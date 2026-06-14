@@ -12,17 +12,18 @@
 
 The operational roles and specific core responsibilities assigned across our team are detailed below:
 
-- **Product Owner (PO):** `[INSERT Name]`
+- **Product Owner (PO):** `[INSERT Login]`
   - *Responsibilities:* Defines the overarching product vision, owns and prioritizes the feature backlogs, sets acceptance criteria, and validates completed iteration deliverables.
-- **Project Manager (PM) / Scrum Master:** `[INSERT Name]`
+- **Project Manager (PM) / Scrum Master:** `[INSERT Login]`
   - *Responsibilities:* Coordinates agile ceremonies, eliminates project blockers, monitors phase milestones, updates sprint timelines, and safeguards overall team synchronization.
-- **Technical Lead / Architect:** `[INSERT Name]`
+- **Technical Lead / Architect:** `[INSERT Login]`
   - *Responsibilities:* Evaluates technical stack options, enforces code-quality standards, reviews pull requests, and orchestrates architectural schemas across frontend, backend, and data tiers.
 - **Developers (All Members):**
-  - `[INSERT Name]`: Core focus on `[INSERT e.g., Backend infrastructure, AI engines, etc.]`.
-  - `[INSERT Name]`: Core focus on `[INSERT e.g., WebSockets implementation, UI components, etc.]`.
-  - `[INSERT Name]`: Core focus on `[INSERT e.g., DevOps pipeline, Database migration, etc.]`.
-  - `[INSERT Name]`: Core focus on `[INSERT e.g., Game rendering, State-management, etc.]`.
+  - `[INSERT Login]`: Core focus on `[INSERT e.g., Backend infrastructure, AI engines, etc.]`.
+  - `[INSERT Login]`: Core focus on `[INSERT e.g., WebSockets implementation, UI components, etc.]`.
+  - `[INSERT Login]`: Core focus on `[INSERT e.g., DevOps pipeline, Database migration, etc.]`.
+  - `[INSERT Login]`: Core focus on `[INSERT e.g., Game rendering, State-management, etc.]`.
+  - `[INSERT Login]`: Core focus on `[INSERT e.g., OAuth integration, Security audits, etc.]`.
 
 ---
 
@@ -37,7 +38,7 @@ We structured our development roadmap into iterative sprints.
 
 ### Team Communication Channels
 
-- **Primary Communications:** [INSERT e.g., Discord server, Slack workspace, or Matrix channels].
+- **Primary Communications:** A simple Slack channel group.
 - **Asynchronous Coordination:** Critical technical blockers, deployment updates, and environment updates were broadcasted via [INSERT e.g., #dev-announcements channel / Git PR comments].
 
 ---
@@ -109,25 +110,31 @@ Our team selected the following specific combination of Major (2 pts) and Minor 
 
 Detailed logs outlining development efforts, challenges, and solutions for each developer:
 
-### Developer 1: `[INSERT Name / Login]`
+### Developer 1: `[INSERT Login]`
 
 - **Key System Additions:** [INSERT List individual features implemented.]
 - **Technical Roadblocks:** [INSERT Detail complex code challenges, network loops, or performance bottlenecks discovered during design phases.]
 - **Resolution Strategy:** [INSERT Explain how you resolved the blocker, redesigned elements, or adjusted logic to meet validation constraints.]
 
-### Developer 2: `[INSERT Name / Login]`
+### Developer 2: `[INSERT Login]`
 
 - **Key System Additions:** [INSERT List individual features implemented.]
 - **Technical Roadblocks:** [INSERT Detail complex code challenges, network loops, or performance bottlenecks discovered during design phases.]
 - **Resolution Strategy:** [INSERT Explain how you resolved the blocker, redesigned elements, or adjusted logic to meet validation constraints.]
 
-### Developer 3: `[INSERT Name / Login]`
+### Developer 3: `[INSERT Login]`
 
 - **Key System Additions:** [INSERT List individual features implemented.]
 - **Technical Roadblocks:** [INSERT Detail complex code challenges, network loops, or performance bottlenecks discovered during design phases.]
 - **Resolution Strategy:** [INSERT Explain how you resolved the blocker, redesigned elements, or adjusted logic to meet validation constraints.]
 
-### Developer 4: `[INSERT Name / Login]`
+### Developer 4: `[INSERT Login]`
+
+- **Key System Additions:** [INSERT List individual features implemented.]
+- **Technical Roadblocks:** [INSERT Detail complex code challenges, network loops, or performance bottlenecks discovered during design phases.]
+- **Resolution Strategy:** [INSERT Explain how you resolved the blocker, redesigned elements, or adjusted logic to meet validation constraints.]
+
+### Developer 5: `[INSERT Login]`
 
 - **Key System Additions:** [INSERT List individual features implemented.]
 - **Technical Roadblocks:** [INSERT Detail complex code challenges, network loops, or performance bottlenecks discovered during design phases.]
