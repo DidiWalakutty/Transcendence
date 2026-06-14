@@ -7,8 +7,9 @@
 - **Frontend Library:** React
 - **Styling Framework:** Tailwind CSS
 - **Form & Validation Layer:** TanStack Form (paired with a schema validator like Zod or Valibot for type-safe, dual-layer frontend/backend validation. tRPC has validation using zod built in.)
-- **Data Fetching & State Management:** TanStack Query (or tRPC)
-- **Web Architecture Toolchain:** TanStack Start or Vite+ (Full TypeScript toolchain)
+- **Data Fetching & State Management:** TanStack Query (or tRPC)'
+- **Web Framework**: TanStack Start
+- **Web Architecture Toolchain:** Vite+ (Full TypeScript toolchain)
 - **Backend Framework:** NestJS (TypeScript-based architecture)
 - **Real-Time Communication:** Socket.IO (WebSockets)
 
