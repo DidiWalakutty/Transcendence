@@ -21,7 +21,7 @@
 
 ### Infrastructure & Operations
 
-- **Runtime & Package Manager:** Bun
+- **Runtime & Package Manager:** Bun, Vite+ (will use bun internally)
 - **Monorepo Management:** Moonrepo, Vite+
 - **Containerization:** Docker Compose (for isolating and managing application services, PostgreSQL, and Redis)
 - **Local Development Environment:** Development Containers (Devcontainers) hooked into Docker Compose to handle rigid system dependencies across local environments
