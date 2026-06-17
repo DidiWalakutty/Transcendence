@@ -1,2 +1,9 @@
-// Export all schemas here so you can import them in other packages
-// or apps using `import { SchemaName } from '@eventlike/schemas'`
+import { z } from 'zod';
+
+export const userSchema = z.object({
+  name: z.string().min(3, "Name must be at least 3 characters").max(50),
+  age: z.number().min(18, "Must be at least 18"),
+});
+
+export type UserDto = z.infer<typeof userSchema>;
+export type { AppRouter } from './trpc-router';

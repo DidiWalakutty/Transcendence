@@ -1,5 +1,5 @@
 {
-    "name": "@eventlike/tsconfig",
+    "name": "@repo/tsconfig",
     "private": true,
     "exports": {
         ".": "./tsconfig.json"

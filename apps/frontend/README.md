@@ -1,1 +1,1 @@
-# @eventlike/frontend
+# @repo/frontend

@@ -1,6 +1,10 @@
 {
-  "extends": "@eventlike/tsconfig",
+  "extends": "@repo/tsconfig",
+  "include": ["src/**/*", "test/**/*"],
   "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolvePackageJsonExports": true,

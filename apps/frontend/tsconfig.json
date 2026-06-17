@@ -1,4 +1,17 @@
 {
-  "extends": "@eventlike/tsconfig",
+  "extends": "@repo/tsconfig",
   "include": ["**/*.ts", "**/*.tsx"],
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": ["vite/client"],
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "noUncheckedSideEffectImports": true
+  }
 }
