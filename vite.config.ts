@@ -20,7 +20,7 @@ export default defineConfig({
       'repo:dev': {
         command:
           'vp run --filter @repo/backend --filter @repo/frontend --fail-if-no-match --parallel dev',
-        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
+        dependsOn: ['repo:db:setup', 'repo:trpc:generate', 'repo:frontend:generate'],
         cache: false,
       },
       'repo:dev:frontend': {
@@ -30,7 +30,27 @@ export default defineConfig({
       },
       'repo:dev:backend': {
         command: 'vp run --filter @repo/backend --fail-if-no-match --parallel dev',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:db:setup', 'repo:trpc:generate'],
+        cache: false,
+      },
+      'repo:db:setup': {
+        command: 'docker compose up -d postgres && vp run -w repo:db:migrate',
+        cache: false,
+      },
+      'repo:db:generate': {
+        command: 'vp exec --filter @repo/backend drizzle-kit generate --config drizzle.config.ts',
+        cache: false,
+      },
+      'repo:db:migrate': {
+        command: 'vp exec --filter @repo/backend drizzle-kit migrate --config drizzle.config.ts',
+        cache: false,
+      },
+      'repo:db:push': {
+        command: 'vp exec --filter @repo/backend drizzle-kit push --config drizzle.config.ts',
+        cache: false,
+      },
+      'repo:db:studio': {
+        command: 'vp exec --filter @repo/backend drizzle-kit studio --config drizzle.config.ts',
         cache: false,
       },
       'repo:build': {

@@ -103,23 +103,33 @@ function Home() {
           children={([canSubmit, isSubmitting]) => (
             <button
               type="submit"
-              disabled={!canSubmit as boolean}
+              disabled={!(canSubmit as boolean) || (isSubmitting as boolean)}
               className="bg-blue-500 text-white p-2 disabled:opacity-50"
             >
               {(isSubmitting as boolean) ? 'Submitting...' : 'Submit'}
             </button>
           )}
         />
+
+        {createUser.error ? (
+          <p role="alert" className="text-red-500 text-sm">
+            {createUser.error.message}
+          </p>
+        ) : null}
       </form>
 
       <div className="mt-8">
         <h2 className="text-2xl font-semibold mb-2">Users List</h2>
-        {usersQuery.isLoading ? (
+        {usersQuery.isPending ? (
           <div>Loading...</div>
+        ) : usersQuery.isError ? (
+          <div role="alert" className="text-red-500">
+            {usersQuery.error.message}
+          </div>
         ) : (
           <ul className="list-disc pl-5">
-            {usersQuery.data?.map((user, i) => (
-              <li key={i}>
+            {usersQuery.data?.map((user) => (
+              <li key={user.id}>
                 {user.name} ({user.email})
               </li>
             ))}

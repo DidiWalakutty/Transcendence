@@ -9,6 +9,11 @@
     "dev": "vp run -w repo:dev",
     "dev:frontend": "vp run -w repo:dev:frontend",
     "dev:backend": "vp run -w repo:dev:backend",
+    "db:setup": "vp run -w repo:db:setup",
+    "db:generate": "vp run -w repo:db:generate",
+    "db:migrate": "vp run -w repo:db:migrate",
+    "db:push": "vp run -w repo:db:push",
+    "db:studio": "vp run -w repo:db:studio",
     "build": "vp run -w repo:build",
     "build:frontend": "vp run -w repo:build:frontend",
     "build:backend": "vp run -w repo:build:backend",
@@ -38,6 +43,7 @@
   },
   "devDependencies": {
     "@repo/tsconfig": "workspace:*",
+    "@types/node": "^25.9.3",
     "vite-plus": "^0.2.0"
   },
   "packageManager": "bun@1.3.14"

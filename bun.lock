@@ -6,6 +6,7 @@
       "name": "eventlike",
       "devDependencies": {
         "@repo/tsconfig": "workspace:*",
+        "@types/node": "^25.9.3",
         "vite-plus": "^0.2.0",
       },
     },

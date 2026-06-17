@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import * as schema from '@repo/schemas/database';
+import { schema } from '@repo/schemas/database';
 
 import { DATABASE } from './database.constants';
 

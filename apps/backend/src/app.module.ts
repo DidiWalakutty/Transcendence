@@ -9,6 +9,12 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: [
+        'apps/backend/.env',
+        '.env',
+        'apps/backend/.env.development',
+        '.env.development',
+      ],
       isGlobal: true,
     }),
     UsersModule,

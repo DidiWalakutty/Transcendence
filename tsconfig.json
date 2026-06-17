@@ -2,16 +2,8 @@
   "extends": "@repo/tsconfig",
   "include": ["vite.config.ts"],
   "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    },
-    "types": ["vite/client"],
-    "jsx": "react-jsx",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "allowJs": true,
     "verbatimModuleSyntax": true,
-    "noEmit": true,
-    "noUncheckedSideEffectImports": true
+    "noEmit": true
   }
 }
