@@ -13,6 +13,7 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/event-emitter": "^3.1.0",
     "@nestjs/platform-express": "^11.0.1",
     "@repo/schemas": "workspace:*",
     "@trpc/server": "^11.17.0",
@@ -22,6 +23,7 @@
     "pg": "^8.21.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
+    "superjson": "^2.2.2",
     "zod": "^4.4.3"
   },
   "devDependencies": {

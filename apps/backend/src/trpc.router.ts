@@ -1,8 +1,15 @@
 import { z } from 'zod';
-import { Router, Query, Mutation, Input } from 'nestjs-trpc';
+import { Router, Query, Mutation, Subscription, Input, Options } from 'nestjs-trpc';
 import { TRPCError } from '@trpc/server';
 
-import { createUserSchema, userSchema, type CreateUserDto } from '@repo/schemas/users';
+import {
+  createUserSchema,
+  userCreatedSubscriptionSchema,
+  userSchema,
+  type CreateUserDto,
+  type UserDto,
+} from '@repo/schemas/users';
+import { UsersEvents } from './users/users.events';
 import { UsersService } from './users/users.service';
 
 const todos = [
@@ -13,7 +20,10 @@ const todos = [
 
 @Router({ alias: 'example' })
 export class ExampleRouter {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersEvents: UsersEvents,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Query({ output: z.array(z.object({ id: z.number(), name: z.string() })) })
   getTodos() {
@@ -39,6 +49,15 @@ export class ExampleRouter {
   @Query({ output: z.array(userSchema) })
   async getUsers() {
     return this.usersService.findAll();
+  }
+
+  @Subscription({ output: userCreatedSubscriptionSchema })
+  async *onUserCreated(
+    @Options() opts: { signal?: AbortSignal },
+  ): AsyncGenerator<UserDto, void, void> {
+    for await (const user of this.usersEvents.listenUserCreated(opts.signal)) {
+      yield user;
+    }
   }
 }
 

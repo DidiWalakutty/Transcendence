@@ -3,9 +3,10 @@ import { z } from 'zod';
 import { users } from '@repo/schemas/database';
 
 export const userSchema = createSelectSchema(users);
+export const userCreatedSubscriptionSchema = z.custom<AsyncIterable<UserDto>>();
 
 export const createUserSchema = createInsertSchema(users, {
-  email: (schema) => schema.email('Must be a valid email address'),
+  email: () => z.email('Must be a valid email address'),
   name: (schema) => schema.min(3, 'Name must be at least 3 characters').max(50),
 }).pick({
   email: true,

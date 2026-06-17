@@ -16,6 +16,7 @@
         "@nestjs/common": "^11.0.1",
         "@nestjs/config": "^4.0.4",
         "@nestjs/core": "^11.0.1",
+        "@nestjs/event-emitter": "^3.1.0",
         "@nestjs/platform-express": "^11.0.1",
         "@repo/schemas": "workspace:*",
         "@trpc/server": "^11.17.0",
@@ -25,6 +26,7 @@
         "pg": "^8.21.0",
         "reflect-metadata": "^0.2.2",
         "rxjs": "^7.8.1",
+        "superjson": "^2.2.2",
         "zod": "^4.4.3",
       },
       "devDependencies": {
@@ -123,6 +125,7 @@
         "@trpc/server": "^11.17.0",
         "drizzle-orm": "^0.45.2",
         "drizzle-zod": "^0.8.3",
+        "superjson": "^2.2.2",
         "zod": "^4.4.3",
       },
       "devDependencies": {
@@ -429,6 +432,8 @@
     "@nestjs/config": ["@nestjs/config@4.0.4", "", { "dependencies": { "dotenv": "17.4.1", "dotenv-expand": "12.0.3", "lodash": "4.18.1" }, "peerDependencies": { "@nestjs/common": "^10.0.0 || ^11.0.0", "rxjs": "^7.1.0" } }, "sha512-CJPjNitr0bAufSEnRe2N+JbnVmMmDoo6hvKCPzXgZoGwJSmp/dZPk9f/RMbuD/+Q1ZJPjwsRpq0vxna++Knwow=="],
 
     "@nestjs/core": ["@nestjs/core@11.1.27", "", { "dependencies": { "fast-safe-stringify": "2.1.1", "iterare": "1.2.1", "path-to-regexp": "8.4.2", "tslib": "2.8.1", "uid": "2.0.2" }, "peerDependencies": { "@nestjs/common": "^11.0.0", "@nestjs/microservices": "^11.0.0", "@nestjs/platform-express": "^11.0.0", "@nestjs/websockets": "^11.0.0", "reflect-metadata": "^0.1.12 || ^0.2.0", "rxjs": "^7.1.0" }, "optionalPeers": ["@nestjs/microservices", "@nestjs/platform-express", "@nestjs/websockets"] }, "sha512-K6DX7hcqmZdeXkv7tsPakKBRCgqL19a4mtbX4FluY0hWtFdtPKp6lbe+lb8gWPfvLdbOWr/CPScn7BSjBX+Ecg=="],
+
+    "@nestjs/event-emitter": ["@nestjs/event-emitter@3.1.0", "", { "dependencies": { "eventemitter2": "6.4.9" }, "peerDependencies": { "@nestjs/common": "^10.0.0 || ^11.0.0", "@nestjs/core": "^10.0.0 || ^11.0.0" } }, "sha512-DOY/4XBGyIjYyOJKkO6jl1kzFE0ZfX0wV+M2HR5NWymPT9Z0zdCEcZGxTXXkoMRwPtglnvCGJALSjOpXPIcM3g=="],
 
     "@nestjs/platform-express": ["@nestjs/platform-express@11.1.27", "", { "dependencies": { "cors": "2.8.6", "express": "5.2.1", "multer": "2.1.1", "path-to-regexp": "8.4.2", "tslib": "2.8.1" }, "peerDependencies": { "@nestjs/common": "^11.0.0", "@nestjs/core": "^11.0.0" } }, "sha512-0ZFhz6H6EdGh4xQVbUNwjoAwBuz73P7FvUAl67h9CTdMqQlJDaQYJApBv8pKfVZ1fGjMCbl0m9DcC6pXaZPWSQ=="],
 
@@ -1453,6 +1458,8 @@
     "estree-walker": ["estree-walker@3.0.3", "", { "dependencies": { "@types/estree": "^1.0.0" } }, "sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g=="],
 
     "etag": ["etag@1.8.1", "", {}, "sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg=="],
+
+    "eventemitter2": ["eventemitter2@6.4.9", "", {}, "sha512-JEPTiaOt9f04oa6NOkc4aH+nVp5I3wEjpHbIPqfgCdD5v5bUzy7xQqwcVO2aDQgOWhI28da57HksMrzK9HlRxg=="],
 
     "eventemitter3": ["eventemitter3@5.0.4", "", {}, "sha512-mlsTRyGaPBjPedk6Bvw+aqbsXDtoAyAzm5MO7JgU+yVRyMQ5O8bD4Kcci7BS85f93veegeCPkL8R4GLClnjLFw=="],
 

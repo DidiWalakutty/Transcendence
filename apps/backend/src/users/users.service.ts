@@ -4,12 +4,14 @@ import { users, type CreateUser } from '@repo/schemas/database';
 
 import { DATABASE } from '../database/database.constants';
 import type { Database } from '../database/database.types';
+import { UsersEvents } from './users.events';
 
 @Injectable()
 export class UsersService {
   constructor(
     @Inject(DATABASE)
     private readonly db: Database,
+    private readonly usersEvents: UsersEvents,
   ) {}
 
   async findByEmail(email: string) {
@@ -26,6 +28,8 @@ export class UsersService {
 
   async create(data: CreateUser) {
     const [user] = await this.db.insert(users).values(data).returning();
+
+    this.usersEvents.emitUserCreated(user);
 
     return user;
   }

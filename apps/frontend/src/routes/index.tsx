@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useSubscription } from '@trpc/tanstack-react-query';
 import { createUserSchema } from '@repo/schemas/users';
 import { useTRPC } from '@/integrations/trpc/react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -31,6 +32,23 @@ function Home() {
     trpc.example.createUser.mutationOptions({
       onSuccess: () => {
         void queryClient.invalidateQueries(trpc.example.getUsers.queryFilter());
+      },
+    }),
+  );
+  useSubscription(
+    trpc.example.onUserCreated.subscriptionOptions(undefined, {
+      onData: (user) => {
+        queryClient.setQueryData(trpc.example.getUsers.queryKey(), (users) => {
+          if (!users) {
+            return [user];
+          }
+
+          if (users.some((existingUser) => existingUser.id === user.id)) {
+            return users;
+          }
+
+          return [...users, user];
+        });
       },
     }),
   );
