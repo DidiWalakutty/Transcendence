@@ -1,6 +1,7 @@
 import { z } from 'zod';
-import { Router, Query, Mutation } from 'nestjs-trpc';
-import { userSchema, UserDto } from '@repo/schemas';
+import { Router, Query, Mutation, Input } from 'nestjs-trpc';
+import { userSchema } from '@repo/schemas';
+import type { UserDto } from '@repo/schemas';
 
 const todos = [
   { id: 1, name: 'Get groceries' },
@@ -18,7 +19,7 @@ export class ExampleRouter {
   }
 
   @Mutation({ input: userSchema, output: userSchema })
-  createUser({ input }: { input: UserDto }) {
+  createUser(@Input() input: UserDto) {
     users.push(input);
     return input;
   }

@@ -2,6 +2,7 @@
   "name": "@repo/backend",
   "private": true,
   "scripts": {
+    "dev": "nest start --watch",
     "build": "nest build",
     "start": "nest start",
     "start:dev": "nest start --watch",

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { QueryClient } from '@tanstack/react-query';
 import superjson from 'superjson';
-import { createTRPCClient, httpBatchStreamLink } from '@trpc/client';
+import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 
 import type { AppRouter } from '@repo/schemas';
@@ -13,8 +13,7 @@ function getUrl() {
 
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [
-    httpBatchStreamLink({
-      // @ts-ignore - nested transformers aren't natively supported by standard initTRPC.create() without superjson
+    httpBatchLink({
       url: getUrl(),
     }),
   ],
