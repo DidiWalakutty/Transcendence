@@ -1,0 +1,9 @@
+{
+    "name": "@eventlike/backend",
+    "private": true,
+    "scripts": {
+        "start": "",
+        "test": "",
+        "check": ""
+    }
+}

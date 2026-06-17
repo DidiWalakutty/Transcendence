@@ -1,0 +1,4 @@
+{
+  "extends": "@eventlike/tsconfig",
+  "include": ["**/*.ts", "**/*.tsx"],
+}

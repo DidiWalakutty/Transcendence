@@ -1,0 +1,14 @@
+{
+    "name": "eventlike",
+    "private": true,
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "scripts": {
+        "start": "",
+        "test": "",
+        "check": ""
+    },
+    "packageManager": "bun@1.3.14"
+}
