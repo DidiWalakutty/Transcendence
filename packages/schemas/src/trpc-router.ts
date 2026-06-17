@@ -8,26 +8,26 @@
  * Learn more: https://nestjs-trpc.io
  */
 
-import { initTRPC } from "@trpc/server";
-import { z } from "zod";
+import { initTRPC } from '@trpc/server';
+import { z } from 'zod';
 
 const t = initTRPC.create();
 const publicProcedure = t.procedure;
-import { userSchema } from "@repo/schemas";
+import { userSchema } from '@repo/schemas';
 
 const appRouter = t.router({
   example: t.router({
     getTodos: publicProcedure
       .output(z.array(z.object({ id: z.number(), name: z.string() })))
-      .query(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
+      .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
     createUser: publicProcedure
       .input(userSchema)
       .output(userSchema)
-      .mutation(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any),
+      .mutation(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
     getUsers: publicProcedure
       .output(z.array(userSchema))
-      .query(async () => "PLACEHOLDER_DO_NOT_REMOVE" as any)
-    })
+      .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

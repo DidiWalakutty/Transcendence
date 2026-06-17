@@ -1,4 +1,4 @@
 {
   "extends": "@repo/tsconfig",
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx"]
 }

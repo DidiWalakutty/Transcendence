@@ -1,14 +1,24 @@
 {
-    "name": "ft_transcendence",
-    "private": true,
-    "workspaces": [
-        "apps/*",
-        "packages/*"
-    ],
-    "scripts": {
-        "start": "",
-        "test": "",
-        "check": ""
-    },
-    "packageManager": "bun@1.3.14"
+  "name": "ft_transcendence",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "vp run -r --parallel dev",
+    "build": "vp run -r build",
+    "test": "vp test",
+    "check": "vp check",
+    "check:fix": "vp check --fix",
+    "lint": "vp lint",
+    "fmt": "vp fmt",
+    "fmt:fix": "vp fmt --fix",
+    "staged": "vp staged",
+    "prepare": "vp config --no-agent"
+  },
+  "devDependencies": {
+    "vite-plus": "^0.2.0"
+  },
+  "packageManager": "bun@1.3.14"
 }

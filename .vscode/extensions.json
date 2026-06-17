@@ -1,12 +1,13 @@
 {
-    "recommendations": [
-        "pomdtr.excalidraw-editor", // Excalidraw Editor
-        "fill-labs.dependi", // Checks dependencies for latest versions and vulnerabilities
-        "ms-vscode.vscode-typescript-next", // TypeScript support
-        "inlang.vs-code-extension", // Inlang extension for localization management
-        "github.vscode-github-actions", // GitHub Actions extension
-        "yzhang.markdown-all-in-one", // Markdown support
-        "esbenp.prettier-vscode", // Prettier code formatter
-        "bradlc.vscode-tailwindcss", // Tailwind CSS support
-    ]
+  "recommendations": [
+    "pomdtr.excalidraw-editor", // Excalidraw Editor
+    "fill-labs.dependi", // Checks dependencies for latest versions and vulnerabilities
+    "ms-vscode.vscode-typescript-next", // TypeScript support
+    "inlang.vs-code-extension", // Inlang extension for localization management
+    "github.vscode-github-actions", // GitHub Actions extension
+    "yzhang.markdown-all-in-one", // Markdown support
+    "esbenp.prettier-vscode", // Prettier code formatter
+    "bradlc.vscode-tailwindcss", // Tailwind CSS support,
+    "VoidZero.vite-plus-extension-pack" // VitePlus extension pack
+  ]
 }

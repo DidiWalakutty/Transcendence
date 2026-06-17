@@ -6,8 +6,7 @@
     "dev": "vite dev --port 3000",
     "generate-routes": "tsr generate",
     "build": "vite build",
-    "preview": "vite preview",
-    "test": "vitest run"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@faker-js/faker": "^10.3.0",
@@ -40,9 +39,9 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@repo/tsconfig": "workspace:*",
-    "@repo/schemas": "workspace:*",
     "@inlang/paraglide-js": "^2.13.1",
+    "@repo/schemas": "workspace:*",
+    "@repo/tsconfig": "workspace:*",
     "@tailwindcss/typography": "^0.5.16",
     "@tanstack/devtools-vite": "latest",
     "@tanstack/router-cli": "^1.132.0",

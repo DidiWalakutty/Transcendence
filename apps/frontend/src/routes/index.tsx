@@ -1,46 +1,47 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useForm } from '@tanstack/react-form'
-import { zodValidator } from '@tanstack/zod-form-adapter'
-import { userSchema } from '@repo/schemas'
-import { useTRPC } from '@/integrations/trpc/react'
+import { createFileRoute } from '@tanstack/react-router';
+import { useForm } from '@tanstack/react-form';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { userSchema } from '@repo/schemas';
+import { useTRPC } from '@/integrations/trpc/react';
 
-export const Route = createFileRoute('/')({ component: Home })
+export const Route = createFileRoute('/')({ component: Home });
 
 function Home() {
-  const trpc = useTRPC()
-  const utils = trpc.useUtils()
-  
-  const usersQuery = trpc.example.getUsers.useQuery()
-  const createUser = trpc.example.createUser.useMutation({
-    onSuccess: () => {
-      utils.example.getUsers.invalidate()
-    }
-  })
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  const usersQuery = useQuery(trpc.example.getUsers.queryOptions());
+  const createUser = useMutation(
+    trpc.example.createUser.mutationOptions({
+      onSuccess: () => {
+        void queryClient.invalidateQueries(trpc.example.getUsers.queryFilter());
+      },
+    }),
+  );
 
   const form = useForm({
     defaultValues: {
       name: '',
       age: 18,
     },
-    validatorAdapter: zodValidator(),
     validators: {
       onChange: userSchema,
     },
     onSubmit: async ({ value }) => {
-      await createUser.mutateAsync(value)
-      form.reset()
+      await createUser.mutateAsync(value);
+      form.reset();
     },
-  })
+  });
 
   return (
     <div className="p-8">
       <h1 className="text-4xl font-bold mb-4">Create User</h1>
-      
+
       <form
         onSubmit={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          form.handleSubmit()
+          e.preventDefault();
+          e.stopPropagation();
+          void form.handleSubmit();
         }}
         className="flex flex-col gap-4 max-w-sm mb-8"
       >
@@ -48,7 +49,9 @@ function Home() {
           name="name"
           children={(field) => (
             <div>
-              <label htmlFor={field.name} className="block mb-1">Name</label>
+              <label htmlFor={field.name} className="block mb-1">
+                Name
+              </label>
               <input
                 id={field.name}
                 name={field.name}
@@ -59,7 +62,9 @@ function Home() {
               />
               {field.state.meta.errors.length > 0 && (
                 <em role="alert" className="text-red-500 text-sm">
-                  {field.state.meta.errors.join(', ')}
+                  {field.state.meta.errors
+                    .flatMap((error) => (error ? [error.message] : []))
+                    .join(', ')}
                 </em>
               )}
             </div>
@@ -70,7 +75,9 @@ function Home() {
           name="age"
           children={(field) => (
             <div>
-              <label htmlFor={field.name} className="block mb-1">Age</label>
+              <label htmlFor={field.name} className="block mb-1">
+                Age
+              </label>
               <input
                 id={field.name}
                 name={field.name}
@@ -82,7 +89,9 @@ function Home() {
               />
               {field.state.meta.errors.length > 0 && (
                 <em role="alert" className="text-red-500 text-sm">
-                  {field.state.meta.errors.join(', ')}
+                  {field.state.meta.errors
+                    .flatMap((error) => (error ? [error.message] : []))
+                    .join(', ')}
                 </em>
               )}
             </div>
@@ -92,8 +101,8 @@ function Home() {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={!canSubmit as boolean}
               className="bg-blue-500 text-white p-2 disabled:opacity-50"
             >
@@ -110,11 +119,13 @@ function Home() {
         ) : (
           <ul className="list-disc pl-5">
             {usersQuery.data?.map((user, i) => (
-              <li key={i}>{user.name} ({user.age})</li>
+              <li key={i}>
+                {user.name} ({user.age})
+              </li>
             ))}
           </ul>
         )}
       </div>
     </div>
-  )
+  );
 }

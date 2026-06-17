@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by mde-krui, diwalaku, dkolodze, ccraciun and rtorrent.*
+_This project has been created as part of the 42 curriculum by mde-krui, diwalaku, dkolodze, ccraciun and rtorrent._
 
 # ft_transcendence
 
@@ -13,11 +13,11 @@ Full-stack event management platform where users can create, manage and particip
 The operational roles and specific core responsibilities assigned across our team are detailed below:
 
 - **Product Owner (PO):** `diwalaku`
-  - *Responsibilities:* Defines the overarching product vision, owns and prioritizes the feature backlogs, sets acceptance criteria, and validates completed iteration deliverables.
+  - _Responsibilities:_ Defines the overarching product vision, owns and prioritizes the feature backlogs, sets acceptance criteria, and validates completed iteration deliverables.
 - **Project Manager (PM) / Scrum Master:** `dkolodze`
-  - *Responsibilities:* Coordinates agile ceremonies, eliminates project blockers, monitors phase milestones, updates sprint timelines, and safeguards overall team synchronization.
+  - _Responsibilities:_ Coordinates agile ceremonies, eliminates project blockers, monitors phase milestones, updates sprint timelines, and safeguards overall team synchronization.
 - **Technical Lead / Architect:** `mde-krui`
-  - *Responsibilities:* Evaluates technical stack options, enforces code-quality standards, reviews pull requests, and orchestrates architectural schemas across frontend, backend, and data tiers.
+  - _Responsibilities:_ Evaluates technical stack options, enforces code-quality standards, reviews pull requests, and orchestrates architectural schemas across frontend, backend, and data tiers.
 - **Developers (All Members):**
   - `mde-krui`: Core focus on `Frontend and backend architecture.`.
   - `dkolodze`: Core focus on `[INSERT e.g., WebSockets implementation, UI components, etc.]`.
@@ -31,7 +31,7 @@ The operational roles and specific core responsibilities assigned across our tea
 
 ### Task Management & Tracking
 
-We structured our development roadmap into iterative sprints. 
+We structured our development roadmap into iterative sprints.
 
 - **Project Management Tool:** [INSERT e.g., GitHub Issues, Trello, Jira, or Notion] was utilized to move components from Backlog $\rightarrow$ In Progress $\rightarrow$ Code Review $\rightarrow$ Done.
 - **Meeting Cadence:** We conducted [INSERT e.g., daily standups / bi-weekly syncs] to review progress, coordinate integrations, and redistribute blockers.
@@ -48,13 +48,13 @@ We structured our development roadmap into iterative sprints.
 Our unified microservices architecture consists of the following components, strictly evaluated and justified below:
 
 - **Frontend Framework:** `[INSERT Framework, e.g., React / Vue / Vanilla JS Web Components]`
-  - *Justification:* [INSERT Explain why this was selected, how it fits your module targets, and its interaction with state management.]
+  - _Justification:_ [INSERT Explain why this was selected, how it fits your module targets, and its interaction with state management.]
 - **Backend Framework:** `[INSERT Framework, e.g., Django / NestJS / Express]`
-  - *Justification:* [INSERT Explain how this addresses routing, security baselines, and WebSocket handshakes efficiently.]
+  - _Justification:_ [INSERT Explain how this addresses routing, security baselines, and WebSocket handshakes efficiently.]
 - **Database Engine:** `[INSERT Database, e.g., PostgreSQL / MongoDB]`
-  - *Justification:* [INSERT Explain why this database fits your relational data mapping and consistency constraints.]
+  - _Justification:_ [INSERT Explain why this database fits your relational data mapping and consistency constraints.]
 - **Styling Engine:** `[INSERT e.g., Tailwind CSS / Bootstrap / Custom CSS Variables Framework]`
-  - *Justification:* [INSERT Detail how this ensures structural design compliance, responsive view rules, and baseline presentation needs.]
+  - _Justification:_ [INSERT Detail how this ensures structural design compliance, responsive view rules, and baseline presentation needs.]
 
 ---
 
@@ -74,7 +74,6 @@ Below is the definitive relational schema detailing our application entities, sy
 
 An inventory of all technical systems and interface modules deployed across the platform, cross-referenced with their primary authors:
 
-
 | Feature Area                       | Functional Scope                                                                       | Primary Author   |
 | ---------------------------------- | -------------------------------------------------------------------------------------- | ---------------- |
 | **Authentication & Core Security** | Signup, login, password hashing/salting, and HTTPS middleware routing.                 | `[INSERT Login]` |
@@ -83,13 +82,11 @@ An inventory of all technical systems and interface modules deployed across the 
 | **[INSERT Module Category]**       | [INSERT Description of specific operational logic implemented.]                        | `[INSERT Login]` |
 | **[INSERT Module Category]**       | [INSERT Description of specific operational logic implemented.]                        | `[INSERT Login]` |
 
-
 ---
 
 ## 7. Modules Matrix
 
 Our team selected the following specific combination of Major (2 pts) and Minor (1 pt) modules to satisfy and exceed the mandatory 14-point project validation threshold.
-
 
 | Module Selected                                | Type        | Points                    | Feature Scope Breakdown                                                                                   | Assigned Developer |
 | ---------------------------------------------- | ----------- | ------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------ |
@@ -102,7 +99,6 @@ Our team selected the following specific combination of Major (2 pts) and Minor 
 | **[INSERT Module Name]**                       | Major/Minor | X                         | [INSERT Implementation criteria breakdown.]                                                               | `[INSERT Login]`   |
 | **[INSERT Module Name]**                       | Major/Minor | X                         | [INSERT Implementation criteria breakdown.]                                                               | `[INSERT Login]`   |
 | **TOTAL VALIDATED POINTS**                     |             | **[INSERT Sum $\ge$ 14]** |                                                                                                           |                    |
-
 
 ---
 
@@ -202,4 +198,3 @@ In strict accordance with the 42 validation rules, our team utilized AI toolsets
 
 1. **Where/How AI was Used:** Deployed to generate [INSERT e.g., target mock data sets, CSS boilerplate properties, initial relational entity templates].
 2. **Validation Process:** Every block of AI-assisted code was manually refactored, stress-tested against asynchronous memory leaks, verified for security gaps, and is completely understood by the implementation authors. We stand fully prepared to break down, modify, or rewrite any part of this system live during peer defense routines.
-
