@@ -1,4 +1,4 @@
-## Validation & Request Flow
+## Validation
 
 The application uses a shared schema-first validation architecture to guarantee consistency between the frontend and backend.
 
