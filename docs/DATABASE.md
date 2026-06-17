@@ -1,6 +1,7 @@
 # Database
 
 The project uses PostgreSQL as the primary relational database and Drizzle ORM as the typed database layer.
+Redis is also available through the local Compose stack for backend cache and throttling storage.
 
 ## Local Service
 
@@ -99,4 +100,4 @@ erDiagram
 
 The devcontainer does not provide PostgreSQL or Redis directly. Infrastructure services are owned by the root Docker Compose stack so they can be used consistently inside or outside the devcontainer.
 
-PostgreSQL is currently integrated. Redis is reserved in the stack and port documentation for caching, sessions, pub/sub, queues, and real-time state when those features are added.
+PostgreSQL is currently integrated as the durable data store. Redis is currently started by development backend tasks and used by the backend for cache and throttling storage; it is also reserved for planned sessions, pub/sub, queues, and real-time state features.

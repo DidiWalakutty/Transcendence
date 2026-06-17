@@ -31,6 +31,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
+import { FieldError } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
@@ -42,6 +43,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { removeById, replaceById, upsertById } from '@/lib/collection-by-id';
 
 export const Route = createFileRoute('/')({ component: Home });
 
@@ -54,7 +56,7 @@ function Home() {
     trpc.example.createUser.mutationOptions({
       onSuccess: (user) => {
         queryClient.setQueryData(trpc.example.getUsers.queryKey(), (users) =>
-          upsertUser(users, user),
+          upsertById(users, user),
         );
       },
     }),
@@ -67,7 +69,7 @@ function Home() {
             return [user];
           }
 
-          return upsertUser(users, user);
+          return upsertById(users, user);
         });
       },
     }),
@@ -76,7 +78,7 @@ function Home() {
     trpc.example.onUserUpdated.subscriptionOptions(undefined, {
       onData: (user) => {
         queryClient.setQueryData(trpc.example.getUsers.queryKey(), (users) =>
-          replaceUser(users, user),
+          replaceById(users, user),
         );
       },
     }),
@@ -85,7 +87,7 @@ function Home() {
     trpc.example.onUserDeleted.subscriptionOptions(undefined, {
       onData: (user) => {
         queryClient.setQueryData(trpc.example.getUsers.queryKey(), (users) =>
-          removeUser(users, user.id),
+          removeById(users, user.id),
         );
       },
     }),
@@ -134,9 +136,7 @@ function Home() {
               <form.Field
                 name="name"
                 children={(field) => {
-                  const errors = field.state.meta.errors
-                    .flatMap((error) => (error ? [error.message] : []))
-                    .join(', ');
+                  const errors = field.state.meta.errors;
 
                   return (
                     <div className="grid gap-2">
@@ -149,11 +149,7 @@ function Home() {
                         onChange={(e) => field.handleChange(e.target.value)}
                         aria-invalid={errors.length > 0}
                       />
-                      {errors ? (
-                        <p role="alert" className="text-sm text-destructive">
-                          {errors}
-                        </p>
-                      ) : null}
+                      <FieldError errors={errors} />
                     </div>
                   );
                 }}
@@ -162,9 +158,7 @@ function Home() {
               <form.Field
                 name="email"
                 children={(field) => {
-                  const errors = field.state.meta.errors
-                    .flatMap((error) => (error ? [error.message] : []))
-                    .join(', ');
+                  const errors = field.state.meta.errors;
 
                   return (
                     <div className="grid gap-2">
@@ -178,11 +172,7 @@ function Home() {
                         onChange={(e) => field.handleChange(e.target.value)}
                         aria-invalid={errors.length > 0}
                       />
-                      {errors ? (
-                        <p role="alert" className="text-sm text-destructive">
-                          {errors}
-                        </p>
-                      ) : null}
+                      <FieldError errors={errors} />
                     </div>
                   );
                 }}
@@ -288,7 +278,7 @@ function EditUserDialog({ user }: { user: UserDto }) {
     trpc.example.updateUser.mutationOptions({
       onSuccess: (updatedUser) => {
         queryClient.setQueryData(trpc.example.getUsers.queryKey(), (users) =>
-          replaceUser(users, updatedUser),
+          replaceById(users, updatedUser),
         );
         setOpen(false);
       },
@@ -353,11 +343,7 @@ function EditUserDialog({ user }: { user: UserDto }) {
               onChange={(event) => setName(event.target.value)}
               aria-invalid={Boolean(fieldErrors.name)}
             />
-            {fieldErrors.name ? (
-              <p role="alert" className="text-sm text-destructive">
-                {fieldErrors.name}
-              </p>
-            ) : null}
+            <FieldError>{fieldErrors.name}</FieldError>
           </div>
           <div className="grid gap-2">
             <Label htmlFor={`edit-email-${user.id}`}>Email</Label>
@@ -368,11 +354,7 @@ function EditUserDialog({ user }: { user: UserDto }) {
               onChange={(event) => setEmail(event.target.value)}
               aria-invalid={Boolean(fieldErrors.email)}
             />
-            {fieldErrors.email ? (
-              <p role="alert" className="text-sm text-destructive">
-                {fieldErrors.email}
-              </p>
-            ) : null}
+            <FieldError>{fieldErrors.email}</FieldError>
           </div>
 
           {updateUser.error ? (
@@ -408,7 +390,7 @@ function DeleteUserAlert({ user }: { user: UserDto }) {
     trpc.example.deleteUser.mutationOptions({
       onSuccess: (deletedUser) => {
         queryClient.setQueryData(trpc.example.getUsers.queryKey(), (users) =>
-          removeUser(users, deletedUser.id),
+          removeById(users, deletedUser.id),
         );
         setOpen(false);
       },
@@ -465,32 +447,4 @@ function DeleteUserAlert({ user }: { user: UserDto }) {
       </AlertDialogContent>
     </AlertDialog>
   );
-}
-
-function upsertUser(users: UserDto[] | undefined, user: UserDto) {
-  if (!users) {
-    return [user];
-  }
-
-  if (users.some((existingUser) => existingUser.id === user.id)) {
-    return replaceUser(users, user);
-  }
-
-  return [...users, user];
-}
-
-function replaceUser(users: UserDto[] | undefined, user: UserDto) {
-  if (!users) {
-    return users;
-  }
-
-  return users.map((existingUser) => (existingUser.id === user.id ? user : existingUser));
-}
-
-function removeUser(users: UserDto[] | undefined, userId: string) {
-  if (!users) {
-    return users;
-  }
-
-  return users.filter((user) => user.id !== userId);
 }

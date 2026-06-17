@@ -6,9 +6,15 @@ import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 
 import type { AppRouter } from '@repo/schemas/trpc';
 import { TRPCProvider } from '@/integrations/trpc/react';
+import { env } from '@/env';
 
 function getUrl() {
-  return `http://localhost:3001/api/trpc`;
+  const baseUrl =
+    env.VITE_API_URL ??
+    (typeof window === 'undefined' ? env.SERVER_URL : undefined) ??
+    'http://localhost:3001';
+
+  return `${baseUrl}/api/trpc`;
 }
 
 export const trpcClient = createTRPCClient<AppRouter>({

@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { Router, Query, Mutation, Subscription, Input, Options } from 'nestjs-trpc';
-import { TRPCError } from '@trpc/server';
 
 import {
   createUserSchema,
@@ -17,6 +16,7 @@ import {
 } from '@repo/schemas/users';
 import { UsersEvents } from './users/users.events';
 import { UsersService } from './users/users.service';
+import { notFoundError, throwIfUniqueViolation } from './trpc/trpc.errors';
 
 const todos = [
   { id: 1, name: 'Get groceries' },
@@ -41,13 +41,7 @@ export class ExampleRouter {
     try {
       return await this.usersService.create(input);
     } catch (error) {
-      if (isUniqueViolation(error)) {
-        throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'A user with this email already exists',
-        });
-      }
-
+      throwIfUniqueViolation(error, 'A user with this email already exists');
       throw error;
     }
   }
@@ -63,21 +57,12 @@ export class ExampleRouter {
       const user = await this.usersService.update(input);
 
       if (!user) {
-        throw new TRPCError({
-          code: 'NOT_FOUND',
-          message: 'User not found',
-        });
+        throw notFoundError('User not found');
       }
 
       return user;
     } catch (error) {
-      if (isUniqueViolation(error)) {
-        throw new TRPCError({
-          code: 'CONFLICT',
-          message: 'A user with this email already exists',
-        });
-      }
-
+      throwIfUniqueViolation(error, 'A user with this email already exists');
       throw error;
     }
   }
@@ -87,10 +72,7 @@ export class ExampleRouter {
     const user = await this.usersService.delete(input.id);
 
     if (!user) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'User not found',
-      });
+      throw notFoundError('User not found');
     }
 
     return user;
@@ -122,8 +104,4 @@ export class ExampleRouter {
       yield user;
     }
   }
-}
-
-function isUniqueViolation(error: unknown) {
-  return typeof error === 'object' && error !== null && 'code' in error && error.code === '23505';
 }

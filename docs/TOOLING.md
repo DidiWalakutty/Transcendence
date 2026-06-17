@@ -51,6 +51,7 @@ vp install
 | `vp run trpc:generate` | Regenerate the shared tRPC router types.            |
 | `vp run trpc:watch`    | Watch backend tRPC changes and regenerate types.    |
 | `vp run db:setup`      | Start PostgreSQL and run migrations.                |
+| `vp run redis:setup`   | Start Redis through Docker Compose.                 |
 | `vp run db:generate`   | Generate Drizzle migration files.                   |
 | `vp run db:migrate`    | Run Drizzle migrations.                             |
 | `vp run db:push`       | Push schema changes directly to the database.       |
@@ -76,7 +77,7 @@ vite.config.ts
 This file defines the repository task graph, including dependencies such as:
 
 - generating tRPC types before frontend/backend tasks that need them;
-- starting the database and running migrations before backend development;
+- starting PostgreSQL, Redis, and database migrations before backend development;
 - running frontend route and localization generation before frontend development.
 
 ```mermaid
@@ -85,6 +86,7 @@ flowchart TD
     DEV_BACKEND["repo:dev:backend"]
     DEV_FRONTEND["repo:dev:frontend"]
     DB_SETUP["repo:db:setup"]
+    REDIS_SETUP["repo:redis:setup"]
     DB_MIGRATE["repo:db:migrate"]
     TRPC["repo:trpc:generate"]
     FRONTEND_GEN["repo:frontend:generate"]
@@ -92,12 +94,14 @@ flowchart TD
     FRONTEND["Frontend dev server"]
 
     DEV --> DB_SETUP
+    DEV --> REDIS_SETUP
     DEV --> TRPC
     DEV --> FRONTEND_GEN
     DEV --> BACKEND
     DEV --> FRONTEND
 
     DEV_BACKEND --> DB_SETUP
+    DEV_BACKEND --> REDIS_SETUP
     DEV_BACKEND --> TRPC
     DEV_BACKEND --> BACKEND
 

@@ -12,17 +12,7 @@ import { AppService } from './app.service';
 import { ExampleRouter } from './trpc.router';
 import { EventsModule } from './events/events.module';
 import { UsersModule } from './users/users.module';
-
-const getRedisUrl = (config: ConfigService) =>
-  config.get<string>('REDIS_URL') ??
-  `redis://localhost:${config.get<string>('REDIS_PORT') ?? '6379'}`;
-
-const getNumber = (config: ConfigService, key: string, fallback: number) => {
-  const value = config.get<string | number>(key);
-  const parsedValue = typeof value === 'number' ? value : Number(value);
-
-  return Number.isFinite(parsedValue) ? parsedValue : fallback;
-};
+import { getNumber, getRedisUrl } from './config/config.utils';
 
 @Module({
   imports: [

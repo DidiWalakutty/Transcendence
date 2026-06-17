@@ -41,7 +41,6 @@ This document defines the primary technology stack for the project.
 ### Notes
 
 - [NestJS](https://nestjs.com/) is the preferred backend architecture due to its modularity, dependency injection system, and TypeScript-first design.
-- [Socket.IO](https://socket.io/) provides bidirectional real-time communication for notifications, presence, live updates, and collaborative features.
 
 ---
 
@@ -56,7 +55,7 @@ This document defines the primary technology stack for the project.
 ### Notes
 
 - [PostgreSQL](https://www.postgresql.org/) serves as the primary source of truth.
-- [Redis](https://redis.io/) is used for caching, sessions, distributed locks, queues, pub/sub, and real-time state.
+- [Redis](https://redis.io/) is currently used for backend cache and throttling storage. Sessions, distributed locks, queues, pub/sub, and real-time state are planned Redis use cases.
 - [Drizzle ORM](https://orm.drizzle.team/) provides the typed database layer and migration workflow.
 - Shared schema definitions are used for database access and validation. See [Validation](./VALIDATION.md) and [Database](./DATABASE.md).
 

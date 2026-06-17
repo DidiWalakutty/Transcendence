@@ -48,7 +48,7 @@ vp run dev
 
 This task:
 
-1. Starts the PostgreSQL service from the root Docker Compose stack.
+1. Starts the PostgreSQL and Redis services from the root Docker Compose stack.
 2. Runs Drizzle migrations.
 3. Generates shared tRPC types.
 4. Generates frontend route and localization files.
@@ -58,24 +58,28 @@ This task:
 flowchart TD
     A["vp run dev"]
     B["repo:db:setup"]
-    C["repo:trpc:generate"]
-    D["repo:frontend:generate"]
-    E["docker compose up -d postgres"]
-    F["Drizzle migrate"]
-    G["Generate tRPC router types"]
-    H["Generate routes and Paraglide runtime"]
-    I["Start NestJS backend"]
-    J["Start TanStack Start frontend"]
+    C["repo:redis:setup"]
+    D["repo:trpc:generate"]
+    E["repo:frontend:generate"]
+    F["docker compose up -d postgres"]
+    G["docker compose up -d redis"]
+    H["Drizzle migrate"]
+    I["Generate tRPC router types"]
+    J["Generate routes and Paraglide runtime"]
+    K["Start NestJS backend"]
+    L["Start TanStack Start frontend"]
 
     A --> B
     A --> C
     A --> D
-    B --> E
+    A --> E
     B --> F
+    B --> H
     C --> G
-    D --> H
-    A --> I
-    A --> J
+    D --> I
+    E --> J
+    A --> K
+    A --> L
 ```
 
 Open the frontend at:
@@ -107,6 +111,7 @@ For more commands, see [Tooling](./TOOLING.md).
 ## Database
 
 The local database is PostgreSQL, managed by the root `docker-compose.yml` file.
+Redis is also managed by Compose and is used by the backend for cache and throttling storage.
 
 The default development connection string is:
 
@@ -114,7 +119,7 @@ The default development connection string is:
 DATABASE_URL=postgres://transcendence:transcendence@localhost:5432/transcendence
 ```
 
-You normally do not need to run migrations manually before development. `vp run dev` and `vp run dev:backend` both depend on database setup.
+You normally do not need to run migrations manually before development. `vp run dev` and `vp run dev:backend` both depend on database and Redis setup.
 
 For database details, see [Database](./DATABASE.md).
 

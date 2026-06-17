@@ -34,12 +34,16 @@ The current router alias is:
 example
 ```
 
-| Procedure               | Type         | Input              | Output                  | Notes                                                 |
-| ----------------------- | ------------ | ------------------ | ----------------------- | ----------------------------------------------------- |
-| `example.getTodos`      | Query        | None               | Array of `{ id, name }` | Temporary example data.                               |
-| `example.getUsers`      | Query        | None               | Array of users          | Reads users from PostgreSQL through Drizzle.          |
-| `example.createUser`    | Mutation     | `createUserSchema` | User                    | Creates a user and rejects duplicate email addresses. |
-| `example.onUserCreated` | Subscription | None               | User stream             | Streams newly created users to subscribed clients.    |
+| Procedure               | Type         | Input              | Output                  | Notes                                                    |
+| ----------------------- | ------------ | ------------------ | ----------------------- | -------------------------------------------------------- |
+| `example.getTodos`      | Query        | None               | Array of `{ id, name }` | Temporary example data.                                  |
+| `example.getUsers`      | Query        | None               | Array of users          | Reads users from PostgreSQL through Drizzle.             |
+| `example.createUser`    | Mutation     | `createUserSchema` | User                    | Creates a user and rejects duplicate email addresses.    |
+| `example.updateUser`    | Mutation     | `updateUserSchema` | User                    | Updates a user and rejects missing or duplicate records. |
+| `example.deleteUser`    | Mutation     | `deleteUserSchema` | User                    | Deletes a user and rejects missing records.              |
+| `example.onUserCreated` | Subscription | None               | User stream             | Streams newly created users to subscribed clients.       |
+| `example.onUserUpdated` | Subscription | None               | User stream             | Streams updated users to subscribed clients.             |
+| `example.onUserDeleted` | Subscription | None               | User stream             | Streams deleted users to subscribed clients.             |
 
 ## Shared Contracts
 
@@ -62,7 +66,7 @@ sequenceDiagram
     participant Service as "UsersService"
     participant DB as "PostgreSQL"
 
-    UI->>Query: submit create user / load users
+    UI->>Query: create, update, delete, or load users
     Query->>TRPC: call example procedure
     TRPC->>Router: HTTP request to /api/trpc
     Router->>Router: validate with shared Zod schema

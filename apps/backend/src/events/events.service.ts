@@ -2,6 +2,7 @@ import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import Redis from 'ioredis';
+import { getRedisUrl } from '../config/config.utils';
 
 @Injectable()
 export class EventsService implements OnModuleDestroy {
@@ -14,17 +15,14 @@ export class EventsService implements OnModuleDestroy {
     private readonly eventEmitter: EventEmitter2,
     config: ConfigService,
   ) {
-    const redisUrl =
-      config.get<string>('REDIS_URL') ??
-      `redis://localhost:${config.get<string>('REDIS_PORT') ?? '6379'}`;
     const options = {
       enableOfflineQueue: false,
       lazyConnect: true,
       maxRetriesPerRequest: 1,
     };
 
-    this.publisher = new Redis(redisUrl, options);
-    this.subscriber = new Redis(redisUrl, options);
+    this.publisher = new Redis(getRedisUrl(config), options);
+    this.subscriber = new Redis(getRedisUrl(config), options);
     this.publisher.on('error', () => undefined);
     this.subscriber.on('error', () => undefined);
   }
