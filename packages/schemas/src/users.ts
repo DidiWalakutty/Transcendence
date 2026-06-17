@@ -2,7 +2,9 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { users } from '@repo/schemas/database';
 
-export const userSchema = createSelectSchema(users);
+export const userSchema = createSelectSchema(users, {
+  createdAt: () => z.coerce.date(),
+});
 export const userCreatedSubscriptionSchema = z.custom<AsyncIterable<UserDto>>();
 export const userUpdatedSubscriptionSchema = z.custom<AsyncIterable<UserDto>>();
 export const userDeletedSubscriptionSchema = z.custom<AsyncIterable<UserDto>>();
