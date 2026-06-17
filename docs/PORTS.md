@@ -1,12 +1,14 @@
 # Ports
 
-The following ports are reserved for local development and are automatically forwarded by the devcontainer, allowing services to be accessed both inside and outside the container when needed.
+The following ports are reserved for local development.
+
+Application services run through Vite+ tasks. Infrastructure services are provided by the root Docker Compose stack.
 
 | Port   | Service    | Description                                                 |
 | ------ | ---------- | ----------------------------------------------------------- |
 | `3000` | Frontend   | Main web application powered by TanStack Start.             |
-| `3001` | Backend    | NestJS API and application services.                        |
+| `3001` | Backend    | NestJS API and tRPC services.                               |
 | `5432` | PostgreSQL | Primary relational database.                                |
-| `6379` | Redis      | In-memory data store used for caching, queues, and pub/sub. |
+| `6379` | Redis      | Reserved for caching, queues, pub/sub, and real-time state. |
 
-All ports are preconfigured and forwarded automatically to streamline local development and debugging workflows.
+When using the devcontainer, these ports should be forwarded so the same services are reachable inside and outside the container.

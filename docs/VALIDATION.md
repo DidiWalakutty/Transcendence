@@ -1,30 +1,42 @@
-## Validation
+# Validation
 
-The application uses a shared schema-first validation architecture to guarantee consistency between the frontend and backend.
+The application uses a shared schema-first validation architecture to keep frontend and backend behavior consistent.
 
 ```mermaid
 flowchart TD
-    A[Shared Zod Schema]
-    B[TanStack Form<br/>Client Validation]
-    C[tRPC Mutation Call]
-    D[nestjs-trpc<br/>Server Validation]
-    E[NestJS Service Layer]
-    F[(PostgreSQL)]
-
-    A --> B
-    A --> D
+    A["Shared schema package<br/>@repo/schemas"]
+    B["Drizzle table definitions"]
+    C["drizzle-zod schemas"]
+    D["TanStack Form<br/>client validation"]
+    E["tRPC mutation/query"]
+    F["nestjs-trpc<br/>server validation"]
+    G["NestJS service layer"]
+    H[("PostgreSQL")]
 
     B --> C
     C --> D
+    C --> F
     D --> E
     E --> F
+    F --> G
+    G --> H
 ```
 
-### Flow
+## Flow
 
-1. A shared **Zod schema** defines the request contract.
-2. **TanStack Form** performs client-side validation using the same schema.
-3. Valid data is submitted through a **tRPC mutation**.
-4. **nestjs-trpc** validates the request again on the server using the shared schema.
-5. The request reaches the **NestJS service layer**.
-6. The service interacts with **PostgreSQL**, **Redis**, external APIs, or other infrastructure as required.
+1. Drizzle table definitions live in `packages/schemas/src/database.ts`.
+2. Zod schemas are derived from those definitions with `drizzle-zod`.
+3. TanStack Form uses the shared schema for instant client-side validation.
+4. tRPC sends validated input to the backend.
+5. `nestjs-trpc` validates the request again on the server.
+6. The NestJS service layer reads or writes data through Drizzle ORM.
+7. PostgreSQL stores the persistent data.
+
+## Why This Matters
+
+- Validation is fast on the client.
+- Validation cannot be bypassed on the server.
+- Request contracts are shared instead of duplicated.
+- Database schema, API inputs, and UI forms stay aligned.
+
+For database details, see [Database](./DATABASE.md).

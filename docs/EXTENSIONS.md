@@ -1,6 +1,6 @@
 # Extensions
 
-The following Visual Studio Code extensions are automatically installed in the development container to provide a consistent development experience:
+The following Visual Studio Code extensions are recommended for the project and should be installed automatically by the devcontainer.
 
 | Extension                           | Purpose                                                                    |
 | ----------------------------------- | -------------------------------------------------------------------------- |
@@ -12,6 +12,6 @@ The following Visual Studio Code extensions are automatically installed in the d
 | `yzhang.markdown-all-in-one`        | Productivity features for writing and editing Markdown documents.          |
 | `esbenp.prettier-vscode`            | Automatic code formatting using Prettier.                                  |
 | `bradlc.vscode-tailwindcss`         | IntelliSense, validation, and tooling for Tailwind CSS.                    |
-| `VoidZero.vite-plus-extension-pack` | VitePlus extension pack.                                                   |
+| `VoidZero.vite-plus-extension-pack` | Vite+ extension pack.                                                      |
 
-These extensions are preconfigured and available immediately after the devcontainer is created.
+The devcontainer owns editor/tooling consistency. Infrastructure services are owned by the root Docker Compose stack.

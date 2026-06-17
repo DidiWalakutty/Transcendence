@@ -1,34 +1,36 @@
-# STACK.md
+# Stack
 
 ## Overview
 
-This document defines the primary technology stack for the project, including preferred technologies, supporting infrastructure, and approved alternatives.
+This document defines the primary technology stack for the project.
 
 ---
 
-# Core Stack
+## Core Stack
 
-## Frontend
+### Frontend
 
-| Category                     | Technology                                   |
-| ---------------------------- | -------------------------------------------- |
-| Framework                    | [React](https://react.dev/)                  |
-| Web Framework                | [TanStack Start](https://tanstack.com/start) |
-| Styling                      | [Tailwind CSS](https://tailwindcss.com/)     |
-| Forms & Validation           | [TanStack Form](https://tanstack.com/form)   |
-| Schema Validation            | [Zod](https://zod.dev/)                      |
-| Data Fetching & Server State | [TanStack Query](https://tanstack.com/query) |
-| tRPC                         | [tRPC](https://nestjs-trpc.io/)              |
+| Category                     | Technology                                                                   |
+| ---------------------------- | ---------------------------------------------------------------------------- |
+| Framework                    | [React](https://react.dev/)                                                  |
+| Web Framework                | [TanStack Start](https://tanstack.com/start)                                 |
+| Styling                      | [Tailwind CSS](https://tailwindcss.com/)                                     |
+| Forms & Validation           | [TanStack Form](https://tanstack.com/form)                                   |
+| Schema Validation            | [Zod](https://zod.dev/)                                                      |
+| Data Fetching & Server State | [TanStack Query](https://tanstack.com/query)                                 |
+| Internationalization         | [Inlang Paraglide](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) |
+| tRPC                         | [tRPC](https://nestjs-trpc.io/)                                              |
 
 ### Notes
 
 - [TanStack Form](https://tanstack.com/form) should be paired with a schema validator to provide both client-side and server-side validation.
 - When using [tRPC](https://nestjs-trpc.io/), schema validation is performed directly through Zod validators, reducing duplicated validation logic.
 - [TanStack Query](https://tanstack.com/query) remains the default solution for asynchronous state management and caching.
+- [Inlang Paraglide](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) provides generated locale-aware message helpers. See [Internationalization](./I18N.md).
 
 ---
 
-## Backend
+### Backend
 
 | Category                | Technology                                                          |
 | ----------------------- | ------------------------------------------------------------------- |
@@ -43,7 +45,7 @@ This document defines the primary technology stack for the project, including pr
 
 ---
 
-## Database & Storage
+### Database & Storage
 
 | Category                | Technology                                |
 | ----------------------- | ----------------------------------------- |
@@ -55,11 +57,12 @@ This document defines the primary technology stack for the project, including pr
 
 - [PostgreSQL](https://www.postgresql.org/) serves as the primary source of truth.
 - [Redis](https://redis.io/) is used for caching, sessions, distributed locks, queues, pub/sub, and real-time state.
-- [Drizzle ORM](https://orm.drizzle.team/) provides the typed database layer and migration workflow, with shared schema definitions used for both database access and validation.
+- [Drizzle ORM](https://orm.drizzle.team/) provides the typed database layer and migration workflow.
+- Shared schema definitions are used for database access and validation. See [Validation](./VALIDATION.md) and [Database](./DATABASE.md).
 
 ---
 
-## Tooling
+### Tooling
 
 | Category            | Technology                     |
 | ------------------- | ------------------------------ |
@@ -77,27 +80,28 @@ This document defines the primary technology stack for the project, including pr
 - [Bun](https://bun.sh/) is the primary runtime and package manager.
 - [Vite+](https://viteplus.dev/) provides a unified TypeScript-centric development toolchain.
 - [Vite+](https://viteplus.dev/) manages workspace orchestration, caching, dependency graphs, and task execution across the monorepo.
+- See [Tooling](./TOOLING.md) for common commands and task details.
 
 ---
 
-## Infrastructure
+### Infrastructure
 
 | Category          | Technology                                                        |
 | ----------------- | ----------------------------------------------------------------- |
 | Containerization  | [Docker Compose](https://docs.docker.com/compose/)                |
 | Local Development | [Development Containers (Devcontainers)](https://containers.dev/) |
 | Database Service  | PostgreSQL Container                                              |
-| Cache Service     | Redis Container                                                   |
+| Cache Service     | Redis through Compose when cache features are added               |
 
 ### Notes
 
 - [Docker Compose](https://docs.docker.com/compose/) is used to orchestrate all local and deployment services.
-- [Development Containers (Devcontainers)](https://containers.dev/) provide reproducible development environments and eliminate machine-specific dependency issues.
-- PostgreSQL and Redis should run as isolated services within the Compose stack.
+- [Development Containers (Devcontainers)](https://containers.dev/) provide reproducible tooling and editor environments and eliminate machine-specific dependency issues.
+- Infrastructure services are provided by the root Compose stack, not by the devcontainer itself.
 
 ---
 
-## HTTPS & Security
+### HTTPS & Security
 
 ### Production
 
@@ -112,7 +116,7 @@ Preferred approaches:
 
 ---
 
-# Architecture Principles
+## Architecture Principles
 
 - TypeScript-first development.
 - End-to-end type safety where practical.
@@ -124,13 +128,14 @@ Preferred approaches:
 - Real-time capabilities available through tRPC subscriptions.
 - Infrastructure reproducibility through [Docker Compose](https://docs.docker.com/compose/) and [Development Containers (Devcontainers)](https://containers.dev/).
 
-# Preferred Stack Summary
+## Preferred Stack Summary
 
 - [React](https://react.dev/)
 - [Tailwind CSS](https://tailwindcss.com/)
 - [TanStack Start](https://tanstack.com/start)
 - [TanStack Form](https://tanstack.com/form)
 - [TanStack Query](https://tanstack.com/query)
+- [Inlang Paraglide](https://inlang.com/m/gerre34r/library-inlang-paraglideJs)
 - [NestJS](https://nestjs.com/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Redis](https://redis.io/)
