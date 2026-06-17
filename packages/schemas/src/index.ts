@@ -6,4 +6,4 @@ export const userSchema = z.object({
 });
 
 export type UserDto = z.infer<typeof userSchema>;
-export type { AppRouter } from './trpc-router';
+export type { AppRouter } from './@generated/server';
