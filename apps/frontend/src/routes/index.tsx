@@ -3,6 +3,22 @@ import { useForm } from '@tanstack/react-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createUserSchema } from '@repo/schemas/users';
 import { useTRPC } from '@/integrations/trpc/react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Spinner } from '@/components/ui/spinner';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 export const Route = createFileRoute('/')({ component: Home });
 
@@ -33,109 +49,166 @@ function Home() {
     },
   });
 
+  const users = usersQuery.data ?? [];
+
   return (
-    <div className="p-8">
-      <h1 className="text-4xl font-bold mb-4">Create User</h1>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          void form.handleSubmit();
-        }}
-        className="flex flex-col gap-4 max-w-sm mb-8"
-      >
-        <form.Field
-          name="name"
-          children={(field) => (
-            <div>
-              <label htmlFor={field.name} className="block mb-1">
-                Name
-              </label>
-              <input
-                id={field.name}
-                name={field.name}
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-                className="border p-2 w-full border-gray-300"
-              />
-              {field.state.meta.errors.length > 0 && (
-                <em role="alert" className="text-red-500 text-sm">
-                  {field.state.meta.errors
-                    .flatMap((error) => (error ? [error.message] : []))
-                    .join(', ')}
-                </em>
-              )}
-            </div>
-          )}
-        />
-
-        <form.Field
-          name="email"
-          children={(field) => (
-            <div>
-              <label htmlFor={field.name} className="block mb-1">
-                Email
-              </label>
-              <input
-                id={field.name}
-                name={field.name}
-                type="email"
-                value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(e.target.value)}
-                className="border p-2 w-full border-gray-300"
-              />
-              {field.state.meta.errors.length > 0 && (
-                <em role="alert" className="text-red-500 text-sm">
-                  {field.state.meta.errors
-                    .flatMap((error) => (error ? [error.message] : []))
-                    .join(', ')}
-                </em>
-              )}
-            </div>
-          )}
-        />
-
-        <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
-          children={([canSubmit, isSubmitting]) => (
-            <button
-              type="submit"
-              disabled={!(canSubmit as boolean) || (isSubmitting as boolean)}
-              className="bg-blue-500 text-white p-2 disabled:opacity-50"
-            >
-              {(isSubmitting as boolean) ? 'Submitting...' : 'Submit'}
-            </button>
-          )}
-        />
-
-        {createUser.error ? (
-          <p role="alert" className="text-red-500 text-sm">
-            {createUser.error.message}
-          </p>
-        ) : null}
-      </form>
-
-      <div className="mt-8">
-        <h2 className="text-2xl font-semibold mb-2">Users List</h2>
-        {usersQuery.isPending ? (
-          <div>Loading...</div>
-        ) : usersQuery.isError ? (
-          <div role="alert" className="text-red-500">
-            {usersQuery.error.message}
-          </div>
-        ) : (
-          <ul className="list-disc pl-5">
-            {usersQuery.data?.map((user) => (
-              <li key={user.id}>
-                {user.name} ({user.email})
-              </li>
-            ))}
-          </ul>
-        )}
+    <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 p-6 md:p-8">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-3xl font-semibold tracking-tight">Users</h1>
+        <p className="text-sm text-muted-foreground">
+          Create a user and keep the local directory in sync.
+        </p>
       </div>
-    </div>
+
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,24rem)_1fr]">
+        <Card>
+          <CardHeader>
+            <CardTitle>Create User</CardTitle>
+            <CardDescription>Add a name and email address.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                void form.handleSubmit();
+              }}
+              className="flex flex-col gap-4"
+            >
+              <form.Field
+                name="name"
+                children={(field) => {
+                  const errors = field.state.meta.errors
+                    .flatMap((error) => (error ? [error.message] : []))
+                    .join(', ');
+
+                  return (
+                    <div className="grid gap-2">
+                      <Label htmlFor={field.name}>Name</Label>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={errors.length > 0}
+                      />
+                      {errors ? (
+                        <p role="alert" className="text-sm text-destructive">
+                          {errors}
+                        </p>
+                      ) : null}
+                    </div>
+                  );
+                }}
+              />
+
+              <form.Field
+                name="email"
+                children={(field) => {
+                  const errors = field.state.meta.errors
+                    .flatMap((error) => (error ? [error.message] : []))
+                    .join(', ');
+
+                  return (
+                    <div className="grid gap-2">
+                      <Label htmlFor={field.name}>Email</Label>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        type="email"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={errors.length > 0}
+                      />
+                      {errors ? (
+                        <p role="alert" className="text-sm text-destructive">
+                          {errors}
+                        </p>
+                      ) : null}
+                    </div>
+                  );
+                }}
+              />
+
+              {createUser.error ? (
+                <Alert variant="destructive">
+                  <AlertDescription>{createUser.error.message}</AlertDescription>
+                </Alert>
+              ) : null}
+
+              <form.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+                children={([canSubmit, isSubmitting]) => (
+                  <Button
+                    type="submit"
+                    disabled={!(canSubmit as boolean) || (isSubmitting as boolean)}
+                    className="w-full"
+                  >
+                    {(isSubmitting as boolean) ? (
+                      <>
+                        <Spinner />
+                        Submitting
+                      </>
+                    ) : (
+                      'Submit'
+                    )}
+                  </Button>
+                )}
+              />
+            </form>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-start justify-between gap-4">
+              <div className="grid gap-1">
+                <CardTitle>Users List</CardTitle>
+                <CardDescription>Recently created users.</CardDescription>
+              </div>
+              <Badge variant="secondary">{users.length}</Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {usersQuery.isPending ? (
+              <div className="flex min-h-32 items-center justify-center gap-2 text-sm text-muted-foreground">
+                <Spinner />
+                Loading users
+              </div>
+            ) : usersQuery.isError ? (
+              <Alert variant="destructive">
+                <AlertDescription>{usersQuery.error.message}</AlertDescription>
+              </Alert>
+            ) : users.length === 0 ? (
+              <Empty>
+                <EmptyHeader>
+                  <EmptyTitle>No users yet</EmptyTitle>
+                  <EmptyDescription>Created users will appear here.</EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {users.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell className="font-medium">{user.name}</TableCell>
+                      <TableCell className="text-muted-foreground">{user.email}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </main>
   );
 }

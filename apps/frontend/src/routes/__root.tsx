@@ -12,6 +12,7 @@ import type { QueryClient } from '@tanstack/react-query';
 
 import type { AppRouter } from '@repo/schemas/trpc';
 import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -58,7 +59,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
         <TanStackDevtools
           config={{
             position: 'bottom-right',
