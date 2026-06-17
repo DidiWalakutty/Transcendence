@@ -45,17 +45,17 @@ This document defines the primary technology stack for the project, including pr
 
 ## Database & Storage
 
-| Category                | Technology                                                    |
-| ----------------------- | ------------------------------------------------------------- |
-| Primary Database        | [PostgreSQL](https://www.postgresql org/)                     |
-| Cache / Key-Value Store | [Redis](https://redis.io/)                                    |
-| ORM / Database Layer    | [TypeORM](https://typeorm.io/), Raw SQL, or a Hybrid Approach |
+| Category                | Technology                                |
+| ----------------------- | ----------------------------------------- |
+| Primary Database        | [PostgreSQL](https://www.postgresql.org/) |
+| Cache / Key-Value Store | [Redis](https://redis.io/)                |
+| ORM / Database Layer    | [Drizzle ORM](https://orm.drizzle.team/)  |
 
 ### Notes
 
 - [PostgreSQL](https://www.postgresql.org/) serves as the primary source of truth.
 - [Redis](https://redis.io/) is used for caching, sessions, distributed locks, queues, pub/sub, and real-time state.
-- Database access may use an ORM, raw SQL, or a combination of both depending on performance and maintainability requirements.
+- [Drizzle ORM](https://orm.drizzle.team/) provides the typed database layer and migration workflow, with shared schema definitions used for both database access and validation.
 
 ---
 
@@ -134,7 +134,7 @@ Preferred approaches:
 - [NestJS](https://nestjs.com/)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Redis](https://redis.io/)
-- [Prisma](https://www.prisma.io/) / [TypeORM](https://typeorm.io/) / Raw SQL
+- [Drizzle ORM](https://orm.drizzle.team/)
 - [Bun](https://bun.sh/)
 - [Vite+](https://viteplus.dev/)
 - [Docker Compose](https://docs.docker.com/compose/)
