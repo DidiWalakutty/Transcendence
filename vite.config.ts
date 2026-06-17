@@ -14,7 +14,7 @@ export default defineConfig({
       },
       'repo:frontend:generate': {
         command:
-          'vp exec --filter @repo/frontend paraglide-js compile --project ./project.inlang --outdir ./src/paraglide --strategy url baseLocale --silent && vp exec --filter @repo/frontend tsr generate',
+          'vp exec --filter @repo/frontend paraglide-js compile --project ./project.inlang --outdir ./src/@generated/paraglide --strategy url baseLocale --silent && vp exec --filter @repo/frontend tsr generate',
         cache: false,
       },
       'repo:dev': {

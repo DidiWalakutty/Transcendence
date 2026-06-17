@@ -4,7 +4,7 @@ import { TanStackDevtools } from '@tanstack/react-devtools';
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
 
-import { getLocale } from '@/paraglide/runtime';
+import { getLocale } from '@/@generated/paraglide/runtime';
 
 import appCss from '../styles.css?url';
 

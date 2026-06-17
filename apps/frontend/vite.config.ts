@@ -14,7 +14,7 @@ const config = defineConfig({
     devtools(),
     paraglideVitePlugin({
       project: './project.inlang',
-      outdir: './src/paraglide',
+      outdir: './src/@generated/paraglide',
       strategy: ['url', 'baseLocale'],
     }),
     nitro(),
