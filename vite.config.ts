@@ -20,7 +20,12 @@ export default defineConfig({
       'repo:dev': {
         command:
           'vp run --filter @repo/backend --filter @repo/frontend --fail-if-no-match --parallel dev',
-        dependsOn: ['repo:db:setup', 'repo:trpc:generate', 'repo:frontend:generate'],
+        dependsOn: [
+          'repo:db:setup',
+          'repo:redis:setup',
+          'repo:trpc:generate',
+          'repo:frontend:generate',
+        ],
         cache: false,
       },
       'repo:dev:frontend': {
@@ -30,11 +35,15 @@ export default defineConfig({
       },
       'repo:dev:backend': {
         command: 'vp run --filter @repo/backend --fail-if-no-match --parallel dev',
-        dependsOn: ['repo:db:setup', 'repo:trpc:generate'],
+        dependsOn: ['repo:db:setup', 'repo:redis:setup', 'repo:trpc:generate'],
         cache: false,
       },
       'repo:db:setup': {
         command: 'docker compose up -d postgres && vp run -w repo:db:migrate',
+        cache: false,
+      },
+      'repo:redis:setup': {
+        command: 'docker compose up -d redis',
         cache: false,
       },
       'repo:db:generate': {

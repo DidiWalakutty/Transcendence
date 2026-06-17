@@ -12,15 +12,15 @@ export class UsersEvents {
   constructor(private readonly eventsService: EventsService) {}
 
   emitUserCreated(user: UserDto) {
-    this.eventsService.emit(USER_CREATED_EVENT, user);
+    return this.eventsService.emit(USER_CREATED_EVENT, user);
   }
 
   emitUserUpdated(user: UserDto) {
-    this.eventsService.emit(USER_UPDATED_EVENT, user);
+    return this.eventsService.emit(USER_UPDATED_EVENT, user);
   }
 
   emitUserDeleted(user: UserDto) {
-    this.eventsService.emit(USER_DELETED_EVENT, user);
+    return this.eventsService.emit(USER_DELETED_EVENT, user);
   }
 
   listenUserCreated(signal?: AbortSignal) {
