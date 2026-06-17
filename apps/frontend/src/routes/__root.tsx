@@ -1,4 +1,4 @@
-import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
+import { HeadContent, Link, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { useEffect } from 'react';
@@ -86,7 +86,27 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         <PwaRegistration />
-        <TooltipProvider>{children}</TooltipProvider>
+        <TooltipProvider>
+          <div className="flex min-h-screen flex-col">
+            <div className="flex-1">{children}</div>
+            <footer className="border-t border-border/70 bg-background/70 px-6 py-5 backdrop-blur">
+              <nav
+                aria-label="Legal"
+                className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground"
+              >
+                <span>ft_transcendence</span>
+                <div className="flex gap-4">
+                  <Link to="/privacy" className="transition-colors hover:text-foreground">
+                    Privacy Policy
+                  </Link>
+                  <Link to="/terms" className="transition-colors hover:text-foreground">
+                    Terms of Service
+                  </Link>
+                </div>
+              </nav>
+            </footer>
+          </div>
+        </TooltipProvider>
         <TanStackDevtools
           config={{
             position: 'bottom-right',

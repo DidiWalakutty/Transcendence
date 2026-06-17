@@ -9,6 +9,8 @@
     "dev": "vp run -w repo:dev",
     "dev:frontend": "vp run -w repo:dev:frontend",
     "dev:backend": "vp run -w repo:dev:backend",
+    "deploy": "vp run -w repo:deploy",
+    "deploy:detached": "vp run -w repo:deploy:detached",
     "db:setup": "vp run -w repo:db:setup",
     "db:generate": "vp run -w repo:db:generate",
     "db:migrate": "vp run -w repo:db:migrate",

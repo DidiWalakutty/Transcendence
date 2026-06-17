@@ -8,6 +8,7 @@
     "yzhang.markdown-all-in-one", // Markdown support
     "esbenp.prettier-vscode", // Prettier code formatter
     "bradlc.vscode-tailwindcss", // Tailwind CSS support,
-    "VoidZero.vite-plus-extension-pack" // VitePlus extension pack
+    "VoidZero.vite-plus-extension-pack", // VitePlus extension pack
+    "ms-azuretools.vscode-containers" // Docker support
   ]
 }

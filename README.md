@@ -173,15 +173,16 @@ OAUTH_CLIENT_SECRET=[INSERT_OAUTH_SECRET]
 
 ### Single-Command Application Launch
 
-To pull image footprints, configure isolated internal networks, mount persistent state configurations, and run all core microservices over secure **HTTPS**, run:
+Build and start the frontend, backend, PostgreSQL, and Redis services with one command:
 
 ```bash
-[INSERT: Specify exact compose startup sequence, e.g., "docker compose up --build" or local cluster boot initialization command]
+docker compose up --build
 
 ```
 
-Once the stack signals initialization completion, access the Chrome optimized suite interface through:
-`https://localhost:[INSERT_MAPPED_PORT]`
+Once the stack has started, access the application at `http://localhost:3000`.
+The backend is exposed at `http://localhost:3001` for local development and container
+health checks.
 
 ---
 

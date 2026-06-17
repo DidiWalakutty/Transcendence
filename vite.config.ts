@@ -38,6 +38,14 @@ export default defineConfig({
         dependsOn: ['repo:db:setup', 'repo:redis:setup', 'repo:trpc:generate'],
         cache: false,
       },
+      'repo:deploy': {
+        command: 'docker compose up --build',
+        cache: false,
+      },
+      'repo:deploy:detached': {
+        command: 'docker compose up -d --build',
+        cache: false,
+      },
       'repo:db:setup': {
         command: 'docker compose up -d postgres && vp run -w repo:db:migrate',
         cache: false,
