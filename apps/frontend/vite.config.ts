@@ -8,6 +8,8 @@ import viteReact from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { nitro } from 'nitro/vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import type { ManifestOptions } from 'vite-plugin-pwa';
+import manifest from './public/manifest.json';
 
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
@@ -24,34 +26,7 @@ const config = defineConfig({
       outDir: '.output/public',
       includeAssets: ['favicon.ico', 'robots.txt'],
       manifestFilename: 'manifest.json',
-      manifest: {
-        name: 'ft_transcendence',
-        short_name: 'Transcendence',
-        description: 'Full-stack event management platform.',
-        start_url: '/',
-        scope: '/',
-        display: 'standalone',
-        background_color: '#e7f3ec',
-        theme_color: '#173a40',
-        icons: [
-          {
-            src: '/logo192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: '/logo512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-          {
-            src: '/logo512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable',
-          },
-        ],
-      },
+      manifest: manifest as Partial<ManifestOptions>,
       workbox: {
         navigateFallbackDenylist: [/^\/api\//],
       },
