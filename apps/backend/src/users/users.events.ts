@@ -4,6 +4,8 @@ import type { UserDto } from '@repo/schemas/users';
 import { EventsService } from '../events/events.service';
 
 const USER_CREATED_EVENT = 'user.created';
+const USER_UPDATED_EVENT = 'user.updated';
+const USER_DELETED_EVENT = 'user.deleted';
 
 @Injectable()
 export class UsersEvents {
@@ -13,7 +15,23 @@ export class UsersEvents {
     this.eventsService.emit(USER_CREATED_EVENT, user);
   }
 
+  emitUserUpdated(user: UserDto) {
+    this.eventsService.emit(USER_UPDATED_EVENT, user);
+  }
+
+  emitUserDeleted(user: UserDto) {
+    this.eventsService.emit(USER_DELETED_EVENT, user);
+  }
+
   listenUserCreated(signal?: AbortSignal) {
     return this.eventsService.listen<UserDto>(USER_CREATED_EVENT, signal);
+  }
+
+  listenUserUpdated(signal?: AbortSignal) {
+    return this.eventsService.listen<UserDto>(USER_UPDATED_EVENT, signal);
+  }
+
+  listenUserDeleted(signal?: AbortSignal) {
+    return this.eventsService.listen<UserDto>(USER_DELETED_EVENT, signal);
   }
 }

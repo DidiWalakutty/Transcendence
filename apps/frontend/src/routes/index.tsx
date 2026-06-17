@@ -1,13 +1,35 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { type FormEvent, useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useSubscription } from '@trpc/tanstack-react-query';
-import { createUserSchema } from '@repo/schemas/users';
+import { PencilIcon, Trash2Icon } from 'lucide-react';
+import { createUserSchema, updateUserSchema, type UserDto } from '@repo/schemas/users';
 import { useTRPC } from '@/integrations/trpc/react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,8 +52,10 @@ function Home() {
   const usersQuery = useQuery(trpc.example.getUsers.queryOptions());
   const createUser = useMutation(
     trpc.example.createUser.mutationOptions({
-      onSuccess: () => {
-        void queryClient.invalidateQueries(trpc.example.getUsers.queryFilter());
+      onSuccess: (user) => {
+        queryClient.setQueryData(trpc.example.getUsers.queryKey(), (users) =>
+          upsertUser(users, user),
+        );
       },
     }),
   );
@@ -43,12 +67,26 @@ function Home() {
             return [user];
           }
 
-          if (users.some((existingUser) => existingUser.id === user.id)) {
-            return users;
-          }
-
-          return [...users, user];
+          return upsertUser(users, user);
         });
+      },
+    }),
+  );
+  useSubscription(
+    trpc.example.onUserUpdated.subscriptionOptions(undefined, {
+      onData: (user) => {
+        queryClient.setQueryData(trpc.example.getUsers.queryKey(), (users) =>
+          replaceUser(users, user),
+        );
+      },
+    }),
+  );
+  useSubscription(
+    trpc.example.onUserDeleted.subscriptionOptions(undefined, {
+      onData: (user) => {
+        queryClient.setQueryData(trpc.example.getUsers.queryKey(), (users) =>
+          removeUser(users, user.id),
+        );
       },
     }),
   );
@@ -212,6 +250,7 @@ function Home() {
                   <TableRow>
                     <TableHead>Name</TableHead>
                     <TableHead>Email</TableHead>
+                    <TableHead className="w-24 text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -219,6 +258,12 @@ function Home() {
                     <TableRow key={user.id}>
                       <TableCell className="font-medium">{user.name}</TableCell>
                       <TableCell className="text-muted-foreground">{user.email}</TableCell>
+                      <TableCell>
+                        <div className="flex justify-end gap-1">
+                          <EditUserDialog user={user} />
+                          <DeleteUserAlert user={user} />
+                        </div>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -229,4 +274,223 @@ function Home() {
       </div>
     </main>
   );
+}
+
+function EditUserDialog({ user }: { user: UserDto }) {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+  const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string }>({});
+
+  const updateUser = useMutation(
+    trpc.example.updateUser.mutationOptions({
+      onSuccess: (updatedUser) => {
+        queryClient.setQueryData(trpc.example.getUsers.queryKey(), (users) =>
+          replaceUser(users, updatedUser),
+        );
+        setOpen(false);
+      },
+    }),
+  );
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+
+    if (nextOpen) {
+      setName(user.name);
+      setEmail(user.email);
+      setFieldErrors({});
+      updateUser.reset();
+    }
+  };
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const result = updateUserSchema.safeParse({
+      id: user.id,
+      name,
+      email,
+    });
+
+    if (!result.success) {
+      const errors = result.error.flatten().fieldErrors;
+
+      setFieldErrors({
+        name: errors.name?.join(', '),
+        email: errors.email?.join(', '),
+      });
+      return;
+    }
+
+    setFieldErrors({});
+    try {
+      await updateUser.mutateAsync(result.data);
+    } catch {
+      // Mutation state renders the error in the dialog.
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger render={<Button variant="ghost" size="icon-sm" />}>
+        <PencilIcon />
+        <span className="sr-only">Edit {user.name}</span>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Edit User</DialogTitle>
+          <DialogDescription>Update this user's name or email address.</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor={`edit-name-${user.id}`}>Name</Label>
+            <Input
+              id={`edit-name-${user.id}`}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              aria-invalid={Boolean(fieldErrors.name)}
+            />
+            {fieldErrors.name ? (
+              <p role="alert" className="text-sm text-destructive">
+                {fieldErrors.name}
+              </p>
+            ) : null}
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor={`edit-email-${user.id}`}>Email</Label>
+            <Input
+              id={`edit-email-${user.id}`}
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              aria-invalid={Boolean(fieldErrors.email)}
+            />
+            {fieldErrors.email ? (
+              <p role="alert" className="text-sm text-destructive">
+                {fieldErrors.email}
+              </p>
+            ) : null}
+          </div>
+
+          {updateUser.error ? (
+            <Alert variant="destructive">
+              <AlertDescription>{updateUser.error.message}</AlertDescription>
+            </Alert>
+          ) : null}
+
+          <DialogFooter>
+            <Button type="submit" disabled={updateUser.isPending}>
+              {updateUser.isPending ? (
+                <>
+                  <Spinner />
+                  Saving
+                </>
+              ) : (
+                'Save'
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function DeleteUserAlert({ user }: { user: UserDto }) {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+
+  const deleteUser = useMutation(
+    trpc.example.deleteUser.mutationOptions({
+      onSuccess: (deletedUser) => {
+        queryClient.setQueryData(trpc.example.getUsers.queryKey(), (users) =>
+          removeUser(users, deletedUser.id),
+        );
+        setOpen(false);
+      },
+    }),
+  );
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+
+    if (nextOpen) {
+      deleteUser.reset();
+    }
+  };
+
+  return (
+    <AlertDialog open={open} onOpenChange={handleOpenChange}>
+      <AlertDialogTrigger render={<Button variant="ghost" size="icon-sm" />}>
+        <Trash2Icon />
+        <span className="sr-only">Delete {user.name}</span>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Delete User</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will permanently delete {user.name} from the users list.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        {deleteUser.error ? (
+          <Alert variant="destructive">
+            <AlertDescription>{deleteUser.error.message}</AlertDescription>
+          </Alert>
+        ) : null}
+
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={deleteUser.isPending}>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            variant="destructive"
+            disabled={deleteUser.isPending}
+            onClick={() => {
+              deleteUser.mutate({ id: user.id });
+            }}
+          >
+            {deleteUser.isPending ? (
+              <>
+                <Spinner />
+                Deleting
+              </>
+            ) : (
+              'Delete'
+            )}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+function upsertUser(users: UserDto[] | undefined, user: UserDto) {
+  if (!users) {
+    return [user];
+  }
+
+  if (users.some((existingUser) => existingUser.id === user.id)) {
+    return replaceUser(users, user);
+  }
+
+  return [...users, user];
+}
+
+function replaceUser(users: UserDto[] | undefined, user: UserDto) {
+  if (!users) {
+    return users;
+  }
+
+  return users.map((existingUser) => (existingUser.id === user.id ? user : existingUser));
+}
+
+function removeUser(users: UserDto[] | undefined, userId: string) {
+  if (!users) {
+    return users;
+  }
+
+  return users.filter((user) => user.id !== userId);
 }

@@ -4,6 +4,8 @@ import { users } from '@repo/schemas/database';
 
 export const userSchema = createSelectSchema(users);
 export const userCreatedSubscriptionSchema = z.custom<AsyncIterable<UserDto>>();
+export const userUpdatedSubscriptionSchema = z.custom<AsyncIterable<UserDto>>();
+export const userDeletedSubscriptionSchema = z.custom<AsyncIterable<UserDto>>();
 
 export const createUserSchema = createInsertSchema(users, {
   email: () => z.email('Must be a valid email address'),
@@ -13,5 +15,15 @@ export const createUserSchema = createInsertSchema(users, {
   name: true,
 });
 
+export const updateUserSchema = createUserSchema.extend({
+  id: z.uuid(),
+});
+
+export const deleteUserSchema = z.object({
+  id: z.uuid(),
+});
+
 export type UserDto = z.infer<typeof userSchema>;
 export type CreateUserDto = z.infer<typeof createUserSchema>;
+export type UpdateUserDto = z.infer<typeof updateUserSchema>;
+export type DeleteUserDto = z.infer<typeof deleteUserSchema>;
