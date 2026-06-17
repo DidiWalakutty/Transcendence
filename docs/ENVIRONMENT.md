@@ -59,10 +59,12 @@ Client-side variables must use the `VITE_` prefix.
 
 The root `docker-compose.yml` supports these optional overrides:
 
-| Variable            | Default         | Purpose                         |
-| ------------------- | --------------- | ------------------------------- |
-| `POSTGRES_DB`       | `transcendence` | PostgreSQL database name.       |
-| `POSTGRES_USER`     | `transcendence` | PostgreSQL user.                |
-| `POSTGRES_PASSWORD` | `transcendence` | PostgreSQL password.            |
-| `POSTGRES_PORT`     | `5432`          | Host port mapped to PostgreSQL. |
-| `REDIS_PORT`        | `6379`          | Host port mapped to Redis.      |
+| Variable            | Default         | Purpose                                     |
+| ------------------- | --------------- | ------------------------------------------- |
+| `POSTGRES_DB`       | `transcendence` | PostgreSQL database name.                   |
+| `POSTGRES_USER`     | `transcendence` | PostgreSQL user.                            |
+| `POSTGRES_PASSWORD` | `transcendence` | PostgreSQL password.                        |
+| `FRONTEND_PORT`     | `3000`          | Host port mapped to the frontend container. |
+| `BACKEND_PORT`      | `3001`          | Host port mapped to the backend container.  |
+| `POSTGRES_PORT`     | `5432`          | Host port mapped to PostgreSQL.             |
+| `REDIS_PORT`        | `6379`          | Host port mapped to Redis.                  |

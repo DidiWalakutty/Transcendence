@@ -90,11 +90,12 @@ This document defines the primary technology stack for the project.
 | Containerization  | [Docker Compose](https://docs.docker.com/compose/)                |
 | Local Development | [Development Containers (Devcontainers)](https://containers.dev/) |
 | Database Service  | PostgreSQL Container                                              |
-| Cache Service     | Redis through Compose when cache features are added               |
+| Cache Service     | Redis through Compose for backend cache and throttling storage    |
 
 ### Notes
 
 - [Docker Compose](https://docs.docker.com/compose/) is used to orchestrate all local and deployment services.
+- `vp run deploy` builds and starts the full Compose stack with `docker compose up --build`.
 - [Development Containers (Devcontainers)](https://containers.dev/) provide reproducible tooling and editor environments and eliminate machine-specific dependency issues.
 - Infrastructure services are provided by the root Compose stack, not by the devcontainer itself.
 
@@ -110,6 +111,7 @@ Preferred approaches:
 
 ### Local Development
 
+- The current local Compose deployment exposes HTTP on `localhost` ports for development.
 - [mkcert](https://github.com/FiloSottile/mkcert) should be used to generate trusted local certificates.
 - Local environments should mirror production HTTPS behavior whenever possible.
 

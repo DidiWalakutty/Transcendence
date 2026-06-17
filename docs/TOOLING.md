@@ -36,33 +36,28 @@ vp install
 
 ## Common Commands
 
-| Command                | Purpose                                             |
-| ---------------------- | --------------------------------------------------- |
-| `vp run dev`           | Start the full local development stack.             |
-| `vp run dev:frontend`  | Start only the frontend.                            |
-| `vp run dev:backend`   | Start the database setup and backend.               |
-| `vp run build`         | Build all workspaces.                               |
-| `vp run test`          | Run all tests.                                      |
-| `vp run check`         | Run formatting, linting, and type checks.           |
-| `vp run check:fix`     | Fix formatting and safe lint issues where possible. |
-| `vp run lint`          | Run lint checks.                                    |
-| `vp run fmt`           | Check formatting.                                   |
-| `vp run fmt:fix`       | Write formatting changes.                           |
-| `vp run trpc:generate` | Regenerate the shared tRPC router types.            |
-| `vp run trpc:watch`    | Watch backend tRPC changes and regenerate types.    |
-| `vp run db:setup`      | Start PostgreSQL and run migrations.                |
-| `vp run redis:setup`   | Start Redis through Docker Compose.                 |
-| `vp run db:generate`   | Generate Drizzle migration files.                   |
-| `vp run db:migrate`    | Run Drizzle migrations.                             |
-| `vp run db:push`       | Push schema changes directly to the database.       |
-| `vp run db:studio`     | Open Drizzle Studio.                                |
-
-Equivalent root package scripts exist for convenience, for example:
-
-```bash
-bun run dev
-bun run check:fix
-```
+| Command                  | Purpose                                                        |
+| ------------------------ | -------------------------------------------------------------- |
+| `vp run dev`             | Start the full local development stack.                        |
+| `vp run dev:frontend`    | Start only the frontend.                                       |
+| `vp run dev:backend`     | Start the database setup and backend.                          |
+| `vp run deploy`          | Build and run the full Docker Compose stack.                   |
+| `vp run deploy:detached` | Build and run the full Docker Compose stack in the background. |
+| `vp run build`           | Build all workspaces.                                          |
+| `vp run test`            | Run all tests.                                                 |
+| `vp run check`           | Run formatting, linting, and type checks.                      |
+| `vp run check:fix`       | Fix formatting and safe lint issues where possible.            |
+| `vp run lint`            | Run lint checks.                                               |
+| `vp run fmt`             | Check formatting.                                              |
+| `vp run fmt:fix`         | Write formatting changes.                                      |
+| `vp run trpc:generate`   | Regenerate the shared tRPC router types.                       |
+| `vp run trpc:watch`      | Watch backend tRPC changes and regenerate types.               |
+| `vp run db:setup`        | Start PostgreSQL and run migrations.                           |
+| `vp run redis:setup`     | Start Redis through Docker Compose.                            |
+| `vp run db:generate`     | Generate Drizzle migration files.                              |
+| `vp run db:migrate`      | Run Drizzle migrations.                                        |
+| `vp run db:push`         | Push schema changes directly to the database.                  |
+| `vp run db:studio`       | Open Drizzle Studio.                                           |
 
 Vite+ installs and manages Bun for the project, so contributors do not need to install Bun manually.
 
@@ -78,13 +73,16 @@ This file defines the repository task graph, including dependencies such as:
 
 - generating tRPC types before frontend/backend tasks that need them;
 - starting PostgreSQL, Redis, and database migrations before backend development;
+- building and running the full containerized deployment stack;
 - running frontend route and localization generation before frontend development.
 
 ```mermaid
 flowchart TD
     DEV["repo:dev"]
+    DEPLOY["repo:deploy"]
     DEV_BACKEND["repo:dev:backend"]
     DEV_FRONTEND["repo:dev:frontend"]
+    COMPOSE["docker compose up --build"]
     DB_SETUP["repo:db:setup"]
     REDIS_SETUP["repo:redis:setup"]
     DB_MIGRATE["repo:db:migrate"]
@@ -110,6 +108,7 @@ flowchart TD
     DEV_FRONTEND --> FRONTEND
 
     DB_SETUP --> DB_MIGRATE
+    DEPLOY --> COMPOSE
 ```
 
 ## Generated Files

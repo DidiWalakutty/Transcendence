@@ -176,9 +176,12 @@ OAUTH_CLIENT_SECRET=[INSERT_OAUTH_SECRET]
 Build and start the frontend, backend, PostgreSQL, and Redis services with one command:
 
 ```bash
-docker compose up --build
+vp run deploy
 
 ```
+
+This runs the Vite+ `repo:deploy` task, which executes `docker compose up --build`.
+For detached local deployment, use `vp run deploy:detached`.
 
 Once the stack has started, access the application at `http://localhost:3000`.
 The backend is exposed at `http://localhost:3001` for local development and container

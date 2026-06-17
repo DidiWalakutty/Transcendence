@@ -94,17 +94,29 @@ The backend runs at:
 http://localhost:3001
 ```
 
+## Deploy Locally
+
+Build and run the full containerized stack with one command:
+
+```bash
+vp run deploy
+```
+
+For a background deployment, use `vp run deploy:detached`.
+
 ## Useful Commands
 
-| Command               | Purpose                                   |
-| --------------------- | ----------------------------------------- |
-| `vp run dev`          | Start the full stack.                     |
-| `vp run dev:frontend` | Start only the frontend.                  |
-| `vp run dev:backend`  | Start database setup and the backend.     |
-| `vp run check`        | Run formatting, linting, and type checks. |
-| `vp run check:fix`    | Fix formatting and safe lint issues.      |
-| `vp run test`         | Run tests.                                |
-| `vp run build`        | Build all workspaces.                     |
+| Command                  | Purpose                                   |
+| ------------------------ | ----------------------------------------- |
+| `vp run dev`             | Start the full development stack.         |
+| `vp run dev:frontend`    | Start only the frontend.                  |
+| `vp run dev:backend`     | Start database setup and the backend.     |
+| `vp run deploy`          | Build and run the full Compose stack.     |
+| `vp run deploy:detached` | Build and run the Compose stack detached. |
+| `vp run check`           | Run formatting, linting, and type checks. |
+| `vp run check:fix`       | Fix formatting and safe lint issues.      |
+| `vp run test`            | Run tests.                                |
+| `vp run build`           | Build all workspaces.                     |
 
 For more commands, see [Tooling](./TOOLING.md).
 
