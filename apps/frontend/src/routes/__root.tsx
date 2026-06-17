@@ -1,6 +1,7 @@
 import { HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanStackDevtools } from '@tanstack/react-devtools';
+import { useEffect } from 'react';
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
 
@@ -41,16 +42,41 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {
         title: 'TanStack Start Starter',
       },
+      {
+        name: 'theme-color',
+        content: '#173a40',
+      },
     ],
     links: [
       {
         rel: 'stylesheet',
         href: appCss,
       },
+      {
+        rel: 'manifest',
+        href: '/manifest.json',
+      },
     ],
   }),
   shellComponent: RootDocument,
 });
+
+function PwaRegistration() {
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) {
+      return;
+    }
+
+    const serviceWorkerUrl = import.meta.env.DEV ? '/dev-sw.js?dev-sw' : '/sw.js';
+
+    void navigator.serviceWorker.register(serviceWorkerUrl, {
+      scope: '/',
+      type: import.meta.env.DEV ? 'module' : 'classic',
+    });
+  }, []);
+
+  return null;
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -59,6 +85,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
+        <PwaRegistration />
         <TooltipProvider>{children}</TooltipProvider>
         <TanStackDevtools
           config={{

@@ -142,13 +142,25 @@ export default defineConfig({
     },
   },
   fmt: {
-    ignorePatterns: ['**/dist/**', '**/.output/**', '**/node_modules/**', '**/routeTree.gen.ts'],
+    ignorePatterns: [
+      '**/dist/**',
+      '**/dev-dist/**',
+      '**/.output/**',
+      '**/node_modules/**',
+      '**/routeTree.gen.ts',
+    ],
     singleQuote: true,
     semi: true,
     sortPackageJson: true,
   },
   lint: {
-    ignorePatterns: ['**/dist/**', '**/.output/**', '**/node_modules/**', '**routeTree.gen.ts'],
+    ignorePatterns: [
+      '**/dist/**',
+      '**/dev-dist/**',
+      '**/.output/**',
+      '**/node_modules/**',
+      '**routeTree.gen.ts',
+    ],
     plugins: ['typescript'],
     options: {
       typeAware: true,

@@ -16,5 +16,9 @@
   "editor.formatOnSaveMode": "file",
   "editor.codeActionsOnSave": {
     "source.fixAll.oxc": "explicit"
+  },
+  "json.schemaDownload.trustedDomains": {
+    "https://inlang.com/schema/inlang-message-format": true,
+    "https://inlang.com/schema/project-settings": true
   }
 }
