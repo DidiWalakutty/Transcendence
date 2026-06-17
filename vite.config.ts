@@ -12,15 +12,20 @@ export default defineConfig({
           'vp exec --filter @repo/backend nestjs-trpc generate --entrypoint src/app.module.ts --output ../../packages/schemas/src/@generated && vp fmt packages/schemas/src/@generated/server.ts --write',
         cache: false,
       },
+      'repo:frontend:generate': {
+        command:
+          'vp exec --filter @repo/frontend paraglide-js compile --project ./project.inlang --outdir ./src/paraglide --strategy url baseLocale --silent && vp exec --filter @repo/frontend tsr generate',
+        cache: false,
+      },
       'repo:dev': {
         command:
           'vp run --filter @repo/backend --filter @repo/frontend --fail-if-no-match --parallel dev',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
         cache: false,
       },
       'repo:dev:frontend': {
         command: 'vp run --filter @repo/frontend --fail-if-no-match --parallel dev',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
         cache: false,
       },
       'repo:dev:backend': {
@@ -30,11 +35,11 @@ export default defineConfig({
       },
       'repo:build': {
         command: 'vp run --filter @repo/backend --filter @repo/frontend --fail-if-no-match build',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
       },
       'repo:build:frontend': {
         command: 'vp run --filter @repo/frontend --fail-if-no-match build',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
       },
       'repo:build:backend': {
         command: 'vp run --filter @repo/backend --fail-if-no-match build',
@@ -42,11 +47,11 @@ export default defineConfig({
       },
       'repo:test': {
         command: 'vp test',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
       },
       'repo:test:frontend': {
         command: 'vp test --project frontend',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
       },
       'repo:test:backend': {
         command: 'vp test --project backend',
@@ -58,11 +63,11 @@ export default defineConfig({
       },
       'repo:check': {
         command: 'vp check',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
       },
       'repo:check:frontend': {
         command: 'vp check apps/frontend packages/schemas',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
       },
       'repo:check:backend': {
         command: 'vp check apps/backend packages/schemas',
@@ -70,12 +75,12 @@ export default defineConfig({
       },
       'repo:check:fix': {
         command: 'vp check --fix',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
         cache: false,
       },
       'repo:check:fix:frontend': {
         command: 'vp check --fix apps/frontend packages/schemas',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
         cache: false,
       },
       'repo:check:fix:backend': {
@@ -85,11 +90,11 @@ export default defineConfig({
       },
       'repo:lint': {
         command: 'vp lint',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
       },
       'repo:lint:frontend': {
         command: 'vp lint apps/frontend packages/schemas',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
       },
       'repo:lint:backend': {
         command: 'vp lint apps/backend packages/schemas',
@@ -97,7 +102,7 @@ export default defineConfig({
       },
       'repo:staged': {
         command: 'vp staged',
-        dependsOn: ['repo:trpc:generate'],
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
         cache: false,
       },
       'repo:trpc:watch': {

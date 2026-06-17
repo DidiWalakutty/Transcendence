@@ -6,4 +6,4 @@ dist-ssr
 .nitro
 .tanstack
 .output
-packages/schemas/src/@generated/
+@generated
