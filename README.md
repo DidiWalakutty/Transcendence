@@ -4,7 +4,7 @@
 
 ## 1. Description
 
-[INSERT: Provide a comprehensive high-level summary of your project. Detail the ultimate goals of your web application, the specific gameplay/interaction experiences you are providing, and a functional overview of the key systems built into the app.]
+Full-stack event management platform where users can create, manage and participate in events. Organizers can set up events with details and users can browse, register and track upcoming events.
 
 ---
 
@@ -12,18 +12,18 @@
 
 The operational roles and specific core responsibilities assigned across our team are detailed below:
 
-- **Product Owner (PO):** `[INSERT Login]`
+- **Product Owner (PO):** `diwalaku`
   - *Responsibilities:* Defines the overarching product vision, owns and prioritizes the feature backlogs, sets acceptance criteria, and validates completed iteration deliverables.
-- **Project Manager (PM) / Scrum Master:** `[INSERT Login]`
+- **Project Manager (PM) / Scrum Master:** `dkolodze`
   - *Responsibilities:* Coordinates agile ceremonies, eliminates project blockers, monitors phase milestones, updates sprint timelines, and safeguards overall team synchronization.
-- **Technical Lead / Architect:** `[INSERT Login]`
+- **Technical Lead / Architect:** `mde-krui`
   - *Responsibilities:* Evaluates technical stack options, enforces code-quality standards, reviews pull requests, and orchestrates architectural schemas across frontend, backend, and data tiers.
 - **Developers (All Members):**
-  - `[INSERT Login]`: Core focus on `[INSERT e.g., Backend infrastructure, AI engines, etc.]`.
-  - `[INSERT Login]`: Core focus on `[INSERT e.g., WebSockets implementation, UI components, etc.]`.
-  - `[INSERT Login]`: Core focus on `[INSERT e.g., DevOps pipeline, Database migration, etc.]`.
-  - `[INSERT Login]`: Core focus on `[INSERT e.g., Game rendering, State-management, etc.]`.
-  - `[INSERT Login]`: Core focus on `[INSERT e.g., OAuth integration, Security audits, etc.]`.
+  - `mde-krui`: Core focus on `Frontend and backend architecture.`.
+  - `dkolodze`: Core focus on `[INSERT e.g., WebSockets implementation, UI components, etc.]`.
+  - `rtorrent`: Core focus on `[INSERT e.g., DevOps pipeline, Database migration, etc.]`.
+  - `diwalaku`: Core focus on `[INSERT e.g., Game rendering, State-management, etc.]`.
+  - `ccraciun`: Core focus on `[INSERT e.g., OAuth integration, Security audits, etc.]`.
 
 ---
 
