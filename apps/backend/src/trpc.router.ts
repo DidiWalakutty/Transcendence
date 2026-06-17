@@ -1,7 +1,9 @@
 import { z } from 'zod';
 import { Router, Query, Mutation, Input } from 'nestjs-trpc';
-import { userSchema } from '@repo/schemas';
-import type { UserDto } from '@repo/schemas';
+import { TRPCError } from '@trpc/server';
+
+import { createUserSchema, userSchema, type CreateUserDto } from '@repo/schemas/users';
+import { UsersService } from './users/users.service';
 
 const todos = [
   { id: 1, name: 'Get groceries' },
@@ -9,23 +11,37 @@ const todos = [
   { id: 3, name: 'Finish the project' },
 ];
 
-let users: UserDto[] = [];
-
 @Router({ alias: 'example' })
 export class ExampleRouter {
+  constructor(private readonly usersService: UsersService) {}
+
   @Query({ output: z.array(z.object({ id: z.number(), name: z.string() })) })
   getTodos() {
     return todos;
   }
 
-  @Mutation({ input: userSchema, output: userSchema })
-  createUser(@Input() input: UserDto) {
-    users.push(input);
-    return input;
+  @Mutation({ input: createUserSchema, output: userSchema })
+  async createUser(@Input() input: CreateUserDto) {
+    try {
+      return await this.usersService.create(input);
+    } catch (error) {
+      if (isUniqueViolation(error)) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          message: 'A user with this email already exists',
+        });
+      }
+
+      throw error;
+    }
   }
 
   @Query({ output: z.array(userSchema) })
-  getUsers() {
-    return users;
+  async getUsers() {
+    return this.usersService.findAll();
   }
+}
+
+function isUniqueViolation(error: unknown) {
+  return typeof error === 'object' && error !== null && 'code' in error && error.code === '23505';
 }

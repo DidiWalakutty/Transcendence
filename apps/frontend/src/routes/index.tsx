@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { userSchema } from '@repo/schemas';
+import { createUserSchema } from '@repo/schemas/users';
 import { useTRPC } from '@/integrations/trpc/react';
 
 export const Route = createFileRoute('/')({ component: Home });
@@ -22,10 +22,10 @@ function Home() {
   const form = useForm({
     defaultValues: {
       name: '',
-      age: 18,
+      email: '',
     },
     validators: {
-      onChange: userSchema,
+      onChange: createUserSchema,
     },
     onSubmit: async ({ value }) => {
       await createUser.mutateAsync(value);
@@ -72,19 +72,19 @@ function Home() {
         />
 
         <form.Field
-          name="age"
+          name="email"
           children={(field) => (
             <div>
               <label htmlFor={field.name} className="block mb-1">
-                Age
+                Email
               </label>
               <input
                 id={field.name}
                 name={field.name}
-                type="number"
+                type="email"
                 value={field.state.value}
                 onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e) => field.handleChange(e.target.value)}
                 className="border p-2 w-full border-gray-300"
               />
               {field.state.meta.errors.length > 0 && (
@@ -120,7 +120,7 @@ function Home() {
           <ul className="list-disc pl-5">
             {usersQuery.data?.map((user, i) => (
               <li key={i}>
-                {user.name} ({user.age})
+                {user.name} ({user.email})
               </li>
             ))}
           </ul>

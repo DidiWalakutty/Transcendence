@@ -4,7 +4,7 @@ import superjson from 'superjson';
 import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 
-import type { AppRouter } from '@repo/schemas';
+import type { AppRouter } from '@repo/schemas/trpc';
 import { TRPCProvider } from '@/integrations/trpc/react';
 
 function getUrl() {

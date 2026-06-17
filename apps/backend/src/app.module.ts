@@ -3,9 +3,15 @@ import { TRPCModule } from 'nestjs-trpc';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ExampleRouter } from './trpc.router';
+import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    UsersModule,
     TRPCModule.forRoot({
       basePath: '/api/trpc',
     }),
