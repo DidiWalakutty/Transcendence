@@ -55,7 +55,7 @@ This document defines the primary technology stack for the project.
 ### Notes
 
 - [PostgreSQL](https://www.postgresql.org/) serves as the primary source of truth.
-- [Redis](https://redis.io/) is currently used for backend cache and throttling storage. Sessions, distributed locks, queues, pub/sub, and real-time state are planned Redis use cases.
+- [Redis](https://redis.io/) is currently used for backend cache and throttling storage.
 - [Drizzle ORM](https://orm.drizzle.team/) provides the typed database layer and migration workflow.
 - Shared schema definitions are used for database access and validation. See [Validation](./VALIDATION.md) and [Database](./DATABASE.md).
 
@@ -125,7 +125,7 @@ Preferred approaches:
 - Modular service boundaries.
 - Containerized local development.
 - [PostgreSQL](https://www.postgresql.org/) as the primary datastore.
-- [Redis](https://redis.io/) for ephemeral and distributed state.
+- [Redis](https://redis.io/) for shared cache and throttling state.
 - Real-time capabilities available through tRPC subscriptions.
 - Infrastructure reproducibility through [Docker Compose](https://docs.docker.com/compose/) and [Development Containers (Devcontainers)](https://containers.dev/).
 

@@ -16,15 +16,15 @@ This app owns the HTTP server, tRPC router, database access, backend cache, thro
 
 ## Important Files
 
-| Path                                                       | Purpose                                                                |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------- |
-| [src/main.ts](./src/main.ts)                               | Starts the NestJS application on `PORT` or `3001`.                     |
-| [src/app.module.ts](./src/app.module.ts)                   | Wires config, Redis-backed cache, throttling, events, users, and tRPC. |
-| [src/trpc.router.ts](./src/trpc.router.ts)                 | Defines the current `example` tRPC router.                             |
-| [src/users/users.service.ts](./src/users/users.service.ts) | Handles user persistence, cache invalidation, and user events.         |
-| [src/database](./src/database)                             | Provides the Drizzle database connection.                              |
-| [drizzle](./drizzle)                                       | Stores generated SQL migrations and Drizzle metadata.                  |
-| [drizzle.config.ts](./drizzle.config.ts)                   | Drizzle Kit configuration.                                             |
+| Path                                                       | Purpose                                                                      |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| [src/main.ts](./src/main.ts)                               | Starts the NestJS application on `PORT` or `3001`.                           |
+| [src/app.module.ts](./src/app.module.ts)                   | Wires config, Redis-backed cache, throttling, local events, users, and tRPC. |
+| [src/trpc.router.ts](./src/trpc.router.ts)                 | Defines the current `example` tRPC router.                                   |
+| [src/users/users.service.ts](./src/users/users.service.ts) | Handles user persistence, cache invalidation, and user events.               |
+| [src/database](./src/database)                             | Provides the Drizzle database connection.                                    |
+| [drizzle](./drizzle)                                       | Stores generated SQL migrations and Drizzle metadata.                        |
+| [drizzle.config.ts](./drizzle.config.ts)                   | Drizzle Kit configuration.                                                   |
 
 ## Common Commands
 

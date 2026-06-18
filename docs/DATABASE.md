@@ -100,4 +100,4 @@ erDiagram
 
 The devcontainer does not provide PostgreSQL or Redis directly. Infrastructure services are owned by the root Docker Compose stack so they can be used consistently inside or outside the devcontainer.
 
-PostgreSQL is currently integrated as the durable data store. Redis is currently started by development backend tasks and used by the backend for cache and throttling storage; it is also reserved for planned sessions, pub/sub, queues, and real-time state features.
+PostgreSQL is currently integrated as the durable data store. Redis is currently started by development backend tasks and used by the backend for cache and throttling storage.

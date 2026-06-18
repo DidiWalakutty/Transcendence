@@ -100,7 +100,7 @@ For tRPC v11 subscriptions, the static output type must be an `AsyncIterable` of
 
 The tRPC server and every frontend terminating link use `superjson` as the transformer. Keep those settings matched so values like `Date` keep the same type across queries, mutations, and subscriptions.
 
-Internal backend events go through `EventsService`, which wraps Nest's `@nestjs/event-emitter` package. Domain-specific services, such as `UsersEvents`, should expose named methods like `emitUserCreated()` and `listenUserCreated()` instead of putting raw event names in routers or feature services.
+Internal backend events go through `EventsService`, which wraps Nest's `@nestjs/event-emitter` package. These events are local to the current backend process; Redis is not used for subscription delivery. Domain-specific services, such as `UsersEvents`, should expose named methods like `emitUserCreated()` and `listenUserCreated()` instead of putting raw event names in routers or feature services.
 
 ### Cleanup Rules
 
@@ -127,4 +127,4 @@ async *listenUserCreated(signal?: AbortSignal) {
 }
 ```
 
-The ownership rule is: whoever opens a resource closes it. The shared `EventsService` deduplicates event listener and abort handling, while feature services remain responsible for database cursors, timers, sockets, Redis subscriptions, file handles, or other resources they create.
+The ownership rule is: whoever opens a resource closes it. The shared `EventsService` deduplicates event listener and abort handling, while feature services remain responsible for database cursors, timers, sockets, file handles, or other resources they create.
