@@ -47,7 +47,7 @@ export default defineConfig({
         cache: false,
       },
       'repo:db:setup': {
-        command: 'docker compose up -d postgres && vp run -w repo:db:migrate',
+        command: 'docker compose up -d --wait postgres && vp run -w repo:db:migrate',
         cache: false,
       },
       'repo:redis:setup': {
