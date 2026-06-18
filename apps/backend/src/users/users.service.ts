@@ -48,7 +48,7 @@ export class UsersService {
     const [user] = await this.db.insert(users).values(data).returning();
 
     await this.clearUsersCache();
-    await this.usersEvents.emitUserCreated(user);
+    this.usersEvents.emitUserCreated(user);
 
     return user;
   }
@@ -58,7 +58,7 @@ export class UsersService {
 
     if (user) {
       await this.clearUsersCache();
-      await this.usersEvents.emitUserUpdated(user);
+      this.usersEvents.emitUserUpdated(user);
     }
 
     return user;
@@ -69,7 +69,7 @@ export class UsersService {
 
     if (user) {
       await this.clearUsersCache();
-      await this.usersEvents.emitUserDeleted(user);
+      this.usersEvents.emitUserDeleted(user);
     }
 
     return user;
