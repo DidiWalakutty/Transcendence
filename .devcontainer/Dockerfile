@@ -38,6 +38,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg \
     lsb-release \
     sudo \
+    ssh \
     && rm -rf /var/lib/apt/lists/*
 
 # Grant the 'bun' user passwordless sudo access.
