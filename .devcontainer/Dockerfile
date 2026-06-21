@@ -27,6 +27,7 @@ FROM oven/bun:1-debian
 #   gnupg       — GPG tooling used to verify the Docker apt repository signature
 #   lsb-release — provides lsb_release command, used to detect the Debian codename
 #   sudo        — allows the non-root 'bun' user to run commands as root when needed
+#   ssh         — needed for git
 #
 # rm -rf /var/lib/apt/lists/* — deletes the apt package index cache after install.
 # These files are only needed during the build; removing them shrinks the image.
