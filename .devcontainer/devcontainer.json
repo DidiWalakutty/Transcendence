@@ -1,6 +1,6 @@
 {
   // Human-readable name shown in VS Code's remote indicator (bottom-left corner).
-  "name": "DevConnect Dev Environment",
+  "name": "ft_transcendence",
 
   // Tells VS Code to build a custom image using our Dockerfile rather than
   // pulling a pre-built one. 'context' sets the Docker build context — the
@@ -19,8 +19,7 @@
   "mounts": ["source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"],
 
   // The Linux user VS Code and the terminal will run as inside the container.
-  // 'bun' is the non-root user that ships with the oven/bun base image at UID 1000.
-  "remoteUser": "bun",
+  "remoteUser": "ft_transcendence",
 
   // When true, VS Code automatically adjusts the container user's UID to match
   // your host user's UID. This prevents file permission mismatches when the
@@ -61,6 +60,16 @@
       "settings": {
         // Automatically format files on save using the active formatter.
         "editor.formatOnSave": true,
+        // Force VS Code terminals to start Bash as a login shell.
+        // This gives contributors normal shell history/keybindings and loads
+        // the Vite+ profile snippet installed by the Dockerfile.
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash",
+            "args": ["-l"]
+          }
+        },
         // Point VS Code's TypeScript language service at the project's own
         // TypeScript install rather than VS Code's bundled version.
         // This ensures the TS version matches what the project actually uses.
@@ -68,6 +77,10 @@
       }
     }
   },
+
+  // Publish application ports from the devcontainer so they are reachable from
+  // the host browser in addition to VS Code's automatic port forwarding.
+  "appPort": ["3000:3000", "3001:3001"],
 
   // Ports to automatically forward from the container to your host machine.
   // VS Code watches these and makes them accessible on localhost.
@@ -91,5 +104,5 @@
   // Command that runs once after the container is created (not on every start).
   // Now only runs 'vp install' since extension installation is handled above
   // by customizations.vscode.extensions, which is the correct mechanism.
-  "postCreateCommand": "vp install"
+  "postCreateCommand": "bash -lc 'vp install'"
 }

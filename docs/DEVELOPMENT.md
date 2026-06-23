@@ -57,25 +57,23 @@ This task:
 ```mermaid
 flowchart TD
     A["vp run dev"]
-    B["repo:db:setup"]
-    C["repo:redis:setup"]
+    P["repo:dev:prepare"]
+    B["repo:services:setup"]
     D["repo:trpc:generate"]
     E["repo:frontend:generate"]
-    F["docker compose up -d postgres"]
-    G["docker compose up -d redis"]
+    F["docker compose up -d --wait postgres redis"]
     H["Drizzle migrate"]
     I["Generate tRPC router types"]
     J["Generate routes and Paraglide runtime"]
     K["Start NestJS backend"]
     L["Start TanStack Start frontend"]
 
-    A --> B
-    A --> C
-    A --> D
-    A --> E
+    A --> P
+    P --> B
+    P --> D
+    P --> E
     B --> F
     B --> H
-    C --> G
     D --> I
     E --> J
     A --> K
@@ -113,6 +111,7 @@ For a background deployment, use `vp run deploy:detached`.
 | `vp run dev:backend`     | Start database setup and the backend.     |
 | `vp run deploy`          | Build and run the full Compose stack.     |
 | `vp run deploy:detached` | Build and run the Compose stack detached. |
+| `vp run services:setup`  | Start PostgreSQL and Redis, then migrate. |
 | `vp run check`           | Run formatting, linting, and type checks. |
 | `vp run check:fix`       | Fix formatting and safe lint issues.      |
 | `vp run test`            | Run tests.                                |

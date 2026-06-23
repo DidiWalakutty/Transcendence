@@ -52,6 +52,7 @@ vp install
 | `vp run fmt:fix`         | Write formatting changes.                                      |
 | `vp run trpc:generate`   | Regenerate the shared tRPC router types.                       |
 | `vp run trpc:watch`      | Watch backend tRPC changes and regenerate types.               |
+| `vp run services:setup`  | Start PostgreSQL and Redis, then run database migrations.      |
 | `vp run db:setup`        | Start PostgreSQL and run migrations.                           |
 | `vp run redis:setup`     | Start Redis through Docker Compose.                            |
 | `vp run db:generate`     | Generate Drizzle migration files.                              |
@@ -79,27 +80,27 @@ This file defines the repository task graph, including dependencies such as:
 ```mermaid
 flowchart TD
     DEV["repo:dev"]
+    DEV_PREPARE["repo:dev:prepare"]
     DEPLOY["repo:deploy"]
     DEV_BACKEND["repo:dev:backend"]
     DEV_FRONTEND["repo:dev:frontend"]
     COMPOSE["docker compose up --build"]
-    DB_SETUP["repo:db:setup"]
-    REDIS_SETUP["repo:redis:setup"]
+    SERVICES_SETUP["repo:services:setup"]
+    SERVICES["docker compose up -d --wait postgres redis"]
     DB_MIGRATE["repo:db:migrate"]
     TRPC["repo:trpc:generate"]
     FRONTEND_GEN["repo:frontend:generate"]
     BACKEND["Backend dev server"]
     FRONTEND["Frontend dev server"]
 
-    DEV --> DB_SETUP
-    DEV --> REDIS_SETUP
-    DEV --> TRPC
-    DEV --> FRONTEND_GEN
+    DEV --> DEV_PREPARE
+    DEV_PREPARE --> SERVICES_SETUP
+    DEV_PREPARE --> TRPC
+    DEV_PREPARE --> FRONTEND_GEN
     DEV --> BACKEND
     DEV --> FRONTEND
 
-    DEV_BACKEND --> DB_SETUP
-    DEV_BACKEND --> REDIS_SETUP
+    DEV_BACKEND --> SERVICES_SETUP
     DEV_BACKEND --> TRPC
     DEV_BACKEND --> BACKEND
 
@@ -107,7 +108,8 @@ flowchart TD
     DEV_FRONTEND --> FRONTEND_GEN
     DEV_FRONTEND --> FRONTEND
 
-    DB_SETUP --> DB_MIGRATE
+    SERVICES_SETUP --> SERVICES
+    SERVICES_SETUP --> DB_MIGRATE
     DEPLOY --> COMPOSE
 ```
 
@@ -122,6 +124,23 @@ Important generated paths include:
 | `packages/schemas/src/@generated/server.ts` | `vp run trpc:generate`           |
 | `apps/frontend/src/routeTree.gen.ts`        | frontend route generation        |
 | `apps/frontend/src/@generated/paraglide`    | frontend localization generation |
+
+## Task Caching
+
+Vite+ caches deterministic tasks by default. The repository keeps dev servers,
+Docker setup, database operations, generated-file writers, watch tasks, staged
+checks, and autofix tasks uncached because they either run continuously, mutate
+external state, or rewrite files.
+
+Build tasks use explicit cache outputs:
+
+| Task                  | Cached Outputs                                           |
+| --------------------- | -------------------------------------------------------- |
+| `repo:build:frontend` | `apps/frontend/.output/**`, `apps/frontend/.tanstack/**` |
+| `repo:build:backend`  | `apps/backend/dist/**`                                   |
+
+The top-level `repo:build` task only orchestrates the frontend and backend
+build tasks, so each build can be restored independently from cache.
 
 ## CI And Hooks
 
