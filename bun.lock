@@ -6,8 +6,12 @@
       "name": "eventlike",
       "devDependencies": {
         "@repo/tsconfig": "workspace:*",
+        "@types/bun": "latest",
         "@types/node": "^25.9.3",
         "vite-plus": "^0.2.0",
+      },
+      "peerDependencies": {
+        "typescript": "^5",
       },
     },
     "apps/backend": {
