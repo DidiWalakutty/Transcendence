@@ -27,7 +27,7 @@ cd ft_transcendence
 Add this to `~/.config/nix/nix.conf` (create the file if it doesn't exist):
 
 ```
-experimental-features = nix-flakes nix-command
+experimental-features = flakes nix-command
 ```
 
 ---
@@ -57,6 +57,26 @@ If the popup doesn't appear, open the command palette (`Ctrl+Shift+P`) and run:
 
 ```
 Extensions: Show Recommended Extensions
+```
+
+## 5. Useful commands
+
+```
+# Starts the full dev server
+bun develop
+
+Frontend → http://localhost:3000
+Backend → http://localhost:3001
+```
+
+```
+# Check linting
+bun check
+```
+
+```
+# Check formatting
+bun fmt
 ```
 
 ---
@@ -93,6 +113,18 @@ nix develop
 ---
 
 ## Troubleshooting
+
+**On MacOS you may encounter this error regarding permissions of a node module**
+
+```
+Failed to execute nestjs-trpc CLI: spawnSync /Users/daria/codam/06-transcendence/ft_transcendence/node_modules/.bun/nestjs-trpc@2.10.0+4027ee5bbcdb762b/node_modules/nestjs-trpc/native/aarch64-apple-darwin/nestjs-trpc EACCES
+```
+
+Make the file executable:
+
+```
+chmod +x node_modules/.bun/nestjs-trpc@*/node_modules/nestjs-trpc/native/aarch64-apple-darwin/nestjs-trpc
+```
 
 **`flake.nix` not found error:**
 Make sure the file is tracked by git:
