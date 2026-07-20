@@ -63,7 +63,7 @@ Extensions: Show Recommended Extensions
 
 ```
 # Starts the full dev server
-bun develop
+bun dev
 
 Frontend → http://localhost:3000
 Backend → http://localhost:3001
@@ -78,6 +78,8 @@ bun check
 # Check formatting
 bun fmt
 ```
+
+These are Bun's script shorthand for the root `package.json` scripts (`bun dev` == `bun run dev`), which in turn run the matching Vite+ task (`vp run -w repo:dev`). Inside this shell you never need a globally installed `vp` — `bun install` already pulled it in locally. For the full command list, see [Tooling](./TOOLING.md).
 
 ---
 
@@ -117,7 +119,7 @@ nix develop
 **On MacOS you may encounter this error regarding permissions of a node module**
 
 ```
-Failed to execute nestjs-trpc CLI: spawnSync /Users/daria/codam/06-transcendence/ft_transcendence/node_modules/.bun/nestjs-trpc@2.10.0+4027ee5bbcdb762b/node_modules/nestjs-trpc/native/aarch64-apple-darwin/nestjs-trpc EACCES
+Failed to execute nestjs-trpc CLI: spawnSync <repo-root>/node_modules/.bun/nestjs-trpc@2.10.0+4027ee5bbcdb762b/node_modules/nestjs-trpc/native/aarch64-apple-darwin/nestjs-trpc EACCES
 ```
 
 Make the file executable:

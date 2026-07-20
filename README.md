@@ -33,7 +33,7 @@ The operational roles and specific core responsibilities assigned across our tea
 
 We structured our development roadmap into iterative sprints.
 
-- **Project Management Tool:** [INSERT e.g., GitHub Issues, Trello, Jira, or Notion] was utilized to move components from Backlog $\rightarrow$ In Progress $\rightarrow$ Code Review $\rightarrow$ Done.
+- **Project Management Tool:** [GitHub Projects](https://github.com/users/milandekruijf/projects/3) is used to move components from Backlog $\rightarrow$ In Progress $\rightarrow$ Code Review $\rightarrow$ Done.
 - **Meeting Cadence:** We conducted [INSERT e.g., daily standups / bi-weekly syncs] to review progress, coordinate integrations, and redistribute blockers.
 
 ### Team Communication Channels
@@ -45,34 +45,44 @@ We structured our development roadmap into iterative sprints.
 
 ## 4. Technical Stack
 
-Our unified microservices architecture consists of the following components, strictly evaluated and justified below:
+Our monorepo architecture (managed by [Vite+](https://viteplus.dev/) and [Bun](https://bun.sh/)) consists of the following components:
 
-- **Frontend Framework:** `[INSERT Framework, e.g., React / Vue / Vanilla JS Web Components]`
-  - _Justification:_ [INSERT Explain why this was selected, how it fits your module targets, and its interaction with state management.]
-- **Backend Framework:** `[INSERT Framework, e.g., Django / NestJS / Express]`
-  - _Justification:_ [INSERT Explain how this addresses routing, security baselines, and WebSocket handshakes efficiently.]
-- **Database Engine:** `[INSERT Database, e.g., PostgreSQL / MongoDB]`
-  - _Justification:_ [INSERT Explain why this database fits your relational data mapping and consistency constraints.]
-- **Styling Engine:** `[INSERT e.g., Tailwind CSS / Bootstrap / Custom CSS Variables Framework]`
-  - _Justification:_ [INSERT Detail how this ensures structural design compliance, responsive view rules, and baseline presentation needs.]
+- **Frontend Framework:** [React](https://react.dev/) with [TanStack Start](https://tanstack.com/start) and [TanStack Router](https://tanstack.com/router).
+  - _Justification:_ TanStack Start gives us file-based routing and SSR on top of React, paired with [TanStack Query](https://tanstack.com/query) for server-state/cache management and [TanStack Form](https://tanstack.com/form) for client-side form validation shared against the same Zod schemas the backend validates with.
+- **Backend Framework:** [NestJS](https://nestjs.com/) with [tRPC](https://nestjs-trpc.io/) (via `nestjs-trpc`).
+  - _Justification:_ NestJS's modular, dependency-injected structure suits a growing feature set, and tRPC gives us end-to-end typed API calls (including subscriptions for real-time updates) without hand-written REST client code.
+- **Database Engine:** [PostgreSQL](https://www.postgresql.org/) via [Drizzle ORM](https://orm.drizzle.team/), with [Redis](https://redis.io/) for backend cache and rate-limit storage.
+  - _Justification:_ PostgreSQL fits our relational data (events, registrations, users). Drizzle keeps table definitions, migrations, and Zod validation schemas (via `drizzle-zod`) derived from one shared source in `packages/schemas`.
+- **Styling Engine:** [Tailwind CSS](https://tailwindcss.com/).
+  - _Justification:_ Utility-first styling paired with a shared `shadcn`-based component library gives us consistent, responsive UI without a separate design-system build step.
+
+See [Stack](./docs/STACK.md) for the full technology list and architecture principles.
 
 ---
 
 ## 5. Database Schema
 
-Below is the definitive relational schema detailing our application entities, system attributes, field rules, and foreign constraint logic.
+Current schema (implemented so far — additional tables for events, registrations, and friends are planned but not yet implemented):
 
+```mermaid
+erDiagram
+    USERS {
+        uuid id PK
+        text email UK
+        text name
+        timestamp created_at
+    }
 ```
 
-[INSERT / PASTE: Either a visual database diagram (Mermaid.js code, ASCII art representation, or linked image file) mapping out tables such as Users, Profiles, Matches, Tournaments, Chats, and Messages with data types, Primary Keys (PK), and Foreign Keys (FK).]
-
-```
+See [Database](./docs/DATABASE.md) for the migration workflow and how this schema is kept in sync with API validation.
 
 ---
 
 ## 6. Features List
 
-An inventory of all technical systems and interface modules deployed across the platform, cross-referenced with their primary authors:
+An inventory of all technical systems and interface modules deployed across the platform, cross-referenced with their primary authors.
+
+_Status: only a demo Users CRUD flow exists in the codebase today (see [API](./docs/API.md)). This table will be filled in as event management, authentication, and the other selected modules from [section 7](#7-modules-matrix) are implemented._
 
 | Feature Area                       | Functional Scope                                                                       | Primary Author   |
 | ---------------------------------- | -------------------------------------------------------------------------------------- | ---------------- |
@@ -86,19 +96,34 @@ An inventory of all technical systems and interface modules deployed across the 
 
 ## 7. Modules Matrix
 
-Our team selected the following specific combination of Major (2 pts) and Minor (1 pt) modules to satisfy and exceed the mandatory 14-point project validation threshold.
+Our team selected the following combination of Major (2 pts) and Minor (1 pt) modules, confirmed for a total of 15 points against the mandatory 14-point threshold. **None of these are implemented yet** — the codebase currently contains only a demo Users CRUD flow (see [section 5](#5-database-schema) and [section 6](#6-features-list)); status will be updated as each module lands. Assigned developers and points are tracked per-task on the [GitHub Project board](https://github.com/users/milandekruijf/projects/3).
 
-| Module Selected                                | Type        | Points                    | Feature Scope Breakdown                                                                                   | Assigned Developer |
-| ---------------------------------------------- | ----------- | ------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------ |
-| **[INSERT Module Name, e.g., Full Framework]** | Major       | 2                         | [INSERT e.g., Using NestJS backend paired with Svelte frontend to route and manage isolated app domains.] | `[INSERT Login]`   |
-| **[INSERT Module Name, e.g., WebSockets]**     | Major       | 2                         | [INSERT e.g., Live WebSocket synchronization for gameplay state loops and persistent chat streaming.]     | `[INSERT Login]`   |
-| **[INSERT Module Name, e.g., OAuth 2.0]**      | Minor       | 1                         | [INSERT e.g., Third-party identity validation integration using 42 / GitHub API endpoints.]               | `[INSERT Login]`   |
-| **[INSERT Module Name]**                       | Major/Minor | X                         | [INSERT Implementation criteria breakdown.]                                                               | `[INSERT Login]`   |
-| **[INSERT Module Name]**                       | Major/Minor | X                         | [INSERT Implementation criteria breakdown.]                                                               | `[INSERT Login]`   |
-| **[INSERT Module Name]**                       | Major/Minor | X                         | [INSERT Implementation criteria breakdown.]                                                               | `[INSERT Login]`   |
-| **[INSERT Module Name]**                       | Major/Minor | X                         | [INSERT Implementation criteria breakdown.]                                                               | `[INSERT Login]`   |
-| **[INSERT Module Name]**                       | Major/Minor | X                         | [INSERT Implementation criteria breakdown.]                                                               | `[INSERT Login]`   |
-| **TOTAL VALIDATED POINTS**                     |             | **[INSERT Sum $\ge$ 14]** |                                                                                                           |                    |
+| Module Selected                                                 | Type  | Points | Status              |
+| --------------------------------------------------------------- | ----- | ------ | ------------------- |
+| Full Framework (NestJS backend + React/TanStack Start frontend) | Major | 2      | Not yet implemented |
+| Database integration via an ORM (Drizzle ORM)                   | Minor | 1      | Not yet implemented |
+| Complete Notification System across all CRUD operations         | Minor | 1      | Not yet implemented |
+| Advanced search functionality (filters, sorting, pagination)    | Minor | 1      | Not yet implemented |
+| Multi-language support (3 languages)                            | Minor | 1      | Not yet implemented |
+| Extended multi-browser support                                  | Minor | 1      | Not yet implemented |
+| Full WCAG 2.1 AA accessibility compliance                       | Major | 2      | Not yet implemented |
+| Standard user management and authentication                     | Major | 2      | Not yet implemented |
+| Remote authentication via OAuth 2.0                             | Minor | 1      | Not yet implemented |
+| Secure Two-Factor Authentication (2FA)                          | Minor | 1      | Not yet implemented |
+| Advanced CRUD permissions and Role Management                   | Major | 2      | Not yet implemented |
+| **TOTAL SELECTED POINTS**                                       |       | **15** |                     |
+
+### Candidate bonus modules (not yet committed to)
+
+These were identified as possible additions if time allows, worth up to 6 more points:
+
+| Module Candidate                                        | Type  | Points |
+| ------------------------------------------------------- | ----- | ------ |
+| Custom-made design system (min. 10 reusable components) | Minor | 1      |
+| Right-to-left (RTL) language support                    | Minor | 1      |
+| Machine learning recommendation system                  | Major | 2      |
+| Sentiment analysis on user-generated content            | Minor | 1      |
+| AI content moderation                                   | Minor | 1      |
 
 ---
 
@@ -144,32 +169,16 @@ Follow these steps to configure, build, and deploy the application environment l
 
 ### Prerequisites
 
-Ensure your local host platform has the following containerization runtimes installed:
+- [Nix](https://nixos.org/download/) (recommended — see [Dev Environment](./docs/DEVENVIRONMENT.md)) or the [Vite+](https://viteplus.dev/) installer.
+- [Docker Engine](https://docs.docker.com/) $\ge$ v20.10 or Podman equivalent, with Docker Compose v2.
 
-- [Docker Engine](https://docs.docker.com/) $\ge$ v20.10 or Podman equivalent.
-- Docker Compose v2 capability.
+Full setup steps: [Development](./docs/DEVELOPMENT.md).
 
 ### Environment Setup (`.env`)
 
-Before launching the service containers, you must populate a production local environment variables profile. Duplicate the placeholder layout:
+Local development already works out of the box using the committed defaults in `apps/backend/.env.development` (see [Environment](./docs/ENVIRONMENT.md) for the full variable list — `DATABASE_URL`, `PORT`, `REDIS_URL`, cache/throttle tuning). For local overrides or production secrets, create an ignored `.env` file at the repo root or in `apps/backend`.
 
-```bash
-cp .env.example .env
-
-```
-
-Open the freshly instantiated `.env` profile and define required production values:
-
-```env
-# [INSERT Framework Keys / Database Passwords / Secrets Setup]
-DB_USER=[INSERT]
-DB_PASSWORD=[INSERT_SECURE_PASSWORD]
-SECRET_SIGNING_KEY=[INSERT_RANDOM_HASH]
-OAUTH_CLIENT_ID=[INSERT_OAUTH_TOKEN_FROM_PROVIDER]
-OAUTH_CLIENT_SECRET=[INSERT_OAUTH_SECRET]
-# Ensure this file remains ignored by Git tracking configurations.
-
-```
+> **Known gap:** the 42 subject requires a committed `.env.example` file; this repository does not have one yet. Adding it is tracked as a task on the [project board](https://github.com/users/milandekruijf/projects/3).
 
 ### Single-Command Application Launch
 
@@ -177,7 +186,6 @@ Build and start the frontend, backend, PostgreSQL, and Redis services with one c
 
 ```bash
 vp run deploy
-
 ```
 
 This runs the Vite+ `repo:deploy` task, which executes `docker compose up --build`.
@@ -198,7 +206,7 @@ health checks.
 
 ### Artificial Intelligence (AI) Usage Disclosure
 
-In strict accordance with the 42 validation rules, our team utilized AI toolsets (e.g., [INSERT Tools, e.g., GitHub Copilot, ChatGPT]) exclusively for repetitive boilerplate setups and template parsing, under full human control:
+In strict accordance with the 42 validation rules and this repository's [AGENTS.md](./AGENTS.md) policy, AI assistance here is restricted to documentation maintenance and project-management tasks — never application code, tests, configuration, or secrets.
 
-1. **Where/How AI was Used:** Deployed to generate [INSERT e.g., target mock data sets, CSS boilerplate properties, initial relational entity templates].
-2. **Validation Process:** Every block of AI-assisted code was manually refactored, stress-tested against asynchronous memory leaks, verified for security gaps, and is completely understood by the implementation authors. We stand fully prepared to break down, modify, or rewrite any part of this system live during peer defense routines.
+1. **Where/How AI was Used:** Claude Code was used to (a) audit `docs/**` and this README against the actual source code and fix inaccuracies (stale commands, missing cross-links, unfilled sections that could be answered from real code/config), and (b) break the product spec down into a task backlog on the [GitHub Project board](https://github.com/users/milandekruijf/projects/3) with estimates and a rough roadmap.
+2. **Validation Process:** All documentation edits were reviewed by the team before merging. No application code, tests, or configuration were written or modified by AI. [INSERT: add further entries here as AI assists with additional repetitive/documentation tasks.]

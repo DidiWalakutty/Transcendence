@@ -12,9 +12,13 @@ Vite+ manages:
 6. Commit hooks.
 7. Generated artifacts such as tRPC router types.
 
+## Nix Shell Equivalent
+
+Inside a [Nix dev shell](./DEVENVIRONMENT.md), `node_modules/.bin/vp` is already installed locally, and every command below also works as a Bun script shorthand: `bun dev` runs the same task as `vp run dev`, `bun check:fix` the same as `vp run check:fix`, and so on. There is no need to install Vite+ globally on this path.
+
 ## Install
 
-Install Vite+ before running the project outside the devcontainer.
+Install Vite+ before running the project outside the devcontainer (skip this if you use Nix — see above).
 
 ### macOS / Linux
 
