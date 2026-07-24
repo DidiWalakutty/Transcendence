@@ -60,6 +60,8 @@ if [[ ":$PATH:" != *":$install_directory:"* ]]; then
   configuration_lines+=("export PATH=$quoted_install_directory:\$PATH")
 fi
 
+configuration_lines+=("export NP_RUNTIME=bwrap")
+
 if [[ -n "${NP_LOCATION:-}" ]]; then
   echo "Portable Nix state will be stored in: $NP_LOCATION"
   printf -v quoted_np_location "%q" "$NP_LOCATION"

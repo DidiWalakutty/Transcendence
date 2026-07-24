@@ -224,6 +224,16 @@ Run:
 vp run trpc:generate
 ```
 
+### Redis Port Is Already In Use
+
+The Compose stack maps Redis to host port `6380` by default because many systems
+already use Redis's standard port `6379`. If `6380` is also occupied, choose
+another host port:
+
+```bash
+REDIS_PORT=6381 vp run dev
+```
+
 ### Commit Hook Fails
 
 Run:

@@ -106,7 +106,8 @@ The script:
 - installs `nix-portable` and a `nix` symlink in `~/.local/bin`;
 - verifies the installation; and
 - detects Bash or Zsh from `$SHELL` and adds any required configuration to the
-  corresponding `~/.bashrc` or `~/.zshrc`.
+  corresponding `~/.bashrc` or `~/.zshrc`, including `NP_RUNTIME=bwrap` for
+  Codam's user-namespace environment.
 
 The installer does not add duplicate configuration lines when it is run again.
 For other shells, it prints the lines that need to be added manually.
@@ -146,8 +147,8 @@ NIX_PORTABLE_INSTALL_DIR="/goinfre/$USER/nix-portable/bin" \
 ```
 
 The installer persists both locations in the Bash or Zsh configuration selected
-from `$SHELL`. Reload the shell using the printed command, then run `nix develop`
-from the repository.
+from `$SHELL`, together with `NP_RUNTIME=bwrap`. Reload the shell using the
+printed command, then run `nix develop` from the repository.
 
 ---
 
@@ -166,6 +167,19 @@ fallback, run:
 ```bash
 chmod +x node_modules/.bun/nestjs-trpc@*/node_modules/nestjs-trpc/native/*/nestjs-trpc
 ```
+
+**`nestjs-trpc` reports `GLIBC_2.39 not found` on Linux:**
+
+The packaged generator requires a newer GLIBC than some Linux distributions
+provide. Exit and re-enter the project Nix shell:
+
+```bash
+exit
+nix develop
+```
+
+The shell's automatic `bun install` step configures the generator to use the
+Nix-provided GLIBC. This keeps the host operating system unchanged.
 
 **`flake.nix` not found error:**
 Make sure the file is tracked by git:
