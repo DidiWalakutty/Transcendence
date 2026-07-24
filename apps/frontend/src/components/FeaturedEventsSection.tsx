@@ -1,62 +1,11 @@
-import { EventCard } from '@/components/events/EventCard';
-import placeholderEvent from '@/assets/placeholder_event.png';
-
-{
-  /* Featured Events Section Component */
-}
-{
-  /* later, image will become: even.image, making it dynamic */
-}
-const featuredEvents = [
-  {
-    title: 'Summer Festival',
-    category: 'Music',
-    location: 'Amsterdam, Netherlands',
-    date: '2026-08-08',
-    image: placeholderEvent,
-  },
-  {
-    title: 'Taste of Amsterdam',
-    category: 'Food',
-    location: 'Amsterdam, Netherlands',
-    date: '2026-07-29',
-    image: placeholderEvent,
-  },
-  {
-    title: 'Software Engineering Course',
-    category: 'Workshop',
-    location: 'The Hague, Netherlands',
-    date: '2026-09-15',
-    image: placeholderEvent,
-  },
-  {
-    title: 'Moluccan Cultural Festival',
-    category: 'Culture',
-    location: 'Rotterdam, Netherlands',
-    date: '2026-10-05',
-    image: placeholderEvent,
-  },
-  {
-    title: 'Board Game Night',
-    category: 'Games',
-    location: 'Utrecht, Netherlands',
-    date: '2026-11-12',
-    image: placeholderEvent,
-  },
-  {
-    title: 'Tech Talk: The Future of AI',
-    category: 'Talks',
-    location: 'Eindhoven, Netherlands',
-    date: '2026-12-01',
-    image: placeholderEvent,
-  },
-];
+import { EventCard } from '@/components/EventCard';
+import { events } from '@/data/events';
 
 export function FeaturedEventsSection() {
   // Only show the first 5 featured events
   // later, this will be connected with backend and become something like:
   // const displayedEvents = await getFeaturedEvents()
-  const displayedEvents = featuredEvents.slice(0, 4);
+  const displayedEvents = events.slice(0, 4);
 
   return (
     <section
@@ -98,7 +47,7 @@ export function FeaturedEventsSection() {
         >
           {displayedEvents.map((event) => (
             <EventCard
-              key={event.title}
+              key={event.id}
               image={event.image}
               title={event.title}
               category={event.category}
