@@ -27,13 +27,10 @@
                       pkgs.nodejs
                       pkgs.direnv
                     ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
-                      pkgs.patchelf
+                      pkgs.autoPatchelfHook
+                      pkgs.glibc
+                      pkgs.stdenv.cc.cc.lib
                     ];
-          NESTJS_TRPC_LINUX_LOADER =
-            pkgs.lib.optionalString pkgs.stdenv.isLinux pkgs.stdenv.cc.bintools.dynamicLinker;
-          NESTJS_TRPC_LINUX_RPATH =
-            pkgs.lib.optionalString pkgs.stdenv.isLinux
-              (pkgs.lib.makeLibraryPath [ pkgs.glibc pkgs.stdenv.cc.cc.lib ]);
         shellHook = ''
           echo "🚀 ft_transcendence dev environment"
           echo ""
@@ -50,6 +47,10 @@
           echo "  bun test         - Run all tests"
           echo ""
           bun install
+          ${pkgs.lib.optionalString pkgs.stdenv.isLinux ''
+            autoPatchelf -- \
+              apps/backend/node_modules/nestjs-trpc/native/${pkgs.stdenv.hostPlatform.config}/nestjs-trpc
+          ''}
         '';
         };
       }

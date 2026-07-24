@@ -178,8 +178,9 @@ exit
 nix develop
 ```
 
-The shell's automatic `bun install` step configures the generator to use the
-Nix-provided GLIBC. This keeps the host operating system unchanged.
+After automatically running `bun install`, the shell uses Nix's
+`autoPatchelfHook` to connect the generator to the Nix-provided GLIBC. This keeps
+the host operating system unchanged.
 
 **`flake.nix` not found error:**
 Make sure the file is tracked by git:

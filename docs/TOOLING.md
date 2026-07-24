@@ -40,9 +40,10 @@ vp install
 
 The root `postinstall` script repairs the executable permissions of the
 `nestjs-trpc` native generator on Unix systems. This runs for both the Vite+
-installation path and direct `bun install`. On Linux inside the recommended Nix
-shell, it also configures the native generator to use Nix's GLIBC so generation
-works on hosts whose system GLIBC is older than the packaged binary requires.
+installation path and direct `bun install`. On Linux, the recommended Nix shell
+then uses Nix's `autoPatchelfHook` to connect the packaged generator to the
+shell-provided GLIBC. This supports hosts whose system GLIBC is older than the
+packaged binary requires.
 
 ## Common Commands
 
