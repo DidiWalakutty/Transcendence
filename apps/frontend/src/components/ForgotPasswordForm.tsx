@@ -1,8 +1,9 @@
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Link } from '@tanstack/react-router';
 
 export function ForgotPassword({ className, ...props }: React.ComponentProps<'div'>) {
   return (
@@ -32,6 +33,13 @@ export function ForgotPassword({ className, ...props }: React.ComponentProps<'di
                   </Button>
                 </div>
               </Field>
+
+              <FieldDescription className="text-center">
+                Do remember your password?{' '}
+                <Link to="/login" className="underline underline-offset-4">
+                  Log in
+                </Link>
+              </FieldDescription>
             </FieldGroup>
           </form>
         </CardContent>
