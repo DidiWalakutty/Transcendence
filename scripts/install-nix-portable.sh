@@ -22,6 +22,14 @@ install_directory="${NIX_PORTABLE_INSTALL_DIR:-$HOME/.local/bin}"
 portable_path="$install_directory/nix-portable"
 download_url="https://github.com/DavHau/nix-portable/releases/latest/download/nix-portable-$architecture"
 
+shell_name="${SHELL:-}"
+shell_name="${shell_name##*/}"
+case "$shell_name" in
+  bash) shell_configuration_file="$HOME/.bashrc" ;;
+  zsh) shell_configuration_file="$HOME/.zshrc" ;;
+  *) shell_configuration_file="" ;;
+esac
+
 mkdir -p "$install_directory"
 temporary_file="$(mktemp "$install_directory/.nix-portable.XXXXXX")"
 trap 'rm -f "$temporary_file"' EXIT
@@ -45,16 +53,48 @@ trap - EXIT
 
 echo
 echo "nix-portable was installed in: $install_directory"
+
+configuration_lines=()
 if [[ ":$PATH:" != *":$install_directory:"* ]]; then
-  echo
-  echo "Add this line to ~/.bashrc or ~/.zshrc, then restart your shell:"
-  printf 'export PATH="%s:$PATH"\n' "$install_directory"
+  printf -v quoted_install_directory "%q" "$install_directory"
+  configuration_lines+=("export PATH=$quoted_install_directory:\$PATH")
 fi
 
 if [[ -n "${NP_LOCATION:-}" ]]; then
   echo "Portable Nix state will be stored in: $NP_LOCATION"
+  printf -v quoted_np_location "%q" "$NP_LOCATION"
+  configuration_lines+=("export NP_LOCATION=$quoted_np_location")
 else
   echo "Portable Nix state will be stored in: $HOME/.nix-portable"
+fi
+
+if ((${#configuration_lines[@]} > 0)); then
+  if [[ -n "$shell_configuration_file" ]]; then
+    added_configuration=false
+    touch "$shell_configuration_file"
+
+    for configuration_line in "${configuration_lines[@]}"; do
+      if ! grep -Fqx -- "$configuration_line" "$shell_configuration_file"; then
+        if [[ "$added_configuration" == false ]]; then
+          printf '\n# Added by the ft_transcendence nix-portable installer\n' \
+            >>"$shell_configuration_file"
+        fi
+        printf '%s\n' "$configuration_line" >>"$shell_configuration_file"
+        added_configuration=true
+      fi
+    done
+
+    if [[ "$added_configuration" == true ]]; then
+      echo
+      echo "Updated $shell_configuration_file for $shell_name."
+      echo "Restart your shell or run: source \"$shell_configuration_file\""
+    fi
+  else
+    echo
+    echo "Could not configure unsupported shell: ${SHELL:-unknown}"
+    echo "Add these lines to your shell configuration, then restart your shell:"
+    printf '%s\n' "${configuration_lines[@]}"
+  fi
 fi
 
 echo

@@ -105,18 +105,15 @@ The script:
 - downloads the matching release;
 - installs `nix-portable` and a `nix` symlink in `~/.local/bin`;
 - verifies the installation; and
-- prints any shell configuration still required.
+- detects Bash or Zsh from `$SHELL` and adds any required configuration to the
+  corresponding `~/.bashrc` or `~/.zshrc`.
 
-**2. Add the installation directory to your shell configuration:**
+The installer does not add duplicate configuration lines when it is run again.
+For other shells, it prints the lines that need to be added manually.
 
-If the installer reports that `~/.local/bin` is not on `PATH`, add the following
-to `~/.zshrc` or `~/.bashrc`:
+**2. Reload your shell:**
 
-```bash
-export PATH="$HOME/.local/bin:$PATH"
-```
-
-Reload your shell:
+Use the command printed by the installer, or restart the shell. For example:
 
 ```bash
 source "$HOME/.zshrc" # Use .bashrc when running Bash
@@ -148,14 +145,9 @@ NIX_PORTABLE_INSTALL_DIR="/goinfre/$USER/nix-portable/bin" \
 ./scripts/install-nix-portable.sh
 ```
 
-Persist both locations in `~/.zshrc` or `~/.bashrc`:
-
-```bash
-export NP_LOCATION="/goinfre/$USER/nix-portable/state"
-export PATH="/goinfre/$USER/nix-portable/bin:$PATH"
-```
-
-Reload the shell and run `nix develop` from the repository.
+The installer persists both locations in the Bash or Zsh configuration selected
+from `$SHELL`. Reload the shell using the printed command, then run `nix develop`
+from the repository.
 
 ---
 
