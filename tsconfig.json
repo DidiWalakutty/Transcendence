@@ -1,6 +1,6 @@
 {
   "extends": "@repo/tsconfig",
-  "include": ["vite.config.ts"],
+  "include": ["vite.config.ts", "scripts/**/*.ts"],
   "compilerOptions": {
     "moduleResolution": "bundler",
     "verbatimModuleSyntax": true,

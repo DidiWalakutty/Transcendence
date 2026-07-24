@@ -43,6 +43,7 @@
     "fmt:fix:backend": "vp fmt apps/backend --write",
     "trpc:generate": "vp run -w repo:trpc:generate",
     "trpc:watch": "vp run -w repo:trpc:watch",
+    "postinstall": "bun scripts/ensure-nestjs-trpc-executable.ts",
     "staged": "vp run -w repo:staged",
     "prepare": "vp config --no-agent"
   },

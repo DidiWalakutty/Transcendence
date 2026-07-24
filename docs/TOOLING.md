@@ -38,6 +38,10 @@ Then install project dependencies:
 vp install
 ```
 
+The root `postinstall` script repairs the executable permissions of the
+`nestjs-trpc` native generator on Unix systems. This runs for both the Vite+
+installation path and direct `bun install`, so it does not depend on Nix.
+
 ## Common Commands
 
 | Command                  | Purpose                                                        |

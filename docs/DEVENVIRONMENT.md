@@ -91,22 +91,29 @@ installation-free Nix environment. It supports `x86_64` and `aarch64` Linux
 systems and enables `nix-command` and flakes by default. It does not support
 macOS.
 
-**1. Download `nix-portable` to a user-writable directory:**
+**1. Clone the repository and run the installer:**
 
 ```bash
-mkdir -p "$HOME/.local/bin"
-curl -L "https://github.com/DavHau/nix-portable/releases/latest/download/nix-portable-$(uname -m)" \
-  -o "$HOME/.local/bin/nix-portable"
-chmod +x "$HOME/.local/bin/nix-portable"
+git clone https://github.com/milandekruijf/ft_transcendence.git
+cd ft_transcendence
+./scripts/install-nix-portable.sh
 ```
 
-**2. Add it to your shell configuration:**
+The script:
 
-Add the following to `~/.zshrc` or `~/.bashrc`:
+- verifies that the machine runs a supported Linux architecture;
+- downloads the matching release;
+- installs `nix-portable` and a `nix` symlink in `~/.local/bin`;
+- verifies the installation; and
+- prints any shell configuration still required.
+
+**2. Add the installation directory to your shell configuration:**
+
+If the installer reports that `~/.local/bin` is not on `PATH`, add the following
+to `~/.zshrc` or `~/.bashrc`:
 
 ```bash
 export PATH="$HOME/.local/bin:$PATH"
-alias nix='nix-portable nix'
 ```
 
 Reload your shell:
@@ -121,11 +128,9 @@ source "$HOME/.zshrc" # Use .bashrc when running Bash
 nix --version
 ```
 
-**4. Clone the repository and enter the development environment:**
+**4. Enter the development environment:**
 
 ```bash
-git clone https://github.com/milandekruijf/ft_transcendence.git
-cd ft_transcendence
 nix develop
 ```
 
@@ -138,20 +143,19 @@ state in another user-writable location. On Codam machines, `/goinfre/$USER` is
 suitable:
 
 ```bash
-mkdir -p "/goinfre/$USER/nix-portable"
-curl -L "https://github.com/DavHau/nix-portable/releases/latest/download/nix-portable-$(uname -m)" \
-  -o "/goinfre/$USER/nix-portable/nix-portable"
-chmod +x "/goinfre/$USER/nix-portable/nix-portable"
+NP_LOCATION="/goinfre/$USER/nix-portable/state" \
+NIX_PORTABLE_INSTALL_DIR="/goinfre/$USER/nix-portable/bin" \
+./scripts/install-nix-portable.sh
 ```
 
-Add this configuration to `~/.zshrc` or `~/.bashrc`:
+Persist both locations in `~/.zshrc` or `~/.bashrc`:
 
 ```bash
 export NP_LOCATION="/goinfre/$USER/nix-portable/state"
-alias nix="/goinfre/$USER/nix-portable/nix-portable nix"
+export PATH="/goinfre/$USER/nix-portable/bin:$PATH"
 ```
 
-Reload the shell and run `nix develop` from the repository as described above.
+Reload the shell and run `nix develop` from the repository.
 
 ---
 
@@ -163,9 +167,9 @@ Reload the shell and run `nix develop` from the repository as described above.
 Failed to execute nestjs-trpc CLI: spawnSync <repo-root>/node_modules/.bun/nestjs-trpc@2.10.0+4027ee5bbcdb762b/node_modules/nestjs-trpc/native/aarch64-apple-darwin/nestjs-trpc EACCES
 ```
 
-The `nix develop` shell fixes the permissions automatically after installing
-dependencies. Re-enter the shell first. If dependencies were installed outside
-the Nix shell, repair all bundled Unix binaries manually:
+Project installation fixes these permissions automatically both inside and
+outside the Nix shell. Run `bun install` or `vp install` again. As a manual
+fallback, run:
 
 ```bash
 chmod +x node_modules/.bun/nestjs-trpc@*/node_modules/nestjs-trpc/native/*/nestjs-trpc

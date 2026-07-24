@@ -43,12 +43,6 @@
           echo "  bun test         - Run all tests"
           echo ""
           bun install
-
-          for nestjs_trpc_binary in node_modules/.bun/nestjs-trpc@*/node_modules/nestjs-trpc/native/*/nestjs-trpc; do
-            if [ -f "$nestjs_trpc_binary" ]; then
-              chmod +x "$nestjs_trpc_binary"
-            fi
-          done
         '';
         };
       }
