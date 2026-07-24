@@ -43,6 +43,7 @@ vp install
 | Command                  | Purpose                                                        |
 | ------------------------ | -------------------------------------------------------------- |
 | `vp run dev`             | Start the full local development stack.                        |
+| `vp run dev:fixtures`    | Start frontend/backend with in-memory fixtures and no Docker.  |
 | `vp run dev:frontend`    | Start only the frontend.                                       |
 | `vp run dev:backend`     | Start the database setup and backend.                          |
 | `vp run deploy`          | Build and run the full Docker Compose stack.                   |

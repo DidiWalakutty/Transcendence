@@ -108,6 +108,30 @@ The backend runs at:
 http://localhost:3001
 ```
 
+## Fixture Mode Without Docker
+
+For frontend and API development without Docker, PostgreSQL, or Redis, run:
+
+```bash
+vp run dev:fixtures
+```
+
+Inside a Nix shell, use `bun dev:fixtures`.
+
+This mode:
+
+1. Generates the shared tRPC types, frontend routes, and localization files.
+2. Starts the NestJS backend with an in-memory user fixture store.
+3. Uses in-memory cache and rate-limit storage.
+4. Starts the frontend and backend with the usual ports.
+
+Fixture changes last only for the current backend process and reset when it
+restarts. The tRPC user queries, mutations, and subscriptions keep the same
+contract as normal development.
+
+Use the standard `vp run dev` command when testing PostgreSQL migrations, Redis
+behavior, persistence, or the containerized service integration.
+
 ## Deploy Locally
 
 Build and run the full containerized stack with one command:
@@ -123,6 +147,7 @@ For a background deployment, use `vp run deploy:detached`.
 | Command                  | Purpose                                   |
 | ------------------------ | ----------------------------------------- |
 | `vp run dev`             | Start the full development stack.         |
+| `vp run dev:fixtures`    | Start fixture mode without Docker.        |
 | `vp run dev:frontend`    | Start only the frontend.                  |
 | `vp run dev:backend`     | Start database setup and the backend.     |
 | `vp run deploy`          | Build and run the full Compose stack.     |

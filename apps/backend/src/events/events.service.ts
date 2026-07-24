@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
+const MAX_BUFFERED_EVENTS = 100;
+
 @Injectable()
 export class EventsService {
   constructor(private readonly eventEmitter: EventEmitter2) {}
@@ -15,8 +17,16 @@ export class EventsService {
   ): AsyncGenerator<TPayload, void, void> {
     const payloads: TPayload[] = [];
     let resume: (() => void) | undefined;
+    let overflowed = false;
 
     const onEvent = (payload: TPayload) => {
+      if (payloads.length >= MAX_BUFFERED_EVENTS) {
+        overflowed = true;
+        resume?.();
+        resume = undefined;
+        return;
+      }
+
       payloads.push(payload);
       resume?.();
       resume = undefined;
@@ -35,6 +45,10 @@ export class EventsService {
           await new Promise<void>((resolve) => {
             resume = resolve;
           });
+        }
+
+        if (overflowed) {
+          throw new Error(`Event subscription exceeded ${MAX_BUFFERED_EVENTS} buffered messages`);
         }
 
         while (payloads.length > 0) {

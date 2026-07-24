@@ -15,15 +15,17 @@ Earlier files take precedence when the same variable is defined.
 
 ### Variables
 
-| Variable               | Required | Default Development Value                                             | Purpose                                                           |
-| ---------------------- | -------- | --------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `DATABASE_URL`         | Yes      | `postgres://transcendence:transcendence@localhost:5432/transcendence` | PostgreSQL connection string used by the backend and Drizzle Kit. |
-| `PORT`                 | No       | `3001`                                                                | Backend HTTP port.                                                |
-| `REDIS_URL`            | No       | `redis://localhost:6379`                                              | Redis connection string for backend cache and throttling storage. |
-| `REDIS_PORT`           | No       | `6379`                                                                | Redis port used to build the fallback `REDIS_URL`.                |
-| `CACHE_TTL_MS`         | No       | `30000`                                                               | Default backend cache TTL in milliseconds.                        |
-| `THROTTLE_TTL_SECONDS` | No       | `60`                                                                  | Rate-limit window length in seconds.                              |
-| `THROTTLE_LIMIT`       | No       | `100`                                                                 | Maximum requests allowed during the throttle window.              |
+| Variable               | Required                   | Default Development Value                                             | Purpose                                                                 |
+| ---------------------- | -------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `NODE_ENV`             | No                         | `development`                                                         | Selects development, production, or test behavior.                      |
+| `DATABASE_URL`         | Unless `DEV_FIXTURES=true` | `postgres://transcendence:transcendence@localhost:5432/transcendence` | PostgreSQL connection string used by the backend and Drizzle Kit.       |
+| `PORT`                 | No                         | `3001`                                                                | Backend HTTP port.                                                      |
+| `REDIS_URL`            | No                         | `redis://localhost:6379`                                              | Redis connection string for backend cache and throttling storage.       |
+| `CACHE_TTL_MS`         | No                         | `30000`                                                               | Default backend cache TTL in milliseconds.                              |
+| `THROTTLE_TTL_SECONDS` | No                         | `60`                                                                  | Rate-limit window length in seconds.                                    |
+| `THROTTLE_LIMIT`       | No                         | `100`                                                                 | Maximum requests allowed during the throttle window.                    |
+| `DEV_FIXTURES`         | No                         | `false`                                                               | Use in-memory users, cache, and throttling without PostgreSQL or Redis. |
+| `CORS_ORIGINS`         | No                         | `http://localhost:3000`                                               | Comma-separated browser origins allowed to call the backend.            |
 
 The committed development fallback lives in:
 
@@ -31,7 +33,13 @@ The committed development fallback lives in:
 apps/backend/.env.development
 ```
 
-Local secrets or overrides should go into ignored `.env` files.
+Local secrets or overrides should go into ignored `.env` files. Paths are
+resolved from the repository and backend directories rather than the command's
+working directory. Invalid values stop the application during startup.
+
+The `dev:fixtures` task sets `DEV_FIXTURES=true` for the backend process. This
+mode is intended for UI and API-contract development; its data resets whenever
+the backend restarts.
 
 ## Drizzle Kit
 

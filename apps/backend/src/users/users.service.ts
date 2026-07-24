@@ -1,31 +1,23 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
-import { asc, eq } from 'drizzle-orm';
-import { users, type CreateUser } from '@repo/schemas/database';
 import type { Cache } from 'cache-manager';
-import type { UpdateUserDto, UserDto } from '@repo/schemas/users';
+import type { CreateUserDto, UpdateUserDto, UserDto } from '@repo/schemas/users';
 
-import { DATABASE } from '../database/database.constants';
-import type { Database } from '../database/database.types';
+import { UsersRepository } from './repositories/users.repository';
 import { UsersEvents } from './users.events';
 
 const USERS_CACHE_KEY = 'users:all';
-const USERS_CACHE_TTL_MS = 30_000;
-
 @Injectable()
 export class UsersService {
   constructor(
-    @Inject(DATABASE)
-    private readonly db: Database,
+    private readonly repository: UsersRepository,
     @Inject(CACHE_MANAGER)
     private readonly cache: Cache,
     private readonly usersEvents: UsersEvents,
   ) {}
 
   async findByEmail(email: string) {
-    return this.db.query.users.findFirst({
-      where: eq(users.email, email),
-    });
+    return this.repository.findByEmail(email);
   }
 
   async findAll() {
@@ -35,17 +27,15 @@ export class UsersService {
       return cachedUsers;
     }
 
-    const allUsers = await this.db.query.users.findMany({
-      orderBy: asc(users.createdAt),
-    });
+    const allUsers = await this.repository.findAll();
 
-    await this.cache.set(USERS_CACHE_KEY, allUsers, USERS_CACHE_TTL_MS);
+    await this.cache.set(USERS_CACHE_KEY, allUsers);
 
     return allUsers;
   }
 
-  async create(data: CreateUser) {
-    const [user] = await this.db.insert(users).values(data).returning();
+  async create(data: CreateUserDto) {
+    const user = await this.repository.create(data);
 
     await this.clearUsersCache();
     this.usersEvents.emitUserCreated(user);
@@ -54,7 +44,7 @@ export class UsersService {
   }
 
   async update({ id, ...data }: UpdateUserDto) {
-    const [user] = await this.db.update(users).set(data).where(eq(users.id, id)).returning();
+    const user = await this.repository.update({ id, ...data });
 
     if (user) {
       await this.clearUsersCache();
@@ -65,7 +55,7 @@ export class UsersService {
   }
 
   async delete(id: string) {
-    const [user] = await this.db.delete(users).where(eq(users.id, id)).returning();
+    const user = await this.repository.delete(id);
 
     if (user) {
       await this.clearUsersCache();

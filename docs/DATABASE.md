@@ -22,7 +22,7 @@ Drizzle is used for:
 1. Defining database tables in TypeScript.
 2. Generating SQL migrations.
 3. Running migrations against PostgreSQL.
-4. Building typed SQL queries in the backend service layer.
+4. Building typed SQL queries in the backend repository adapter.
 
 The shared database schema lives in:
 
@@ -36,8 +36,8 @@ The backend imports the shared `schema` object from `@repo/schemas/database` and
 flowchart LR
     A["packages/schemas/src/database.ts"]
     B["schema object"]
-    C["apps/backend/src/database/database.provider.ts"]
-    D["Drizzle ORM"]
+    C["apps/backend/src/database/database.service.ts"]
+    D["Drizzle ORM + managed pg Pool"]
     E[("PostgreSQL")]
     F["apps/backend/drizzle/*.sql"]
 
@@ -48,6 +48,11 @@ flowchart LR
     A --> F
     F --> E
 ```
+
+`DatabaseService` owns the PostgreSQL pool and closes it through Nest's
+application-shutdown lifecycle. User-facing services access the database through
+`DrizzleUsersRepository`; fixture mode replaces that adapter with
+`InMemoryUsersRepository` and does not import `DatabaseModule`.
 
 ## Validation Integration
 

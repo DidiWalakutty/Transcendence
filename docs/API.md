@@ -8,10 +8,21 @@ The backend exposes a tRPC API through `nestjs-trpc`.
 http://localhost:3001/api/trpc
 ```
 
+The non-tRPC health endpoint is available at:
+
+```text
+GET http://localhost:3001/health
+```
+
+This is a Terminus readiness check for PostgreSQL and Redis. It returns `200` when
+both dependencies respond and `503` when either check fails. In fixture mode, both
+checks are marked as skipped because that mode intentionally runs without external
+services.
+
 The tRPC router implementation currently lives in:
 
 ```text
-apps/backend/src/trpc.router.ts
+apps/backend/src/users/users.router.ts
 ```
 
 Generated client router types live in:
@@ -31,19 +42,18 @@ vp run trpc:generate
 The current router alias is:
 
 ```text
-example
+users
 ```
 
-| Procedure               | Type         | Input              | Output                  | Notes                                                    |
-| ----------------------- | ------------ | ------------------ | ----------------------- | -------------------------------------------------------- |
-| `example.getTodos`      | Query        | None               | Array of `{ id, name }` | Temporary example data.                                  |
-| `example.getUsers`      | Query        | None               | Array of users          | Reads users from PostgreSQL through Drizzle.             |
-| `example.createUser`    | Mutation     | `createUserSchema` | User                    | Creates a user and rejects duplicate email addresses.    |
-| `example.updateUser`    | Mutation     | `updateUserSchema` | User                    | Updates a user and rejects missing or duplicate records. |
-| `example.deleteUser`    | Mutation     | `deleteUserSchema` | User                    | Deletes a user and rejects missing records.              |
-| `example.onUserCreated` | Subscription | None               | User stream             | Streams newly created users to subscribed clients.       |
-| `example.onUserUpdated` | Subscription | None               | User stream             | Streams updated users to subscribed clients.             |
-| `example.onUserDeleted` | Subscription | None               | User stream             | Streams deleted users to subscribed clients.             |
+| Procedure             | Type         | Input              | Output         | Notes                                                    |
+| --------------------- | ------------ | ------------------ | -------------- | -------------------------------------------------------- |
+| `users.getUsers`      | Query        | None               | Array of users | Reads users through the configured repository.           |
+| `users.createUser`    | Mutation     | `createUserSchema` | User           | Creates a user and rejects duplicate email addresses.    |
+| `users.updateUser`    | Mutation     | `updateUserSchema` | User           | Updates a user and rejects missing or duplicate records. |
+| `users.deleteUser`    | Mutation     | `deleteUserSchema` | User           | Deletes a user and rejects missing records.              |
+| `users.onUserCreated` | Subscription | None               | User stream    | Streams newly created users to subscribed clients.       |
+| `users.onUserUpdated` | Subscription | None               | User stream    | Streams updated users to subscribed clients.             |
+| `users.onUserDeleted` | Subscription | None               | User stream    | Streams deleted users to subscribed clients.             |
 
 ## Shared Contracts
 
@@ -64,15 +74,15 @@ sequenceDiagram
     participant TRPC as "tRPC client"
     participant Router as "nestjs-trpc router"
     participant Service as "UsersService"
-    participant DB as "PostgreSQL"
+    participant Repo as "UsersRepository"
 
     UI->>Query: create, update, delete, or load users
-    Query->>TRPC: call example procedure
+    Query->>TRPC: call users procedure
     TRPC->>Router: HTTP request to /api/trpc
     Router->>Router: validate with shared Zod schema
     Router->>Service: call service method
-    Service->>DB: Drizzle query
-    DB-->>Service: rows
+    Service->>Repo: repository query
+    Repo-->>Service: users
     Service-->>Router: typed result
     Router-->>TRPC: response
     TRPC-->>Query: cached data

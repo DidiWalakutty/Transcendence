@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TRPCModule } from 'nestjs-trpc';
 import superjson from 'superjson';
 import { CacheModule } from '@nestjs/cache-manager';
@@ -7,61 +8,73 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule, seconds } from '@nestjs/throttler';
 import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import { createKeyv } from '@keyv/redis';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ExampleRouter } from './trpc.router';
-import { EventsModule } from './events/events.module';
+import { environment, environmentFilePaths } from './config/environment';
+import { HealthModule } from './health/health.module';
 import { UsersModule } from './users/users.module';
-import { getNumber, getRedisUrl } from './config/config.utils';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: [
-        'apps/backend/.env',
-        '.env',
-        'apps/backend/.env.development',
-        '.env.development',
-      ],
+      cache: true,
+      envFilePath: environmentFilePaths,
       isGlobal: true,
+      validate: () => environment,
     }),
     CacheModule.registerAsync({
       isGlobal: true,
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        ttl: getNumber(config, 'CACHE_TTL_MS', 30_000),
-        stores: [
-          createKeyv(getRedisUrl(config), {
-            namespace: 'ft_transcendence:cache',
-          }),
-        ],
-      }),
+      useFactory: (config: ConfigService) => {
+        const useFixtures = config.getOrThrow<boolean>('DEV_FIXTURES');
+
+        return {
+          ttl: config.getOrThrow<number>('CACHE_TTL_MS'),
+          ...(useFixtures
+            ? {}
+            : {
+                stores: [
+                  createKeyv(config.getOrThrow<string>('REDIS_URL'), {
+                    namespace: 'ft_transcendence:cache',
+                  }),
+                ],
+              }),
+        };
+      },
     }),
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        skipIf: () => config.get<string>('NODE_ENV') === 'test',
-        storage: new ThrottlerStorageRedisService(getRedisUrl(config)),
-        throttlers: [
-          {
-            name: 'default',
-            ttl: seconds(getNumber(config, 'THROTTLE_TTL_SECONDS', 60)),
-            limit: getNumber(config, 'THROTTLE_LIMIT', 100),
-          },
-        ],
-      }),
+      useFactory: (config: ConfigService) => {
+        const useFixtures = config.getOrThrow<boolean>('DEV_FIXTURES');
+
+        return {
+          skipIf: () => config.get<string>('NODE_ENV') === 'test',
+          ...(useFixtures
+            ? {}
+            : {
+                storage: new ThrottlerStorageRedisService(config.getOrThrow<string>('REDIS_URL')),
+              }),
+          throttlers: [
+            {
+              name: 'default',
+              ttl: seconds(config.getOrThrow<number>('THROTTLE_TTL_SECONDS')),
+              limit: config.getOrThrow<number>('THROTTLE_LIMIT'),
+            },
+          ],
+        };
+      },
     }),
-    EventsModule,
-    UsersModule,
+    EventEmitterModule.forRoot(),
+    HealthModule.register({
+      useFixtures: environment.DEV_FIXTURES,
+    }),
+    UsersModule.register({
+      persistence: environment.DEV_FIXTURES ? 'fixtures' : 'database',
+    }),
     TRPCModule.forRoot({
       basePath: '/api/trpc',
       transformer: superjson,
     }),
   ],
-  controllers: [AppController],
   providers: [
-    AppService,
-    ExampleRouter,
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,

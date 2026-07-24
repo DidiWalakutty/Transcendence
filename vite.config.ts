@@ -51,6 +51,16 @@ export default defineConfig({
         command: 'vp run -w repo:services:setup && vp run -w repo:trpc:generate',
         cache: false,
       },
+      'repo:dev:fixtures': {
+        command:
+          'DEV_FIXTURES=true vp run --filter @repo/backend --filter @repo/frontend --fail-if-no-match --parallel dev',
+        dependsOn: ['repo:dev:fixtures:prepare'],
+        cache: false,
+      },
+      'repo:dev:fixtures:prepare': {
+        command: 'vp run -w repo:trpc:generate && vp run -w repo:frontend:generate',
+        cache: false,
+      },
       'repo:deploy': {
         command: 'docker compose up --build',
         cache: false,

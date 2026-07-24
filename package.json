@@ -9,6 +9,7 @@
     "dev": "vp run -w repo:dev",
     "dev:frontend": "vp run -w repo:dev:frontend",
     "dev:backend": "vp run -w repo:dev:backend",
+    "dev:fixtures": "vp run -w repo:dev:fixtures",
     "deploy": "vp run -w repo:deploy",
     "deploy:detached": "vp run -w repo:deploy:detached",
     "services:setup": "vp run -w repo:services:setup",

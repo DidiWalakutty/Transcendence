@@ -9,7 +9,8 @@ Before cloning the repo, make sure you have the following installed on your mach
 - [VSCode](https://code.visualstudio.com/)
 - [Docker](https://www.docker.com/)
 
-> **Codam machines:** Nix cannot be installed with root. Use [nix-portable](#codam-machines) instead.
+> **No sudo access on Linux:** Use [nix-portable](#install-nix-without-sudo-linux)
+> instead. This also applies to Codam machines.
 
 ---
 
@@ -83,49 +84,91 @@ These are Bun's script shorthand for the root `package.json` scripts (`bun dev` 
 
 ---
 
-## Codam machines
+## Install Nix without sudo (Linux)
 
-Codam machines do not allow root access, so Nix must be installed via nix-portable.
+[nix-portable](https://github.com/DavHau/nix-portable) provides a rootless,
+installation-free Nix environment. It supports `x86_64` and `aarch64` Linux
+systems and enables `nix-command` and flakes by default. It does not support
+macOS.
 
-**1. Download nix-portable to goinfre:**
+**1. Download `nix-portable` to a user-writable directory:**
 
 ```bash
-curl -L https://github.com/DavHau/nix-portable/releases/latest/download/nix-portable-x86_64 \
-  -o /goinfre/$USER/nix-portable
-chmod +x /goinfre/$USER/nix-portable
+mkdir -p "$HOME/.local/bin"
+curl -L "https://github.com/DavHau/nix-portable/releases/latest/download/nix-portable-$(uname -m)" \
+  -o "$HOME/.local/bin/nix-portable"
+chmod +x "$HOME/.local/bin/nix-portable"
 ```
 
-**2. Add an alias** (add to `~/.zshrc` or `~/.bashrc`):
+**2. Add it to your shell configuration:**
+
+Add the following to `~/.zshrc` or `~/.bashrc`:
 
 ```bash
-export NIX_PORTABLE_STORE="$HOME/.nix-portable"
-alias nix='/goinfre/$USER/nix-portable nix'
+export PATH="$HOME/.local/bin:$PATH"
+alias nix='nix-portable nix'
 ```
 
+Reload your shell:
+
 ```bash
-source ~/.zshrc
+source "$HOME/.zshrc" # Use .bashrc when running Bash
 ```
 
-**4. Enter the dev environment:**
+**3. Verify the installation:**
 
 ```bash
+nix --version
+```
+
+**4. Clone the repository and enter the development environment:**
+
+```bash
+git clone https://github.com/milandekruijf/ft_transcendence.git
+cd ft_transcendence
 nix develop
 ```
+
+The first invocation creates the portable Nix store in `~/.nix-portable`.
+
+### Codam machines and limited home directories
+
+If your home directory has limited storage, place both the executable and its
+state in another user-writable location. On Codam machines, `/goinfre/$USER` is
+suitable:
+
+```bash
+mkdir -p "/goinfre/$USER/nix-portable"
+curl -L "https://github.com/DavHau/nix-portable/releases/latest/download/nix-portable-$(uname -m)" \
+  -o "/goinfre/$USER/nix-portable/nix-portable"
+chmod +x "/goinfre/$USER/nix-portable/nix-portable"
+```
+
+Add this configuration to `~/.zshrc` or `~/.bashrc`:
+
+```bash
+export NP_LOCATION="/goinfre/$USER/nix-portable/state"
+alias nix="/goinfre/$USER/nix-portable/nix-portable nix"
+```
+
+Reload the shell and run `nix develop` from the repository as described above.
 
 ---
 
 ## Troubleshooting
 
-**On MacOS you may encounter this error regarding permissions of a node module**
+**`nestjs-trpc` reports an executable-permission error:**
 
 ```
 Failed to execute nestjs-trpc CLI: spawnSync <repo-root>/node_modules/.bun/nestjs-trpc@2.10.0+4027ee5bbcdb762b/node_modules/nestjs-trpc/native/aarch64-apple-darwin/nestjs-trpc EACCES
 ```
 
-Make the file executable:
+The `nix develop` shell fixes the permissions automatically after installing
+dependencies. Re-enter the shell first. If dependencies were installed outside
+the Nix shell, repair all bundled Unix binaries manually:
 
-```
-chmod +x node_modules/.bun/nestjs-trpc@*/node_modules/nestjs-trpc/native/aarch64-apple-darwin/nestjs-trpc
+```bash
+chmod +x node_modules/.bun/nestjs-trpc@*/node_modules/nestjs-trpc/native/*/nestjs-trpc
 ```
 
 **`flake.nix` not found error:**

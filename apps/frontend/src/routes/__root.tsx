@@ -14,6 +14,9 @@ import type { QueryClient } from '@tanstack/react-query';
 import type { AppRouter } from '@repo/schemas/trpc';
 import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { Footer } from '@/components/Footer';
+import { Navbar } from '@/components/navigation/Navbar';
+import { buttonVariants } from '@/components/ui/button';
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -40,7 +43,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'Eventra',
       },
       {
         name: 'theme-color',
@@ -58,8 +61,26 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
   }),
+  notFoundComponent: NotFoundPage,
   shellComponent: RootDocument,
 });
+
+function NotFoundPage() {
+  return (
+    <section className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col items-center justify-center gap-6 px-6 py-16 text-center">
+      <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">404</p>
+      <div className="grid gap-3">
+        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">Page not found</h1>
+        <p className="text-muted-foreground">
+          The page you are looking for does not exist or may have moved.
+        </p>
+      </div>
+      <Link to="/" className={buttonVariants({ size: 'lg' })}>
+        Back to home
+      </Link>
+    </section>
+  );
+}
 
 function PwaRegistration() {
   useEffect(() => {
@@ -88,23 +109,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <PwaRegistration />
         <TooltipProvider>
           <div className="flex min-h-screen flex-col">
-            <div className="flex-1">{children}</div>
-            <footer className="border-t border-border/70 bg-background/70 px-6 py-5 backdrop-blur">
-              <nav
-                aria-label="Legal"
-                className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground"
-              >
-                <span>ft_transcendence</span>
-                <div className="flex gap-4">
-                  <Link to="/privacy" className="transition-colors hover:text-foreground">
-                    Privacy Policy
-                  </Link>
-                  <Link to="/terms" className="transition-colors hover:text-foreground">
-                    Terms of Service
-                  </Link>
-                </div>
-              </nav>
-            </footer>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
           </div>
         </TooltipProvider>
         <TanStackDevtools

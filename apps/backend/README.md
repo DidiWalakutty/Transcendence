@@ -16,15 +16,18 @@ This app owns the HTTP server, tRPC router, database access, backend cache, thro
 
 ## Important Files
 
-| Path                                                       | Purpose                                                                      |
-| ---------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| [src/main.ts](./src/main.ts)                               | Starts the NestJS application on `PORT` or `3001`.                           |
-| [src/app.module.ts](./src/app.module.ts)                   | Wires config, Redis-backed cache, throttling, local events, users, and tRPC. |
-| [src/trpc.router.ts](./src/trpc.router.ts)                 | Defines the current `example` tRPC router.                                   |
-| [src/users/users.service.ts](./src/users/users.service.ts) | Handles user persistence, cache invalidation, and user events.               |
-| [src/database](./src/database)                             | Provides the Drizzle database connection.                                    |
-| [drizzle](./drizzle)                                       | Stores generated SQL migrations and Drizzle metadata.                        |
-| [drizzle.config.ts](./drizzle.config.ts)                   | Drizzle Kit configuration.                                                   |
+| Path                                                       | Purpose                                                                       |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [src/main.ts](./src/main.ts)                               | Starts the validated NestJS application and enables graceful shutdown.        |
+| [src/app.module.ts](./src/app.module.ts)                   | Wires configuration, cache, throttling, events, health, users, and tRPC.      |
+| [src/config/environment.ts](./src/config/environment.ts)   | Loads and validates backend environment variables from stable absolute paths. |
+| [src/health](./src/health)                                 | Exposes Terminus readiness checks for PostgreSQL and Redis.                   |
+| [src/users/users.router.ts](./src/users/users.router.ts)   | Defines the `users` tRPC router.                                              |
+| [src/users/users.service.ts](./src/users/users.service.ts) | Handles cache invalidation and user events around repository operations.      |
+| [src/users/repositories](./src/users/repositories)         | Provides PostgreSQL and in-memory implementations of the user repository.     |
+| [src/database](./src/database)                             | Owns the Drizzle connection pool and closes it during application shutdown.   |
+| [drizzle](./drizzle)                                       | Stores generated SQL migrations and Drizzle metadata.                         |
+| [drizzle.config.ts](./drizzle.config.ts)                   | Drizzle Kit configuration.                                                    |
 
 ## Common Commands
 
@@ -32,6 +35,7 @@ Run commands from the repository root:
 
 ```bash
 vp run dev:backend
+vp run dev:fixtures
 vp run test:backend
 vp run test:backend:e2e
 vp run check:backend
