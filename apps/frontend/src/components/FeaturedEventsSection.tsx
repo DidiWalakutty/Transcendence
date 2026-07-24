@@ -1,4 +1,4 @@
-import { EventCard } from '@/components/EventCard';
+import { EventCard } from '@/components/events/EventCard';
 import placeholderEvent from '@/assets/placeholder_event.png';
 
 {
