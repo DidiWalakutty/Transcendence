@@ -25,11 +25,7 @@
                       pkgs.openssh
                       pkgs.mkcert
                       pkgs.nodejs
-                      pkgs.direnv
-                    ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
-                      pkgs.autoPatchelfHook
-                      pkgs.glibc
-                      pkgs.stdenv.cc.cc.lib
+                      pkgs.patchelf
                     ];
         shellHook = ''
           echo "🚀 ft_transcendence dev environment"
@@ -46,11 +42,9 @@
           echo "  bun db:migrate   - Run database migrations"
           echo "  bun test         - Run all tests"
           echo ""
-          bun install
-          ${pkgs.lib.optionalString pkgs.stdenv.isLinux ''
-            autoPatchelf -- \
-              apps/backend/node_modules/nestjs-trpc/native/${pkgs.stdenv.hostPlatform.config}/nestjs-trpc
-          ''}
+          if [ -d node_modules ]; then
+            bash scripts/fix-native-binaries.sh
+          fi
         '';
         };
       }

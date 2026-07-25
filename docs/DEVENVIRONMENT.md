@@ -29,6 +29,7 @@ Add this to `~/.config/nix/nix.conf` (create the file if it doesn't exist):
 
 ```
 experimental-features = flakes nix-command
+sandbox = false
 ```
 
 ---
