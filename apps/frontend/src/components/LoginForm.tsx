@@ -37,27 +37,30 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-
-                  <Link
-                    to="/forgot-password"
-                    className="ml-auto text-sm text-muted-foreground hover:text-primary"
-                  >
-                    Forgot Password?
-                  </Link>
                 </div>
 
                 <Input id="password" type="password" placeholder="********" required />
+                <Link
+                  to="/forgot-password"
+                  className="text-right ml-auto text-sm text-muted-foreground hover:text-primary"
+                >
+                  Forgot Password?
+                </Link>
               </Field>
 
               <Field>
-                <Button type="submit">Login</Button>
+                <div className="flex flex-col items-center gap-4">
+                  <Button className="px-15" type="submit">
+                    Login
+                  </Button>
 
-                <FieldDescription className="text-center">
-                  Don't have an account?{' '}
-                  <Link to="/register" className="underline underline-offset-4">
-                    Sign up
-                  </Link>
-                </FieldDescription>
+                  <FieldDescription className="text-center">
+                    Don't have an account?{' '}
+                    <Link to="/create-account" className="underline underline-offset-4">
+                      Sign up
+                    </Link>
+                  </FieldDescription>
+                </div>
               </Field>
             </FieldGroup>
           </form>
