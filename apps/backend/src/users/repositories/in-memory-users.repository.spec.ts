@@ -20,6 +20,7 @@ describe('InMemoryUsersRepository', () => {
     const created = await repository.create({
       name: 'Fixture User',
       email: 'fixture@example.com',
+      username: 'ada_lovelace',
     });
 
     await expect(
@@ -27,6 +28,7 @@ describe('InMemoryUsersRepository', () => {
         id: created.id,
         name: 'Updated Fixture',
         email: 'updated@example.com',
+        username: 'ada_lovelace',
       }),
     ).resolves.toMatchObject({
       id: created.id,
@@ -46,6 +48,7 @@ describe('InMemoryUsersRepository', () => {
       repository.create({
         name: 'Duplicate User',
         email: 'ada@example.com',
+        username: 'ada_lovelace',
       }),
     ).rejects.toBeInstanceOf(UserEmailAlreadyExistsError);
   });
