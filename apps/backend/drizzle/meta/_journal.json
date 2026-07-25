@@ -15,6 +15,13 @@
       "when": 1784986212648,
       "tag": "0001_long_black_tom",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1784993697016,
+      "tag": "0002_parched_iceman",
+      "breakpoints": true
     }
   ]
 }
