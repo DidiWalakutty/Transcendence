@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 
 import { CategoryCard } from './CategoryCard';
+import * as m from '@/@generated/paraglide/messages';
 
 export function CategorySection() {
   return (
@@ -43,43 +44,43 @@ export function CategorySection() {
         >
           <CategoryCard
             icon={<Activity className="size-8 text-brand-primary 2xl:size-10" />}
-            title="Music"
+            title={m.category_music()}
             href="/events/music"
           />
 
           <CategoryCard
             icon={<Palette className="size-8 text-brand-primary 2xl:size-10" />}
-            title="Culture"
+            title={m.category_culture()}
             href="/events/culture"
           />
 
           <CategoryCard
             icon={<Utensils className="size-8 text-brand-primary 2xl:size-10" />}
-            title="Food"
+            title={m.category_food()}
             href="/events/food"
           />
 
           <CategoryCard
             icon={<Dices className="size-8 text-brand-primary 2xl:size-10" />}
-            title="Games"
+            title={m.category_games()}
             href="/events/games"
           />
 
           <CategoryCard
             icon={<MicVocal className="size-8 text-brand-primary 2xl:size-10" />}
-            title="Talks"
+            title={m.category_talks()}
             href="/events/talks"
           />
 
           <CategoryCard
             icon={<Scissors className="size-8 text-brand-primary 2xl:size-10" />}
-            title="Workshops"
+            title={m.category_workshops()}
             href="/events/workshops"
           />
 
           <CategoryCard
             icon={<InfinityIcon className="size-8 text-brand-primary 2xl:size-10" />}
-            title="All Events"
+            title={m.category_all_events()}
             href="/events"
           />
         </div>
