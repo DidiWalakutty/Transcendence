@@ -1,5 +1,6 @@
 import { EventCard } from '@/components/EventCard';
 import { events } from '@/data/events';
+import * as m from '@/@generated/paraglide/messages';
 
 export function FeaturedEventsSection() {
   // Only show the first 5 featured events
@@ -27,11 +28,11 @@ export function FeaturedEventsSection() {
       >
         {/* Section Header */}
         <div className="mb-12 text-center">
-          <h2 className="text-6xl font-bold text-text-primary 2xl:text-7xl">Featured Events</h2>
+          <h2 className="text-6xl font-bold text-text-primary 2xl:text-7xl">
+            {m.featured_events_title()}
+          </h2>
 
-          <p className="mt-2 text-text-muted text-lg 2xl:text-xl">
-            Discover exciting events happening near you.
-          </p>
+          <p className="mt-2 text-text-muted text-lg 2xl:text-xl">{m.featured_events_subtitle()}</p>
         </div>
 
         {/* Event Cards */}
