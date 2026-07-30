@@ -20,7 +20,7 @@ Earlier files take precedence when the same variable is defined.
 | `NODE_ENV`             | No                         | `development`                                                         | Selects development, production, or test behavior.                      |
 | `DATABASE_URL`         | Unless `DEV_FIXTURES=true` | `postgres://transcendence:transcendence@localhost:5432/transcendence` | PostgreSQL connection string used by the backend and Drizzle Kit.       |
 | `PORT`                 | No                         | `3001`                                                                | Backend HTTP port.                                                      |
-| `REDIS_URL`            | No                         | `redis://localhost:6379`                                              | Redis connection string for backend cache and throttling storage.       |
+| `REDIS_URL`            | No                         | `redis://localhost:6380`                                              | Redis connection string for backend cache and throttling storage.       |
 | `CACHE_TTL_MS`         | No                         | `30000`                                                               | Default backend cache TTL in milliseconds.                              |
 | `THROTTLE_TTL_SECONDS` | No                         | `60`                                                                  | Rate-limit window length in seconds.                                    |
 | `THROTTLE_LIMIT`       | No                         | `100`                                                                 | Maximum requests allowed during the throttle window.                    |
