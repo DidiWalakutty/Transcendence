@@ -1,0 +1,37 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "home_page": "Startpagina",
+  "about_page": "Over ons",
+  "example_message": "Welkom in je i18n app.",
+  "language_label": "Taal",
+  "current_locale": "Huidige taal: {locale}",
+  "learn_router": "Leer Paraglide JS",
+
+  "hero_title_1": "Ontdek leuke evenementen",
+  "hero_title_2": "in jouw buurt",
+  "hero_subtitle": "Vind concerten, workshops, conferenties, festivals en meer, allemaal op één plek.",
+  "hero_explore_button": "Bekijk events",
+  "hero_create_button": "Creëer event",
+
+  "category_music": "Muziek",
+  "category_culture": "Cultuur",
+  "category_food": "Eten",
+  "category_games": "Spellen",
+  "category_talks": "Lezingen",
+  "category_workshops": "Workshops",
+  "category_all_events": "Alle Events",
+
+  "featured_events_title": "Uitgelichte evenementen",
+  "featured_events_subtitle": "Ontdek leuke evenementen die in je buurt plaatsvinden.",
+
+  "view_event_button": "Bekijk Event",
+
+  "how_it_works_title": "Ontdek. Registreer. Geniet.",
+  "how_it_works_subtitle": "Je volgende event vinden is nog nooit zo makkelijk geweest.",
+  "how_it_works_discover_title": "Ontdek",
+  "how_it_works_discover_description": "Vind events die overeenkomen met je interesses.",
+  "how_it_works_register_title": "Registreer",
+  "how_it_works_register_description": "Meld je aan voor events en verzeker je plek.",
+  "how_it_works_enjoy_title": "Geniet",
+  "how_it_works_enjoy_description": "Neem deel aan het event en geniet van de ervaring."
+}
