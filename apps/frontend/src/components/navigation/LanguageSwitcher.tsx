@@ -7,6 +7,7 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Languages } from 'lucide-react';
+import { setLocale } from '@/@generated/paraglide/runtime';
 
 export function LanguageSwitcher() {
   return (
@@ -17,11 +18,8 @@ export function LanguageSwitcher() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent>
-        <DropdownMenuItem>English</DropdownMenuItem>
-
-        <DropdownMenuItem>Nederlands</DropdownMenuItem>
-
-        <DropdownMenuItem>Español</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setLocale('en')}>English</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setLocale('nl')}>Nederlands</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
