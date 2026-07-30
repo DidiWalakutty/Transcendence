@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1781721224646,
-      "tag": "0000_big_justin_hammer",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1784986212648,
-      "tag": "0001_long_black_tom",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1784993697016,
-      "tag": "0002_parched_iceman",
+      "when": 1785417446949,
+      "tag": "0000_shiny_talon",
       "breakpoints": true
     }
   ]
