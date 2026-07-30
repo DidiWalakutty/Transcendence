@@ -1,5 +1,6 @@
 import heroImage from '@/assets/hero_night_2.png';
 import { Button } from '@/components/ui/button';
+import * as m from '@/@generated/paraglide/messages';
 
 export function Hero() {
   return (
@@ -60,9 +61,9 @@ export function Hero() {
 						2xl:text-6xl
 					"
         >
-          Discover exciting events
+          {m.hero_title_1()}
           <br />
-          near you
+          {m.hero_title_2()}
         </h1>
 
         <p
@@ -74,7 +75,7 @@ export function Hero() {
 						2xl:text-xl
 					"
         >
-          Find concerts, workshops, conferences, festivals and more, all in one place.
+          {m.hero_subtitle()}
         </p>
 
         <div
@@ -85,7 +86,7 @@ export function Hero() {
 					"
         >
           <Button size="hero">
-            <a href="/events">Explore Events</a>
+            <a href="/events">{m.hero_explore_button()}</a>
           </Button>
 
           <Button
@@ -98,7 +99,7 @@ export function Hero() {
 							hover:text-text-primary
 							"
           >
-            <a href="/create-event">Create Event</a>
+            <a href="/create-event">{m.hero_create_button()}</a>
           </Button>
         </div>
       </div>
