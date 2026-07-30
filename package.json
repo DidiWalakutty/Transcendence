@@ -47,6 +47,9 @@
     "staged": "vp run -w repo:staged",
     "prepare": "vp config --no-agent"
   },
+  "dependencies": {
+    "sync": "^0.2.5"
+  },
   "devDependencies": {
     "@repo/tsconfig": "workspace:*",
     "@types/bun": "latest",
