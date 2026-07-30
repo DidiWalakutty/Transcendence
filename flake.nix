@@ -17,35 +17,46 @@
       {
         devShells.default = pkgs.mkShell {
           packages = [
-                      pkgs.bun
-                      pkgs.git
-                      pkgs.cacert
-                      pkgs.curl
-                      pkgs.gnupg
-                      pkgs.openssh
-                      pkgs.mkcert
-                      pkgs.nodejs
-                      pkgs.patchelf
-                    ];
-        shellHook = ''
-          echo "🚀 ft_transcendence dev environment"
-          echo ""
-          echo "Bun: $(bun --version)"
-          echo "Node: $(node --version)"
-          echo ""
-          echo "Some useful commands:"
-          echo "  bun dev          - Start full dev server"
-          echo "  bun dev:frontend - Start frontend only"
-          echo "  bun dev:backend  - Start backend only"
-          echo "  bun check        - Run type checks and linting"
-          echo "  bun fmt:fix      - Format all code"
-          echo "  bun db:migrate   - Run database migrations"
-          echo "  bun test         - Run all tests"
-          echo ""
-          if [ -d node_modules ]; then
-            bash scripts/fix-native-binaries.sh
-          fi
-        '';
+            pkgs.bun
+            pkgs.git
+            pkgs.cacert
+            pkgs.curl
+            pkgs.gnupg
+            pkgs.openssh
+            pkgs.mkcert
+            pkgs.nodejs
+            pkgs.direnv
+          ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
+            pkgs.autoPatchelfHook
+            pkgs.glibc
+            pkgs.stdenv.cc.cc.lib
+          ];
+
+          shellHook = ''
+            echo "🚀 ft_transcendence dev environment"
+            echo ""
+            echo "Bun: $(bun --version)"
+            echo "Node: $(node --version)"
+            echo ""
+            echo "Some useful commands:"
+            echo "  bun dev          - Start full dev server"
+            echo "  bun dev:frontend - Start frontend only"
+            echo "  bun dev:backend  - Start backend only"
+            echo "  bun check        - Run type checks and linting"
+            echo "  bun fmt:fix      - Format all code"
+            echo "  bun db:migrate   - Run database migrations"
+            echo "  bun test         - Run all tests"
+            echo ""
+
+            bun install
+
+            ${pkgs.lib.optionalString pkgs.stdenv.isLinux ''
+              echo "🔧 Patching nestjs-trpc native binary..."
+
+              autoPatchelf -- \
+                node_modules/.bun/*/node_modules/nestjs-trpc/native/${pkgs.stdenv.hostPlatform.config}/nestjs-trpc || true
+            ''}
+          '';
         };
       }
     );
