@@ -130,16 +130,16 @@ export function EventCard({ image, title, category, location, date }: EventCardP
         {/* Category */}
         <p
           className="
-						inline-block
-						rounded-full
-						bg-brand-primary/10
-						px-3
-						py-1
-						text-center
-						text-sm
-						font-medium
-						text-brand-primary
-					"
+					inline-block
+					rounded-full
+					bg-brand-primary/10
+					px-3
+					py-1
+					text-center
+					text-sm
+					font-medium
+					text-brand-primary
+				"
         >
           {category}
         </p>
@@ -161,12 +161,12 @@ export function EventCard({ image, title, category, location, date }: EventCardP
         {/* Location */}
         <div
           className="
-						mt-3
-						flex
-						items-center
-						gap-2
-						text-text-muted
-					"
+					mt-3
+					flex
+					items-center
+					gap-2
+					text-text-muted
+				"
         >
           <MapPin className="h-4 w-4" />
           <span>{location}</span>
@@ -175,12 +175,12 @@ export function EventCard({ image, title, category, location, date }: EventCardP
         {/* Date */}
         <div
           className="
-						mt-1
-						flex
-						items-center
-						gap-2
-						text-text-muted
-					"
+					mt-1
+					flex
+					items-center
+					gap-2
+					text-text-muted
+				"
         >
           <Calendar className="h-4 w-4" />
           <span>{formattedDate}</span>
