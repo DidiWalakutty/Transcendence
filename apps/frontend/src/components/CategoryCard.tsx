@@ -33,7 +33,7 @@ export function CategoryCard({ icon, title, href }: CategoryCardProps) {
 
 				hover:-translate-y-1
 				hover:shadow-lg
-			"
+				"
     >
       {/* Icon */}
       <div
@@ -50,7 +50,7 @@ export function CategoryCard({ icon, title, href }: CategoryCardProps) {
 
 					rounded-full
 					bg-surface-page
-				"
+					"
       >
         {icon}
       </div>
@@ -62,7 +62,7 @@ export function CategoryCard({ icon, title, href }: CategoryCardProps) {
 					font-medium
 					text-text-primary
 					2xl:text-xl
-				"
+					"
       >
         {title}
       </p>

@@ -11,20 +11,20 @@ export function FeaturedEventsSection() {
   return (
     <section
       className="
-				bg-surface-white
-				pt-24
-				pb-32
-				2xl:pt-32
-				2xl:pb-48
-			"
+					bg-surface-white
+					pt-24
+					pb-32
+					2xl:pt-32
+					2xl:pb-48
+					"
     >
       <div
         className="
-					mx-auto
-					max-w-6xl
-					2xl:max-w-[1600px]
-					px-6
-				"
+						mx-auto
+						max-w-6xl
+						2xl:max-w-[1600px]
+						px-6
+						"
       >
         {/* Section Header */}
         <div className="mb-12 text-center">
@@ -38,13 +38,13 @@ export function FeaturedEventsSection() {
         {/* Event Cards */}
         <div
           className="
-						grid
-						grid-cols-1
-						gap-6
-						md:grid-cols-2
-						lg:grid-cols-3
-						2xl:grid-cols-4
-					"
+							grid
+							grid-cols-1
+							gap-6
+							md:grid-cols-2
+							lg:grid-cols-3
+							2xl:grid-cols-4
+							"
         >
           {displayedEvents.map((event) => (
             <EventCard

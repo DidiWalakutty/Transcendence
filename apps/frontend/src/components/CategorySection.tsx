@@ -15,9 +15,9 @@ export function CategorySection() {
   return (
     <section
       className="
-					bg-brand-primary/15
-					py-14
-					"
+			bg-brand-primary/15
+			py-14
+			"
     >
       <div
         className="
@@ -40,7 +40,7 @@ export function CategorySection() {
 						lg:grid-cols-4
 						2xl:grid-cols-7
 						justify-items-center
-				>	"
+						"
         >
           <CategoryCard
             icon={<Activity className="size-8 text-brand-primary 2xl:size-10" />}

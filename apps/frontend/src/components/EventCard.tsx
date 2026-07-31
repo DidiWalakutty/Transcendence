@@ -14,13 +14,13 @@ type EventCardProps = {
 export function EventCard({ image, title, category, location, date }: EventCardProps) {
   const eventDate = new Date(date);
 
-  // Get current language from Paraglide for date formatting
   const localeMap = {
     en: 'en-GB',
     nl: 'nl-NL',
     es: 'es-ES',
   };
 
+  // Get current language from Paraglide for date formatting
   const locale = localeMap[getLocale()];
 
   const day = new Intl.DateTimeFormat(locale, {
@@ -52,7 +52,7 @@ export function EventCard({ image, title, category, location, date }: EventCardP
 					duration-200
 					hover:-translate-y-1
 					hover:shadow-xl
-				"
+					"
     >
       {/* Event Image */}
       <div className="relative">
@@ -60,20 +60,20 @@ export function EventCard({ image, title, category, location, date }: EventCardP
           src={image}
           alt={title}
           className="
-							h-52
-							w-full
-							object-cover
+						h-52
+						w-full
+						object-cover
 						"
         />
 
         {/* Gradient Overlay */}
         <div
           className="
-							absolute
-							inset-0
-							bg-gradient-to-t
-							from-black/30
-							to-transparent
+						absolute
+						inset-0
+						bg-gradient-to-t
+						from-black/30
+						to-transparent
 						"
         />
 
@@ -92,7 +92,7 @@ export function EventCard({ image, title, category, location, date }: EventCardP
 							py-2
 							shadow-lg
 							backdrop-blur-sm
-						"
+							"
         >
           <p
             className="
@@ -101,7 +101,7 @@ export function EventCard({ image, title, category, location, date }: EventCardP
 								uppercase
 								tracking-wide
 								text-brand-primary
-							"
+								"
           >
             {month}
           </p>
@@ -112,7 +112,7 @@ export function EventCard({ image, title, category, location, date }: EventCardP
 								font-bold
 								leading-none
 								text-text-primary
-							"
+								"
           >
             {day}
           </p>
@@ -133,7 +133,7 @@ export function EventCard({ image, title, category, location, date }: EventCardP
 							text-sm
 							font-medium
 							text-brand-primary
-						"
+							"
         >
           {category}
         </p>
@@ -147,7 +147,7 @@ export function EventCard({ image, title, category, location, date }: EventCardP
 							text-xl
 							font-bold
 							2xl:text-2xl
-						"
+							"
         >
           {title}
         </h3>
@@ -160,7 +160,7 @@ export function EventCard({ image, title, category, location, date }: EventCardP
 							items-center
 							gap-2
 							text-text-muted
-						"
+							"
         >
           <MapPin className="h-4 w-4" />
           <span>{location}</span>
@@ -174,7 +174,7 @@ export function EventCard({ image, title, category, location, date }: EventCardP
 							items-center
 							gap-2
 							text-text-muted
-						"
+							"
         >
           <Calendar className="h-4 w-4" />
           <span>{formattedDate}</span>

@@ -6,14 +6,14 @@ export function Hero() {
   return (
     <section
       className="
-				relative
-				flex
-				h-[500px]
-				2xl:h-[650px]
-				flex-col
-				items-start
-				justify-start
-				overflow-hidden
+			relative
+			flex
+			h-[500px]
+			2xl:h-[650px]
+			flex-col
+			items-start
+			justify-start
+			overflow-hidden
 			"
     >
       {/* Hero Image */}
@@ -27,7 +27,7 @@ export function Hero() {
 					w-full
 					object-cover
 					object-center
-				"
+					"
       />
 
       {/* Dark overlay */}
@@ -39,27 +39,27 @@ export function Hero() {
 					from-black/60
 					via-black/30
 					to-transparent
-				"
+					"
       />
 
       {/* Content */}
       <div
         className="
-					relative
-					z-10
-					ml-20
-					pt-30
-					max-w-xl
-					text-left
-					text-text-on-image
-				"
+						relative
+						z-10
+						ml-20
+						pt-30
+						max-w-xl
+						text-left
+						text-text-on-image
+						"
       >
         <h1
           className="
-						text-5xl
-						font-bold
-						2xl:text-6xl
-					"
+							text-5xl
+							font-bold
+							2xl:text-6xl
+							"
         >
           {m.hero_title_1()}
           <br />
@@ -68,12 +68,12 @@ export function Hero() {
 
         <p
           className="
-						mt-4
-						max-w-md
-						text-lg
-						text-text-on-image/90
-						2xl:text-xl
-					"
+							mt-4
+							max-w-md
+							text-lg
+							text-text-on-image/90
+							2xl:text-xl
+							"
         >
           {m.hero_subtitle()}
         </p>
@@ -83,7 +83,7 @@ export function Hero() {
 						mt-12
 						flex
 						gap-4
-					"
+						"
         >
           <Button size="hero">
             <a href="/events">{m.hero_explore_button()}</a>
