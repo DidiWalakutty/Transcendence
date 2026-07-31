@@ -5,28 +5,32 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 
+import * as m from '@/@generated/paraglide/messages';
+
 const faqItems = [
   {
-    question: 'What is Eventra?',
-    answer: 'Eventra is a platform where you can discover, register and create events.',
+    question: m.faq_question_1(),
+    answer: m.faq_answer_1(),
   },
   {
-    question: 'How can I find an event?',
-    answer: 'You can use the category or search bar to find events by name, category or location.',
+    question: m.faq_question_2(),
+    answer: m.faq_answer_2(),
   },
   {
-    question: 'Do I need an account to register for an event?',
-    answer:
-      'Yes, you need to create an account to register for events. This allows us to keep track of your registrations and provide a personalized experience.',
+    question: m.faq_question_3(),
+    answer: m.faq_answer_3(),
   },
   {
-    question: 'Can I create my own event?',
-    answer:
-      "Yes, you can create your own event by clicking on the 'Create Event' button and filling out the necessary details.",
+    question: m.faq_question_4(),
+    answer: m.faq_answer_4(),
   },
   {
-    question: 'Are there any fees for attending an event?',
-    answer: 'No, Eventra and its events are completely free!',
+    question: m.faq_question_5(),
+    answer: m.faq_answer_5(),
+  },
+  {
+    question: m.faq_question_6(),
+    answer: m.faq_answer_6(),
   },
 ];
 
@@ -35,10 +39,10 @@ export function FAQSection() {
     <section className="py-24 2xl:py-32">
       <div
         className="
-					mx-auto
-					max-w-4xl 
-					px-6
-					"
+						mx-auto
+						max-w-4xl 
+						px-6
+						"
       >
         {/* Header */}
         <div className="mb-12 text-center">
@@ -50,7 +54,7 @@ export function FAQSection() {
 								2xl:text-6xl
 								"
           >
-            Frequently Asked Questions
+            {m.faq_title()}
           </h2>
 
           <p
@@ -61,7 +65,7 @@ export function FAQSection() {
 								2xl:text-xl
 								"
           >
-            Find answers to common questions about Eventra.
+            {m.faq_subtitle()}
           </p>
         </div>
 
