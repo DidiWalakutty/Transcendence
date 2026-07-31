@@ -10,7 +10,14 @@ type EventListItemProps = {
   description: string;
 };
 
-export function EventListItem({ image, title, category, date, description }: EventListItemProps) {
+export function EventListItem({
+  id: _id,
+  image,
+  title,
+  category,
+  date,
+  description,
+}: EventListItemProps) {
   return (
     <div className="grid max-w-5xl grid-cols-[70px_1fr] gap-6">
       {/* max-w-5xl making it bigger == bigger card*/}
