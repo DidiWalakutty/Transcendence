@@ -10,6 +10,8 @@ type EventListItemProps = {
   description: string;
 };
 
+// id must currently be passed as _id, because it's not hooked up to the backend yet.
+// Temp solution.
 export function EventListItem({
   id: _id,
   image,
