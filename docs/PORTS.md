@@ -11,7 +11,7 @@ Application services run through Vite+ tasks. Infrastructure services are provid
 | `5432` | PostgreSQL | Primary relational database.                    |
 | `6380` | Redis      | Host port for backend cache and throttling.     |
 
-Redis still listens on port `6379` inside the Compose network. The less common
+Redis still listens on port `6380` inside the Compose network. The less common
 host port `6380` avoids conflicts with Redis instances already running on a
 developer's machine. Set `REDIS_PORT` to override it.
 

@@ -12,7 +12,7 @@ config({
 
 export default defineConfig({
   schema: join(__dirname, '../../packages/schemas/src/database.ts'),
-  out: './drizzle',
+  out: join(__dirname, 'drizzle'),
   dialect: 'postgresql',
   dbCredentials: {
     url: process.env.DATABASE_URL!,
