@@ -49,30 +49,30 @@ export function HowItWorksSection() {
               <div
                 key={step.title}
                 className="
-							rounded-2xl
-							border
-							bg-surface-card
-							p-8
-							text-center
-							shadow-md
-							transition-all
-							duration-200
-							hover:-translate-y-1
-							hover:shadow-lg
-							"
+								rounded-2xl
+								border
+								bg-surface-card
+								p-8
+								text-center
+								shadow-md
+								transition-all
+								duration-200
+								hover:-translate-y-1
+								hover:shadow-lg
+								"
               >
                 <div
                   className="
-							mx-auto
-							mb-6
-							flex
-							h-16
-							w-16
-							items-center
-							justify-center
-							rounded-full
-							bg-brand-primary/10
-							"
+										mx-auto
+										mb-6
+										flex
+										h-16
+										w-16
+										items-center
+										justify-center
+										rounded-full
+										bg-brand-primary/10
+										"
                 >
                   <Icon className="h-8 w-8 text-brand-primary" />
                 </div>
