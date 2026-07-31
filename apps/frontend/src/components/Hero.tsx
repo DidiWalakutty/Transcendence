@@ -1,8 +1,12 @@
 import heroImage from '@/assets/hero_night_2.png';
+import { getLocale } from '@/@generated/paraglide/runtime';
+import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import * as m from '@/@generated/paraglide/messages';
 
 export function Hero() {
+  const locale = getLocale();
+
   return (
     <section
       className="
@@ -86,7 +90,9 @@ export function Hero() {
 						"
         >
           <Button size="hero">
-            <a href="/events">{m.hero_explore_button()}</a>
+            <Link to="/$locale/events" params={{ locale }}>
+              {m.button_explore()}
+            </Link>
           </Button>
 
           <Button
@@ -99,7 +105,9 @@ export function Hero() {
 							hover:text-text-primary
 							"
           >
-            <a href="/create-event">{m.hero_create_button()}</a>
+            <Link to="/$locale/create-event" params={{ locale }}>
+              {m.button_create()}
+            </Link>
           </Button>
         </div>
       </div>
