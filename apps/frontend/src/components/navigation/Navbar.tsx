@@ -18,22 +18,22 @@ export function Navbar() {
   return (
     <nav
       className="
-					sticky 
-					top-4 
-					z-50
-					mx-2
-					flex 
-					h-16 
-					2xl:h-20 
-					items-center 
-					justify-between
-					rounded-xl
-					border 
-					border-border-default
-					bg-surface-card
-					px-8
-					shadow-md
-					text-text-primary
+						sticky 
+						top-4 
+						z-50
+						mx-2
+						flex 
+						h-16 
+						2xl:h-20 
+						items-center 
+						justify-between
+						rounded-xl
+						border 
+						border-border-default
+						bg-surface-card
+						px-8
+						shadow-md
+						text-text-primary
 					"
     >
       {/* Logo */}
