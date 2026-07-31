@@ -22,35 +22,33 @@ export function EventListItem({
 }: EventListItemProps) {
   return (
     <div className="grid max-w-5xl grid-cols-[70px_1fr] gap-6">
-      {/* max-w-5xl making it bigger == bigger card*/}
-
       {/* Event Date */}
       <EventDate date={date} />
 
       {/* Event Rectangle */}
       <div
         className="
-					relative
-					rounded-2xl
-					border
-					border-border
-					bg-white
-					p-6
-					shadow-md
-				"
+							relative
+							rounded-2xl
+							border
+							border-border
+							bg-white
+							p-6
+							shadow-md
+						"
       >
         {/* Category */}
         <div className="absolute right-6 top-6">
           <span
             className="
-							rounded-full
-							bg-brand-primary/10
-							px-4
-							py-2
-							text-sm
-							font-medium
-							text-brand-primary
-						"
+									rounded-full
+									bg-brand-primary/10
+									px-4
+									py-2
+									text-sm
+									font-medium
+									text-brand-primary
+								"
           >
             {category}
           </span>
