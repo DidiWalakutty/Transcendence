@@ -3,9 +3,18 @@ import { events } from '@/data/events';
 import * as m from '@/@generated/paraglide/messages';
 
 export function FeaturedEventsSection() {
-  // Only show the first 5 featured events
-  // later, this will be connected with backend and become something like:
-  // const displayedEvents = await getFeaturedEvents()
+  /*
+TODO (Backend Featured Events)
+
+Featured events are currently loaded from mock data.
+
+Once the backend is ready:
+- Fetch featured events from the API (tRPC).
+- The backend determines which events are featured.
+- Pass the event id to EventCard.
+- EventCard will later link to:
+	/$locale/events/$eventId
+*/
   const displayedEvents = events.slice(0, 4);
 
   return (
@@ -38,13 +47,13 @@ export function FeaturedEventsSection() {
         {/* Event Cards */}
         <div
           className="
-							grid
-							grid-cols-1
-							gap-6
-							md:grid-cols-2
-							lg:grid-cols-3
-							2xl:grid-cols-4
-							"
+						grid
+						grid-cols-1
+						gap-6
+						md:grid-cols-2
+						lg:grid-cols-3
+						2xl:grid-cols-4
+						"
         >
           {displayedEvents.map((event) => (
             <EventCard
