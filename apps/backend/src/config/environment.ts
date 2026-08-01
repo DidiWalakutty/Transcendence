@@ -27,7 +27,7 @@ const environmentSchema = z
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     PORT: z.coerce.number().int().min(1).max(65_535).default(3001),
     DATABASE_URL: z.string().url().optional(),
-    REDIS_URL: z.string().url().default('redis://localhost:6380'),
+    REDIS_URL: z.string().url().default('redis://localhost:6379'),
     CACHE_TTL_MS: z.coerce.number().int().positive().default(30_000),
     THROTTLE_TTL_SECONDS: z.coerce.number().int().positive().default(60),
     THROTTLE_LIMIT: z.coerce.number().int().positive().default(100),

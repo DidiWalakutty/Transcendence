@@ -25,7 +25,7 @@ services:
     environment:
       PORT: 3001
       DATABASE_URL: postgres://${POSTGRES_USER:-transcendence}:${POSTGRES_PASSWORD:-transcendence}@postgres:5432/${POSTGRES_DB:-transcendence}
-      REDIS_URL: redis://redis:6380
+      REDIS_URL: redis://redis:6379
     ports:
       - '${BACKEND_PORT:-3001}:3001'
     depends_on:
@@ -57,7 +57,7 @@ services:
     container_name: ft_transcendence_redis
     restart: unless-stopped
     ports:
-      - '${REDIS_PORT:-6380}:6380'
+      - '${REDIS_PORT:-6380}:6379'
     volumes:
       - redis_data:/data
     healthcheck:

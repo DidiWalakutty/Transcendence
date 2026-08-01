@@ -8,7 +8,7 @@ const connectDevcontainerToComposeNetwork =
 const databaseHost = '$(if [ -f /.dockerenv ]; then printf postgres; else printf localhost; fi)';
 const redisHost = '$(if [ -f /.dockerenv ]; then printf redis; else printf localhost; fi)';
 const redisPort =
-  '$(if [ -f /.dockerenv ]; then printf 6380; else printf "${REDIS_PORT:-6380}"; fi)';
+  '$(if [ -f /.dockerenv ]; then printf 6379; else printf "${REDIS_PORT:-6380}"; fi)';
 const devDatabaseUrl = `DATABASE_URL="\${DATABASE_URL:-postgres://transcendence:transcendence@${databaseHost}:5432/transcendence}"`;
 const devRedisUrl = `REDIS_URL="\${REDIS_URL:-redis://${redisHost}:${redisPort}}"`;
 
