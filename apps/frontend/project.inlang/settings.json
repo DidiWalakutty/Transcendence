@@ -8,5 +8,16 @@
   ],
   "plugin.inlang.messageFormat": {
     "pathPattern": "./messages/{locale}.json"
+  },
+  "compilerOptions": {
+    "urlPatterns": [
+      {
+        "pattern": ":protocol://:domain(.*)::port?/:path(.*)?",
+        "localized": [
+          ["en", ":protocol://:domain(.*)::port?/en/:path(.*)?"],
+          ["nl", ":protocol://:domain(.*)::port?/nl/:path(.*)?"]
+        ]
+      }
+    ]
   }
 }
