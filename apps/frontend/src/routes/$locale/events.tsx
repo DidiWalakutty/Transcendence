@@ -3,21 +3,171 @@ import { events } from '@/data/events';
 import { EventListItem } from '@/components/events/EventListItem';
 import { useState } from 'react';
 import * as m from '@/@generated/paraglide/messages';
+import { EventFilters } from '@/components/events/EventFilters';
+import { EventSort } from '@/components/events/EventSort';
 
 export const Route = createFileRoute('/$locale/events')({
   component: EventsPage,
 });
 
 function EventsPage() {
-  // Pagination logic
-  // Needs to be hooked up to database so every refresh stays
-  // on the same page, and so that the number of events per page can be dynamic.
+  /*
+    TODO: Backend integration
+
+    Currently:
+    - Filtering, sorting and pagination happen on the frontend.
+    - Data comes from the static events array.
+
+    Later:
+    - Fetch events from backend/API.
+    - Send filters, sorting and pagination as query parameters.
+    - Backend/database handles the heavy lifting.
+
+    Example future request:
+
+    GET /events?page=2&category=music&sort=upcoming
+
+    Backend returns:
+    - Only requested page.
+    - Already filtered events.
+    - Already sorted events.
+  */
+
+  // ---------------------------------------
+  // Pagination
+  // ---------------------------------------
+
+  /*
+    TODO: Pagination
+
+    Currently:
+    - All events are loaded at once.
+    - Pagination happens client-side using slice().
+
+    Later:
+    - Move pagination to backend.
+    - Fetch only events needed for the current page.
+    - Store current page in URL.
+
+    Example:
+
+    /events?page=2
+
+    Backend handles:
+
+    LIMIT 8 OFFSET 8
+  */
+
   const eventsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(events.length / eventsPerPage);
+  // ---------------------------------------
+  // Filtering
+  // ---------------------------------------
+
+  /*
+    TODO: Filtering
+
+    Currently:
+    - Categories are filtered locally in React.
+    - Uses mock event data.
+
+    Later:
+    - Selected filters should become query parameters.
+    - Database performs filtering.
+
+    Example:
+
+    /events?category=music
+
+    Future filters:
+    - category
+    - date range
+    - location
+  */
+
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const filteredEvents = events.filter((event) => {
+    if (selectedCategories.length === 0) {
+      return true;
+    }
+
+    return selectedCategories.includes(event.category);
+  });
+
+  // ---------------------------------------
+  // Sorting
+  // ---------------------------------------
+
+  /*
+    TODO: Sorting
+
+    Currently:
+    - Sorting state exists locally.
+    - Sorting will temporarily happen on the frontend.
+
+    Later:
+    - Send selectedSort to backend/API.
+    - Backend/database handles ordering.
+
+    Example:
+
+    /events?sort=upcoming
+    /events?sort=popular
+    /events?sort=newest
+
+    Available sorting values:
+
+    upcoming:
+    - Soonest events first.
+    - Uses event date.
+
+    popular:
+    - Most popular events first.
+    - Requires popularity data from backend.
+
+    newest:
+    - Recently created events first.
+    - Requires createdAt field.
+  */
+
+  const [selectedSort, setSelectedSort] = useState('upcoming');
+
+  /*
+    Temporary frontend sorting.
+
+    This will be removed once sorting moves to backend.
+  */
+
+  const sortedEvents = [...filteredEvents].sort((a, b) => {
+    if (selectedSort === 'upcoming') {
+      return new Date(a.date).getTime() - new Date(b.date).getTime();
+    }
+
+    // if (selectedSort === 'newest') {
+    //   return (
+    //     new Date(b.createdAt).getTime() -
+    //     new Date(a.createdAt).getTime()
+    //   );
+    // }
+
+    // if (selectedSort === 'popular') {
+    //   return b.attendees - a.attendees;
+    // }
+
+    return 0;
+  });
+
+  // ---------------------------------------
+  // Displayed events
+  // ---------------------------------------
+
+  const totalPages = Math.ceil(sortedEvents.length / eventsPerPage);
+
   const startIndex = (currentPage - 1) * eventsPerPage;
-  const displayedEvents = events.slice(startIndex, startIndex + eventsPerPage);
+
+  const displayedEvents = sortedEvents.slice(startIndex, startIndex + eventsPerPage);
 
   return (
     <div className="relative min-h-[calc(100vh-180px)] bg-white">
@@ -42,14 +192,40 @@ function EventsPage() {
           <div />
         </div>
 
-        {/* Event List */}
-        <div className="mx-auto mt-12 max-w-[1400px] space-y-8">
-          {displayedEvents.map((event) => (
-            <EventListItem key={event.id} {...event} />
-          ))}
+        {/* Events + Filters */}
+        <div className="mx-auto mt-12 flex max-w-[1600px] gap-8">
+          {/* Event List */}
+          <div className="flex-1 space-y-8">
+            {displayedEvents.map((event) => (
+              <EventListItem key={event.id} {...event} />
+            ))}
+          </div>
+
+          {/* Sidebar */}
+          <div className="relative w-1/4">
+            {/* Sorting */}
+            <div className="absolute -top-16 left-0">
+              <EventSort selectedSort={selectedSort} onSortChange={setSelectedSort} />
+            </div>
+
+            {/* Filters */}
+
+            <EventFilters
+              selectedCategories={selectedCategories}
+              onCategoryChange={(category) => {
+                setSelectedCategories((prev) =>
+                  prev.includes(category)
+                    ? prev.filter((item) => item !== category)
+                    : [...prev, category],
+                );
+              }}
+              onClearFilters={() => setSelectedCategories([])}
+            />
+          </div>
         </div>
 
         {/* Pagination */}
+
         <div className="mt-12 flex justify-center gap-3">
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
