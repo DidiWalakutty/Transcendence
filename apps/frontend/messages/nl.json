@@ -100,5 +100,18 @@
   "login_no_account": "Geen account?",
 
   "login_sign_up": "Creëer een account",
-  "login_continue": "Door door te gaan, ga je akkoord met onze"
+  "login_continue": "Door door te gaan, ga je akkoord met onze",
+
+  "events_page_title": "Alle Events",
+  "events_page_subtitle": "Ontdek en neem deel aan evenementen in de buurt.",
+  "events_page_pagination_prev": "Vorige",
+  "events_page_pagination_next": "Volgende",
+
+  "event_sorting_upcoming": "Binnenkort",
+  "event_sorting_popular": "Meest populair",
+  "event_sorting_newest": "Recent toegevoegd",
+
+  "filter_title": "Filters",
+  "filter_category_text": "Categorie",
+  "filter_clear": "Reset filters"
 }

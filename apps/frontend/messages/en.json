@@ -99,5 +99,18 @@
   "login_forgot_password": "Forgot Password?",
   "login_no_account": "Don't have an account?",
   "login_sign_up": "Sign up",
-  "login_continue": "By continuing, you agree to our"
+  "login_continue": "By continuing, you agree to our",
+
+  "events_page_title": "All Events",
+  "events_page_subtitle": "Discover and join events happening near you.",
+  "events_page_pagination_prev": "Previous",
+  "events_page_pagination_next": "Next",
+
+  "event_sorting_upcoming": "Upcoming",
+  "event_sorting_popular": "Most popular",
+  "event_sorting_newest": "Recently added",
+
+  "filter_title": "Filters",
+  "filter_category_text": "Category",
+  "filter_clear": "Clear filters"
 }
