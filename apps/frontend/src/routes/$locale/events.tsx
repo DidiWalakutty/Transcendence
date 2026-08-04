@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { events } from '@/data/events';
 import { EventListItem } from '@/components/events/EventListItem';
 import { useState } from 'react';
+import * as m from '@/@generated/paraglide/messages';
 
 export const Route = createFileRoute('/$locale/events')({
   component: EventsPage,
@@ -9,6 +10,8 @@ export const Route = createFileRoute('/$locale/events')({
 
 function EventsPage() {
   // Pagination logic
+  // Needs to be hooked up to database so every refresh stays
+  // on the same page, and so that the number of events per page can be dynamic.
   const eventsPerPage = 8;
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -29,9 +32,11 @@ function EventsPage() {
         {/* Header */}
         <div className="grid max-w-[1400px] grid-cols-[30%_1fr] gap-6">
           <div className="relative left-4 2xl:left-[220px]">
-            <h1 className="text-4xl font-bold text-surface-footer md:text-5xl">All Events</h1>
+            <h1 className="text-4xl font-bold text-surface-footer md:text-5xl">
+              {m.events_page_title()}
+            </h1>
 
-            <p className="mt-3 text-surface-footer/80">Discover events happening near you.</p>
+            <p className="mt-3 text-surface-footer/80">{m.events_page_subtitle()}</p>
           </div>
 
           <div />
@@ -57,7 +62,7 @@ function EventsPage() {
               disabled:opacity-50
             "
           >
-            Previous
+            {m.events_page_pagination_prev()}
           </button>
 
           {Array.from({ length: totalPages }).map((_, index) => {
@@ -90,7 +95,7 @@ function EventsPage() {
               disabled:opacity-50
             "
           >
-            Next
+            {m.events_page_pagination_next()}
           </button>
         </div>
       </div>
