@@ -1,4 +1,5 @@
 import { EventDate } from '@/components/events/EventDate';
+import * as m from '@/@generated/paraglide/messages';
 
 type EventListItemProps = {
   id: string;
@@ -127,7 +128,7 @@ export function EventListItem({
               shadow-xl
             "
           >
-            Tickets
+            {m.button_tickets()}
           </div>
         </div>
 
