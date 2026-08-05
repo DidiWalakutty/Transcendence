@@ -17,6 +17,10 @@
       "types": "./src/users.ts",
       "default": "./src/users.ts"
     },
+    "./auth": {
+      "types": "./src/auth.ts",
+      "default": "./src/auth.ts"
+    },
     "./trpc": {
       "types": "./src/@generated/server.ts",
       "default": "./src/@generated/server.ts"

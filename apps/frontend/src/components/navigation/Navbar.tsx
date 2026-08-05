@@ -1,12 +1,11 @@
+import { authClient } from '@/lib/auth-client';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { UserMenu } from './UserMenu';
 import { navigationItems, type UserRole } from './navigation.config';
 
-// temporary hardcoded user role, will be replaced with actual user role from auth context
-// will later become something like: const role = session.user.role
-const role: UserRole = 'visitor';
-
 export function Navbar() {
+  const { data: session } = authClient.useSession();
+  const role: UserRole = !session ? 'visitor' : session.user.isAdministrator ? 'admin' : 'user';
   const links = navigationItems[role];
 
   return (

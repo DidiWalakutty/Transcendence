@@ -1,44 +1,51 @@
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
-import { signInSchema } from '@repo/schemas/auth';
+import { resetPasswordSchema } from '@repo/schemas/auth';
 import { cn } from '@/lib/utils';
 import { authClient } from '@/lib/auth-client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 
-export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
+export function ResetPasswordForm({
+  token,
+  className,
+  ...props
+}: { token: string } & React.ComponentProps<'div'>) {
   const navigate = useNavigate();
 
-  const signIn = useMutation({
-    mutationFn: async (values: { email: string; password: string }) => {
-      const { data, error } = await authClient.signIn.email(values);
+  const resetPassword = useMutation({
+    mutationFn: async (values: { newPassword: string }) => {
+      const { data, error } = await authClient.resetPassword({
+        newPassword: values.newPassword,
+        token,
+      });
 
       if (error) {
-        throw new Error(error.message ?? 'Unable to log in');
+        throw new Error(error.message ?? 'Unable to reset the password');
       }
 
       return data;
     },
     onSuccess: () => {
-      void navigate({ to: '/' });
+      void navigate({ to: '/login' });
     },
   });
 
   const form = useForm({
     defaultValues: {
-      email: '',
-      password: '',
+      newPassword: '',
+      confirmPassword: '',
     },
     validators: {
-      onChange: signInSchema,
+      onChange: resetPasswordSchema,
     },
     onSubmit: async ({ value }) => {
-      await signIn.mutateAsync(value);
+      await resetPassword.mutateAsync({ newPassword: value.newPassword });
     },
   });
 
@@ -46,9 +53,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl">Welcome</CardTitle>
+          <CardTitle className="text-3xl">Set a new password</CardTitle>
 
-          <CardDescription>Log in to manage your events</CardDescription>
+          <CardDescription>Choose a new password for your account</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -60,51 +67,14 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
             }}
           >
             <FieldGroup>
-              {/*
-								Future:
-								Add OAuth providers here, e.g. Google
-
-								Requires:
-								- OAuth provider setup
-								- Backend callback routes
-								- Token Verification
-							*/}
-
               <form.Field
-                name="email"
+                name="newPassword"
                 children={(field) => {
                   const errors = field.state.meta.errors;
 
                   return (
                     <Field>
-                      <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-
-                      <Input
-                        id={field.name}
-                        name={field.name}
-                        type="email"
-                        placeholder="youremail@example.com"
-                        value={field.state.value}
-                        onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        aria-invalid={errors.length > 0}
-                      />
-                      <FieldError errors={errors} />
-                    </Field>
-                  );
-                }}
-              />
-
-              <form.Field
-                name="password"
-                children={(field) => {
-                  const errors = field.state.meta.errors;
-
-                  return (
-                    <Field>
-                      <div className="flex items-center">
-                        <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-                      </div>
+                      <FieldLabel htmlFor={field.name}>New password</FieldLabel>
 
                       <Input
                         id={field.name}
@@ -117,20 +87,39 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                         aria-invalid={errors.length > 0}
                       />
                       <FieldError errors={errors} />
-                      <Link
-                        to="/forgot-password"
-                        className="text-right ml-auto text-sm text-muted-foreground hover:text-primary"
-                      >
-                        Forgot Password?
-                      </Link>
                     </Field>
                   );
                 }}
               />
 
-              {signIn.error ? (
+              <form.Field
+                name="confirmPassword"
+                children={(field) => {
+                  const errors = field.state.meta.errors;
+
+                  return (
+                    <Field>
+                      <FieldLabel htmlFor={field.name}>Confirm password</FieldLabel>
+
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        type="password"
+                        placeholder="********"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={errors.length > 0}
+                      />
+                      <FieldError errors={errors} />
+                    </Field>
+                  );
+                }}
+              />
+
+              {resetPassword.error ? (
                 <Alert variant="destructive">
-                  <AlertDescription>{signIn.error.message}</AlertDescription>
+                  <AlertDescription>{resetPassword.error.message}</AlertDescription>
                 </Alert>
               ) : null}
 
@@ -139,46 +128,36 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                   <form.Subscribe
                     selector={(state) => [state.canSubmit, state.isSubmitting]}
                     children={([canSubmit, isSubmitting]) => (
-                      <Button
-                        className="px-15"
-                        type="submit"
-                        disabled={!(canSubmit as boolean) || (isSubmitting as boolean)}
-                      >
-                        {(isSubmitting as boolean) ? (
-                          <>
-                            <Spinner />
-                            Logging in
-                          </>
-                        ) : (
-                          'Login'
-                        )}
-                      </Button>
+                      <>
+                        <Button
+                          className="w-fit px-8"
+                          type="submit"
+                          disabled={!(canSubmit as boolean) || (isSubmitting as boolean)}
+                        >
+                          {(isSubmitting as boolean) ? (
+                            <>
+                              <Spinner />
+                              Saving
+                            </>
+                          ) : (
+                            'Reset Password'
+                          )}
+                        </Button>
+
+                        <FieldDescription className="text-center">
+                          <Link to="/login" className="underline underline-offset-4">
+                            Back to log in
+                          </Link>
+                        </FieldDescription>
+                      </>
                     )}
                   />
-
-                  <FieldDescription className="text-center">
-                    Don't have an account?{' '}
-                    <Link to="/create-account" className="underline underline-offset-4">
-                      Sign up
-                    </Link>
-                  </FieldDescription>
                 </div>
               </Field>
             </FieldGroup>
           </form>
         </CardContent>
       </Card>
-
-      <FieldDescription className="px-6 text-center">
-        By continuing, you agree to our{' '}
-        <Link to="/terms-of-service" className="underline underline-offset-4">
-          Terms of Service
-        </Link>{' '}
-        and{' '}
-        <Link to="/privacy-policy" className="underline underline-offset-4">
-          Privacy Policy
-        </Link>
-      </FieldDescription>
     </div>
   );
 }

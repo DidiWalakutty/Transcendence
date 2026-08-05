@@ -1,11 +1,57 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { useForm } from '@tanstack/react-form';
+import { useMutation } from '@tanstack/react-query';
+import { signUpSchema } from '@repo/schemas/auth';
 import { cn } from '@/lib/utils';
+import { authClient } from '@/lib/auth-client';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 
 export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>) {
+  const navigate = useNavigate();
+
+  const signUp = useMutation({
+    mutationFn: async (values: {
+      name: string;
+      email: string;
+      username: string;
+      password: string;
+    }) => {
+      const { data, error } = await authClient.signUp.email(values);
+
+      if (error) {
+        throw new Error(error.message ?? 'Unable to create an account');
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      void navigate({ to: '/' });
+    },
+  });
+
+  const form = useForm({
+    defaultValues: {
+      name: '',
+      email: '',
+      username: '',
+      password: '',
+      confirmPassword: '',
+    },
+    validators: {
+      onChange: signUpSchema,
+    },
+    onSubmit: async ({ value }) => {
+      const { confirmPassword: _confirmPassword, ...values } = value;
+
+      await signUp.mutateAsync(values);
+    },
+  });
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
@@ -16,37 +62,150 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
         </CardHeader>
 
         <CardContent>
-          <form>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              void form.handleSubmit();
+            }}
+          >
             <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="name">Full name</FieldLabel>
+              <form.Field
+                name="name"
+                children={(field) => {
+                  const errors = field.state.meta.errors;
 
-                <Input id="name" type="text" placeholder="Your Name" required />
-              </Field>
+                  return (
+                    <Field>
+                      <FieldLabel htmlFor={field.name}>Full name</FieldLabel>
 
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        type="text"
+                        placeholder="Your Name"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={errors.length > 0}
+                      />
+                      <FieldError errors={errors} />
+                    </Field>
+                  );
+                }}
+              />
 
-                <Input id="email" type="email" placeholder="your.email@example.com" required />
-              </Field>
+              <form.Field
+                name="email"
+                children={(field) => {
+                  const errors = field.state.meta.errors;
+
+                  return (
+                    <Field>
+                      <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        type="email"
+                        placeholder="your.email@example.com"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={errors.length > 0}
+                      />
+                      <FieldError errors={errors} />
+                    </Field>
+                  );
+                }}
+              />
+
+              <form.Field
+                name="username"
+                children={(field) => {
+                  const errors = field.state.meta.errors;
+
+                  return (
+                    <Field>
+                      <FieldLabel htmlFor={field.name}>Username</FieldLabel>
+
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        type="text"
+                        placeholder="your_username"
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        aria-invalid={errors.length > 0}
+                      />
+                      <FieldError errors={errors} />
+                    </Field>
+                  );
+                }}
+              />
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field>
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
+                <form.Field
+                  name="password"
+                  children={(field) => {
+                    const errors = field.state.meta.errors;
 
-                  <Input id="password" type="password" placeholder="********" required />
-                </Field>
+                    return (
+                      <Field>
+                        <FieldLabel htmlFor={field.name}>Password</FieldLabel>
 
-                <Field>
-                  <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
+                        <Input
+                          id={field.name}
+                          name={field.name}
+                          type="password"
+                          placeholder="********"
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          aria-invalid={errors.length > 0}
+                        />
+                        <FieldError errors={errors} />
+                      </Field>
+                    );
+                  }}
+                />
 
-                  <Input id="confirm-password" type="password" placeholder="********" required />
-                </Field>
+                <form.Field
+                  name="confirmPassword"
+                  children={(field) => {
+                    const errors = field.state.meta.errors;
+
+                    return (
+                      <Field>
+                        <FieldLabel htmlFor={field.name}>Confirm Password</FieldLabel>
+
+                        <Input
+                          id={field.name}
+                          name={field.name}
+                          type="password"
+                          placeholder="********"
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          aria-invalid={errors.length > 0}
+                        />
+                        <FieldError errors={errors} />
+                      </Field>
+                    );
+                  }}
+                />
               </div>
 
               <FieldDescription className="text-center">
                 Password must be at least 8 characters.
               </FieldDescription>
+
+              {signUp.error ? (
+                <Alert variant="destructive">
+                  <AlertDescription>{signUp.error.message}</AlertDescription>
+                </Alert>
+              ) : null}
 
               <Field>
                 {/*
@@ -60,9 +219,25 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
 										- Account linking
 									*/}
                 <div className="flex flex-col items-center gap-4">
-                  <Button className="px-10" type="submit">
-                    Create Account
-                  </Button>
+                  <form.Subscribe
+                    selector={(state) => [state.canSubmit, state.isSubmitting]}
+                    children={([canSubmit, isSubmitting]) => (
+                      <Button
+                        className="px-10"
+                        type="submit"
+                        disabled={!(canSubmit as boolean) || (isSubmitting as boolean)}
+                      >
+                        {(isSubmitting as boolean) ? (
+                          <>
+                            <Spinner />
+                            Creating account
+                          </>
+                        ) : (
+                          'Create Account'
+                        )}
+                      </Button>
+                    )}
+                  />
 
                   <FieldDescription className="text-center">
                     Already have an account?{' '}

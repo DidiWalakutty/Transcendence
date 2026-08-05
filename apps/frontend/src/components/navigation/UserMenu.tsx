@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -6,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { User } from 'lucide-react';
+import { authClient } from '@/lib/auth-client';
 import type { UserRole } from './navigation.config';
 
 interface UserMenuProps {
@@ -13,6 +15,13 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ role }: UserMenuProps) {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await authClient.signOut();
+    void navigate({ to: '/' });
+  };
+
   // Visitor is not logged in
   if (role === 'visitor') {
     return (
@@ -50,9 +59,7 @@ export function UserMenu({ role }: UserMenuProps) {
           </DropdownMenuItem>
         )}
 
-        <DropdownMenuItem>
-          <a href="/log-out">Logout</a>
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => void handleLogout()}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

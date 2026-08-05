@@ -1,0 +1,145 @@
+# Authentication
+
+The project uses [Better Auth](https://better-auth.com) for sign-up, login, sessions, and
+password reset. It satisfies the subject's baseline requirement of "basic sign-up and login with
+encrypted credentials" (see [Subject](./SUBJECT.md)). OAuth (Google/GitHub/42, etc.) is a separate,
+optional bonus module and is not implemented.
+
+## How it's wired
+
+Better Auth's backend instance lives in `apps/backend/src/auth/`:
+
+| File                      | Purpose                                                                                                                                                          |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth.constants.ts`       | `AUTH` DI token, mirroring `database.constants.ts`'s `DATABASE` token.                                                                                           |
+| `auth.instance.ts`        | Builds the `betterAuth()` instance: Drizzle adapter, plugins, email/password config.                                                                             |
+| `auth.module.ts`          | Provides `AUTH` via a factory injecting the existing `DATABASE` token.                                                                                           |
+| `auth.context.ts`         | tRPC context provider; resolves the session for every tRPC request.                                                                                              |
+| `protected.middleware.ts` | Reusable tRPC middleware that rejects requests with no session. Not currently applied to any router — see [Dual user-creation paths](#dual-user-creation-paths). |
+
+```mermaid
+flowchart LR
+    A["Browser: authClient (better-auth/react)"]
+    B["/api/auth/* (Express, mounted in main.ts)"]
+    C["betterAuth() instance (auth.instance.ts)"]
+    D["Drizzle adapter"]
+    E[("PostgreSQL: users, sessions, accounts, verifications")]
+    F["AuthContext (tRPC context)"]
+    G["tRPC procedures"]
+
+    A -- "fetch, credentials: include" --> B
+    B --> C
+    C --> D
+    D --> E
+    F -- "auth.api.getSession()" --> C
+    F --> G
+```
+
+### Why the handler is mounted directly on Express
+
+`main.ts` mounts Better Auth's handler on the raw Express instance:
+
+```ts
+app.use('/api/auth', toNodeHandler(app.get<Auth>(AUTH)));
+```
+
+Two details make this mounting non-obvious:
+
+- **Body parsing.** Better Auth reads the raw request body itself. Nest's
+  `NestFactory.create(AppModule)` normally auto-attaches Express's body parser globally before any
+  app code runs, which would drain the body stream before Better Auth ever sees it. The app is
+  created with `bodyParser: false`, and `express.json()`/`express.urlencoded()` are added back
+  _after_ the Better Auth mount, only for every other route.
+- **Plain prefix, not a wildcard.** The mount uses the plain string `'/api/auth'`, not an
+  Express 5 wildcard pattern like `'/api/auth/{*splat}'`. The wildcard form was tried first and
+  broke query-string parsing specifically for Better Auth's password-reset redirect endpoint
+  (`GET /reset-password/:token?callbackURL=...`): Express's wildcard-mount path rewriting produces
+  a `req.url`/`req.baseUrl` combination that trips an edge case in `better-call`'s Node adapter
+  (`constructRelativeUrl`), silently dropping the query string. A plain prefix mount only strips
+  the literal `/api/auth` segment and doesn't hit that edge case.
+- **CORS registration order.** `app.enableCors(...)` must be called _before_ the Better Auth
+  mount. Better Auth's own router has no handler for a generic `OPTIONS` preflight request, so if
+  it's mounted first it answers (with a 404) before Nest's CORS middleware gets a chance to.
+
+Because the frontend (`localhost:3000`) and backend (`localhost:3001`) are different origins,
+CORS is configured with `credentials: true`, and both the auth client and the tRPC `httpBatchLink`
+send `credentials: 'include'` so the session cookie flows both ways.
+
+## Schema
+
+Better Auth's required tables extend the existing schema in
+[`packages/schemas/src/database.ts`](../packages/schemas/src/database.ts) rather than living
+separately, because `users` already has foreign keys from `events`, `friends`, and
+`registrations`:
+
+- `users` gained `emailVerified`, `updatedAt`, and `displayUsername` columns.
+- New tables: `sessions`, `accounts`, `verifications` — Better Auth's standard shape. Notably, the
+  hashed password lives in `accounts` (one row per sign-in method, `provider_id = 'credential'`
+  for email/password), **not** on `users`.
+
+All four tables use the same `uuid` primary key / `defaultRandom()` convention as the rest of the
+schema, via `advanced.database.generateId: 'uuid'` in `auth.instance.ts`, which tells
+Better Auth to let Postgres's `gen_random_uuid()` generate IDs instead of generating its own.
+
+The `username` plugin (`better-auth/plugins`) is what makes the existing `username` column work
+as a login credential: it validates the sign-up input, normalizes it for uniqueness, and adds the
+`displayUsername` column to preserve the original casing shown in the UI.
+
+## Dual user-creation paths
+
+The backend currently has **two** independent ways to create a `users` row:
+
+1. **Better Auth's `/sign-up/email`** — the real signup path, used by `/create-account`. Sets a
+   hashed password, `username`, `emailVerified`, etc.
+2. **The legacy `users.createUser` tRPC mutation** ([users.router.ts](../apps/backend/src/users/users.router.ts))
+   — predates Better Auth, takes only `email`/`name`/`username`, and never sets a password. It
+   still powers the `/example` page and is left untouched deliberately, rather than merged with
+   Better Auth's signup.
+
+This means a user created via `/example`'s form has no password and cannot log in through
+`/login`. `updateUser`/`deleteUser`/`getUsers` are similarly unguarded — `ProtectedMiddleware`
+exists as ready-to-use infra (`@UseMiddlewares(ProtectedMiddleware)`) for locking these down later,
+but nothing currently uses it.
+
+## Password reset (development)
+
+No email provider is configured. `sendResetPassword` in `auth.instance.ts` logs the reset link to
+the backend's own console instead of sending an email:
+
+```text
+[Auth] Password reset link for alan@example.com: http://localhost:3001/api/auth/reset-password/<token>?callbackURL=...
+```
+
+Opening that link makes the backend validate the token and 302-redirect the browser to the
+frontend's `/reset-password?token=...` page, which posts the new password back to
+`/api/auth/reset-password`. The `redirectTo` passed from `ForgotPasswordForm.tsx` must be an
+**absolute** URL (`${window.location.origin}/reset-password`) — a relative path resolves against
+the _backend's_ origin (`localhost:3001`), not the frontend's, and the redirect lands on the wrong
+server.
+
+Swapping in a real provider (e.g. Resend, or a local Mailpit container) means replacing the body
+of `sendResetPassword` with an actual send call — the rest of the flow is unaffected.
+
+## Frontend usage
+
+The client lives in `apps/frontend/src/lib/auth-client.ts` (`better-auth/react` +
+`usernameClient()` + `inferAdditionalFields()` for the `isAdministrator` field used to pick the
+navbar role). Common calls:
+
+```ts
+authClient.signUp.email({ name, email, username, password });
+authClient.signIn.email({ email, password });
+authClient.signIn.username({ username, password });
+authClient.signOut();
+authClient.useSession(); // { data, isPending, error }
+authClient.requestPasswordReset({ email, redirectTo });
+authClient.resetPassword({ newPassword, token });
+```
+
+`Navbar.tsx` derives the visitor/user/admin role from `authClient.useSession()` and
+`session.user.isAdministrator`. `UserMenu.tsx`'s logout item calls `authClient.signOut()` directly
+instead of linking to a route.
+
+## Environment variables
+
+See [Environment](./ENVIRONMENT.md) for `BETTER_AUTH_SECRET` and `BETTER_AUTH_URL`.

@@ -17,6 +17,10 @@ function getUrl() {
   return `${baseUrl}/api/trpc`;
 }
 
+function fetchWithCredentials(input: RequestInfo | URL, init?: RequestInit) {
+  return fetch(input, { ...init, credentials: 'include' });
+}
+
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     splitLink({
@@ -28,6 +32,7 @@ export const trpcClient = createTRPCClient<AppRouter>({
       false: httpBatchLink({
         url: getUrl(),
         transformer: superjson,
+        fetch: fetchWithCredentials,
       }),
     }),
   ],
