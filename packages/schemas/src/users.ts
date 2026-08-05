@@ -15,6 +15,7 @@ export const createUserSchema = createInsertSchema(users, {
 }).pick({
   email: true,
   name: true,
+  username: true,
 });
 
 export const updateUserSchema = createUserSchema.extend({

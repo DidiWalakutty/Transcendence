@@ -97,6 +97,7 @@ function Home() {
     defaultValues: {
       name: '',
       email: '',
+      username: '',
     },
     validators: {
       onChange: createUserSchema,
