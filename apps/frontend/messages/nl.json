@@ -161,5 +161,41 @@
   "terms_9": "9. Wijzigingen in deze gebruiksvoorwaarden",
   "terms_9_text": "Deze gebruiksvoorwaarden kunnen worden bijgewerkt wanneer Eventra verandert of wanneer nieuwe vereisten van toepassing zijn. Door het platform na dergelijke wijzigingen te blijven gebruiken, ga je akkoord met de herziene voorwaarden.",
   "terms_10": "10. Contact",
-  "terms_10_text": "Heb je vragen over deze gebruiksvoorwaarden? Neem dan contact op met het Eventra-projectteam via de officiële communicatiekanalen van het project."
+  "terms_10_text": "Heb je vragen over deze gebruiksvoorwaarden? Neem dan contact op met het Eventra-projectteam via de officiële communicatiekanalen van het project.",
+
+  "event_month": [
+    {
+      "declarations": ["input date", "local formattedMonth = date: datetime month=short"],
+      "match": {
+        "date=*": "{formattedMonth}"
+      }
+    }
+  ],
+  "event_day": [
+    {
+      "declarations": ["input date", "local formattedDay = date: datetime day=2-digit"],
+      "match": {
+        "date=*": "{formattedDay}"
+      }
+    }
+  ],
+  "event_weekday": [
+    {
+      "declarations": ["input date", "local formattedWeekday = date: datetime weekday=short"],
+      "match": {
+        "date=*": "{formattedWeekday}"
+      }
+    }
+  ],
+  "event_date": [
+    {
+      "declarations": [
+        "input date",
+        "local formattedDate = date: datetime day=numeric month=long year=numeric"
+      ],
+      "match": {
+        "date=*": "{formattedDate}"
+      }
+    }
+  ]
 }

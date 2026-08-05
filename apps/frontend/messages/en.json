@@ -116,68 +116,85 @@
 
   "privacy_policy_title": "Privacy Policy",
   "privacy_policy_date": "Effective date: July 22, 2026",
-
   "privacy_policy_1": "1. Introduction",
   "privacy_policy_1_text": "Eventra is an event management platform that allows users to discover, create, and manage events. This Privacy Policy explains how we collect, use, and protect information when you use our platform.",
-
   "privacy_policy_2": "2. Information We Collect",
   "privacy_policy_2_text": "When creating an account, we may collect information such as your name, email address, display name, profile information, and account preferences. Some profile information, such as a display name, may be visible to other users when interacting with events on the platform.\n\nWhen using the platform, we may also collect technical information such as browser information, device data, and usage information needed to operate and secure the service.",
-
   "privacy_policy_3": "3. How We Use Information",
   "privacy_policy_3_text": "We use collected information to provide Eventra's features, manage user accounts, display events, improve the platform, maintain security, and communicate important service updates.",
-
   "privacy_policy_4": "4. Event Registration and Attendance Information",
   "privacy_policy_4_text": "When users register for an event, Eventra may store registration information such as the user's display name and registration status. This information is used to allow event organizers to manage attendance and verify registered participants.\n\nEvent organizers may be able to view the list of registered participants for their events. This allows organizers to check attendance and manage access to events when required.\n\nOnly information necessary for managing the event experience is displayed to organizers and other authorized users.\n\nFor events created by users, Eventra may display the creator's display name or profile name alongside the event information so that participants can identify the event organizer.",
-
   "privacy_policy_5": "5. Sharing Information",
   "privacy_policy_5_text": "We do not sell personal information. Information may be shared only when necessary to operate the service, maintain infrastructure, comply with legal obligations, or protect the security of the platform.",
-
   "privacy_policy_6": "6. Data Retention",
   "privacy_policy_6_text": "We keep information only for as long as necessary to provide the service, maintain security, comply with legal requirements, or resolve disputes.",
-
   "privacy_policy_7": "7. Your Rights",
   "privacy_policy_7_text": "Depending on applicable laws, users may request access to their personal information, corrections, or deletion of their account data.",
-
   "privacy_policy_8": "8. Changes to This Policy",
   "privacy_policy_8_text": "We may update this Privacy Policy when the platform changes. Updated versions will be made available through the application.",
-
   "privacy_policy_9": "9. Contact",
   "privacy_policy_9_text": "For questions regarding this Privacy Policy, please contact the Eventra project team through the official project communication channels.",
 
   "terms_title": "Terms of Service",
   "terms_date": "Effective date: July 22, 2026",
-
   "terms_1": "1. Introduction",
   "terms_1_text": "Eventra is an event management platform that allows users to discover, create, register for, and manage events. By using Eventra, you agree to these Terms of Service.",
-
   "terms_2": "2. User Accounts",
   "terms_2_text": "Some Eventra features require an account. When creating an account, you agree to provide accurate information and keep your account information secure.\n\nYou are responsible for activity performed through your account. If you believe your account has been compromised, you should take appropriate steps to secure it.",
-
   "terms_3": "3. Creating and Managing Events",
   "terms_3_text": "Registered users may create and manage events on Eventra. Event creators are responsible for ensuring that event information, including descriptions, dates, locations, and requirements, is accurate.\n\nUsers must not create events that violate applicable laws, infringe on the rights of others, contain harmful content, or intentionally provide misleading information.",
-
   "terms_4": "4. Event Registration",
   "terms_4_text": "Users may register for available events through Eventra. When registering for an event, your account information, such as your display name and registration status, may be used to manage your participation.\n\nEvent organizers may view a list of registered participants for their events. This allows organizers to verify attendance, manage participant access, and organize the event effectively.",
-
   "terms_5": "5. Acceptable Use",
   "terms_5_intro": "When using Eventra, you agree not to:",
   "terms_5_item_1": "Use the platform for unlawful purposes",
   "terms_5_item_2": "Provide false or misleading information",
   "terms_5_item_3": "Harass, abuse, or harm other users",
   "terms_5_item_4": "Attempt to compromise the security or operation of the platform",
-
   "terms_6": "6. User Content",
   "terms_6_text": "Users are responsible for content they submit to Eventra, including event descriptions, profile information, and other provided details.\n\nEventra does not guarantee the accuracy, availability, or quality of events created by users.",
-
   "terms_7": "7. Availability of the Service",
   "terms_7_text": "We aim to keep Eventra reliable and available, but we cannot guarantee uninterrupted access. The platform may be updated, changed, or temporarily unavailable for maintenance or improvements.",
-
   "terms_8": "8. Account Restrictions",
   "terms_8_text": "Eventra may restrict or remove access to accounts that violate these Terms of Service or negatively affect the safety, security, or reliability of the platform.",
-
   "terms_9": "9. Changes to These Terms",
   "terms_9_text": "These Terms of Service may be updated when Eventra changes or when new requirements apply. Continued use of the platform after updates means that you accept the revised terms.",
-
   "terms_10": "10. Contact",
-  "terms_10_text": "For questions regarding these Terms of Service, please contact the Eventra project team through the official project communication channels."
+  "terms_10_text": "For questions regarding these Terms of Service, please contact the Eventra project team through the official project communication channels.",
+
+  "event_month": [
+    {
+      "declarations": ["input date", "local formattedMonth = date: datetime month=short"],
+      "match": {
+        "date=*": "{formattedMonth}"
+      }
+    }
+  ],
+  "event_day": [
+    {
+      "declarations": ["input date", "local formattedDay = date: datetime day=2-digit"],
+      "match": {
+        "date=*": "{formattedDay}"
+      }
+    }
+  ],
+  "event_weekday": [
+    {
+      "declarations": ["input date", "local formattedWeekday = date: datetime weekday=short"],
+      "match": {
+        "date=*": "{formattedWeekday}"
+      }
+    }
+  ],
+  "event_date": [
+    {
+      "declarations": [
+        "input date",
+        "local formattedDate = date: datetime day=numeric month=long year=numeric"
+      ],
+      "match": {
+        "date=*": "{formattedDate}"
+      }
+    }
+  ]
 }
