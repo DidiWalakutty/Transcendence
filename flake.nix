@@ -27,7 +27,6 @@
             pkgs.mkcert
             pkgs.nodejs
             pkgs.direnv
-            pkgs.vite-plus
           ] ++ pkgs.lib.optionals pkgs.stdenv.isLinux [
             pkgs.autoPatchelfHook
             pkgs.glibc

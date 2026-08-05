@@ -9,78 +9,95 @@ import {
 } from 'lucide-react';
 
 import { CategoryCard } from './CategoryCard';
+import * as m from '@/@generated/paraglide/messages';
 
 export function CategorySection() {
   return (
     <section
       className="
-					bg-brand-primary/15
-					py-14
+						bg-brand-primary/15
+						py-14
 					"
     >
       <div
         className="
-					mx-auto
-					flex
-					min-h-40
-					max-w-7xl
-					items-center
-					px-8
+						mx-auto
+						flex
+						min-h-40
+						max-w-7xl
+						items-center
+						px-8
 					"
       >
+        {/*
+			TODO (Backend Categories)
+
+			Categories are currently hardcoded.
+
+			Once the backend is ready:
+			- Fetch the available categories from the database.
+			- Pass the categoryKey to CategoryCard.
+			- CategoryCard will map the categoryKey to the
+				correct frontend icon using category.config.ts.
+
+			The translated title should continue to come from
+			Paraglide, while the backend provides the stable
+			category key (e.g. "music", "food", "workshops").
+			*/}
+
         {/* Category Cards */}
         <div
           className="
-						grid
-						w-full
-						grid-cols-2
-						gap-3
-						md:grid-cols-3
-						lg:grid-cols-4
-						2xl:grid-cols-7
-						justify-items-center
-				>	"
+							grid
+							w-full
+							grid-cols-2
+							gap-3
+							md:grid-cols-3
+							lg:grid-cols-4
+							2xl:grid-cols-7
+							justify-items-center
+						"
         >
           <CategoryCard
+            category="music"
             icon={<Activity className="size-8 text-brand-primary 2xl:size-10" />}
-            title="Music"
-            href="/events/music"
+            title={m.category_music()}
           />
 
           <CategoryCard
+            category="culture"
             icon={<Palette className="size-8 text-brand-primary 2xl:size-10" />}
-            title="Culture"
-            href="/events/culture"
+            title={m.category_culture()}
           />
 
           <CategoryCard
+            category="food"
             icon={<Utensils className="size-8 text-brand-primary 2xl:size-10" />}
-            title="Food"
-            href="/events/food"
+            title={m.category_food()}
           />
 
           <CategoryCard
+            category="games"
             icon={<Dices className="size-8 text-brand-primary 2xl:size-10" />}
-            title="Games"
-            href="/events/games"
+            title={m.category_games()}
           />
 
           <CategoryCard
+            category="talks"
             icon={<MicVocal className="size-8 text-brand-primary 2xl:size-10" />}
-            title="Talks"
-            href="/events/talks"
+            title={m.category_talks()}
           />
 
           <CategoryCard
+            category="workshops"
             icon={<Scissors className="size-8 text-brand-primary 2xl:size-10" />}
-            title="Workshops"
-            href="/events/workshops"
+            title={m.category_workshops()}
           />
 
           <CategoryCard
+            category="all"
             icon={<InfinityIcon className="size-8 text-brand-primary 2xl:size-10" />}
-            title="All Events"
-            href="/events"
+            title={m.button_all_events()}
           />
         </div>
       </div>

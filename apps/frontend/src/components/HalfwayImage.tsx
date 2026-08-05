@@ -1,14 +1,18 @@
 import halfwayImage from '@/assets/halfway_image.png';
+import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
+import * as m from '@/@generated/paraglide/messages';
+import { getLocale } from '@/@generated/paraglide/runtime';
 
 export function HalfwayImage() {
+  const locale = getLocale();
   return (
     <section
       className="
-				relative
-				mt-24
-				h-[500px]
-				overflow-hidden
+			relative
+			mt-24
+			h-[500px]
+			overflow-hidden
 			"
     >
       {/* Halfway Image */}
@@ -22,7 +26,7 @@ export function HalfwayImage() {
 					w-full
 					object-cover
 					object-center
-			"
+				"
       />
 
       {/* Gradient overlay */}
@@ -34,48 +38,49 @@ export function HalfwayImage() {
 					from-black/75
 					via-black/40
 					to-transparent
-			"
+				"
       />
 
       {/* Content */}
       <div
         className="
-					relative
-					z-10
-					mx-auto
-					flex
-					h-full
-					max-w-7xl
-					items-center
-					px-8
-			"
+						relative
+						z-10
+						mx-auto
+						flex
+						h-full
+						max-w-7xl
+						items-center
+						px-8
+						"
       >
         <div className="max-w-xl text-text-on-image">
           <h2
             className="
-							text-4xl
-							font-bold
-							2xl:text-5xl
-						"
+								text-4xl
+								font-bold
+								2xl:text-5xl
+								"
           >
-            Find your next unforgettable experience
+            {m.halfway_image_title()}
           </h2>
 
           <p
             className="
-							mt-6
-							text-lg
-							leading-relaxed
-							text-text-on-image/90
-							2xl:text-xl
-						"
+								mt-6
+								text-lg
+								leading-relaxed
+								text-text-on-image/90
+								2xl:text-xl
+								"
           >
-            Discover a wide range of events, from music festivals to tech conferences, and
-            everything in between. Your next adventure awaits!
+            {m.halfway_image_subtitle()}
           </p>
 
           <Button size="lg" className="mt-10">
-            Explore Events
+            <Link to="/$locale/events" params={{ locale }}>
+              {m.button_explore()}
+            </Link>
           </Button>
         </div>
       </div>

@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { CalendarDays } from 'lucide-react';
 import { ForgotPassword } from '@/components/ForgotPasswordForm';
 
-export const Route = createFileRoute('/forgot-password')({
+export const Route = createFileRoute('/$locale/forgot-password')({
   component: ForgotPasswordPage,
 });
 

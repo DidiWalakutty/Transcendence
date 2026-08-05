@@ -10,6 +10,23 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+<<<<<<< HEAD
+import { Route as LocaleRouteRouteImport } from './routes/$locale/route'
+import { Route as LocaleIndexRouteImport } from './routes/$locale/index'
+import { Route as LocaleAdminRouteImport } from './routes/$locale/admin'
+import { Route as LocaleContactRouteImport } from './routes/$locale/contact'
+import { Route as LocaleCreateAccountRouteImport } from './routes/$locale/create-account'
+import { Route as LocaleCreateEventRouteImport } from './routes/$locale/create-event'
+import { Route as LocaleEventsRouteImport } from './routes/$locale/events'
+import { Route as LocaleExampleRouteImport } from './routes/$locale/example'
+import { Route as LocaleForgotPasswordRouteImport } from './routes/$locale/forgot-password'
+import { Route as LocaleLoginRouteImport } from './routes/$locale/login'
+import { Route as LocaleMyEventsRouteImport } from './routes/$locale/my-events'
+import { Route as LocalePrivacyPolicyRouteImport } from './routes/$locale/privacy-policy'
+import { Route as LocaleProfileRouteImport } from './routes/$locale/profile'
+import { Route as LocaleSignupRouteImport } from './routes/$locale/signup'
+import { Route as LocaleTermsOfServiceRouteImport } from './routes/$locale/terms-of-service'
+=======
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CreateAccountRouteImport } from './routes/create-account'
 import { Route as EventsRouteImport } from './routes/events'
@@ -18,10 +35,13 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PrivacyPolicyRouteImport } from './routes/privacy-policy'
 import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
+>>>>>>> main
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+<<<<<<< HEAD
+=======
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -62,89 +82,198 @@ const PrivacyPolicyRoute = PrivacyPolicyRouteImport.update({
 const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
   id: '/terms-of-service',
   path: '/terms-of-service',
+>>>>>>> main
   getParentRoute: () => rootRouteImport,
+} as any)
+const LocaleRouteRoute = LocaleRouteRouteImport.update({
+  id: '/$locale',
+  path: '/$locale',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LocaleIndexRoute = LocaleIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleAdminRoute = LocaleAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleContactRoute = LocaleContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleCreateAccountRoute = LocaleCreateAccountRouteImport.update({
+  id: '/create-account',
+  path: '/create-account',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleCreateEventRoute = LocaleCreateEventRouteImport.update({
+  id: '/create-event',
+  path: '/create-event',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleEventsRoute = LocaleEventsRouteImport.update({
+  id: '/events',
+  path: '/events',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleExampleRoute = LocaleExampleRouteImport.update({
+  id: '/example',
+  path: '/example',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleForgotPasswordRoute = LocaleForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleLoginRoute = LocaleLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleMyEventsRoute = LocaleMyEventsRouteImport.update({
+  id: '/my-events',
+  path: '/my-events',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocalePrivacyPolicyRoute = LocalePrivacyPolicyRouteImport.update({
+  id: '/privacy-policy',
+  path: '/privacy-policy',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleProfileRoute = LocaleProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleSignupRoute = LocaleSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => LocaleRouteRoute,
+} as any)
+const LocaleTermsOfServiceRoute = LocaleTermsOfServiceRouteImport.update({
+  id: '/terms-of-service',
+  path: '/terms-of-service',
+  getParentRoute: () => LocaleRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/contact': typeof ContactRoute
-  '/create-account': typeof CreateAccountRoute
-  '/events': typeof EventsRoute
-  '/example': typeof ExampleRoute
-  '/forgot-password': typeof ForgotPasswordRoute
-  '/login': typeof LoginRoute
-  '/privacy-policy': typeof PrivacyPolicyRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
+  '/$locale': typeof LocaleRouteRouteWithChildren
+  '/$locale/admin': typeof LocaleAdminRoute
+  '/$locale/contact': typeof LocaleContactRoute
+  '/$locale/create-account': typeof LocaleCreateAccountRoute
+  '/$locale/create-event': typeof LocaleCreateEventRoute
+  '/$locale/events': typeof LocaleEventsRoute
+  '/$locale/example': typeof LocaleExampleRoute
+  '/$locale/forgot-password': typeof LocaleForgotPasswordRoute
+  '/$locale/login': typeof LocaleLoginRoute
+  '/$locale/my-events': typeof LocaleMyEventsRoute
+  '/$locale/privacy-policy': typeof LocalePrivacyPolicyRoute
+  '/$locale/profile': typeof LocaleProfileRoute
+  '/$locale/signup': typeof LocaleSignupRoute
+  '/$locale/terms-of-service': typeof LocaleTermsOfServiceRoute
+  '/$locale/': typeof LocaleIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/contact': typeof ContactRoute
-  '/create-account': typeof CreateAccountRoute
-  '/events': typeof EventsRoute
-  '/example': typeof ExampleRoute
-  '/forgot-password': typeof ForgotPasswordRoute
-  '/login': typeof LoginRoute
-  '/privacy-policy': typeof PrivacyPolicyRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
+  '/$locale/admin': typeof LocaleAdminRoute
+  '/$locale/contact': typeof LocaleContactRoute
+  '/$locale/create-account': typeof LocaleCreateAccountRoute
+  '/$locale/create-event': typeof LocaleCreateEventRoute
+  '/$locale/events': typeof LocaleEventsRoute
+  '/$locale/example': typeof LocaleExampleRoute
+  '/$locale/forgot-password': typeof LocaleForgotPasswordRoute
+  '/$locale/login': typeof LocaleLoginRoute
+  '/$locale/my-events': typeof LocaleMyEventsRoute
+  '/$locale/privacy-policy': typeof LocalePrivacyPolicyRoute
+  '/$locale/profile': typeof LocaleProfileRoute
+  '/$locale/signup': typeof LocaleSignupRoute
+  '/$locale/terms-of-service': typeof LocaleTermsOfServiceRoute
+  '/$locale': typeof LocaleIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/contact': typeof ContactRoute
-  '/create-account': typeof CreateAccountRoute
-  '/events': typeof EventsRoute
-  '/example': typeof ExampleRoute
-  '/forgot-password': typeof ForgotPasswordRoute
-  '/login': typeof LoginRoute
-  '/privacy-policy': typeof PrivacyPolicyRoute
-  '/terms-of-service': typeof TermsOfServiceRoute
+  '/$locale': typeof LocaleRouteRouteWithChildren
+  '/$locale/admin': typeof LocaleAdminRoute
+  '/$locale/contact': typeof LocaleContactRoute
+  '/$locale/create-account': typeof LocaleCreateAccountRoute
+  '/$locale/create-event': typeof LocaleCreateEventRoute
+  '/$locale/events': typeof LocaleEventsRoute
+  '/$locale/example': typeof LocaleExampleRoute
+  '/$locale/forgot-password': typeof LocaleForgotPasswordRoute
+  '/$locale/login': typeof LocaleLoginRoute
+  '/$locale/my-events': typeof LocaleMyEventsRoute
+  '/$locale/privacy-policy': typeof LocalePrivacyPolicyRoute
+  '/$locale/profile': typeof LocaleProfileRoute
+  '/$locale/signup': typeof LocaleSignupRoute
+  '/$locale/terms-of-service': typeof LocaleTermsOfServiceRoute
+  '/$locale/': typeof LocaleIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/contact'
-    | '/create-account'
-    | '/events'
-    | '/example'
-    | '/forgot-password'
-    | '/login'
-    | '/privacy-policy'
-    | '/terms-of-service'
+    | '/$locale'
+    | '/$locale/admin'
+    | '/$locale/contact'
+    | '/$locale/create-account'
+    | '/$locale/create-event'
+    | '/$locale/events'
+    | '/$locale/example'
+    | '/$locale/forgot-password'
+    | '/$locale/login'
+    | '/$locale/my-events'
+    | '/$locale/privacy-policy'
+    | '/$locale/profile'
+    | '/$locale/signup'
+    | '/$locale/terms-of-service'
+    | '/$locale/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/contact'
-    | '/create-account'
-    | '/events'
-    | '/example'
-    | '/forgot-password'
-    | '/login'
-    | '/privacy-policy'
-    | '/terms-of-service'
+    | '/$locale/admin'
+    | '/$locale/contact'
+    | '/$locale/create-account'
+    | '/$locale/create-event'
+    | '/$locale/events'
+    | '/$locale/example'
+    | '/$locale/forgot-password'
+    | '/$locale/login'
+    | '/$locale/my-events'
+    | '/$locale/privacy-policy'
+    | '/$locale/profile'
+    | '/$locale/signup'
+    | '/$locale/terms-of-service'
+    | '/$locale'
   id:
     | '__root__'
     | '/'
-    | '/contact'
-    | '/create-account'
-    | '/events'
-    | '/example'
-    | '/forgot-password'
-    | '/login'
-    | '/privacy-policy'
-    | '/terms-of-service'
+    | '/$locale'
+    | '/$locale/admin'
+    | '/$locale/contact'
+    | '/$locale/create-account'
+    | '/$locale/create-event'
+    | '/$locale/events'
+    | '/$locale/example'
+    | '/$locale/forgot-password'
+    | '/$locale/login'
+    | '/$locale/my-events'
+    | '/$locale/privacy-policy'
+    | '/$locale/profile'
+    | '/$locale/signup'
+    | '/$locale/terms-of-service'
+    | '/$locale/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ContactRoute: typeof ContactRoute
-  CreateAccountRoute: typeof CreateAccountRoute
-  EventsRoute: typeof EventsRoute
-  ExampleRoute: typeof ExampleRoute
-  ForgotPasswordRoute: typeof ForgotPasswordRoute
-  LoginRoute: typeof LoginRoute
-  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
-  TermsOfServiceRoute: typeof TermsOfServiceRoute
+  LocaleRouteRoute: typeof LocaleRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -154,6 +283,8 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+<<<<<<< HEAD
+=======
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -210,21 +341,158 @@ declare module '@tanstack/react-router' {
       path: '/terms-of-service'
       fullPath: '/terms-of-service'
       preLoaderRoute: typeof TermsOfServiceRouteImport
+>>>>>>> main
       parentRoute: typeof rootRouteImport
+    }
+    '/$locale': {
+      id: '/$locale'
+      path: '/$locale'
+      fullPath: '/$locale'
+      preLoaderRoute: typeof LocaleRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$locale/': {
+      id: '/$locale/'
+      path: '/'
+      fullPath: '/$locale/'
+      preLoaderRoute: typeof LocaleIndexRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/admin': {
+      id: '/$locale/admin'
+      path: '/admin'
+      fullPath: '/$locale/admin'
+      preLoaderRoute: typeof LocaleAdminRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/contact': {
+      id: '/$locale/contact'
+      path: '/contact'
+      fullPath: '/$locale/contact'
+      preLoaderRoute: typeof LocaleContactRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/create-account': {
+      id: '/$locale/create-account'
+      path: '/create-account'
+      fullPath: '/$locale/create-account'
+      preLoaderRoute: typeof LocaleCreateAccountRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/create-event': {
+      id: '/$locale/create-event'
+      path: '/create-event'
+      fullPath: '/$locale/create-event'
+      preLoaderRoute: typeof LocaleCreateEventRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/events': {
+      id: '/$locale/events'
+      path: '/events'
+      fullPath: '/$locale/events'
+      preLoaderRoute: typeof LocaleEventsRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/example': {
+      id: '/$locale/example'
+      path: '/example'
+      fullPath: '/$locale/example'
+      preLoaderRoute: typeof LocaleExampleRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/forgot-password': {
+      id: '/$locale/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/$locale/forgot-password'
+      preLoaderRoute: typeof LocaleForgotPasswordRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/login': {
+      id: '/$locale/login'
+      path: '/login'
+      fullPath: '/$locale/login'
+      preLoaderRoute: typeof LocaleLoginRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/my-events': {
+      id: '/$locale/my-events'
+      path: '/my-events'
+      fullPath: '/$locale/my-events'
+      preLoaderRoute: typeof LocaleMyEventsRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/privacy-policy': {
+      id: '/$locale/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/$locale/privacy-policy'
+      preLoaderRoute: typeof LocalePrivacyPolicyRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/profile': {
+      id: '/$locale/profile'
+      path: '/profile'
+      fullPath: '/$locale/profile'
+      preLoaderRoute: typeof LocaleProfileRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/signup': {
+      id: '/$locale/signup'
+      path: '/signup'
+      fullPath: '/$locale/signup'
+      preLoaderRoute: typeof LocaleSignupRouteImport
+      parentRoute: typeof LocaleRouteRoute
+    }
+    '/$locale/terms-of-service': {
+      id: '/$locale/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/$locale/terms-of-service'
+      preLoaderRoute: typeof LocaleTermsOfServiceRouteImport
+      parentRoute: typeof LocaleRouteRoute
     }
   }
 }
 
+interface LocaleRouteRouteChildren {
+  LocaleAdminRoute: typeof LocaleAdminRoute
+  LocaleContactRoute: typeof LocaleContactRoute
+  LocaleCreateAccountRoute: typeof LocaleCreateAccountRoute
+  LocaleCreateEventRoute: typeof LocaleCreateEventRoute
+  LocaleEventsRoute: typeof LocaleEventsRoute
+  LocaleExampleRoute: typeof LocaleExampleRoute
+  LocaleForgotPasswordRoute: typeof LocaleForgotPasswordRoute
+  LocaleLoginRoute: typeof LocaleLoginRoute
+  LocaleMyEventsRoute: typeof LocaleMyEventsRoute
+  LocalePrivacyPolicyRoute: typeof LocalePrivacyPolicyRoute
+  LocaleProfileRoute: typeof LocaleProfileRoute
+  LocaleSignupRoute: typeof LocaleSignupRoute
+  LocaleTermsOfServiceRoute: typeof LocaleTermsOfServiceRoute
+  LocaleIndexRoute: typeof LocaleIndexRoute
+}
+
+const LocaleRouteRouteChildren: LocaleRouteRouteChildren = {
+  LocaleAdminRoute: LocaleAdminRoute,
+  LocaleContactRoute: LocaleContactRoute,
+  LocaleCreateAccountRoute: LocaleCreateAccountRoute,
+  LocaleCreateEventRoute: LocaleCreateEventRoute,
+  LocaleEventsRoute: LocaleEventsRoute,
+  LocaleExampleRoute: LocaleExampleRoute,
+  LocaleForgotPasswordRoute: LocaleForgotPasswordRoute,
+  LocaleLoginRoute: LocaleLoginRoute,
+  LocaleMyEventsRoute: LocaleMyEventsRoute,
+  LocalePrivacyPolicyRoute: LocalePrivacyPolicyRoute,
+  LocaleProfileRoute: LocaleProfileRoute,
+  LocaleSignupRoute: LocaleSignupRoute,
+  LocaleTermsOfServiceRoute: LocaleTermsOfServiceRoute,
+  LocaleIndexRoute: LocaleIndexRoute,
+}
+
+const LocaleRouteRouteWithChildren = LocaleRouteRoute._addFileChildren(
+  LocaleRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ContactRoute: ContactRoute,
-  CreateAccountRoute: CreateAccountRoute,
-  EventsRoute: EventsRoute,
-  ExampleRoute: ExampleRoute,
-  ForgotPasswordRoute: ForgotPasswordRoute,
-  LoginRoute: LoginRoute,
-  PrivacyPolicyRoute: PrivacyPolicyRoute,
-  TermsOfServiceRoute: TermsOfServiceRoute,
+  LocaleRouteRoute: LocaleRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
