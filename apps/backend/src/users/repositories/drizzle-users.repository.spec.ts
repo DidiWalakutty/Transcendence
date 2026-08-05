@@ -22,6 +22,7 @@ describe('DrizzleUsersRepository', () => {
       repository.create({
         name: 'Ada Lovelace',
         email: 'ada@example.com',
+        username: 'ada_lovelace',
       }),
     ).rejects.toBeInstanceOf(UserEmailAlreadyExistsError);
   });
@@ -42,6 +43,7 @@ describe('DrizzleUsersRepository', () => {
       repository.create({
         name: 'Ada Lovelace',
         email: 'ada@example.com',
+        username: 'ada_lovelace',
       }),
     ).rejects.toBe(databaseError);
   });

@@ -16,6 +16,7 @@ describe('UsersRouter', () => {
       router.createUser({
         name: 'Ada Lovelace',
         email: 'ada@example.com',
+        username: 'ada_lovelace',
       }),
     ).rejects.toMatchObject({
       code: 'CONFLICT',

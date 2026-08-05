@@ -11,6 +11,12 @@ const user: UserDto = {
   name: 'Ada Lovelace',
   email: 'ada@example.com',
   createdAt: new Date('2026-01-12T09:00:00.000Z'),
+  isAdministrator: false,
+  aboutMe: null,
+  location: null,
+  preferedLanguage: 'english',
+  avatar: 'PLACEHOLDER',
+  username: 'ada_lovelace',
 };
 
 describe('UsersService', () => {
@@ -67,11 +73,13 @@ describe('UsersService', () => {
     await service.create({
       name: user.name,
       email: user.email,
+      username: user.username,
     });
     await service.update({
       id: user.id,
       name: user.name,
       email: user.email,
+      username: user.username,
     });
     await service.delete(user.id);
 
@@ -89,6 +97,7 @@ describe('UsersService', () => {
       id: user.id,
       name: user.name,
       email: user.email,
+      username: user.username,
     });
     await service.delete(user.id);
 

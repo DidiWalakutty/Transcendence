@@ -22,6 +22,11 @@ export class InMemoryUsersRepository extends UsersRepository {
     this.assertUniqueEmail(data.email);
 
     const user: UserDto = {
+      isAdministrator: false,
+      aboutMe: null,
+      location: null,
+      preferedLanguage: 'english',
+      avatar: 'PLACEHOLDER',
       ...data,
       id: randomUUID(),
       createdAt: new Date(),
