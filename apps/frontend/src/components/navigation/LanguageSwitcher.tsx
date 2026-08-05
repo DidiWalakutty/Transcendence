@@ -7,13 +7,18 @@ import {
 
 import { Button } from '@/components/ui/button';
 import { Languages } from 'lucide-react';
-import { localizeHref, setLocale } from '@/@generated/paraglide/runtime';
+import { localizeHref, locales, setLocale } from '@/@generated/paraglide/runtime';
 import { useRouter } from '@tanstack/react-router';
+
+const languageNames = {
+  en: 'English',
+  nl: 'Nederlands',
+} satisfies Record<(typeof locales)[number], string>;
 
 export function LanguageSwitcher() {
   const router = useRouter();
 
-  function changeLanguage(locale: 'en' | 'nl') {
+  function changeLanguage(locale: (typeof locales)[number]) {
     setLocale(locale);
 
     const localizedPath = localizeHref(window.location.pathname, {
@@ -32,9 +37,11 @@ export function LanguageSwitcher() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent>
-        <DropdownMenuItem onClick={() => changeLanguage('en')}>English</DropdownMenuItem>
-
-        <DropdownMenuItem onClick={() => changeLanguage('nl')}>Nederlands</DropdownMenuItem>
+        {locales.map((locale) => (
+          <DropdownMenuItem key={locale} onClick={() => changeLanguage(locale)}>
+            {languageNames[locale]}
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   );
