@@ -1,6 +1,5 @@
 import { Calendar, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
 
 type EventCardProps = {
@@ -26,22 +25,17 @@ type EventCardProps = {
 export function EventCard({ image, title, category, location, date }: EventCardProps) {
   const eventDate = new Date(date);
 
-  // Use the current Paraglide locale for date formatting.
-  const locale = getLocale();
+  const month = m.event_month({
+    date: eventDate,
+  });
 
-  const day = new Intl.DateTimeFormat(locale, {
-    day: '2-digit',
-  }).format(eventDate);
+  const day = m.event_day({
+    date: eventDate,
+  });
 
-  const month = new Intl.DateTimeFormat(locale, {
-    month: 'short',
-  }).format(eventDate);
-
-  const formattedDate = new Intl.DateTimeFormat(locale, {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  }).format(eventDate);
+  const formattedDate = m.event_date({
+    date: eventDate,
+  });
 
   return (
     <div
