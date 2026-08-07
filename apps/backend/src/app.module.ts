@@ -11,6 +11,8 @@ import { createKeyv } from '@keyv/redis';
 import { environment, environmentFilePaths } from './config/environment';
 import { HealthModule } from './health/health.module';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { AuthContext } from './auth/auth.context';
 
 @Module({
   imports: [
@@ -69,9 +71,11 @@ import { UsersModule } from './users/users.module';
     UsersModule.register({
       persistence: environment.DEV_FIXTURES ? 'fixtures' : 'database',
     }),
+    AuthModule,
     TRPCModule.forRoot({
       basePath: '/api/trpc',
       transformer: superjson,
+      context: AuthContext,
     }),
   ],
   providers: [

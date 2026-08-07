@@ -15,17 +15,19 @@ Earlier files take precedence when the same variable is defined.
 
 ### Variables
 
-| Variable               | Required                   | Default Development Value                                             | Purpose                                                                 |
-| ---------------------- | -------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `NODE_ENV`             | No                         | `development`                                                         | Selects development, production, or test behavior.                      |
-| `DATABASE_URL`         | Unless `DEV_FIXTURES=true` | `postgres://transcendence:transcendence@localhost:5432/transcendence` | PostgreSQL connection string used by the backend and Drizzle Kit.       |
-| `PORT`                 | No                         | `3001`                                                                | Backend HTTP port.                                                      |
-| `REDIS_URL`            | No                         | `redis://localhost:6380`                                              | Redis connection string for backend cache and throttling storage.       |
-| `CACHE_TTL_MS`         | No                         | `30000`                                                               | Default backend cache TTL in milliseconds.                              |
-| `THROTTLE_TTL_SECONDS` | No                         | `60`                                                                  | Rate-limit window length in seconds.                                    |
-| `THROTTLE_LIMIT`       | No                         | `100`                                                                 | Maximum requests allowed during the throttle window.                    |
-| `DEV_FIXTURES`         | No                         | `false`                                                               | Use in-memory users, cache, and throttling without PostgreSQL or Redis. |
-| `CORS_ORIGINS`         | No                         | `http://localhost:3000`                                               | Comma-separated browser origins allowed to call the backend.            |
+| Variable               | Required                   | Default Development Value                                             | Purpose                                                                                        |
+| ---------------------- | -------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `NODE_ENV`             | No                         | `development`                                                         | Selects development, production, or test behavior.                                             |
+| `DATABASE_URL`         | Unless `DEV_FIXTURES=true` | `postgres://transcendence:transcendence@localhost:5432/transcendence` | PostgreSQL connection string used by the backend and Drizzle Kit.                              |
+| `PORT`                 | No                         | `3001`                                                                | Backend HTTP port.                                                                             |
+| `REDIS_URL`            | No                         | `redis://localhost:6379`                                              | Redis connection string for backend cache and throttling storage.                              |
+| `BETTER_AUTH_SECRET`   | Yes                        | (see `apps/backend/.env.development`)                                 | Signing secret for Better Auth sessions and tokens. See [Authentication](./AUTHENTICATION.md). |
+| `BETTER_AUTH_URL`      | No                         | `http://localhost:3001`                                               | The backend's own base URL, used by Better Auth to build absolute links.                       |
+| `CACHE_TTL_MS`         | No                         | `30000`                                                               | Default backend cache TTL in milliseconds.                                                     |
+| `THROTTLE_TTL_SECONDS` | No                         | `60`                                                                  | Rate-limit window length in seconds.                                                           |
+| `THROTTLE_LIMIT`       | No                         | `100`                                                                 | Maximum requests allowed during the throttle window.                                           |
+| `DEV_FIXTURES`         | No                         | `false`                                                               | Use in-memory users, cache, and throttling without PostgreSQL or Redis.                        |
+| `CORS_ORIGINS`         | No                         | `http://localhost:3000`                                               | Comma-separated browser origins allowed to call the backend.                                   |
 
 The committed development fallback lives in:
 

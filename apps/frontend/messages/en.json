@@ -19,6 +19,10 @@
   "button_contact": "Contact Us",
   "button_tickets": "Tickets",
 
+  "button_profile": "Profile",
+  "button_my_events": "My Events",
+  "button_admin_panel": "Admin Panel",
+
   "hero_title_1": "Discover exciting events",
   "hero_title_2": "near you",
   "hero_subtitle": "Find concerts, workshops, conferences, festivals and more, all in one place.",

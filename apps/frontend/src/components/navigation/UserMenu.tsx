@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
 
 import { Button } from '@/components/ui/button';
@@ -9,14 +10,22 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { User } from 'lucide-react';
+import { authClient } from '@/lib/auth-client';
 import { getLocale } from '@/@generated/paraglide/runtime';
 import type { UserRole } from './navigation.config';
+import * as m from '@/@generated/paraglide/messages';
 
 interface UserMenuProps {
   role: UserRole;
 }
 
 export function UserMenu({ role }: UserMenuProps) {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await authClient.signOut();
+    void navigate({ to: '/' });
+  };
   const locale = getLocale();
 
   // Visitor is not logged in
@@ -43,14 +52,14 @@ export function UserMenu({ role }: UserMenuProps) {
       <DropdownMenuContent align="end">
         <DropdownMenuItem>
           <Link to="/$locale/profile" params={{ locale }}>
-            Profile
+            {m.button_profile()}
           </Link>
         </DropdownMenuItem>
 
         {role === 'user' && (
           <DropdownMenuItem>
             <Link to="/$locale/my-events" params={{ locale }}>
-              My Events
+              {m.button_my_events()}
             </Link>
           </DropdownMenuItem>
         )}
@@ -58,10 +67,12 @@ export function UserMenu({ role }: UserMenuProps) {
         {role === 'admin' && (
           <DropdownMenuItem>
             <Link to="/$locale/admin" params={{ locale }}>
-              Admin Dashboard
+              {m.button_admin_panel()}
             </Link>
           </DropdownMenuItem>
         )}
+
+        <DropdownMenuItem onClick={() => void handleLogout()}>Logout</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

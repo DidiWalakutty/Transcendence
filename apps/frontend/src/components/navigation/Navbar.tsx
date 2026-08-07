@@ -1,3 +1,4 @@
+import { authClient } from '@/lib/auth-client';
 import { Link } from '@tanstack/react-router';
 
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -7,11 +8,9 @@ import { navigationItems, type UserRole } from './navigation.config';
 import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
 
-// temporary hardcoded user role, will be replaced with actual user role from auth context
-// will later become something like: const role = session.user.role
-const role: UserRole = 'visitor';
-
 export function Navbar() {
+  const { data: session } = authClient.useSession();
+  const role: UserRole = !session ? 'visitor' : session.user.isAdministrator ? 'admin' : 'user';
   const links = navigationItems[role];
   const locale = getLocale();
 

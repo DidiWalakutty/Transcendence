@@ -27,9 +27,12 @@ export class InMemoryUsersRepository extends UsersRepository {
       location: null,
       preferedLanguage: 'english',
       avatar: 'PLACEHOLDER',
+      displayUsername: null,
+      emailVerified: false,
       ...data,
       id: randomUUID(),
       createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     this.users.push(user);

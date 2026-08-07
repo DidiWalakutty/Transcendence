@@ -1,45 +1,71 @@
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
+import { useForm } from '@tanstack/react-form';
+import { useMutation } from '@tanstack/react-query';
+import { signInSchema } from '@repo/schemas/auth';
 
 import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
-
-import { cn } from '@/lib/utils';
-
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
+import { authClient } from '@/lib/auth-client';
+import { cn } from '@/lib/utils';
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
+  const navigate = useNavigate();
   const locale = getLocale();
+
+  const signIn = useMutation({
+    mutationFn: async (values: { email: string; password: string }) => {
+      const { data, error } = await authClient.signIn.email(values);
+
+      if (error) {
+        throw new Error(error.message ?? 'Unable to log in');
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      void navigate({
+        to: '/$locale',
+        params: { locale },
+      });
+    },
+  });
+
+  const form = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+    validators: {
+      onChange: signInSchema,
+    },
+    onSubmit: async ({ value }) => {
+      await signIn.mutateAsync(value);
+    },
+  });
 
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
-      {/*
-        TODO (Authentication)
-
-        Connect this form to the authentication system.
-
-        Requires:
-        - TanStack Form
-        - Zod validation
-        - tRPC login mutation
-        - Session management
-        - Loading state
-        - Error handling
-        - Redirect after successful login
-        - Remember authenticated user
-      */}
-
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-3xl">{m.login_title()}</CardTitle>
-
           <CardDescription>{m.login_subtitle()}</CardDescription>
         </CardHeader>
 
         <CardContent>
-          <form>
+          <form
+            onSubmit={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+
+              void form.handleSubmit();
+            }}
+          >
             <FieldGroup>
               {/*
                 TODO (OAuth)
@@ -58,41 +84,95 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                 - Account linking
               */}
 
-              {/* Email */}
-              <Field>
-                <FieldLabel htmlFor="email">{m.login_email()}</FieldLabel>
+              <form.Field
+                name="email"
+                children={(field) => {
+                  const errors = field.state.meta.errors;
 
-                <Input id="email" type="email" placeholder={m.placeholder_email()} required />
-              </Field>
+                  return (
+                    <Field>
+                      <FieldLabel htmlFor={field.name}>{m.login_email()}</FieldLabel>
 
-              {/* Password */}
-              <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">{m.login_password()}</FieldLabel>
-                </div>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        type="email"
+                        placeholder={m.placeholder_email()}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(event) => field.handleChange(event.target.value)}
+                        aria-invalid={errors.length > 0}
+                      />
 
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder={m.placeholder_password()}
-                  required
-                />
+                      <FieldError errors={errors} />
+                    </Field>
+                  );
+                }}
+              />
 
-                <Link
-                  to="/$locale/forgot-password"
-                  params={{ locale }}
-                  className="ml-auto text-right text-sm text-muted-foreground hover:text-primary"
-                >
-                  {m.login_forgot_password()}
-                </Link>
-              </Field>
+              <form.Field
+                name="password"
+                children={(field) => {
+                  const errors = field.state.meta.errors;
 
-              {/* Submit */}
+                  return (
+                    <Field>
+                      <div className="flex items-center">
+                        <FieldLabel htmlFor={field.name}>{m.login_password()}</FieldLabel>
+                      </div>
+
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        type="password"
+                        placeholder={m.placeholder_password()}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(event) => field.handleChange(event.target.value)}
+                        aria-invalid={errors.length > 0}
+                      />
+
+                      <FieldError errors={errors} />
+
+                      <Link
+                        to="/$locale/forgot-password"
+                        params={{ locale }}
+                        className="ml-auto text-right text-sm text-muted-foreground hover:text-primary"
+                      >
+                        {m.login_forgot_password()}
+                      </Link>
+                    </Field>
+                  );
+                }}
+              />
+
+              {signIn.error ? (
+                <Alert variant="destructive">
+                  <AlertDescription>{signIn.error.message}</AlertDescription>
+                </Alert>
+              ) : null}
+
               <Field>
                 <div className="flex flex-col items-center gap-4">
-                  <Button className="px-15" type="submit">
-                    {m.button_login()}
-                  </Button>
+                  <form.Subscribe
+                    selector={(state) => [state.canSubmit, state.isSubmitting]}
+                    children={([canSubmit, isSubmitting]) => (
+                      <Button
+                        className="px-15"
+                        type="submit"
+                        disabled={!(canSubmit as boolean) || (isSubmitting as boolean)}
+                      >
+                        {(isSubmitting as boolean) ? (
+                          <>
+                            <Spinner />
+                            {m.button_login()}
+                          </>
+                        ) : (
+                          m.button_login()
+                        )}
+                      </Button>
+                    )}
+                  />
 
                   <FieldDescription className="text-center">
                     {m.login_no_account()}{' '}
@@ -111,7 +191,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
         </CardContent>
       </Card>
 
-      {/* Terms */}
       <FieldDescription className="px-6 text-center">
         {m.login_continue()}{' '}
         <Link

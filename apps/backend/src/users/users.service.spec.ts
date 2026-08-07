@@ -17,6 +17,9 @@ const user: UserDto = {
   preferedLanguage: 'english',
   avatar: 'PLACEHOLDER',
   username: 'ada_lovelace',
+  displayUsername: null,
+  emailVerified: false,
+  updatedAt: new Date('2026-01-12T09:00:00.000Z'),
 };
 
 describe('UsersService', () => {

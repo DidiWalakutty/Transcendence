@@ -1,11 +1,44 @@
+import { Link } from '@tanstack/react-router';
+import { useForm } from '@tanstack/react-form';
+import { useMutation } from '@tanstack/react-query';
+import { forgotPasswordSchema } from '@repo/schemas/auth';
 import { cn } from '@/lib/utils';
+import { authClient } from '@/lib/auth-client';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Field, FieldDescription, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Link } from '@tanstack/react-router';
+import { Spinner } from '@/components/ui/spinner';
 
 export function ForgotPassword({ className, ...props }: React.ComponentProps<'div'>) {
+  const requestReset = useMutation({
+    mutationFn: async (values: { email: string }) => {
+      const { data, error } = await authClient.requestPasswordReset({
+        email: values.email,
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        throw new Error(error.message ?? 'Unable to send the reset link');
+      }
+
+      return data;
+    },
+  });
+
+  const form = useForm({
+    defaultValues: {
+      email: '',
+    },
+    validators: {
+      onChange: forgotPasswordSchema,
+    },
+    onSubmit: async ({ value }) => {
+      await requestReset.mutateAsync(value);
+    },
+  });
+
   return (
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
@@ -19,29 +52,84 @@ export function ForgotPassword({ className, ...props }: React.ComponentProps<'di
         </CardHeader>
 
         <CardContent>
-          <form>
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
+          {requestReset.isSuccess ? (
+            <FieldDescription className="text-center">
+              If an account exists for that email, a reset link has been sent. In this development
+              environment, check the backend server's console output for the link.
+            </FieldDescription>
+          ) : (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                void form.handleSubmit();
+              }}
+            >
+              <FieldGroup>
+                <form.Field
+                  name="email"
+                  children={(field) => {
+                    const errors = field.state.meta.errors;
 
-                <Input id="email" type="email" placeholder="youremail@example.com" required />
-              </Field>
-              <Field>
-                <div className="flex justify-center">
-                  <Button className="w-fit px-8" type="submit">
-                    Send Reset Link
-                  </Button>
-                </div>
-              </Field>
+                    return (
+                      <Field>
+                        <FieldLabel htmlFor={field.name}>Email</FieldLabel>
 
-              <FieldDescription className="text-center">
-                Do remember your password?{' '}
-                <Link to="/login" className="underline underline-offset-4">
-                  Log in
-                </Link>
-              </FieldDescription>
-            </FieldGroup>
-          </form>
+                        <Input
+                          id={field.name}
+                          name={field.name}
+                          type="email"
+                          placeholder="youremail@example.com"
+                          value={field.state.value}
+                          onBlur={field.handleBlur}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          aria-invalid={errors.length > 0}
+                        />
+                        <FieldError errors={errors} />
+                      </Field>
+                    );
+                  }}
+                />
+
+                {requestReset.error ? (
+                  <Alert variant="destructive">
+                    <AlertDescription>{requestReset.error.message}</AlertDescription>
+                  </Alert>
+                ) : null}
+
+                <Field>
+                  <div className="flex justify-center">
+                    <form.Subscribe
+                      selector={(state) => [state.canSubmit, state.isSubmitting]}
+                      children={([canSubmit, isSubmitting]) => (
+                        <Button
+                          className="w-fit px-8"
+                          type="submit"
+                          disabled={!(canSubmit as boolean) || (isSubmitting as boolean)}
+                        >
+                          {(isSubmitting as boolean) ? (
+                            <>
+                              <Spinner />
+                              Sending
+                            </>
+                          ) : (
+                            'Send Reset Link'
+                          )}
+                        </Button>
+                      )}
+                    />
+                  </div>
+                </Field>
+
+                <FieldDescription className="text-center">
+                  Do remember your password?{' '}
+                  <Link to="/login" className="underline underline-offset-4">
+                    Log in
+                  </Link>
+                </FieldDescription>
+              </FieldGroup>
+            </form>
+          )}
         </CardContent>
       </Card>
     </div>
