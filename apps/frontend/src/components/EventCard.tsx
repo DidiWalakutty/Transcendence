@@ -1,7 +1,20 @@
 import { Calendar, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import * as m from '@/@generated/paraglide/messages';
 
 type EventCardProps = {
+  /*
+		TODO (Backend Events)
+
+		Once events are fetched from the backend:
+
+		- Add the event id.
+		- Link this card/button to:
+			/$locale/events/$eventId
+		- Category will come from the database.
+		- Image URL will come from uploaded event images.
+	*/
+
   image: string;
   title: string;
   category: string;
@@ -10,26 +23,18 @@ type EventCardProps = {
 };
 
 export function EventCard({ image, title, category, location, date }: EventCardProps) {
-  // Convert the ISO date string into a JavaScript Date object
   const eventDate = new Date(date);
 
-  // Later this will come from Inlang Paraglide
-  const locale = 'en-GB';
-
-  // Date badge
-  const day = eventDate.toLocaleDateString(locale, {
-    day: '2-digit',
+  const month = m.event_month({
+    date: eventDate,
   });
 
-  const month = eventDate.toLocaleDateString(locale, {
-    month: 'short',
+  const day = m.event_day({
+    date: eventDate,
   });
 
-  // Full formatted date
-  const formattedDate = eventDate.toLocaleDateString(locale, {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+  const formattedDate = m.event_date({
+    date: eventDate,
   });
 
   return (
@@ -75,39 +80,39 @@ export function EventCard({ image, title, category, location, date }: EventCardP
         {/* Date Badge */}
         <div
           className="
-						absolute
-						top-4
-						right-4
-						flex
-						flex-col
-						items-center
-						rounded-xl
-						bg-surface-card
-						px-3
-						py-2
-						shadow-lg
-						backdrop-blur-sm
-					"
+					absolute
+					right-4
+					top-4
+					flex
+					flex-col
+					items-center
+					rounded-xl
+					bg-surface-card
+					px-3
+					py-2
+					shadow-lg
+					backdrop-blur-sm
+				"
         >
           <p
             className="
-							text-xs
-							font-semibold
-							uppercase
-							tracking-wide
-							text-brand-primary
-						"
+					text-xs
+					font-semibold
+					uppercase
+					tracking-wide
+					text-brand-primary
+					"
           >
             {month}
           </p>
 
           <p
             className="
-							text-2xl
-							font-bold
-							leading-none
-							text-text-primary
-						"
+					text-2xl
+					font-bold
+					leading-none
+					text-text-primary
+					"
           >
             {day}
           </p>
@@ -119,12 +124,12 @@ export function EventCard({ image, title, category, location, date }: EventCardP
         {/* Category */}
         <p
           className="
-						text-center
 						inline-block
 						rounded-full
 						bg-brand-primary/10
 						px-3
 						py-1
+						text-center
 						text-sm
 						font-medium
 						text-brand-primary
@@ -136,13 +141,13 @@ export function EventCard({ image, title, category, location, date }: EventCardP
         {/* Event Title */}
         <h3
           className="
-						mt-4
-						line-clamp-2
-						min-h-[3.5rem]
-						text-xl
-						font-bold
-						2xl:text-2xl
-					"
+							mt-4
+							min-h-[3.5rem]
+							line-clamp-2
+							text-xl
+							font-bold
+							2xl:text-2xl
+						"
         >
           {title}
         </h3>
@@ -175,7 +180,12 @@ export function EventCard({ image, title, category, location, date }: EventCardP
           <span>{formattedDate}</span>
         </div>
 
-        <Button className="mt-auto w-full">View Event</Button>
+        {/* TODO:
+						Once the event details page exists,
+						navigate to:
+						/$locale/events/$eventId
+					*/}
+        <Button className="mt-auto w-full">{m.button_view_event()}</Button>
       </div>
     </div>
   );

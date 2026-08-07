@@ -1,4 +1,10 @@
+import { Link } from '@tanstack/react-router';
+import { getLocale } from '@/@generated/paraglide/runtime';
+import * as m from '@/@generated/paraglide/messages';
+
 export function Footer() {
+  const locale = getLocale();
+
   return (
     <footer
       className="
@@ -21,16 +27,17 @@ export function Footer() {
       >
         {/* Brand */}
         <div className="md:col-span-1">
-          <a
-            href="/"
+          <Link
+            to="/$locale"
+            params={{ locale }}
             className="
 							text-4xl
 							font-bold
 							text-brand-primary
 							"
           >
-            Eventra
-          </a>
+            {m.button_eventra()}
+          </Link>
 
           <p
             className="
@@ -39,7 +46,7 @@ export function Footer() {
 							text-text-on-brand/80
 							"
           >
-            Discover, create and enjoy events with ease.
+            {m.footer_description()}
           </p>
         </div>
 
@@ -51,7 +58,7 @@ export function Footer() {
 							text-lg
 							"
           >
-            Explore
+            {m.footer_text_explore()}
           </h3>
 
           <ul
@@ -62,9 +69,9 @@ export function Footer() {
 							"
           >
             <li>
-              <a href="/events" className="hover:text-brand-primary">
-                All Events
-              </a>
+              <Link to="/$locale/events" params={{ locale }} className="hover:text-brand-primary">
+                {m.button_all_events()}
+              </Link>
             </li>
           </ul>
         </div>
@@ -77,7 +84,7 @@ export function Footer() {
 							text-lg
 							"
           >
-            Account
+            {m.footer_text_account()}
           </h3>
 
           <ul
@@ -88,21 +95,29 @@ export function Footer() {
 							"
           >
             <li>
-              <a href="/login" className="hover:text-brand-primary">
-                Login
-              </a>
+              <Link to="/$locale/login" params={{ locale }} className="hover:text-brand-primary">
+                {m.button_login()}
+              </Link>
             </li>
 
             <li>
-              <a href="/create-account" className="hover:text-brand-primary">
-                Create Account
-              </a>
+              <Link
+                to="/$locale/create-account"
+                params={{ locale }}
+                className="hover:text-brand-primary"
+              >
+                {m.button_create_account()}
+              </Link>
             </li>
 
             <li>
-              <a href="/create-event" className="hover:text-brand-primary">
-                Create Event
-              </a>
+              <Link
+                to="/$locale/create-event"
+                params={{ locale }}
+                className="hover:text-brand-primary"
+              >
+                {m.button_create()}
+              </Link>
             </li>
           </ul>
         </div>
@@ -115,7 +130,7 @@ export function Footer() {
 							font-semibold
 							"
           >
-            Legal
+            {m.footer_text_legal()}
           </h3>
 
           <ul
@@ -126,15 +141,23 @@ export function Footer() {
 							"
           >
             <li>
-              <a href="/privacy-policy" className="hover:text-brand-primary">
-                Privacy Policy
-              </a>
+              <Link
+                to="/$locale/privacy-policy"
+                params={{ locale }}
+                className="hover:text-brand-primary"
+              >
+                {m.button_privacy()}
+              </Link>
             </li>
 
             <li>
-              <a href="/terms-of-service" className="hover:text-brand-primary">
-                Terms of Service
-              </a>
+              <Link
+                to="/$locale/terms-of-service"
+                params={{ locale }}
+                className="hover:text-brand-primary"
+              >
+                {m.button_terms()}
+              </Link>
             </li>
           </ul>
         </div>
@@ -145,9 +168,9 @@ export function Footer() {
             className="
 							text-lg
 							font-semibold
-						"
+							"
           >
-            Contact
+            {m.footer_text_contact()}
           </h3>
 
           <ul
@@ -155,12 +178,12 @@ export function Footer() {
 							mt-4
 							space-y-3
 							text-text-on-brand/80
-						"
+							"
           >
             <li>
-              <a href="/contact" className="hover:text-brand-primary">
-                Contact Us
-              </a>
+              <Link to="/$locale/contact" params={{ locale }} className="hover:text-brand-primary">
+                {m.button_contact()}
+              </Link>
             </li>
           </ul>
         </div>
@@ -179,9 +202,9 @@ export function Footer() {
 						md:col-span-5
 						"
         >
-          <p>Made with 🧡 for explorers.</p>
+          <p>{m.footer_bottom_text_1()}</p>
 
-          <p>© 2026 Eventra. All rights reserved.</p>
+          <p>{m.footer_bottom_text_2()}</p>
         </div>
       </div>
     </footer>

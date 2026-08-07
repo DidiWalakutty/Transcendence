@@ -1,27 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router';
-
-import { Hero } from '@/components/Hero';
-import { CategorySection } from '@/components/CategorySection';
-import { FeaturedEventsSection } from '@/components/FeaturedEventsSection';
-import { HowItWorksSection } from '@/components/HowItWorksSection';
-import { HalfwayImage } from '@/components/HalfwayImage';
-import { StatsSection } from '@/components/StatsSection';
-import { FAQSection } from '@/components/FAQ';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
-  component: LandingPage,
+  beforeLoad: () => {
+    throw redirect({
+      to: '/$locale',
+      params: {
+        locale: 'en',
+      },
+    });
+  },
 });
-
-function LandingPage() {
-  return (
-    <>
-      <Hero />
-      <CategorySection />
-      <FeaturedEventsSection />
-      <HowItWorksSection />
-      <StatsSection />
-      <HalfwayImage />
-      <FAQSection />
-    </>
-  );
-}

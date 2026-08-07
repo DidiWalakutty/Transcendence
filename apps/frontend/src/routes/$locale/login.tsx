@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { CalendarDays } from 'lucide-react';
 import { LoginForm } from '@/components/LoginForm';
 
-export const Route = createFileRoute('/login')({
+export const Route = createFileRoute('/$locale/login')({
   component: LoginPage,
 });
 

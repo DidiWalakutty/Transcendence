@@ -20,6 +20,8 @@
 // {stats.locationCount}
 // {stats.categoryCount}
 
+import * as m from '@/@generated/paraglide/messages';
+
 const stats = {
   eventCount: 250,
   locationCount: 25,
@@ -30,18 +32,18 @@ export function StatsSection() {
   return (
     <section
       className="
-				bg-surface-subtle
-				border-y
-				border-border-default
-				py-20
-			"
+					bg-surface-subtle
+					border-y
+					border-border-default
+					py-20
+					"
     >
       <div
         className="
-					mx-auto
-					max-w-7xl
-					px-6
-				"
+						mx-auto
+						max-w-7xl
+						px-6
+						"
       >
         <div
           className="
@@ -50,30 +52,30 @@ export function StatsSection() {
 						gap-12
 						text-center
 						md:grid-cols-3
-					"
+						"
         >
           {/* Number of events */}
           <div>
             <p
               className="
-								text-5xl
-								font-bold
-								text-brand-primary
-								2xl:text-6xl
-							"
+											text-5xl
+											font-bold
+											text-brand-primary
+											2xl:text-6xl
+										"
             >
               {stats.eventCount}+
             </p>
 
             <p
               className="
-								mt-3
-								text-lg
-								text-text-muted
-								2xl:text-xl
-							"
+											mt-3
+											text-lg
+											text-text-muted
+											2xl:text-xl
+										"
             >
-              Upcoming Events
+              {m.stats_event_count()}
             </p>
           </div>
 
@@ -81,24 +83,24 @@ export function StatsSection() {
           <div>
             <p
               className="
-								text-5xl
-								font-bold
-								text-brand-primary
-								2xl:text-6xl
-							"
+											text-5xl
+											font-bold
+											text-brand-primary
+											2xl:text-6xl
+										"
             >
               {stats.locationCount}+
             </p>
 
             <p
               className="
-								mt-3
-								text-lg
-								text-text-muted
-								2xl:text-xl
-							"
+											mt-3
+											text-lg
+											text-text-muted
+											2xl:text-xl
+										"
             >
-              Locations
+              {m.stats_location()}
             </p>
           </div>
 
@@ -106,24 +108,24 @@ export function StatsSection() {
           <div>
             <p
               className="
-								text-5xl
-								font-bold
-								text-brand-primary
-								2xl:text-6xl
-							"
+											text-5xl
+											font-bold
+											text-brand-primary
+											2xl:text-6xl
+										"
             >
               {stats.categoryCount}
             </p>
 
             <p
               className="
-								mt-3
-								text-lg
-								text-text-muted
-								2xl:text-xl
-							"
+											mt-3
+											text-lg
+											text-text-muted
+											2xl:text-xl
+										"
             >
-              Categories
+              {m.stats_categories()}
             </p>
           </div>
         </div>

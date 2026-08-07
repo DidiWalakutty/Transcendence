@@ -1,19 +1,20 @@
 import { Search, Ticket, Laugh } from 'lucide-react';
+import * as m from '@/@generated/paraglide/messages';
 
 const steps = [
   {
-    title: 'Discover',
-    description: 'Find events that match your interests.',
+    title: m.how_it_works_discover_title(),
+    description: m.how_it_works_discover_description(),
     icon: Search,
   },
   {
-    title: 'Register',
-    description: 'Sign up for events and secure your spot.',
+    title: m.how_it_works_register_title(),
+    description: m.how_it_works_register_description(),
     icon: Ticket,
   },
   {
-    title: 'Enjoy',
-    description: 'Join the event and enjoy the experience.',
+    title: m.how_it_works_enjoy_title(),
+    description: m.how_it_works_enjoy_description(),
     icon: Laugh,
   },
 ];
@@ -33,10 +34,10 @@ export function HowItWorksSection() {
 							text-text-primary
 							"
           >
-            Discover. Register. Enjoy.
+            {m.how_it_works_title()}
           </h2>
 
-          <p className="mt-3 text-text-muted">Finding your next event has never been easier.</p>
+          <p className="mt-3 text-text-muted">{m.how_it_works_subtitle()}</p>
         </div>
 
         {/* Steps */}
@@ -48,30 +49,30 @@ export function HowItWorksSection() {
               <div
                 key={step.title}
                 className="
-									rounded-2xl
-									border
-									bg-surface-card
-									p-8
-									text-center
-									shadow-md
-									transition-all
-									duration-200
-									hover:-translate-y-1
-									hover:shadow-lg
-									"
+								rounded-2xl
+								border
+								bg-surface-card
+								p-8
+								text-center
+								shadow-md
+								transition-all
+								duration-200
+								hover:-translate-y-1
+								hover:shadow-lg
+								"
               >
                 <div
                   className="
-									mx-auto
-									mb-6
-									flex
-									h-16
-									w-16
-									items-center
-									justify-center
-									rounded-full
-									bg-brand-primary/10
-									"
+										mx-auto
+										mb-6
+										flex
+										h-16
+										w-16
+										items-center
+										justify-center
+										rounded-full
+										bg-brand-primary/10
+										"
                 >
                   <Icon className="h-8 w-8 text-brand-primary" />
                 </div>

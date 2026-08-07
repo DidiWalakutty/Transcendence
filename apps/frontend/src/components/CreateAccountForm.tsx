@@ -2,17 +2,21 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { signUpSchema } from '@repo/schemas/auth';
-import { cn } from '@/lib/utils';
-import { authClient } from '@/lib/auth-client';
+
+import { getLocale } from '@/@generated/paraglide/runtime';
+import * as m from '@/@generated/paraglide/messages';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
+import { authClient } from '@/lib/auth-client';
+import { cn } from '@/lib/utils';
 
 export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>) {
   const navigate = useNavigate();
+  const locale = getLocale();
 
   const signUp = useMutation({
     mutationFn: async (values: {
@@ -30,7 +34,10 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
       return data;
     },
     onSuccess: () => {
-      void navigate({ to: '/' });
+      void navigate({
+        to: '/$locale',
+        params: { locale },
+      });
     },
   });
 
@@ -56,16 +63,17 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl">Create an account</CardTitle>
+          <CardTitle className="text-3xl">{m.create_account_title()}</CardTitle>
 
-          <CardDescription>Sign up to discover and manage your events</CardDescription>
+          <CardDescription>{m.create_account_subtitle()}</CardDescription>
         </CardHeader>
 
         <CardContent>
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
+            onSubmit={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+
               void form.handleSubmit();
             }}
           >
@@ -77,18 +85,19 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
 
                   return (
                     <Field>
-                      <FieldLabel htmlFor={field.name}>Full name</FieldLabel>
+                      <FieldLabel htmlFor={field.name}>{m.create_account_full_name()}</FieldLabel>
 
                       <Input
                         id={field.name}
                         name={field.name}
                         type="text"
-                        placeholder="Your Name"
+                        placeholder={m.placeholder_name()}
                         value={field.state.value}
                         onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
+                        onChange={(event) => field.handleChange(event.target.value)}
                         aria-invalid={errors.length > 0}
                       />
+
                       <FieldError errors={errors} />
                     </Field>
                   );
@@ -102,18 +111,19 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
 
                   return (
                     <Field>
-                      <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                      <FieldLabel htmlFor={field.name}>{m.create_account_email()}</FieldLabel>
 
                       <Input
                         id={field.name}
                         name={field.name}
                         type="email"
-                        placeholder="your.email@example.com"
+                        placeholder={m.placeholder_email()}
                         value={field.state.value}
                         onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
+                        onChange={(event) => field.handleChange(event.target.value)}
                         aria-invalid={errors.length > 0}
                       />
+
                       <FieldError errors={errors} />
                     </Field>
                   );
@@ -136,9 +146,10 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
                         placeholder="your_username"
                         value={field.state.value}
                         onBlur={field.handleBlur}
-                        onChange={(e) => field.handleChange(e.target.value)}
+                        onChange={(event) => field.handleChange(event.target.value)}
                         aria-invalid={errors.length > 0}
                       />
+
                       <FieldError errors={errors} />
                     </Field>
                   );
@@ -153,18 +164,19 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
 
                     return (
                       <Field>
-                        <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                        <FieldLabel htmlFor={field.name}>{m.create_account_password()}</FieldLabel>
 
                         <Input
                           id={field.name}
                           name={field.name}
                           type="password"
-                          placeholder="********"
+                          placeholder={m.placeholder_password()}
                           value={field.state.value}
                           onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
+                          onChange={(event) => field.handleChange(event.target.value)}
                           aria-invalid={errors.length > 0}
                         />
+
                         <FieldError errors={errors} />
                       </Field>
                     );
@@ -178,18 +190,21 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
 
                     return (
                       <Field>
-                        <FieldLabel htmlFor={field.name}>Confirm Password</FieldLabel>
+                        <FieldLabel htmlFor={field.name}>
+                          {m.create_account_confirm_password()}
+                        </FieldLabel>
 
                         <Input
                           id={field.name}
                           name={field.name}
                           type="password"
-                          placeholder="********"
+                          placeholder={m.placeholder_password()}
                           value={field.state.value}
                           onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
+                          onChange={(event) => field.handleChange(event.target.value)}
                           aria-invalid={errors.length > 0}
                         />
+
                         <FieldError errors={errors} />
                       </Field>
                     );
@@ -198,7 +213,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
               </div>
 
               <FieldDescription className="text-center">
-                Password must be at least 8 characters.
+                {m.create_account_password_info()}
               </FieldDescription>
 
               {signUp.error ? (
@@ -207,17 +222,24 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
                 </Alert>
               ) : null}
 
-              <Field>
-                {/*
-										Future:
-										Add OAuth providers here for social sign up (e.g., Google etc.)
+              {/*
+                TODO (OAuth)
 
-										Requires:
-										- OAuth integration
-										- Backend callback routes
-										- Token verification
-										- Account linking
-									*/}
+                Add social sign-up providers.
+
+                Examples:
+                - Google
+                - GitHub
+                - Microsoft
+
+                Requires:
+                - OAuth provider setup
+                - Backend callback routes
+                - Token verification
+                - Account linking
+              */}
+
+              <Field>
                 <div className="flex flex-col items-center gap-4">
                   <form.Subscribe
                     selector={(state) => [state.canSubmit, state.isSubmitting]}
@@ -230,19 +252,23 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
                         {(isSubmitting as boolean) ? (
                           <>
                             <Spinner />
-                            Creating account
+                            {m.button_create_account()}
                           </>
                         ) : (
-                          'Create Account'
+                          m.button_create_account()
                         )}
                       </Button>
                     )}
                   />
 
                   <FieldDescription className="text-center">
-                    Already have an account?{' '}
-                    <Link to="/login" className="underline underline-offset-4">
-                      Sign in
+                    {m.create_account_already_have_account()}{' '}
+                    <Link
+                      to="/$locale/login"
+                      params={{ locale }}
+                      className="underline underline-offset-4"
+                    >
+                      {m.create_account_sign_in()}
                     </Link>
                   </FieldDescription>
                 </div>
@@ -253,13 +279,21 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
       </Card>
 
       <FieldDescription className="px-6 text-center">
-        By signing up, you agree to our{' '}
-        <Link to="/terms-of-service" className="underline underline-offset-4">
-          Terms of Service
+        {m.create_account_info()}{' '}
+        <Link
+          to="/$locale/terms-of-service"
+          params={{ locale }}
+          className="underline underline-offset-4"
+        >
+          {m.create_account_terms()}
         </Link>{' '}
-        and{' '}
-        <Link to="/privacy-policy" className="underline underline-offset-4">
-          Privacy Policy
+        {m.create_account_and()}{' '}
+        <Link
+          to="/$locale/privacy-policy"
+          params={{ locale }}
+          className="underline underline-offset-4"
+        >
+          {m.create_account_privacy()}
         </Link>
       </FieldDescription>
     </div>

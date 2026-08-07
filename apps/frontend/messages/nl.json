@@ -1,0 +1,205 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "home_page": "Startpagina",
+  "about_page": "Over ons",
+  "example_message": "Welkom in je i18n app.",
+  "language_label": "Taal",
+  "current_locale": "Huidige taal: {locale}",
+  "learn_router": "Leer Paraglide JS",
+
+  "button_eventra": "Eventra",
+  "button_explore": "Bekijk events",
+  "button_create": "Creëer event",
+  "button_create_account": "Creëer account",
+  "button_view_event": "Bekijk Event",
+  "button_all_events": "Alle Events",
+  "button_login": "Login",
+  "button_privacy": "Privacybeleid",
+  "button_terms": "Gebruikersvoorwaarden",
+  "button_contact": "Contacteer ons",
+  "button_tickets": "Kaartjes",
+
+  "button_profile": "Profiel",
+  "button_my_events": "Mijn Events",
+  "button_admin_panel": "Admin Paneel",
+
+  "hero_title_1": "Ontdek leuke evenementen",
+  "hero_title_2": "in jouw buurt",
+  "hero_subtitle": "Vind concerten, workshops, conferenties, festivals en meer, allemaal op één plek.",
+
+  "category_music": "Muziek",
+  "category_culture": "Cultuur",
+  "category_food": "Eten",
+  "category_games": "Spellen",
+  "category_talks": "Lezingen",
+  "category_workshops": "Workshops",
+
+  "featured_events_title": "Uitgelichte evenementen",
+  "featured_events_subtitle": "Ontdek bruisende evenementen in jouw buurt",
+
+  "how_it_works_title": "Ontdek. Registreer. Geniet.",
+  "how_it_works_subtitle": "Je volgende event vinden is nog nooit zo makkelijk geweest.",
+  "how_it_works_discover_title": "Ontdek",
+  "how_it_works_discover_description": "Ontdek iets nieuws.",
+  "how_it_works_register_title": "Registreer",
+  "how_it_works_register_description": "Meld je aan voor events en verzeker je plek.",
+  "how_it_works_enjoy_title": "Geniet",
+  "how_it_works_enjoy_description": "Neem deel aan het event en geniet van de ervaring.",
+
+  "stats_event_count": "Komende Evenementen",
+  "stats_location": "Locaties",
+  "stats_categories": "Categorieën",
+
+  "halfway_image_title": "Vind je volgende onvergetelijke ervaring",
+  "halfway_image_subtitle": "Ontdek een breed scala aan events, van muziekfestival tot tech conferenties, en alles daar tussen. Je volgende avontuur wacht!",
+
+  "faq_title": "Veelgestelde vragen",
+  "faq_subtitle": "Vind antwoorden op veelgestelde vragen over Eventra.",
+
+  "faq_question_1": "Wat is Eventra?",
+  "faq_answer_1": "Eventra is een platform waar je evenementen kunt ontdekken, eraan kunt deelnemen en zelf kunt organiseren. Blader door verschillende categorieën, ontdek iets nieuws, meld je eenvoudig aan voor evenementen of maak je eigen evenement aan om met anderen te delen.",
+  "faq_question_2": "Hoe vind ik een evenement?",
+  "faq_answer_2": "Blader door de verschillende categorieën, zoek op naam of filter op locatie om een evenement te vinden dat bij jou past.",
+  "faq_question_3": "Heb ik een account nodig om deel te nemen aan een evenement?",
+  "faq_answer_3": "Ja. Je hebt een Eventra-account nodig om je aan te melden voor evenementen. Zo kun je je aanmeldingen beheren, je aankomende evenementen terugvinden en krijg je een persoonlijkere ervaring.",
+  "faq_question_4": "Kan ik mijn aanmelding voor een evenement annuleren?",
+  "faq_answer_4": "Natuurlijk. Ga naar je account, open je aangemelde evenementen, selecteer het evenement waarvoor je je wilt afmelden en annuleer je registratie.",
+  "faq_question_5": "Kan ik zelf een evenement organiseren?",
+  "faq_answer_5": "Ja! Een evenement aanmaken is eenvoudig. Log in, klik op de knop 'Evenement aanmaken', vul de benodigde gegevens in en publiceer je evenement zodat anderen het kunnen ontdekken.",
+  "faq_question_6": "Kost Eventra geld?",
+  "faq_answer_6": "Nee, het gebruik van Eventra is helemaal gratis. Via het platform kun je kosteloos evenementen aanmaken en je aanmelden voor evenementen.",
+
+  "footer_description": "Ontdek, creëer en geniet van evenementen met gemak.",
+  "footer_text_explore": "Ontdek",
+  "footer_text_account": "Account",
+  "footer_text_legal": "Juridisch",
+  "footer_text_contact": "Contact",
+  "footer_bottom_text_1": "Met 🧡 gemaakt voor ontdekkers.",
+  "footer_bottom_text_2": "© 2026 Eventra. Alle rechten voorbehouden.",
+
+  "create_account_title": "Creëer een Eventra Account",
+  "create_account_subtitle": "Meld je aan om je evenementen te ontdekken en te beheren",
+  "create_account_full_name": "Volledige naam",
+  "create_account_email": "Email",
+  "create_account_password": "Wachtwoord",
+  "create_account_confirm_password": "Bevestig wachtwoord",
+  "create_account_password_info": "Wachtwoord moet minimaal 8 karakters lang zijn.",
+  "create_account_already_have_account": "Heb je al een account?",
+  "create_account_sign_in": "Inloggen",
+  "create_account_info": "Door in te schrijven, ga je akkoord met onze",
+  "create_account_terms": "Gebruikersvoorwaarden",
+  "create_account_and": "en",
+  "create_account_privacy": "Privacybeleid",
+
+  "placeholder_name": "je naam",
+  "placeholder_email": "je.email@example.com",
+  "placeholder_password": "********",
+
+  "login_title": "Welkom",
+  "login_subtitle": "Log in om je evenementen te beheren",
+  "login_email": "Email",
+  "login_password": "Wachtwoord",
+  "login_button": "Inloggen",
+  "login_forgot_password": "Wachtwoord vergeten?",
+  "login_no_account": "Geen account?",
+
+  "login_sign_up": "Creëer een account",
+  "login_continue": "Door door te gaan, ga je akkoord met onze",
+
+  "events_page_title": "Alle Events",
+  "events_page_subtitle": "Ontdek en neem deel aan evenementen in de buurt.",
+  "events_page_pagination_prev": "Vorige",
+  "events_page_pagination_next": "Volgende",
+
+  "event_sorting_upcoming": "Binnenkort",
+  "event_sorting_popular": "Meest populair",
+  "event_sorting_newest": "Recent toegevoegd",
+
+  "filter_title": "Filters",
+  "filter_category_text": "Categorie",
+  "filter_clear": "Reset filters",
+
+  "privacy_policy_title": "Privacyverklaring",
+  "privacy_policy_date": "Ingangsdatum: 22 juli 2026",
+  "privacy_policy_1": "1. Inleiding",
+  "privacy_policy_1_text": "Eventra is een platform voor evenementenbeheer waarmee gebruikers evenementen kunnen ontdekken, aanmaken en beheren. Deze privacyverklaring legt uit hoe wij informatie verzamelen, gebruiken en beschermen wanneer je ons platform gebruikt.",
+  "privacy_policy_2": "2. Welke informatie wij verzamelen",
+  "privacy_policy_2_text": "Bij het aanmaken van een account kunnen wij informatie verzamelen, zoals je naam, e-mailadres, weergavenaam, profielinformatie en accountvoorkeuren. Sommige profielinformatie, zoals je weergavenaam, kan zichtbaar zijn voor andere gebruikers wanneer je deelneemt aan evenementen op het platform.\n\nTijdens het gebruik van het platform kunnen wij ook technische informatie verzamelen, zoals browserinformatie, apparaatgegevens en gebruiksinformatie die nodig zijn om de dienst te laten functioneren en te beveiligen.",
+  "privacy_policy_3": "3. Hoe wij informatie gebruiken",
+  "privacy_policy_3_text": "Wij gebruiken de verzamelde informatie om de functies van Eventra aan te bieden, gebruikersaccounts te beheren, evenementen weer te geven, het platform te verbeteren, de beveiliging te waarborgen en belangrijke service-updates te communiceren.",
+  "privacy_policy_4": "4. Registratie- en aanwezigheidsgegevens van evenementen",
+  "privacy_policy_4_text": "Wanneer gebruikers zich aanmelden voor een evenement, kan Eventra registratiegegevens opslaan, zoals de weergavenaam van de gebruiker en de registratiestatus. Deze informatie wordt gebruikt zodat organisatoren de aanwezigheid kunnen beheren en geregistreerde deelnemers kunnen verifiëren.\n\nOrganisatoren van evenementen kunnen de lijst met geregistreerde deelnemers voor hun evenementen bekijken. Hierdoor kunnen zij de aanwezigheid controleren en indien nodig de toegang tot evenementen beheren.\n\nAlleen de informatie die noodzakelijk is voor het beheren van de evenementervaring wordt weergegeven aan organisatoren en andere bevoegde gebruikers.\n\nVoor evenementen die door gebruikers zijn aangemaakt, kan Eventra de weergavenaam of profielnaam van de organisator tonen naast de evenementinformatie, zodat deelnemers kunnen zien wie het evenement organiseert.",
+  "privacy_policy_5": "5. Delen van informatie",
+  "privacy_policy_5_text": "Wij verkopen geen persoonsgegevens. Informatie wordt alleen gedeeld wanneer dit noodzakelijk is om de dienst te leveren, de infrastructuur te onderhouden, te voldoen aan wettelijke verplichtingen of de veiligheid van het platform te beschermen.",
+  "privacy_policy_6": "6. Bewaartermijn van gegevens",
+  "privacy_policy_6_text": "Wij bewaren informatie alleen zolang dit nodig is om de dienst te leveren, de beveiliging te waarborgen, te voldoen aan wettelijke verplichtingen of geschillen op te lossen.",
+  "privacy_policy_7": "7. Jouw rechten",
+  "privacy_policy_7_text": "Afhankelijk van de toepasselijke wetgeving kunnen gebruikers verzoeken om inzage in hun persoonsgegevens, correctie van hun gegevens of verwijdering van hun accountgegevens.",
+  "privacy_policy_8": "8. Wijzigingen in deze privacyverklaring",
+  "privacy_policy_8_text": "Wij kunnen deze privacyverklaring aanpassen wanneer het platform verandert. Bijgewerkte versies worden beschikbaar gesteld via de applicatie.",
+  "privacy_policy_9": "9. Contact",
+  "privacy_policy_9_text": "Heb je vragen over deze privacyverklaring? Neem dan contact op met het Eventra-projectteam via de officiële communicatiekanalen van het project.",
+
+  "terms_title": "Gebruiksvoorwaarden",
+  "terms_date": "Ingangsdatum: 22 juli 2026",
+  "terms_1": "1. Introductie",
+  "terms_1_text": "Eventra is een platform voor evenementenbeheer waarmee gebruikers evenementen kunnen ontdekken, aanmaken, zich kunnen registreren voor evenementen en evenementen kunnen beheren. Door Eventra te gebruiken ga je akkoord met deze gebruiksvoorwaarden.",
+  "terms_2": "2. Gebruikersaccounts",
+  "terms_2_text": "Voor sommige functies van Eventra is een account vereist. Bij het aanmaken van een account ga je ermee akkoord correcte informatie te verstrekken en je accountgegevens veilig te houden.\n\nJe bent verantwoordelijk voor alle activiteiten die via jouw account plaatsvinden. Als je vermoedt dat je account is gecompromitteerd, dien je passende maatregelen te nemen om het te beveiligen.",
+  "terms_3": "3. Evenementen aanmaken en beheren",
+  "terms_3_text": "Geregistreerde gebruikers mogen evenementen aanmaken en beheren op Eventra. Organisatoren zijn verantwoordelijk voor het correct en volledig invullen van evenementinformatie, waaronder beschrijvingen, data, locaties en vereisten.\n\nGebruikers mogen geen evenementen aanmaken die in strijd zijn met de wet, inbreuk maken op de rechten van anderen, schadelijke inhoud bevatten of opzettelijk misleidende informatie verstrekken.",
+  "terms_4": "4. Registratie voor evenementen",
+  "terms_4_text": "Gebruikers kunnen zich via Eventra registreren voor beschikbare evenementen. Bij registratie kunnen accountgegevens, zoals je weergavenaam en registratiestatus, worden gebruikt om je deelname te beheren.\n\nOrganisatoren kunnen een lijst met geregistreerde deelnemers bekijken. Hierdoor kunnen zij de aanwezigheid verifiëren, deelnemers beheren en het evenement effectief organiseren.",
+  "terms_5": "5. Toegestaan gebruik",
+  "terms_5_intro": "Wanneer je Eventra gebruikt, ga je ermee akkoord om:",
+  "terms_5_item_1": "het platform niet te gebruiken voor onwettige doeleinden",
+  "terms_5_item_2": "geen onjuiste of misleidende informatie te verstrekken",
+  "terms_5_item_3": "andere gebruikers niet lastig te vallen, te misbruiken of schade toe te brengen",
+  "terms_5_item_4": "niet te proberen de beveiliging of werking van het platform in gevaar te brengen",
+  "terms_6": "6. Gebruikersinhoud",
+  "terms_6_text": "Gebruikers zijn verantwoordelijk voor de inhoud die zij op Eventra plaatsen, waaronder evenementbeschrijvingen, profielinformatie en andere verstrekte gegevens.\n\nEventra garandeert niet de juistheid, beschikbaarheid of kwaliteit van door gebruikers aangemaakte evenementen.",
+  "terms_7": "7. Beschikbaarheid van de dienst",
+  "terms_7_text": "Wij streven ernaar Eventra betrouwbaar en beschikbaar te houden, maar kunnen geen ononderbroken toegang garanderen. Het platform kan worden bijgewerkt, gewijzigd of tijdelijk niet beschikbaar zijn vanwege onderhoud of verbeteringen.",
+  "terms_8": "8. Accountbeperkingen",
+  "terms_8_text": "Eventra kan de toegang tot accounts beperken of verwijderen wanneer deze in strijd zijn met deze gebruiksvoorwaarden of een negatieve invloed hebben op de veiligheid, beveiliging of betrouwbaarheid van het platform.",
+  "terms_9": "9. Wijzigingen in deze gebruiksvoorwaarden",
+  "terms_9_text": "Deze gebruiksvoorwaarden kunnen worden bijgewerkt wanneer Eventra verandert of wanneer nieuwe vereisten van toepassing zijn. Door het platform na dergelijke wijzigingen te blijven gebruiken, ga je akkoord met de herziene voorwaarden.",
+  "terms_10": "10. Contact",
+  "terms_10_text": "Heb je vragen over deze gebruiksvoorwaarden? Neem dan contact op met het Eventra-projectteam via de officiële communicatiekanalen van het project.",
+
+  "event_month": [
+    {
+      "declarations": ["input date", "local formattedMonth = date: datetime month=short"],
+      "match": {
+        "date=*": "{formattedMonth}"
+      }
+    }
+  ],
+  "event_day": [
+    {
+      "declarations": ["input date", "local formattedDay = date: datetime day=2-digit"],
+      "match": {
+        "date=*": "{formattedDay}"
+      }
+    }
+  ],
+  "event_weekday": [
+    {
+      "declarations": ["input date", "local formattedWeekday = date: datetime weekday=short"],
+      "match": {
+        "date=*": "{formattedWeekday}"
+      }
+    }
+  ],
+  "event_date": [
+    {
+      "declarations": [
+        "input date",
+        "local formattedDate = date: datetime day=numeric month=long year=numeric"
+      ],
+      "match": {
+        "date=*": "{formattedDate}"
+      }
+    }
+  ]
+}
