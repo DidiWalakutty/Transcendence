@@ -14,6 +14,8 @@ import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 
+import { toast } from 'sonner';
+
 export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>) {
   const navigate = useNavigate();
   const locale = getLocale();
@@ -34,10 +36,15 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
       return data;
     },
     onSuccess: () => {
+      toast.success('Account created successfully!');
+
       void navigate({
         to: '/$locale',
         params: { locale },
       });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to create an account.');
     },
   });
 
