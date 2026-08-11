@@ -18,10 +18,10 @@
   "button_terms": "Gebruikersvoorwaarden",
   "button_contact": "Contacteer ons",
   "button_tickets": "Kaartjes",
-
   "button_profile": "Profiel",
   "button_my_events": "Mijn Events",
   "button_admin_panel": "Admin Paneel",
+  "button_spinner_sending": "Versturen...",
 
   "hero_title_1": "Ontdek leuke evenementen",
   "hero_title_2": "in jouw buurt",
@@ -91,9 +91,18 @@
   "create_account_and": "en",
   "create_account_privacy": "Privacybeleid",
 
+  "contact_title": "Neem contact op",
+  "contact_subtitle": "Heb je vragen, feedback of hulp nodig? Neem contact op met het Eventra team.",
+  "contact_project_support_title": "Project Ondersteuning",
+  "contact_project_support_description": "Voor vragen, feedback, of problemen met betrekking tot Eventra, neem contact op met het projectteam via het e-mailadres hieronder.",
+  "contact_project_support_email": "Email: eventra.team@voorbeeld.com",
+  "contact_privacy_requests_title": "Privacy Verzoeken",
+  "contact_privacy_requests_description": "Als je vragen hebt over je persoonlijke informatie, accountgegevens, of privacy-gerelateerde verzoeken, neem dan contact op met het Eventra team.",
+
   "placeholder_name": "je naam",
-  "placeholder_email": "je.email@example.com",
+  "placeholder_email": "je.email@voorbeeld.com",
   "placeholder_password": "********",
+  "placeholder_username": "jouw gebruikersnaam",
 
   "login_title": "Welkom",
   "login_subtitle": "Log in om je evenementen te beheren",
@@ -105,6 +114,14 @@
 
   "login_sign_up": "Creëer een account",
   "login_continue": "Door door te gaan, ga je akkoord met onze",
+
+  "forgot_password_title": "Je wachtwoord vergeten?",
+  "forgot_password_subtitle_1": "Geen probleem!",
+  "forgot_password_subtitle_2": "Voer je e-mailadres in om een resetlink te ontvangen.",
+  "forgot_password_info": "Als er een account bestaat met jouw e-mailadres, is er een resetlink verstuurd.",
+  "forgot_password_button": "Verstuur reset link",
+  "forgot_password_remember": "Herinner je je wachtwoord?",
+  "forgot_password_error": "Kon de resetlink niet versturen.",
 
   "events_page_title": "Alle Events",
   "events_page_subtitle": "Ontdek en neem deel aan evenementen in de buurt.",
@@ -118,6 +135,24 @@
   "filter_title": "Filters",
   "filter_category_text": "Categorie",
   "filter_clear": "Reset filters",
+
+  "create_event_title": "Creëer een nieuw evenement",
+  "create_event_description": "Vul de onderstaande gegevens in om je evenement aan te maken.",
+  "create_event_event_title": "Titel van het evenement",
+  "create_event_event_title_placeholder": "Vul de titel van het evenement in",
+  "create_event_event_description": "Beschrijving",
+  "create_event_event_description_placeholder": "Beschrijf je evenement",
+  "create_event_category": "Categorie",
+  "create_event_category_placeholder": "Kies een categorie",
+  "create_event_location": "Locatie",
+  "create_event_location_placeholder": "Vul de locatie in",
+  "create_event_date": "Datum",
+  "create_event_time": "Tijd",
+  "create_event_capacity": "Maximum aantal deelnemers",
+  "create_event_capacity_placeholder": "Vul het maximale aantal deelnemers in",
+  "create_event_image": "Evenementafbeelding",
+  "create_event_image_upload_button": "Upload afbeelding",
+  "create_event_create_button": "Evenement maken",
 
   "privacy_policy_title": "Privacyverklaring",
   "privacy_policy_date": "Ingangsdatum: 22 juli 2026",
