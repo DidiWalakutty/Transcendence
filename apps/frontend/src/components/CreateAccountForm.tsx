@@ -143,7 +143,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
                         id={field.name}
                         name={field.name}
                         type="text"
-                        placeholder="your_username"
+                        placeholder={m.placeholder_username()}
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(event) => field.handleChange(event.target.value)}
