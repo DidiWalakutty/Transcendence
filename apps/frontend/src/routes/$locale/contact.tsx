@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
+import * as m from '@/@generated/paraglide/messages';
 
 export const Route = createFileRoute('/$locale/contact')({
   component: Contact,
@@ -16,11 +17,9 @@ function Contact() {
 		"
     >
       <header className="mb-12">
-        <h1 className="text-5xl font-bold">Contact Us</h1>
+        <h1 className="text-5xl font-bold">{m.contact_title()}</h1>
 
-        <p className="mt-4 text-text-muted">
-          Have questions, feedback, or need support? Get in touch with the Eventra team.
-        </p>
+        <p className="mt-4 text-text-muted">{m.contact_subtitle()}</p>
       </header>
 
       <div
@@ -31,23 +30,17 @@ function Contact() {
 			"
       >
         <section>
-          <h2 className="text-2xl font-semibold mb-3">Project Support</h2>
+          <h2 className="text-2xl font-semibold mb-3">{m.contact_project_support_title()}</h2>
 
-          <p>
-            For questions, feedback, or issues related to Eventra, please contact the project team
-            using the email address below.
-          </p>
+          <p>{m.contact_project_support_description()}</p>
 
-          <p className="mt-3">Email: eventra.team@example.com</p>
+          <p className="mt-3">{m.contact_project_support_email()}</p>
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-3">Privacy Requests</h2>
+          <h2 className="text-2xl font-semibold mb-3">{m.contact_privacy_requests_title()}</h2>
 
-          <p>
-            If you have questions about your personal information, account data, or privacy-related
-            requests, please contact the Eventra team.
-          </p>
+          <p>{m.contact_privacy_requests_description()}</p>
         </section>
       </div>
     </section>
