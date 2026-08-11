@@ -10,6 +10,8 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/c
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
+import * as m from '@/@generated/paraglide/messages';
+import { getLocale } from '@/@generated/paraglide/runtime';
 
 export function ForgotPassword({ className, ...props }: React.ComponentProps<'div'>) {
   const requestReset = useMutation({
@@ -20,7 +22,7 @@ export function ForgotPassword({ className, ...props }: React.ComponentProps<'di
       });
 
       if (error) {
-        throw new Error(error.message ?? 'Unable to send the reset link');
+        throw new Error(m.forgot_password_error());
       }
 
       return data;
@@ -43,20 +45,17 @@ export function ForgotPassword({ className, ...props }: React.ComponentProps<'di
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl">Forgot your password?</CardTitle>
+          <CardTitle className="text-3xl">{m.forgot_password_title()}</CardTitle>
 
           <CardDescription className="mt-4 text-md">
-            No worries! <br />
-            Enter your email address to receive a reset link.
+            {m.forgot_password_subtitle_1()} <br />
+            {m.forgot_password_subtitle_2()}
           </CardDescription>
         </CardHeader>
 
         <CardContent>
           {requestReset.isSuccess ? (
-            <FieldDescription className="text-center">
-              If an account exists for that email, a reset link has been sent. In this development
-              environment, check the backend server's console output for the link.
-            </FieldDescription>
+            <FieldDescription className="text-center">{m.forgot_password_info()}</FieldDescription>
           ) : (
             <form
               onSubmit={(e) => {
@@ -73,13 +72,13 @@ export function ForgotPassword({ className, ...props }: React.ComponentProps<'di
 
                     return (
                       <Field>
-                        <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                        <FieldLabel htmlFor={field.name}>{m.create_account_email()}</FieldLabel>
 
                         <Input
                           id={field.name}
                           name={field.name}
                           type="email"
-                          placeholder="youremail@example.com"
+                          placeholder={m.placeholder_email()}
                           value={field.state.value}
                           onBlur={field.handleBlur}
                           onChange={(e) => field.handleChange(e.target.value)}
@@ -110,10 +109,10 @@ export function ForgotPassword({ className, ...props }: React.ComponentProps<'di
                           {(isSubmitting as boolean) ? (
                             <>
                               <Spinner />
-                              Sending
+                              {m.button_spinner_sending()}
                             </>
                           ) : (
-                            'Send Reset Link'
+                            m.forgot_password_button()
                           )}
                         </Button>
                       )}
@@ -122,9 +121,13 @@ export function ForgotPassword({ className, ...props }: React.ComponentProps<'di
                 </Field>
 
                 <FieldDescription className="text-center">
-                  Do remember your password?{' '}
-                  <Link to="/login" className="underline underline-offset-4">
-                    Log in
+                  {m.forgot_password_remember()}{' '}
+                  <Link
+                    to="/$locale/login"
+                    params={{ locale: getLocale() }}
+                    className="underline underline-offset-4"
+                  >
+                    {m.login_button()}
                   </Link>
                 </FieldDescription>
               </FieldGroup>
