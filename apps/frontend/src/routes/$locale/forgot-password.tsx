@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { CalendarDays } from 'lucide-react';
 import { ForgotPassword } from '@/components/ForgotPasswordForm';
+import * as m from '@/@generated/paraglide/messages';
 
 export const Route = createFileRoute('/$locale/forgot-password')({
   component: ForgotPasswordPage,
@@ -14,7 +15,7 @@ function ForgotPasswordPage() {
           <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <CalendarDays className="size-4" />
           </div>
-          Eventra
+          {m.button_eventra()}
         </div>
 
         <ForgotPassword />

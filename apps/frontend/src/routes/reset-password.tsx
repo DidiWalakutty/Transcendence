@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { CalendarDays } from 'lucide-react';
 import { z } from 'zod';
 import { ResetPasswordForm } from '@/components/ResetPasswordForm';
+import * as m from '@/@generated/paraglide/messages';
 
 export const Route = createFileRoute('/reset-password')({
   validateSearch: z.object({
@@ -20,7 +21,7 @@ function ResetPasswordPage() {
           <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <CalendarDays className="size-4" />
           </div>
-          Eventra
+          {m.button_eventra()}
         </div>
 
         <ResetPasswordForm token={token} />
