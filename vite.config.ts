@@ -17,7 +17,7 @@ export default defineConfig({
     tasks: {
       'repo:trpc:generate': {
         command:
-          'vp exec --filter @repo/backend nestjs-trpc generate --entrypoint src/app.module.ts --output ../../packages/schemas/src/@generated && vp fmt packages/schemas/src/@generated/server.ts --write',
+          'vp exec --filter @repo/backend ../../bin/nestjs-trpc generate --entrypoint src/app.module.ts --output ../../packages/schemas/src/@generated && vp fmt packages/schemas/src/@generated/server.ts --write',
         cache: false,
       },
       'repo:frontend:generate': {
@@ -193,7 +193,7 @@ export default defineConfig({
       },
       'repo:trpc:watch': {
         command:
-          'vp exec --filter @repo/backend nestjs-trpc watch --entrypoint src/app.module.ts --output ../../packages/schemas/src/@generated',
+          'vp exec --filter @repo/backend ../../bin/nestjs-trpc watch --entrypoint src/app.module.ts --output ../../packages/schemas/src/@generated',
         cache: false,
       },
     },

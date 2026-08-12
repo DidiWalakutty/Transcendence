@@ -9,7 +9,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { nitro } from 'nitro/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import type { ManifestOptions } from 'vite-plugin-pwa';
-import manifest from './public/manifest.json';
+import manifest from './public/manifest.json' with { type: 'json' };
 
 const config = defineConfig({
   resolve: { tsconfigPaths: true },

@@ -74,6 +74,11 @@ packaged binary requires.
 
 Vite+ installs and manages Bun for the project, so contributors do not need to install Bun manually.
 
+For environments that cannot use Nix, the repository also vendors a compiled
+`nestjs-trpc` CLI at `bin/nestjs-trpc`. The tRPC generation tasks invoke that
+binary directly from the backend workspace, so you can run the code generation
+path without relying on the packaged `bunx nestjs-trpc` executable.
+
 ## Task Configuration
 
 Workspace tasks are configured in:
