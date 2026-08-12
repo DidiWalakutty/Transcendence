@@ -77,7 +77,7 @@ export const events = pgTable('events', {
   location: text('location').notNull(),
   dateTime: timestamp('date_time').notNull(),
   maxCapacity: integer('max_capacity').notNull(),
-  tags: text('tags').array().notNull(),
+  category: text('category').array().notNull(),
 });
 
 export const friendshipStatus = pgEnum('friendship_status', ['pending', 'accepted']);

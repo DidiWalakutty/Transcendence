@@ -15,6 +15,20 @@
       "when": 1785603305328,
       "tag": "0001_simple_kate_bishop",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1786476183374,
+      "tag": "0002_stale_nightmare",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1786536552761,
+      "tag": "0003_worried_zzzax",
+      "breakpoints": true
     }
   ]
 }

@@ -54,6 +54,7 @@
     "@repo/tsconfig": "workspace:*",
     "@types/bun": "latest",
     "@types/node": "^25.9.3",
+    "drizzle-seed": "^0.3.1",
     "vite-plus": "^0.2.0"
   },
   "peerDependencies": {
