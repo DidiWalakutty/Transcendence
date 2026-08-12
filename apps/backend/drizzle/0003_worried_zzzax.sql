@@ -1,0 +1,1 @@
+ALTER TABLE "events" ALTER COLUMN "category" SET DATA TYPE text[];
