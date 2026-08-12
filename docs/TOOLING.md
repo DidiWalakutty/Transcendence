@@ -20,6 +20,12 @@ Inside a [Nix dev shell](./DEVENVIRONMENT.md), `node_modules/.bin/vp` is already
 
 Install Vite+ before running the project outside the devcontainer (skip this if you use Nix — see above).
 
+You can also run the repository helper script:
+
+```bash
+./scripts/install-viteplus.sh
+```
+
 ### macOS / Linux
 
 ```bash
