@@ -1,4 +1,5 @@
 import * as m from '@/@generated/paraglide/messages';
+import { Button } from '../ui/button';
 
 // 1) TODO:
 // This component currently controls the category selection UI.
@@ -129,7 +130,7 @@ export function EventFilters({
               {category.title}
             </label>
           ))}
-          <button
+          <Button
             onClick={onClearFilters}
             disabled={selectedCategories.length === 0}
             className="
@@ -146,7 +147,7 @@ export function EventFilters({
 			"
           >
             {m.filter_clear()}
-          </button>
+          </Button>
         </div>
       </div>
     </aside>

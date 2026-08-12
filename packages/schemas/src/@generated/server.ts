@@ -9,10 +9,12 @@
  */
 
 import { initTRPC } from '@trpc/server';
+import { z } from 'zod';
 import superjson from 'superjson';
 
 const t = initTRPC.create({ transformer: superjson });
 const publicProcedure = t.procedure;
+import { eventSortSchema, eventsSchema } from '@repo/schemas/events';
 import {
   createUserSchema,
   userSchema,
@@ -24,6 +26,12 @@ import {
 } from '@repo/schemas/users';
 
 const appRouter = t.router({
+  events: t.router({
+    getEvents: publicProcedure
+      .input(eventSortSchema)
+      .output(eventsSchema)
+      .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+  }),
   users: t.router({
     createUser: publicProcedure
       .input(createUserSchema)

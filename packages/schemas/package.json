@@ -17,6 +17,10 @@
       "types": "./src/users.ts",
       "default": "./src/users.ts"
     },
+    "./events": {
+      "types": "./src/events.ts",
+      "default": "./src/events.ts"
+    },
     "./auth": {
       "types": "./src/auth.ts",
       "default": "./src/auth.ts"

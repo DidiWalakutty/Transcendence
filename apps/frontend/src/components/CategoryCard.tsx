@@ -28,7 +28,7 @@ export function CategoryCard({ icon, title, category }: CategoryCardProps) {
       // TODO:
       // Once filtering has been implemented on the events page,
       // read this search parameter and automatically select the matching category filter.
-      search={{ category: category }}
+      search={{ category: [category] }}
 
       className="
 						group

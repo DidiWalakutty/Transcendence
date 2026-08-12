@@ -217,6 +217,7 @@ export default defineConfig({
       '**/.output/**',
       '**/node_modules/**',
       '**routeTree.gen.ts',
+      '**/@generated/**',
     ],
     plugins: ['typescript'],
     options: {

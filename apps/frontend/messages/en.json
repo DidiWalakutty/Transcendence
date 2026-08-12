@@ -107,6 +107,8 @@
 
   "events_page_title": "All Events",
   "events_page_subtitle": "Discover and join events happening near you.",
+  "events_page_empty_title": "No events found",
+  "events_page_empty_description": "Try clearing your filters or check back later for new events.",
   "events_page_pagination_prev": "Previous",
   "events_page_pagination_next": "Next",
 

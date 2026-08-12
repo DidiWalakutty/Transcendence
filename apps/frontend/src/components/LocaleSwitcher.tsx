@@ -3,6 +3,7 @@
 // - Router example: https://github.com/TanStack/router/tree/main/examples/react/i18n-paraglide#switching-locale
 import { m } from '@/@generated/paraglide/messages';
 import { getLocale, locales, setLocale } from '@/@generated/paraglide/runtime';
+import { Button } from './ui/button';
 
 export default function ParaglideLocaleSwitcher() {
   const currentLocale = getLocale();
@@ -20,7 +21,7 @@ export default function ParaglideLocaleSwitcher() {
       <span style={{ opacity: 0.85 }}>{m.current_locale({ locale: currentLocale })}</span>
       <div style={{ display: 'flex', gap: '0.25rem' }}>
         {locales.map((locale) => (
-          <button
+          <Button
             key={locale}
             onClick={() => setLocale(locale)}
             aria-pressed={locale === currentLocale}
@@ -36,7 +37,7 @@ export default function ParaglideLocaleSwitcher() {
             }}
           >
             {locale.toUpperCase()}
-          </button>
+          </Button>
         ))}
       </div>
     </div>

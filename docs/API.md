@@ -23,6 +23,7 @@ The tRPC router implementation currently lives in:
 
 ```text
 apps/backend/src/users/users.router.ts
+apps/backend/src/event-listings/event-listings.router.ts
 ```
 
 Generated client router types live in:
@@ -39,21 +40,22 @@ vp run trpc:generate
 
 ## Current Router
 
-The current router alias is:
+The current router aliases are:
 
 ```text
-users
+events, users
 ```
 
-| Procedure             | Type         | Input              | Output         | Notes                                                    |
-| --------------------- | ------------ | ------------------ | -------------- | -------------------------------------------------------- |
-| `users.getUsers`      | Query        | None               | Array of users | Reads users through the configured repository.           |
-| `users.createUser`    | Mutation     | `createUserSchema` | User           | Creates a user and rejects duplicate email addresses.    |
-| `users.updateUser`    | Mutation     | `updateUserSchema` | User           | Updates a user and rejects missing or duplicate records. |
-| `users.deleteUser`    | Mutation     | `deleteUserSchema` | User           | Deletes a user and rejects missing records.              |
-| `users.onUserCreated` | Subscription | None               | User stream    | Streams newly created users to subscribed clients.       |
-| `users.onUserUpdated` | Subscription | None               | User stream    | Streams updated users to subscribed clients.             |
-| `users.onUserDeleted` | Subscription | None               | User stream    | Streams deleted users to subscribed clients.             |
+| Procedure             | Type         | Input              | Output          | Notes                                                    |
+| --------------------- | ------------ | ------------------ | --------------- | -------------------------------------------------------- |
+| `events.getEvents`    | Query        | `eventSortSchema`  | Array of events | Reads events and orders them in the backend by sort key. |
+| `users.getUsers`      | Query        | None               | Array of users  | Reads users through the configured repository.           |
+| `users.createUser`    | Mutation     | `createUserSchema` | User            | Creates a user and rejects duplicate email addresses.    |
+| `users.updateUser`    | Mutation     | `updateUserSchema` | User            | Updates a user and rejects missing or duplicate records. |
+| `users.deleteUser`    | Mutation     | `deleteUserSchema` | User            | Deletes a user and rejects missing records.              |
+| `users.onUserCreated` | Subscription | None               | User stream     | Streams newly created users to subscribed clients.       |
+| `users.onUserUpdated` | Subscription | None               | User stream     | Streams updated users to subscribed clients.             |
+| `users.onUserDeleted` | Subscription | None               | User stream     | Streams deleted users to subscribed clients.             |
 
 ## Shared Contracts
 
@@ -61,6 +63,7 @@ User input/output contracts are imported from:
 
 ```text
 @repo/schemas/users
+@repo/schemas/events
 ```
 
 The frontend calls these procedures through TanStack Query and `@trpc/tanstack-react-query`.
