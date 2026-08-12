@@ -5,7 +5,7 @@ export const eventSortSchema = z.enum(['upcoming', 'popular', 'newest']);
 export const eventSchema = z.object({
   id: z.string(),
   title: z.string(),
-  category: z.string(),
+  category: z.string().array(),
   location: z.string(),
   date: z.string(),
   image: z.string(),

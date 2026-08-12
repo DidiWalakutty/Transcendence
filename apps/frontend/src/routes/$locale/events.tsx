@@ -48,7 +48,7 @@ function EventsPage() {
       return true;
     }
 
-    return selectedCategories.includes(event.category);
+    return selectedCategories.some((category) => event.category.includes(category));
   });
 
   const totalPages = Math.max(1, Math.ceil(filteredEvents.length / eventsPerPage));

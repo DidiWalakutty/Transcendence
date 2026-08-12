@@ -1,4 +1,5 @@
 import * as m from '@/@generated/paraglide/messages';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 
 type EventSortValue = 'upcoming' | 'popular' | 'newest';
 
@@ -9,26 +10,15 @@ type EventSortProps = {
 
 export function EventSort({ selectedSort, onSortChange }: EventSortProps) {
   return (
-    <select
-      value={selectedSort}
-      onChange={(event) => onSortChange(event.target.value as EventSortValue)}
-      className="
-        rounded-lg
-        border
-        border-border
-        bg-white
-        px-4
-        py-2
-        text-sm
-        text-surface-footer
-        shadow-sm
-      "
-    >
-      <option value="upcoming">{m.event_sorting_upcoming()}</option>
-
-      <option value="popular">{m.event_sorting_popular()}</option>
-
-      <option value="newest">{m.event_sorting_newest()}</option>
-    </select>
+    <Select value={selectedSort} onValueChange={(event) => onSortChange(event as EventSortValue)}>
+      <SelectTrigger>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="upcoming">{m.event_sorting_upcoming()}</SelectItem>
+        <SelectItem value="popular">{m.event_sorting_popular()}</SelectItem>
+        <SelectItem value="newest">{m.event_sorting_newest()}</SelectItem>
+      </SelectContent>
+    </Select>
   );
 }

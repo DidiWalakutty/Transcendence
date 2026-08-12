@@ -6,7 +6,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '1',
     title: 'Summer Festival',
-    category: 'music',
+    category: ['music'],
     location: 'Amsterdam, Netherlands',
     date: '2026-08-08',
     image: placeholderImage,
@@ -17,7 +17,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '2',
     title: 'Taste of Amsterdam',
-    category: 'food',
+    category: ['food'],
     location: 'Amsterdam, Netherlands',
     date: '2026-07-29',
     image: placeholderImage,
@@ -28,7 +28,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '3',
     title: 'Software Engineering Workshop',
-    category: 'workshops',
+    category: ['workshops'],
     location: 'The Hague, Netherlands',
     date: '2026-09-15',
     image: placeholderImage,
@@ -39,7 +39,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '4',
     title: 'Moluccan Cultural Festival',
-    category: 'culture',
+    category: ['culture'],
     location: 'Rotterdam, Netherlands',
     date: '2026-10-05',
     image: placeholderImage,
@@ -50,7 +50,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '5',
     title: 'Board Game Night',
-    category: 'games',
+    category: ['games'],
     location: 'Utrecht, Netherlands',
     date: '2026-11-12',
     image: placeholderImage,
@@ -61,7 +61,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '6',
     title: 'The Future of Artificial Intelligence',
-    category: 'talks',
+    category: ['talks'],
     location: 'Eindhoven, Netherlands',
     date: '2026-12-01',
     image: placeholderImage,
@@ -72,7 +72,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '7',
     title: 'Jazz Under the Stars',
-    category: 'music',
+    category: ['music'],
     location: 'Leiden, Netherlands',
     date: '2026-08-21',
     image: placeholderImage,
@@ -83,7 +83,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '8',
     title: 'Street Art Walking Tour',
-    category: 'culture',
+    category: ['culture'],
     location: 'Rotterdam, Netherlands',
     date: '2026-09-03',
     image: placeholderImage,
@@ -94,7 +94,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '9',
     title: 'Italian Pasta Masterclass',
-    category: 'food',
+    category: ['food'],
     location: 'Amsterdam, Netherlands',
     date: '2026-09-20',
     image: placeholderImage,
@@ -105,7 +105,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '10',
     title: 'Escape Room Challenge',
-    category: 'games',
+    category: ['games'],
     location: 'Haarlem, Netherlands',
     date: '2026-10-18',
     image: placeholderImage,
@@ -116,7 +116,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '11',
     title: 'Climate Change: What Can We Do?',
-    category: 'talks',
+    category: ['talks'],
     location: 'Amsterdam, Netherlands',
     date: '2026-11-05',
     image: placeholderImage,
@@ -127,7 +127,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '12',
     title: 'Photography for Beginners',
-    category: 'workshops',
+    category: ['workshops'],
     location: 'Utrecht, Netherlands',
     date: '2026-11-22',
     image: placeholderImage,
@@ -138,7 +138,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '13',
     title: 'Indie Music Showcase',
-    category: 'music',
+    category: ['music'],
     location: 'Groningen, Netherlands',
     date: '2026-12-10',
     image: placeholderImage,
@@ -149,7 +149,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '14',
     title: 'International Food Market',
-    category: 'food',
+    category: ['food'],
     location: 'The Hague, Netherlands',
     date: '2026-12-14',
     image: placeholderImage,
@@ -160,7 +160,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '15',
     title: 'Creative Writing Workshop',
-    category: 'workshops',
+    category: ['workshops'],
     location: 'Utrecht, Netherlands',
     date: '2027-01-10',
     image: placeholderImage,
@@ -171,7 +171,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '16',
     title: 'Museum Night',
-    category: 'culture',
+    category: ['culture'],
     location: 'Amsterdam, Netherlands',
     date: '2027-01-22',
     image: placeholderImage,
@@ -182,7 +182,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '17',
     title: 'Trivia Championship',
-    category: 'games',
+    category: ['games'],
     location: 'Rotterdam, Netherlands',
     date: '2027-02-05',
     image: placeholderImage,
@@ -193,7 +193,7 @@ export const createEventFixtures = (): EventListingRecord[] => [
   {
     id: '18',
     title: 'Building Better Communities',
-    category: 'talks',
+    category: ['talks'],
     location: 'Amersfoort, Netherlands',
     date: '2027-02-18',
     image: placeholderImage,

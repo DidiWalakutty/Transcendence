@@ -19,13 +19,13 @@ export function LanguageSwitcher() {
   const router = useRouter();
 
   function changeLanguage(locale: (typeof locales)[number]) {
-    setLocale(locale);
+    void setLocale(locale);
 
     const localizedPath = localizeHref(window.location.pathname, {
       locale,
     });
 
-    router.navigate({
+    void router.navigate({
       href: localizedPath,
     });
   }
