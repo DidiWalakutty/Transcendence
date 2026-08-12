@@ -29,7 +29,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
         image: events.image,
         location: events.location,
         dateTime: events.dateTime,
-        tags: events.tags,
+        category: events.category,
         registrationsCount: sql<number>`count(${registrations.eventId})`,
       })
       .from(events)
@@ -47,7 +47,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
     return rows.map((row) => ({
       id: row.id,
       title: row.title,
-      category: row.tags[0] ?? 'event',
+      category: row.category,
       location: row.location,
       date: row.dateTime.toISOString().slice(0, 10),
       image: row.image,
