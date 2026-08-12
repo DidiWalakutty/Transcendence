@@ -17,7 +17,7 @@ export default defineConfig({
     tasks: {
       'repo:trpc:generate': {
         command:
-          'vp exec --filter @repo/backend ../../bin/nestjs-trpc generate --entrypoint src/app.module.ts --output ../../packages/schemas/src/@generated && vp fmt packages/schemas/src/@generated/server.ts --write',
+          'if [ -d /goinfre ]; then vp exec --filter @repo/backend ../../bin/nestjs-trpc generate --entrypoint src/app.module.ts --output ../../packages/schemas/src/@generated; else vp exec --filter @repo/backend bunx nestjs-trpc generate --entrypoint src/app.module.ts --output ../../packages/schemas/src/@generated; fi && vp fmt packages/schemas/src/@generated/server.ts --write',
         cache: false,
       },
       'repo:frontend:generate': {
