@@ -125,6 +125,8 @@
 
   "events_page_title": "Alle Events",
   "events_page_subtitle": "Ontdek en neem deel aan evenementen in de buurt.",
+  "events_page_empty_title": "Geen events gevonden",
+  "events_page_empty_description": "Probeer je filters te wissen of kom later terug voor nieuwe events.",
   "events_page_pagination_prev": "Vorige",
   "events_page_pagination_next": "Volgende",
 

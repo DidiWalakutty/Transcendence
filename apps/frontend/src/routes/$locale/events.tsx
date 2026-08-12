@@ -1,92 +1,47 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { events } from '@/data/events';
+import { useQuery } from '@tanstack/react-query';
 import { EventListItem } from '@/components/events/EventListItem';
-import { useState } from 'react';
 import * as m from '@/@generated/paraglide/messages';
 import { EventFilters } from '@/components/events/EventFilters';
 import { EventSort } from '@/components/events/EventSort';
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
+import { z } from 'zod';
+import { useTRPC } from '@/integrations/trpc/react';
+import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/$locale/events')({
+  validateSearch: z.object({
+    page: z.coerce.number().int().positive().optional(),
+    category: z.array(z.string()).optional(),
+    sort: z.enum(['upcoming', 'popular', 'newest']).optional(),
+  }),
   component: EventsPage,
 });
 
 function EventsPage() {
-  /*
-    TODO: Backend integration
-
-    Currently:
-    - Filtering, sorting and pagination happen on the frontend.
-    - Data comes from the static events array.
-
-    Later:
-    - Fetch events from backend/API.
-    - Send filters, sorting and pagination as query parameters.
-    - Backend/database handles the heavy lifting.
-
-    Example future request:
-
-    GET /events?page=2&category=music&sort=upcoming
-
-    Backend returns:
-    - Only requested page.
-    - Already filtered events.
-    - Already sorted events.
-  */
-
-  // ---------------------------------------
-  // Pagination
-  // ---------------------------------------
-
-  /*
-    TODO: Pagination
-
-    Currently:
-    - All events are loaded at once.
-    - Pagination happens client-side using slice().
-
-    Later:
-    - Move pagination to backend.
-    - Fetch only events needed for the current page.
-    - Store current page in URL.
-
-    Example:
-
-    /events?page=2
-
-    Backend handles:
-
-    LIMIT 8 OFFSET 8
-  */
-
   const eventsPerPage = 8;
-  const [currentPage, setCurrentPage] = useState(1);
+  const navigate = Route.useNavigate();
+  const { page, category, sort } = Route.useSearch();
+  const currentPage = page ?? 1;
+  const selectedCategories = category ?? [];
+  const selectedSort = sort ?? 'upcoming';
+  const trpc = useTRPC();
+  const eventsQuery = useQuery(trpc.events.getEvents.queryOptions(selectedSort));
+  const events = eventsQuery.data ?? [];
 
-  // ---------------------------------------
-  // Filtering
-  // ---------------------------------------
-
-  /*
-    TODO: Filtering
-
-    Currently:
-    - Categories are filtered locally in React.
-    - Uses mock event data.
-
-    Later:
-    - Selected filters should become query parameters.
-    - Database performs filtering.
-
-    Example:
-
-    /events?category=music
-
-    Future filters:
-    - category
-    - date range
-    - location
-  */
-
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const updateSearch = (updates: {
+    page?: number;
+    category?: string[];
+    sort?: 'upcoming' | 'popular' | 'newest';
+  }) => {
+    void navigate({
+      search: (previous) => ({
+        ...previous,
+        ...updates,
+      }),
+      replace: true,
+    });
+  };
 
   const filteredEvents = events.filter((event) => {
     if (selectedCategories.length === 0) {
@@ -96,78 +51,20 @@ function EventsPage() {
     return selectedCategories.includes(event.category);
   });
 
-  // ---------------------------------------
-  // Sorting
-  // ---------------------------------------
-
-  /*
-    TODO: Sorting
-
-    Currently:
-    - Sorting state exists locally.
-    - Sorting will temporarily happen on the frontend.
-
-    Later:
-    - Send selectedSort to backend/API.
-    - Backend/database handles ordering.
-
-    Example:
-
-    /events?sort=upcoming
-    /events?sort=popular
-    /events?sort=newest
-
-    Available sorting values:
-
-    upcoming:
-    - Soonest events first.
-    - Uses event date.
-
-    popular:
-    - Most popular events first.
-    - Requires popularity data from backend.
-
-    newest:
-    - Recently created events first.
-    - Requires createdAt field.
-  */
-
-  const [selectedSort, setSelectedSort] = useState('upcoming');
-
-  /*
-    Temporary frontend sorting.
-
-    This will be removed once sorting moves to backend.
-  */
-
-  const sortedEvents = [...filteredEvents].sort((a, b) => {
-    if (selectedSort === 'upcoming') {
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    }
-
-    // if (selectedSort === 'newest') {
-    //   return (
-    //     new Date(b.createdAt).getTime() -
-    //     new Date(a.createdAt).getTime()
-    //   );
-    // }
-
-    // if (selectedSort === 'popular') {
-    //   return b.attendees - a.attendees;
-    // }
-
-    return 0;
-  });
-
-  // ---------------------------------------
-  // Displayed events
-  // ---------------------------------------
-
-  const totalPages = Math.ceil(sortedEvents.length / eventsPerPage);
+  const totalPages = Math.max(1, Math.ceil(filteredEvents.length / eventsPerPage));
 
   const startIndex = (currentPage - 1) * eventsPerPage;
 
-  const displayedEvents = sortedEvents.slice(startIndex, startIndex + eventsPerPage);
+  const displayedEvents = filteredEvents.slice(startIndex, startIndex + eventsPerPage);
+
+  const handleCategoryChange = (category: string) => {
+    updateSearch({
+      page: 1,
+      category: selectedCategories.includes(category)
+        ? selectedCategories.filter((item) => item !== category)
+        : [...selectedCategories, category],
+    });
+  };
 
   return (
     <div className="relative min-h-[calc(100vh-180px)] bg-white">
@@ -195,31 +92,45 @@ function EventsPage() {
         {/* Events + Filters */}
         <div className="mx-auto mt-12 flex max-w-[1600px] gap-8">
           {/* Event List */}
-          <div className="flex-1 space-y-8">
-            {displayedEvents.map((event) => (
-              <EventListItem key={event.id} {...event} />
-            ))}
+          <div className="flex-1">
+            {filteredEvents.length === 0 ? (
+              <Empty className="min-h-[320px] border-border bg-white/80 shadow-sm">
+                <EmptyHeader>
+                  <EmptyTitle>{m.events_page_empty_title()}</EmptyTitle>
+                  <EmptyDescription>{m.events_page_empty_description()}</EmptyDescription>
+                </EmptyHeader>
+
+                <Button onClick={() => updateSearch({ page: 1, category: [] })}>
+                  {m.filter_clear()}
+                </Button>
+              </Empty>
+            ) : (
+              <div className="space-y-8">
+                {displayedEvents.map((event) => (
+                  <EventListItem key={event.id} {...event} />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Sidebar */}
           <div className="relative w-1/4">
             {/* Sorting */}
             <div className="absolute -top-16 left-0">
-              <EventSort selectedSort={selectedSort} onSortChange={setSelectedSort} />
+              <EventSort
+                selectedSort={selectedSort}
+                onSortChange={(sort: 'upcoming' | 'popular' | 'newest') =>
+                  updateSearch({ page: 1, sort })
+                }
+              />
             </div>
 
             {/* Filters */}
 
             <EventFilters
               selectedCategories={selectedCategories}
-              onCategoryChange={(category) => {
-                setSelectedCategories((prev) =>
-                  prev.includes(category)
-                    ? prev.filter((item) => item !== category)
-                    : [...prev, category],
-                );
-              }}
-              onClearFilters={() => setSelectedCategories([])}
+              onCategoryChange={handleCategoryChange}
+              onClearFilters={() => updateSearch({ page: 1, category: [] })}
             />
           </div>
         </div>
@@ -227,8 +138,8 @@ function EventsPage() {
         {/* Pagination */}
 
         <div className="mt-12 flex justify-center gap-3">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          <Button
+            onClick={() => updateSearch({ page: Math.max(currentPage - 1, 1) })}
             disabled={currentPage === 1}
             className="
               rounded-lg
@@ -239,15 +150,15 @@ function EventsPage() {
             "
           >
             {m.events_page_pagination_prev()}
-          </button>
+          </Button>
 
           {Array.from({ length: totalPages }).map((_, index) => {
             const page = index + 1;
 
             return (
-              <button
+              <Button
                 key={page}
-                onClick={() => setCurrentPage(page)}
+                onClick={() => updateSearch({ page })}
                 className={`
                   rounded-lg
                   px-4
@@ -256,12 +167,12 @@ function EventsPage() {
                 `}
               >
                 {page}
-              </button>
+              </Button>
             );
           })}
 
-          <button
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+          <Button
+            onClick={() => updateSearch({ page: Math.min(currentPage + 1, totalPages) })}
             disabled={currentPage === totalPages}
             className="
               rounded-lg
@@ -272,7 +183,7 @@ function EventsPage() {
             "
           >
             {m.events_page_pagination_next()}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

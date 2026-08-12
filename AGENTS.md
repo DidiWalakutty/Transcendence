@@ -20,3 +20,7 @@ Key references:
 Keep documentation consistent with the implementation, and update the
 [documentation index](docs/README.md) when documentation is added, removed, or
 renamed.
+
+Do not edit Drizzle migration SQL files in `apps/backend/drizzle` by hand.
+When schema changes are needed, update the shared schema definitions and
+regenerate migrations through the repository command (`vp run db:generate`).

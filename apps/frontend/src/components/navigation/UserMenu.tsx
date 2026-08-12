@@ -43,10 +43,8 @@ export function UserMenu({ role }: UserMenuProps) {
   // Logout must be handled later.
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button variant="ghost" size="icon">
-          <User className="h-5 w-5 text-text-primary 2xl:h-7 2xl:w-7" />
-        </Button>
+      <DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
+        <User className="h-5 w-5 text-text-primary 2xl:h-7 2xl:w-7" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">

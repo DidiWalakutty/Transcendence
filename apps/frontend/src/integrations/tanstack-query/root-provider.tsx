@@ -8,6 +8,9 @@ import type { AppRouter } from '@repo/schemas/trpc';
 import { TRPCProvider } from '@/integrations/trpc/react';
 import { env } from '@/env';
 
+import { MutationCache } from '@tanstack/react-query';
+import { toast } from 'sonner';
+
 function getUrl() {
   const baseUrl =
     env.VITE_API_URL ??
@@ -40,6 +43,23 @@ export const trpcClient = createTRPCClient<AppRouter>({
 
 export function getContext() {
   const queryClient = new QueryClient({
+    mutationCache: new MutationCache({
+      onSuccess: (data: any, _variables, _context, mutation) => {
+        // Safely extract the active tRPC endpoint pathway (e.g. ['users', 'createUser'])
+        const pathArray = (mutation.options as any).mutationKey?.[0] || [];
+        const pathName = Array.isArray(pathArray) ? pathArray.join('.').toLowerCase() : '';
+
+        const entryName = data?.name || data?.title || 'Entry';
+
+        if (pathName.includes('create')) {
+          toast.success(`${entryName} was successfully created!`);
+        } else if (pathName.includes('update')) {
+          toast.info(`${entryName} details have been updated.`);
+        } else if (pathName.includes('delete')) {
+          toast.error(`${entryName} has been removed.`);
+        }
+      },
+    }),
     defaultOptions: {
       queries: {
         retry: false,

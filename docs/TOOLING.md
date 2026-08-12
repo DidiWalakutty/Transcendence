@@ -20,6 +20,12 @@ Inside a [Nix dev shell](./DEVENVIRONMENT.md), `node_modules/.bin/vp` is already
 
 Install Vite+ before running the project outside the devcontainer (skip this if you use Nix — see above).
 
+You can also run the repository helper script:
+
+```bash
+./scripts/install-viteplus.sh
+```
+
 ### macOS / Linux
 
 ```bash
@@ -73,6 +79,11 @@ packaged binary requires.
 | `vp run db:studio`       | Open Drizzle Studio.                                           |
 
 Vite+ installs and manages Bun for the project, so contributors do not need to install Bun manually.
+
+For environments that cannot use Nix, the repository also vendors a compiled
+`nestjs-trpc` CLI at `bin/nestjs-trpc`. The tRPC generation tasks invoke that
+binary directly from the backend workspace, so you can run the code generation
+path without relying on the packaged `bunx nestjs-trpc` executable.
 
 ## Task Configuration
 

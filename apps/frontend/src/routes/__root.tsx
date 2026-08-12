@@ -18,6 +18,8 @@ import { Footer } from '@/components/Footer';
 import { Navbar } from '@/components/navigation/Navbar';
 import { buttonVariants } from '@/components/ui/button';
 
+import { Toaster } from 'sonner';
+
 interface MyRouterContext {
   queryClient: QueryClient;
 
@@ -114,6 +116,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <Footer />
           </div>
         </TooltipProvider>
+        <Toaster closeButton richColors position="top-right" />
         <TanStackDevtools
           config={{
             position: 'bottom-right',
