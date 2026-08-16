@@ -40,6 +40,9 @@ const appRouter = t.router({
     getUsers: publicProcedure
       .output(userSchema.array())
       .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+    getMe: publicProcedure
+      .output(userSchema.nullable())
+      .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
     updateUser: publicProcedure
       .input(updateUserSchema)
       .output(userSchema)

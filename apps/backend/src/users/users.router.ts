@@ -1,4 +1,4 @@
-import { Router, Query, Mutation, Subscription, Input, Options } from 'nestjs-trpc';
+import { Router, Query, Mutation, Subscription, Input, Options, Ctx } from 'nestjs-trpc';
 
 import {
   createUserSchema,
@@ -41,6 +41,12 @@ export class UsersRouter {
   @Query({ output: userSchema.array() })
   async getUsers() {
     return this.usersService.findAll();
+  }
+
+  @Query({ output: userSchema.nullable() })
+  async getMe(@Ctx() ctx: { user: { id: string } | null }) {
+    if (!ctx.user) return null;
+    return (await this.usersService.findById(ctx.user.id)) ?? null;
   }
 
   @Mutation({ input: updateUserSchema, output: userSchema })

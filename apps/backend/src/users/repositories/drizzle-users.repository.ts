@@ -24,6 +24,12 @@ export class DrizzleUsersRepository extends UsersRepository {
     });
   }
 
+  async findById(id: string) {
+    return this.db.query.users.findFirst({
+      where: eq(users.id, id),
+    });
+  }
+
   async findAll() {
     return this.db.query.users.findMany({
       orderBy: asc(users.createdAt),
