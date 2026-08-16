@@ -68,6 +68,19 @@ services:
       timeout: 5s
       retries: 10
 
+  caddy:
+    image: caddy:2-alpine
+    container_name: ft_transcendence_caddy
+    restart: unless-stopped
+    ports:
+      - '443:443'
+      - '80:80'
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/certs:/certs
+    depends_on:
+      - frontend
+      - backend
 volumes:
   postgres_data:
   redis_data:
