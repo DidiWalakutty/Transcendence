@@ -16,14 +16,15 @@ const t = initTRPC.create({ transformer: superjson });
 const publicProcedure = t.procedure;
 import { eventSortSchema, eventsSchema } from '@repo/schemas/events';
 import {
-  createUserSchema,
   userSchema,
+  createUserSchema,
   updateUserSchema,
   deleteUserSchema,
   userCreatedSubscriptionSchema,
   userUpdatedSubscriptionSchema,
   userDeletedSubscriptionSchema,
 } from '@repo/schemas/users';
+import { addFriendSchema, friendSchema, removeFriendSchema } from '@repo/schemas/friends';
 
 const appRouter = t.router({
   events: t.router({
@@ -31,6 +32,26 @@ const appRouter = t.router({
       .input(eventSortSchema)
       .output(eventsSchema)
       .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+  }),
+  friends: t.router({
+    getFriends: publicProcedure
+      .output(userSchema.array())
+      .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+    getPendingRequests: publicProcedure
+      .output(userSchema.array())
+      .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+    addFriend: publicProcedure
+      .input(addFriendSchema)
+      .output(friendSchema)
+      .mutation(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+    acceptFriend: publicProcedure
+      .input(addFriendSchema)
+      .output(friendSchema)
+      .mutation(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+    removeFriend: publicProcedure
+      .input(removeFriendSchema)
+      .output(friendSchema)
+      .mutation(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
   }),
   users: t.router({
     createUser: publicProcedure

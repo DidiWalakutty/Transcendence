@@ -12,6 +12,7 @@ import { environment, environmentFilePaths } from './config/environment';
 import { HealthModule } from './health/health.module';
 import { UsersModule } from './users/users.module';
 import { EventListingsModule } from './event-listings/event-listings.module';
+import { FriendsModule } from './friends/friends.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthContext } from './auth/auth.context';
 
@@ -73,6 +74,9 @@ import { AuthContext } from './auth/auth.context';
       persistence: environment.DEV_FIXTURES ? 'fixtures' : 'database',
     }),
     EventListingsModule.register({
+      persistence: environment.DEV_FIXTURES ? 'fixtures' : 'database',
+    }),
+    FriendsModule.register({
       persistence: environment.DEV_FIXTURES ? 'fixtures' : 'database',
     }),
     AuthModule,

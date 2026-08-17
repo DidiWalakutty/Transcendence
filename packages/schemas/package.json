@@ -28,6 +28,10 @@
     "./trpc": {
       "types": "./src/@generated/server.ts",
       "default": "./src/@generated/server.ts"
+    },
+    "./friends": {
+      "types": "./src/friends.ts",
+      "default": "./src/friends.ts"
     }
   },
   "dependencies": {

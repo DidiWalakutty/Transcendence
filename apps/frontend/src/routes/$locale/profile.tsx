@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@/integrations/trpc/react';
 import { authClient } from '@/lib/auth-client';
@@ -32,7 +32,7 @@ function ProfilePage() {
   const [language, setLanguage] = useState('');
 
   // Sync form state when user loads
-  useState(() => {
+  useEffect(() => {
     if (user) {
       setName(user.name ?? '');
       setUsername(user.username ?? '');
@@ -40,7 +40,7 @@ function ProfilePage() {
       setLocation(user.location ?? '');
       setLanguage(user.preferedLanguage ?? '');
     }
-  });
+  }, [user]);
 
   const updateUser = useMutation(
     trpc.users.updateUser.mutationOptions({
@@ -51,7 +51,30 @@ function ProfilePage() {
       },
     }),
   );
+  const friendsQuery = useQuery(trpc.friends.getFriends.queryOptions());
+  const pendingQuery = useQuery(trpc.friends.getPendingRequests.queryOptions());
 
+  const acceptFriend = useMutation(
+    trpc.friends.acceptFriend.mutationOptions({
+      onSuccess: () => {
+        void queryClient.invalidateQueries({ queryKey: trpc.friends.getFriends.queryKey() });
+        void queryClient.invalidateQueries({
+          queryKey: trpc.friends.getPendingRequests.queryKey(),
+        });
+      },
+    }),
+  );
+
+  const removeFriend = useMutation(
+    trpc.friends.removeFriend.mutationOptions({
+      onSuccess: () => {
+        void queryClient.invalidateQueries({ queryKey: trpc.friends.getFriends.queryKey() });
+      },
+    }),
+  );
+
+  const friends = friendsQuery.data ?? [];
+  const pending = pendingQuery.data ?? [];
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -65,6 +88,34 @@ function ProfilePage() {
     });
   };
 
+  const [friendSearch, setFriendSearch] = useState('');
+
+  const usersQuery = useQuery(trpc.users.getUsers.queryOptions());
+
+  const addFriend = useMutation(
+    trpc.friends.addFriend.mutationOptions({
+      onSuccess: () => {
+        setFriendSearch('');
+        void queryClient.invalidateQueries({
+          queryKey: trpc.friends.getPendingRequests.queryKey(),
+        });
+      },
+    }),
+  );
+
+  const friendIds = new Set(friends.map((f) => f.id));
+
+  const searchResults =
+    friendSearch.trim().length < 2
+      ? []
+      : (usersQuery.data ?? [])
+          .filter(
+            (candidate) =>
+              candidate.id !== user?.id &&
+              !friendIds.has(candidate.id) &&
+              candidate.username.toLowerCase().includes(friendSearch.trim().toLowerCase()),
+          )
+          .slice(0, 5);
   if (!session) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -183,6 +234,78 @@ function ProfilePage() {
             <Button variant="outline" disabled>
               My Registered Events
             </Button>
+          </div>
+        </CardContent>
+      </Card>
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle>Friends</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="friend-search">Add a friend</Label>
+            <Input
+              id="friend-search"
+              value={friendSearch}
+              onChange={(e) => setFriendSearch(e.target.value)}
+              placeholder="Search by username..."
+            />
+
+            {searchResults.map((candidate) => (
+              <div key={candidate.id} className="flex items-center justify-between gap-4">
+                <span className="text-sm">{candidate.displayUsername ?? candidate.username}</span>
+                <Button
+                  size="sm"
+                  disabled={addFriend.isPending}
+                  onClick={() => addFriend.mutate({ friendId: candidate.id })}
+                >
+                  Add
+                </Button>
+              </div>
+            ))}
+
+            {addFriend.error && (
+              <Alert variant="destructive">
+                <AlertDescription>{addFriend.error.message}</AlertDescription>
+              </Alert>
+            )}
+          </div>
+          {pending.length > 0 && (
+            <div className="flex flex-col gap-3">
+              <h3 className="text-sm font-medium text-muted-foreground">Pending requests</h3>
+              {pending.map((person) => (
+                <div key={person.id} className="flex items-center justify-between gap-4">
+                  <span>{person.displayUsername ?? person.username}</span>
+                  <Button
+                    size="sm"
+                    disabled={acceptFriend.isPending}
+                    onClick={() => acceptFriend.mutate({ friendId: person.id })}
+                  >
+                    Accept
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="flex flex-col gap-3">
+            {friends.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No friends yet.</p>
+            ) : (
+              friends.map((person) => (
+                <div key={person.id} className="flex items-center justify-between gap-4">
+                  <span>{person.displayUsername ?? person.username}</span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={removeFriend.isPending}
+                    onClick={() => removeFriend.mutate({ friendId: person.id })}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              ))
+            )}
           </div>
         </CardContent>
       </Card>
