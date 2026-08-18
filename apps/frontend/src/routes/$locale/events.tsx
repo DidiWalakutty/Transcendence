@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 export const Route = createFileRoute('/$locale/events')({
   validateSearch: z.object({
     page: z.coerce.number().int().positive().optional(),
-    category: z.array(z.string()).optional(),
+    category: z.string().optional(),
     sort: z.enum(['upcoming', 'popular', 'newest']).optional(),
   }),
   component: EventsPage,
@@ -23,7 +23,7 @@ function EventsPage() {
   const navigate = Route.useNavigate();
   const { page, category, sort } = Route.useSearch();
   const currentPage = page ?? 1;
-  const selectedCategories = category ?? [];
+  const selectedCategories = category ? category.split(',') : [];
   const selectedSort = sort ?? 'upcoming';
   const trpc = useTRPC();
   const eventsQuery = useQuery(trpc.events.getEvents.queryOptions(selectedSort));
@@ -31,7 +31,7 @@ function EventsPage() {
 
   const updateSearch = (updates: {
     page?: number;
-    category?: string[];
+    category?: string;
     sort?: 'upcoming' | 'popular' | 'newest';
   }) => {
     void navigate({
@@ -58,11 +58,13 @@ function EventsPage() {
   const displayedEvents = filteredEvents.slice(startIndex, startIndex + eventsPerPage);
 
   const handleCategoryChange = (category: string) => {
+    const newCategories = selectedCategories.includes(category)
+      ? selectedCategories.filter((item) => item !== category)
+      : [...selectedCategories, category];
+
     updateSearch({
       page: 1,
-      category: selectedCategories.includes(category)
-        ? selectedCategories.filter((item) => item !== category)
-        : [...selectedCategories, category],
+      category: newCategories.length > 0 ? newCategories.join(',') : undefined,
     });
   };
 
@@ -100,7 +102,7 @@ function EventsPage() {
                   <EmptyDescription>{m.events_page_empty_description()}</EmptyDescription>
                 </EmptyHeader>
 
-                <Button onClick={() => updateSearch({ page: 1, category: [] })}>
+                <Button onClick={() => updateSearch({ page: 1, category: undefined })}>
                   {m.filter_clear()}
                 </Button>
               </Empty>
@@ -130,7 +132,7 @@ function EventsPage() {
             <EventFilters
               selectedCategories={selectedCategories}
               onCategoryChange={handleCategoryChange}
-              onClearFilters={() => updateSearch({ page: 1, category: [] })}
+              onClearFilters={() => updateSearch({ page: 1, category: undefined })}
             />
           </div>
         </div>

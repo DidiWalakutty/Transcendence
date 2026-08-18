@@ -1,23 +1,15 @@
 import { Calendar, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import * as m from '@/@generated/paraglide/messages';
+import placeholderEvent from '@/assets/placeholder_event.png';
 
+{
+  /* TODO: Add event id and link to the event details page once it exists. */
+}
 type EventCardProps = {
-  /*
-		TODO (Backend Events)
-
-		Once events are fetched from the backend:
-
-		- Add the event id.
-		- Link this card/button to:
-			/$locale/events/$eventId
-		- Category will come from the database.
-		- Image URL will come from uploaded event images.
-	*/
-
   image: string;
   title: string;
-  category: string;
+  category: string[];
   location: string;
   date: string;
 };
@@ -57,7 +49,7 @@ export function EventCard({ image, title, category, location, date }: EventCardP
       {/* Event Image */}
       <div className="relative">
         <img
-          src={image}
+          src={image === 'PLACEHOLDER' ? placeholderEvent : image}
           alt={title}
           className="
 						h-52
@@ -135,7 +127,7 @@ export function EventCard({ image, title, category, location, date }: EventCardP
 						text-brand-primary
 					"
         >
-          {category}
+          {category.join(' • ')}
         </p>
 
         {/* Event Title */}

@@ -1,6 +1,7 @@
 import { EventDate } from '@/components/events/EventDate';
 import * as m from '@/@generated/paraglide/messages';
 import { Badge } from '../ui/badge';
+import placeholderEvent from '@/assets/placeholder_event.png';
 
 type EventListItemProps = {
   id: string;
@@ -79,7 +80,11 @@ export function EventListItem({
         <div className="flex min-h-40 gap-6">
           {/* Event Image */}
           <div className="h-40 w-40 shrink-0 overflow-hidden rounded-xl">
-            <img src={image} alt={title} className="h-full w-full object-cover" />
+            <img
+              src={image === 'PLACEHOLDER' ? placeholderEvent : image}
+              alt={title}
+              className="h-full w-full object-cover"
+            />
           </div>
 
           {/* Event Information */}
