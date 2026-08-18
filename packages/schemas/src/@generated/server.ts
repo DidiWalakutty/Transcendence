@@ -31,6 +31,9 @@ const appRouter = t.router({
       .input(eventSortSchema)
       .output(eventsSchema)
       .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+    getFeaturedEvents: publicProcedure
+      .output(eventsSchema)
+      .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
   }),
   users: t.router({
     createUser: publicProcedure

@@ -11,4 +11,9 @@ export class EventListingsRouter {
   async getEvents(@Input() sort: EventSortDto) {
     return this.eventListingsService.findAll(sort);
   }
+
+  @Query({ output: eventsSchema })
+  async getFeaturedEvents() {
+    return this.eventListingsService.findFeatured();
+  }
 }

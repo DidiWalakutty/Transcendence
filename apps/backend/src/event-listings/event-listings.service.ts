@@ -14,4 +14,12 @@ export class EventListingsService {
       ({ createdAt: _createdAt, registrationsCount: _registrationsCount, ...event }) => event,
     );
   }
+
+  async findFeatured(): Promise<EventDto[]> {
+    const events = await this.repository.findFeatured();
+
+    return events.map(
+      ({ createdAt: _createdAt, registrationsCount: _registrationsCount, ...event }) => event,
+    );
+  }
 }

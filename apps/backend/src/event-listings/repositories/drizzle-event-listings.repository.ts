@@ -56,4 +56,37 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       registrationsCount: Number(row.registrationsCount),
     }));
   }
+  async findFeatured(): Promise<EventListingRecord[]> {
+    const registrationCount = sql<number>`count(${registrations.eventId})`;
+
+    const rows = await this.db
+      .select({
+        id: events.id,
+        title: events.title,
+        createdAt: events.createdAt,
+        description: events.description,
+        image: events.image,
+        location: events.location,
+        dateTime: events.dateTime,
+        category: events.category,
+        registrationsCount: registrationCount,
+      })
+      .from(events)
+      .leftJoin(registrations, eq(registrations.eventId, events.id))
+      .groupBy(events.id)
+      .orderBy(asc(events.dateTime))
+      .limit(4);
+
+    return rows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      category: row.category,
+      location: row.location,
+      date: row.dateTime.toISOString().slice(0, 10),
+      image: row.image,
+      description: Object.values(row.description).find((value) => value.length > 0) ?? '',
+      createdAt: row.createdAt,
+      registrationsCount: Number(row.registrationsCount),
+    }));
+  }
 }
