@@ -13,3 +13,10 @@ export function conflictError(message: string) {
     message,
   });
 }
+
+export function unauthorizedError(message: string) {
+  return new TRPCError({
+    code: 'UNAUTHORIZED',
+    message,
+  });
+}

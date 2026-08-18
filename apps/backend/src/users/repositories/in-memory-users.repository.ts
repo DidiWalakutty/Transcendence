@@ -18,6 +18,10 @@ export class InMemoryUsersRepository extends UsersRepository {
     return [...this.users].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
   }
 
+  async findById(id: string) {
+    return this.users.find((u) => u.id === id);
+  }
+
   async create(data: CreateUserDto) {
     this.assertUniqueEmail(data.email);
 
@@ -47,7 +51,9 @@ export class InMemoryUsersRepository extends UsersRepository {
       return undefined;
     }
 
-    this.assertUniqueEmail(data.email, id);
+    if (data.email) {
+      this.assertUniqueEmail(data.email, id);
+    }
 
     const user: UserDto = {
       ...this.users[index],

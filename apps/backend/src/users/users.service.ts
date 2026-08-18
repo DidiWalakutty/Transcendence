@@ -20,6 +20,10 @@ export class UsersService {
     return this.repository.findByEmail(email);
   }
 
+  async findById(id: string) {
+    return this.repository.findById(id);
+  }
+
   async findAll() {
     const cachedUsers = await this.cache.get<UserDto[]>(USERS_CACHE_KEY);
 

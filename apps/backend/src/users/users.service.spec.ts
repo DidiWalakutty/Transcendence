@@ -43,6 +43,7 @@ describe('UsersService', () => {
     emitUserDeleted = vi.fn();
     repository = {
       findByEmail: vi.fn(),
+      findById: vi.fn(),
       findAll,
       create: vi.fn().mockResolvedValue(user),
       update,

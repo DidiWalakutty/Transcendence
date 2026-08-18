@@ -18,8 +18,13 @@ export const createUserSchema = createInsertSchema(users, {
   username: true,
 });
 
-export const updateUserSchema = createUserSchema.extend({
+export const updateUserSchema = createUserSchema.partial().extend({
   id: z.uuid(),
+  aboutMe: z.string().max(500).optional(),
+  location: z.string().max(100).optional(),
+  preferedLanguage: z.string().optional(),
+  avatar: z.string().optional(),
+  displayUsername: z.string().optional(),
 });
 
 export const deleteUserSchema = z.object({
