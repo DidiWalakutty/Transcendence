@@ -7,4 +7,5 @@ export type EventListingRecord = EventDto & {
 
 export abstract class EventListingsRepository {
   abstract findAll(sort: EventSortDto): Promise<EventListingRecord[]>;
+  abstract findFeatured(): Promise<EventListingRecord[]>;
 }

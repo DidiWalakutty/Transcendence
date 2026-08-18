@@ -1,0 +1,201 @@
+export const seedEvents = [
+  {
+    title: 'Summer Festival',
+    category: ['music'],
+    location: 'Amsterdam, Netherlands',
+    dateTime: '2026-08-08T18:00:00',
+    maxCapacity: 500,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Enjoy live music, food, and activities with summer vibes.',
+    },
+  },
+  {
+    title: 'Taste of Amsterdam',
+    category: ['food'],
+    location: 'Amsterdam, Netherlands',
+    dateTime: '2026-10-10T18:00:00',
+    maxCapacity: 200,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Discover amazing dishes from local restaurants, chefs, and food creators.',
+    },
+  },
+  {
+    title: 'Software Engineering Workshop',
+    category: ['workshops'],
+    location: 'The Hague, Netherlands',
+    dateTime: '2026-09-15T18:00:00',
+    maxCapacity: 50,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Learn practical software engineering skills through hands-on projects.',
+    },
+  },
+  {
+    title: 'Moluccan Cultural Festival',
+    category: ['culture', 'music', 'talks', 'food'],
+    location: 'Rotterdam, Netherlands',
+    dateTime: '2026-10-05T18:00:00',
+    maxCapacity: 300,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Celebrate heritage, traditions, music, and stories from the Moluccan islands.',
+    },
+  },
+  {
+    title: 'Board Game Night',
+    category: ['games'],
+    location: 'Utrecht, Netherlands',
+    dateTime: '2026-11-12T19:00:00',
+    maxCapacity: 40,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Join a relaxed evening full of strategy games, new friends, and fun.',
+    },
+  },
+  {
+    title: 'The Future of Artificial Intelligence',
+    category: ['talks'],
+    location: 'Eindhoven, Netherlands',
+    dateTime: '2026-12-01T19:00:00',
+    maxCapacity: 100,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Explore how AI is changing technology, creativity, and everyday life.',
+    },
+  },
+  {
+    title: 'Jazz Under the Stars',
+    category: ['music', 'food', 'festivals'],
+    location: 'Leiden, Netherlands',
+    dateTime: '2026-08-21T20:00:00',
+    maxCapacity: 150,
+    image: 'PLACEHOLDER',
+    description: {
+      english:
+        'An outdoor evening featuring talented jazz musicians, local artists and some vibing food.',
+    },
+  },
+  {
+    title: 'Street Art Walking Tour',
+    category: ['culture'],
+    location: 'Rotterdam, Netherlands',
+    dateTime: '2026-09-03T14:00:00',
+    maxCapacity: 30,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Discover murals, graffiti, and the stories behind urban art.',
+    },
+  },
+  {
+    title: 'Italian Pasta Masterclass',
+    category: ['food', 'workshops'],
+    location: 'Amsterdam, Netherlands',
+    dateTime: '2026-09-20T17:00:00',
+    maxCapacity: 25,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Learn how to create fresh pasta with guidance from experienced chefs.',
+    },
+  },
+  {
+    title: 'Escape Room Challenge',
+    category: ['games'],
+    location: 'Haarlem, Netherlands',
+    dateTime: '2026-10-18T18:00:00',
+    maxCapacity: 24,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Work together with your team to solve puzzles and escape in time.',
+    },
+  },
+  {
+    title: 'Climate Change: What Can We Do?',
+    category: ['talks'],
+    location: 'Amsterdam, Netherlands',
+    dateTime: '2026-11-05T19:00:00',
+    maxCapacity: 50,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'A discussion with experts about climate solutions and sustainable choices.',
+    },
+  },
+  {
+    title: 'Photography for Beginners',
+    category: ['workshops'],
+    location: 'Utrecht, Netherlands',
+    dateTime: '2026-11-22T14:00:00',
+    maxCapacity: 30,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Learn photography basics, composition, and creative techniques.',
+    },
+  },
+  {
+    title: 'Indie Music Showcase',
+    category: ['music'],
+    location: 'Groningen, Netherlands',
+    dateTime: '2026-12-10T20:00:00',
+    maxCapacity: 100,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Discover upcoming artists performing live in an intimate venue.',
+    },
+  },
+  {
+    title: 'International Food Market',
+    category: ['food'],
+    location: 'The Hague, Netherlands',
+    dateTime: '2026-12-14T12:00:00',
+    maxCapacity: 250,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Taste flavors from around the world in one vibrant food market.',
+    },
+  },
+  {
+    title: 'Creative Writing Workshop',
+    category: ['workshops'],
+    location: 'Utrecht, Netherlands',
+    dateTime: '2027-01-10T14:00:00',
+    maxCapacity: 15,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Develop your writing skills through creative exercises and storytelling.',
+    },
+  },
+  {
+    title: 'Museum Night',
+    category: ['culture'],
+    location: 'Amsterdam, Netherlands',
+    dateTime: '2027-01-22T19:00:00',
+    maxCapacity: 25,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Experience museums after dark with exhibitions, performances, and activities.',
+    },
+  },
+  {
+    title: 'Trivia Championship',
+    category: ['games'],
+    location: 'Rotterdam, Netherlands',
+    dateTime: '2027-02-05T19:00:00',
+    maxCapacity: 80,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Test your knowledge and compete with teams in a fun trivia night.',
+    },
+  },
+  {
+    title: 'Building Better Communities',
+    category: ['talks'],
+    location: 'Amersfoort, Netherlands',
+    dateTime: '2027-02-18T19:00:00',
+    maxCapacity: 100,
+    image: 'PLACEHOLDER',
+    description: {
+      english: 'Hear inspiring stories about community projects and social innovation.',
+    },
+  },
+];

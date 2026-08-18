@@ -1,21 +1,12 @@
+import { useQuery } from '@tanstack/react-query';
 import { EventCard } from '@/components/EventCard';
-import { events } from '@/data/events';
 import * as m from '@/@generated/paraglide/messages';
+import { useTRPC } from '@/integrations/trpc/react';
 
 export function FeaturedEventsSection() {
-  /*
-TODO (Backend Featured Events)
-
-Featured events are currently loaded from mock data.
-
-Once the backend is ready:
-- Fetch featured events from the API (tRPC).
-- The backend determines which events are featured.
-- Pass the event id to EventCard.
-- EventCard will later link to:
-	/$locale/events/$eventId
-*/
-  const displayedEvents = events.slice(0, 4);
+  const trpc = useTRPC();
+  const featuredEventsQuery = useQuery(trpc.events.getFeaturedEvents.queryOptions());
+  const displayedEvents = featuredEventsQuery.data ?? [];
 
   return (
     <section
