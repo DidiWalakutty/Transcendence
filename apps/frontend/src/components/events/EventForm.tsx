@@ -1,12 +1,17 @@
 import placeholderEvent from '@/assets/placeholder_event.png';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { enUS, nl } from 'date-fns/locale';
+import { format } from 'date-fns';
 import { Select, SelectContent, SelectGroup, SelectTrigger } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Upload } from 'lucide-react';
+import { CalendarIcon, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { getLocale } from '@/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
 
 const DEFAULT_EVENT_IMAGE = placeholderEvent;
@@ -21,9 +26,12 @@ const categories = [
 ];
 
 export function EventForm() {
+  const locale = getLocale();
+  const calendarLocale = locale == 'nl' ? nl : enUS;
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [categoryOpen, setCategoryOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>();
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategories((current) =>
@@ -288,15 +296,60 @@ export function EventForm() {
             <div className="flex flex-col gap-2">
               <Label htmlFor="date">{m.create_event_date()}</Label>
 
-              <div className="rounded-lg border border-input bg-white">
-                <Input
+              <Popover>
+                <PopoverTrigger
                   id="date"
-                  name="date"
-                  type="date"
-                  className="w-full text-text-primary border-0 bg-transparent focus-visible:ring-0"
-                  required
-                />
-              </div>
+                  type="button"
+                  className={`
+					inline-flex
+					h-9
+					w-full
+					items-center
+					justify-start
+					rounded-md
+					border
+					border-input
+					bg-white
+					px-3
+					py-2
+					text-left
+					text-sm
+					font-normal
+					shadow-xs
+					outline-none
+					transition-colors
+					hover:bg-white
+					focus-visible:border-ring
+					focus-visible:ring-[3px]
+					focus-visible:ring-ring/50
+					${!selectedDate ? 'text-muted-foreground' : 'text-text-primary'}
+				`}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+
+                  {selectedDate
+                    ? format(selectedDate, 'dd/MM/yyyy', {
+                        locale: calendarLocale,
+                      })
+                    : m.create_event_date()}
+                </PopoverTrigger>
+
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={setSelectedDate}
+                    locale={calendarLocale}
+                  />
+                </PopoverContent>
+              </Popover>
+
+              <input
+                type="hidden"
+                name="date"
+                value={selectedDate ? format(selectedDate, 'yyyy-MM-dd') : ''}
+                required
+              />
             </div>
 
             {/* Time */}
