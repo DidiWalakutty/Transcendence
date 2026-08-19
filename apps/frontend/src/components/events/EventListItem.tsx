@@ -13,6 +13,15 @@ type EventListItemProps = {
   description: string;
 };
 
+const categoryLabels: Record<string, () => string> = {
+  music: m.category_music,
+  culture: m.category_culture,
+  food: m.category_food,
+  games: m.category_games,
+  talks: m.category_talks,
+  workshops: m.category_workshops,
+};
+
 // id must currently be passed as _id, because it's not hooked up to the backend yet.
 // Temp solution.
 export function EventListItem({
@@ -117,7 +126,8 @@ export function EventListItem({
           </div>
           {/* Category */}
           <div className="mb-4 flex flex-wrap gap-2">
-            {category.length > 0 && category.map((cat) => <Badge key={cat}>{cat}</Badge>)}
+            {category.length > 0 &&
+              category.map((cat) => <Badge key={cat}>{categoryLabels[cat]?.() ?? cat}</Badge>)}
           </div>
 
           {/* Tickets CTA (visual only) */}
