@@ -2,7 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { createEventFixtures } from '../fixtures/events.fixture';
 import { type EventSortDto } from '@repo/schemas/events';
-import { type EventListingRecord, EventListingsRepository } from './event-listings.repository';
+import {
+  type EventListingRecord,
+  type EventStats,
+  EventListingsRepository,
+} from './event-listings.repository';
 
 @Injectable()
 export class InMemoryEventListingsRepository extends EventListingsRepository {
@@ -29,5 +33,17 @@ export class InMemoryEventListingsRepository extends EventListingsRepository {
 
   async findFeatured(): Promise<EventListingRecord[]> {
     return [...this.events].sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4);
+  }
+
+  async getStats(): Promise<EventStats> {
+    const eventCount = this.events.length;
+    const locationCount = new Set(this.events.map((event) => event.location)).size;
+    const categoryCount = new Set(this.events.flatMap((event) => event.category)).size;
+
+    return {
+      eventCount,
+      locationCount,
+      categoryCount,
+    };
   }
 }

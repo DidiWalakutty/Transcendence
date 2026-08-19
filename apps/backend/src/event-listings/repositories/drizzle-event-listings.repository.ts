@@ -6,7 +6,11 @@ import { type EventSortDto } from '@repo/schemas/events';
 
 import { DATABASE } from '../../database/database.constants';
 import type { Database } from '../../database/database.types';
-import { type EventListingRecord, EventListingsRepository } from './event-listings.repository';
+import {
+  type EventListingRecord,
+  type EventStats,
+  EventListingsRepository,
+} from './event-listings.repository';
 
 @Injectable()
 export class DrizzleEventListingsRepository extends EventListingsRepository {
@@ -28,6 +32,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
         description: events.description,
         image: events.image,
         location: events.location,
+        address: events.address,
         dateTime: events.dateTime,
         category: events.category,
         registrationsCount: sql<number>`count(${registrations.eventId})`,
@@ -49,6 +54,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       title: row.title,
       category: row.category,
       location: row.location,
+      address: row.address,
       date: row.dateTime.toISOString().slice(0, 10),
       image: row.image,
       description: Object.values(row.description).find((value) => value.length > 0) ?? '',
@@ -67,6 +73,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
         description: events.description,
         image: events.image,
         location: events.location,
+        address: events.address,
         dateTime: events.dateTime,
         category: events.category,
         registrationsCount: registrationCount,
@@ -82,11 +89,39 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       title: row.title,
       category: row.category,
       location: row.location,
+      address: row.address,
       date: row.dateTime.toISOString().slice(0, 10),
       image: row.image,
       description: Object.values(row.description).find((value) => value.length > 0) ?? '',
       createdAt: row.createdAt,
       registrationsCount: Number(row.registrationsCount),
     }));
+  }
+  async getStats(): Promise<EventStats> {
+    const [eventCountResult] = await this.db
+      .select({
+        count: sql<number>`count(*)`,
+      })
+      .from(events);
+
+    const [locationCountResult] = await this.db
+      .select({
+        count: sql<number>`count(distinct ${events.location})`,
+      })
+      .from(events);
+
+    const categoryCountResult = await this.db.execute(sql`
+		SELECT COUNT(DISTINCT category) AS count
+		FROM (
+		SELECT unnest(category) AS category
+		FROM events
+		) AS categories
+	`);
+
+    return {
+      eventCount: Number(eventCountResult.count),
+      locationCount: Number(locationCountResult.count),
+      categoryCount: Number(categoryCountResult.rows[0]?.count ?? 0),
+    };
   }
 }
