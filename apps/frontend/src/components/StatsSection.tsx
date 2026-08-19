@@ -1,34 +1,16 @@
-// Later this data will come from the backend.
-// Example future flow:
-//
-// PostgreSQL database
-//        ↓
-// NestJS backend
-//        ↓
-// tRPC endpoint (e.g. getPlatformStats)
-//        ↓
-// TanStack Query in React
-//        ↓
-// StatsSection receives the data as props
-//
-// For now we use static data while building the UI.
-
-// the const stats under this will become something like:
-// const { data: stats } = trpc.stats.getPlatformStats.useQuery()
-// and the component keeps rendering like:
-// {stats.eventCount}
-// {stats.locationCount}
-// {stats.categoryCount}
-
+import { useQuery } from '@tanstack/react-query';
 import * as m from '@/@generated/paraglide/messages';
-
-const stats = {
-  eventCount: 250,
-  locationCount: 25,
-  categoryCount: 7,
-};
+import { useTRPC } from '@/integrations/trpc/react';
 
 export function StatsSection() {
+  const trpc = useTRPC();
+  const statsQuery = useQuery(trpc.events.getEventStats.queryOptions());
+  const stats = statsQuery.data;
+
+  if (!stats) {
+    return null;
+  }
+
   return (
     <section
       className="
@@ -64,7 +46,7 @@ export function StatsSection() {
 											2xl:text-6xl
 										"
             >
-              {stats.eventCount}+
+              {stats.eventCount}
             </p>
 
             <p
@@ -89,7 +71,7 @@ export function StatsSection() {
 											2xl:text-6xl
 										"
             >
-              {stats.locationCount}+
+              {stats.locationCount}
             </p>
 
             <p
@@ -100,7 +82,7 @@ export function StatsSection() {
 											2xl:text-xl
 										"
             >
-              {m.stats_location()}
+              {m.stats_cities()}
             </p>
           </div>
 
