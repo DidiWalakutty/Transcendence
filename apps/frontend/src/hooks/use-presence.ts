@@ -41,9 +41,11 @@ export function usePresence(userIds: string[]) {
 export function usePresenceConnection(enabled: boolean) {
   const trpc = useTRPC();
 
-  useSubscription(
+  const subscription = useSubscription(
     trpc.presence.onPresenceChanged.subscriptionOptions(undefined, {
       enabled,
     }),
   );
+
+  return subscription.status === 'pending';
 }

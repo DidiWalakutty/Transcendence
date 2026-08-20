@@ -41,6 +41,12 @@ export class PresenceRouter {
       this.presenceEvents.emitPresenceChanged({ userId, online: true });
     }
 
+    // Broadcast listeners only register once `listenPresenceChanged` below
+    // starts being consumed, which is after the emit above — so the client
+    // that just connected would otherwise miss its own "online" event. Yield
+    // it directly instead of relying on that round trip.
+    yield { userId, online: true };
+
     try {
       for await (const change of this.presenceEvents.listenPresenceChanged(opts.signal)) {
         yield change;

@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@/integrations/trpc/react';
-import { usePresence } from '@/hooks/use-presence';
+import { usePresence, usePresenceConnection } from '@/hooks/use-presence';
 import { authClient } from '@/lib/auth-client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -85,7 +85,11 @@ function ProfilePage() {
 
   const friends = friendsQuery.data ?? [];
   const pending = pendingQuery.data ?? [];
-  const onlineIds = usePresence(user ? [user.id, ...friends.map((f) => f.id)] : []);
+  // Derived directly from this tab's own subscription connection state rather
+  // than round-tripping through the server, since that round trip otherwise
+  // races the connection itself and can show "Offline" right after login.
+  const isSelfOnline = usePresenceConnection(!!user);
+  const onlineIds = usePresence(friends.map((f) => f.id));
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -165,8 +169,8 @@ function ProfilePage() {
           </div>
           <CardTitle>{user?.displayUsername ?? user?.username}</CardTitle>
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
-            <StatusDot online={!!user && onlineIds.has(user.id)} />
-            {user && onlineIds.has(user.id) ? 'Online' : 'Offline'}
+            <StatusDot online={isSelfOnline} />
+            {isSelfOnline ? 'Online' : 'Offline'}
           </p>
           <p className="text-sm text-muted-foreground">{user?.email}</p>
         </CardHeader>
