@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { CalendarIcon, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { getLocale } from '@/paraglide/runtime';
+import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
 
 const DEFAULT_EVENT_IMAGE = placeholderEvent;
