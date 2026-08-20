@@ -30,7 +30,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     },
     onSuccess: () => {
       void navigate({
-        to: '/$locale',
+        to: '/$locale/profile',
         params: { locale },
       });
     },
