@@ -36,6 +36,10 @@
     "./friends": {
       "types": "./src/friends.ts",
       "default": "./src/friends.ts"
+    },
+    "./presence": {
+      "types": "./src/presence.ts",
+      "default": "./src/presence.ts"
     }
   },
   "dependencies": {
