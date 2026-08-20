@@ -19,6 +19,7 @@
   "button_contact": "Contact Us",
   "button_tickets": "Tickets",
   "button_spinner_sending": "Sending...",
+  "button_ok": "OK",
 
   "button_profile": "Profile",
   "button_my_events": "My Events",
@@ -48,7 +49,7 @@
   "how_it_works_enjoy_description": "Join the event and enjoy the experience.",
 
   "stats_event_count": "Upcoming Events",
-  "stats_location": "Locations",
+  "stats_cities": "Cities",
   "stats_categories": "Categories",
 
   "halfway_image_title": "Find your next unforgettable experience",
@@ -148,6 +149,8 @@
   "create_event_category_placeholder": "Choose a category",
   "create_event_location": "Location",
   "create_event_location_placeholder": "Enter event location",
+  "create_event_address": "Address",
+  "create_event_address_placeholder": "Enter event address",
   "create_event_date": "Date",
   "create_event_time": "Time",
   "create_event_capacity": "Maximum attendees",

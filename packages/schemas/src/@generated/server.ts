@@ -15,6 +15,7 @@ import superjson from 'superjson';
 const t = initTRPC.create({ transformer: superjson });
 const publicProcedure = t.procedure;
 import { eventSortSchema, eventsSchema } from '@repo/schemas/events';
+import { eventStatsSchema } from '@repo/schemas/stats';
 import {
   userSchema,
   createUserSchema,
@@ -34,6 +35,9 @@ const appRouter = t.router({
       .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
     getFeaturedEvents: publicProcedure
       .output(eventsSchema)
+      .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+    getEventStats: publicProcedure
+      .output(eventStatsSchema)
       .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
   }),
   friends: t.router({

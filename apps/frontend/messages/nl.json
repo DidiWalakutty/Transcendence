@@ -22,6 +22,7 @@
   "button_my_events": "Mijn Events",
   "button_admin_panel": "Admin Paneel",
   "button_spinner_sending": "Versturen...",
+  "button_ok": "OK",
 
   "hero_title_1": "Ontdek leuke evenementen",
   "hero_title_2": "in jouw buurt",
@@ -47,7 +48,7 @@
   "how_it_works_enjoy_description": "Neem deel aan het event en geniet van de ervaring.",
 
   "stats_event_count": "Komende Evenementen",
-  "stats_location": "Locaties",
+  "stats_cities": "Steden",
   "stats_categories": "Categorieën",
 
   "halfway_image_title": "Vind je volgende onvergetelijke ervaring",
@@ -148,6 +149,8 @@
   "create_event_category_placeholder": "Kies een categorie",
   "create_event_location": "Locatie",
   "create_event_location_placeholder": "Vul de locatie in",
+  "create_event_address": "Adres",
+  "create_event_address_placeholder": "Vul het adres in",
   "create_event_date": "Datum",
   "create_event_time": "Tijd",
   "create_event_capacity": "Maximum aantal deelnemers",

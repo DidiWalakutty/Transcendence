@@ -2,6 +2,7 @@ import { Query, Router, Input } from 'nestjs-trpc';
 
 import { eventsSchema, eventSortSchema, type EventSortDto } from '@repo/schemas/events';
 import { EventListingsService } from './event-listings.service';
+import { eventStatsSchema } from '@repo/schemas/stats';
 
 @Router({ alias: 'events' })
 export class EventListingsRouter {
@@ -15,5 +16,10 @@ export class EventListingsRouter {
   @Query({ output: eventsSchema })
   async getFeaturedEvents() {
     return this.eventListingsService.findFeatured();
+  }
+
+  @Query({ output: eventStatsSchema })
+  async getEventStats() {
+    return this.eventListingsService.getStats();
   }
 }

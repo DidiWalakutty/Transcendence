@@ -3,6 +3,15 @@ import { Button } from '@/components/ui/button';
 import * as m from '@/@generated/paraglide/messages';
 import placeholderEvent from '@/assets/placeholder_event.png';
 
+const categoryLabels: Record<string, () => string> = {
+  music: m.category_music,
+  culture: m.category_culture,
+  food: m.category_food,
+  games: m.category_games,
+  talks: m.category_talks,
+  workshops: m.category_workshops,
+};
+
 {
   /* TODO: Add event id and link to the event details page once it exists. */
 }
@@ -127,7 +136,7 @@ export function EventCard({ image, title, category, location, date }: EventCardP
 						text-brand-primary
 					"
         >
-          {category.join(' • ')}
+          {category.map((item) => categoryLabels[item]?.() ?? item).join(' • ')}
         </p>
 
         {/* Event Title */}

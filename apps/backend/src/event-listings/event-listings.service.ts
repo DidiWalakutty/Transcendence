@@ -22,4 +22,8 @@ export class EventListingsService {
       ({ createdAt: _createdAt, registrationsCount: _registrationsCount, ...event }) => event,
     );
   }
+
+  async getStats() {
+    return this.repository.getStats();
+  }
 }

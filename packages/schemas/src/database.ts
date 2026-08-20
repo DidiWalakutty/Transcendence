@@ -75,6 +75,7 @@ export const events = pgTable('events', {
     .notNull()
     .references(() => users.id),
   location: text('location').notNull(),
+  address: text('address').notNull(),
   dateTime: timestamp('date_time').notNull(),
   maxCapacity: integer('max_capacity').notNull(),
   category: text('category').array().notNull(),
