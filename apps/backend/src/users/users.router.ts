@@ -17,7 +17,7 @@ import { conflictError, notFoundError } from '../trpc/trpc.errors';
 import { UserEmailAlreadyExistsError } from './errors/user-email-already-exists.error';
 import { UsersEvents } from './users.events';
 import { UsersService } from './users.service';
-import { NotificationService } from '../notification/notification.service';
+import { NotificationService } from '../notification/notification.service.js';
 
 @Router({ alias: 'users' })
 export class UsersRouter {
@@ -28,12 +28,14 @@ export class UsersRouter {
   ) {}
 
   @Mutation({ input: createUserSchema, output: userSchema })
-  async createUser(@Input() input: CreateUserDto) {
+  async createUser(@Input() input: CreateUserDto, @Ctx() ctx: { req: import('express').Request }) {
     try {
       const user = await this.usersService.create(input);
+      const rawBody = ctx.req.body;
+      const userLang = rawBody?.json?.preferedLanguage || rawBody?.preferedLanguage || 'en';
 
       this.notificationService
-        .sendWelcomeEmail(user.email, user.name, 'en')
+        .sendWelcomeEmail(user.email, user.name, userLang)
         .catch((err) => console.error('Background Notification Dispatch Failure:', err));
 
       return user;
