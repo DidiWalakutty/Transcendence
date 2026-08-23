@@ -17,18 +17,26 @@ import { conflictError, notFoundError } from '../trpc/trpc.errors';
 import { UserEmailAlreadyExistsError } from './errors/user-email-already-exists.error';
 import { UsersEvents } from './users.events';
 import { UsersService } from './users.service';
+import { NotificationService } from '../notification/notification.service';
 
 @Router({ alias: 'users' })
 export class UsersRouter {
   constructor(
     private readonly usersEvents: UsersEvents,
     private readonly usersService: UsersService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   @Mutation({ input: createUserSchema, output: userSchema })
   async createUser(@Input() input: CreateUserDto) {
     try {
-      return await this.usersService.create(input);
+      const user = await this.usersService.create(input);
+
+      this.notificationService
+        .sendWelcomeEmail(user.email, user.name, 'en')
+        .catch((err) => console.error('Background Notification Dispatch Failure:', err));
+
+      return user;
     } catch (error) {
       if (error instanceof UserEmailAlreadyExistsError) {
         throw conflictError(error.message);

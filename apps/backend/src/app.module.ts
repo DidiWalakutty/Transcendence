@@ -16,6 +16,7 @@ import { FriendsModule } from './friends/friends.module';
 import { PresenceModule } from './presence/presence.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthContext } from './auth/auth.context';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -87,6 +88,7 @@ import { AuthContext } from './auth/auth.context';
       transformer: superjson,
       context: AuthContext,
     }),
+    NotificationModule,
   ],
   providers: [
     {
