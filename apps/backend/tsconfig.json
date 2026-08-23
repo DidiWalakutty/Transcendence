@@ -5,7 +5,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "react": ["../../node_modules/react"],
-      "@react-email": ["../../node_modules/@react-email/components"]
+      "react-email": ["../../node_modules/react-email"],
+      "react-email/*": ["../../node_modules/react-email/*"]
     },
     "jsx": "react-jsx",
     "types": ["node"],

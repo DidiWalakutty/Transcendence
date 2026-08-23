@@ -1,10 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { render } from 'react-email';
-import * as React from 'react';
 
-import { WelcomeEmail } from './templates/welcome';
-import { welcomeTranslations } from './templates/welcome.i18n';
+import { WelcomeEmail, welcomeTranslations } from '../templates/index.js';
 
 @Injectable()
 export class NotificationService {
@@ -26,12 +23,10 @@ export class NotificationService {
     try {
       const selectedDictionary = welcomeTranslations[lang] || welcomeTranslations.en;
 
-      const htmlContent = await render(
-        React.createElement(WelcomeEmail, {
-          userName,
-          dictionary: selectedDictionary,
-        }),
-      );
+      const htmlContent = WelcomeEmail({
+        userName,
+        dictionary: selectedDictionary,
+      });
 
       await this.mailerService.sendMail({
         to: toEmail,

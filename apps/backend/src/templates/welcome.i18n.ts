@@ -1,4 +1,10 @@
-import { WelcomeEmailDictionary } from './welcome';
+export interface WelcomeEmailDictionary {
+  previewText: string;
+  greeting: string;
+  description: string;
+  buttonLabel: string;
+  footerNotice: string;
+}
 
 export const welcomeTranslations: Record<'en' | 'nl' | 'es', WelcomeEmailDictionary> = {
   en: {
