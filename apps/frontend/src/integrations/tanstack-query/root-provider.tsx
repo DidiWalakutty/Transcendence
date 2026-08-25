@@ -31,6 +31,7 @@ export const trpcClient = createTRPCClient<AppRouter>({
       true: httpSubscriptionLink({
         url: getUrl(),
         transformer: superjson,
+        eventSourceOptions: { withCredentials: true },
       }),
       false: httpBatchLink({
         url: getUrl(),

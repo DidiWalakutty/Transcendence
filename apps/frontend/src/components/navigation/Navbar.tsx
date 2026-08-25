@@ -5,6 +5,7 @@ import { LanguageSwitcher } from './LanguageSwitcher';
 import { UserMenu } from './UserMenu';
 import { navigationItems, type UserRole } from './navigation.config';
 
+import { usePresenceConnection } from '@/hooks/use-presence';
 import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
 
@@ -13,6 +14,10 @@ export function Navbar() {
   const role: UserRole = !session ? 'visitor' : session.user.isAdministrator ? 'admin' : 'user';
   const links = navigationItems[role];
   const locale = getLocale();
+
+  // Keeps the current user marked online for as long as the app is open in
+  // this tab, not just while they're on the profile page.
+  usePresenceConnection(!!session);
 
   return (
     <nav

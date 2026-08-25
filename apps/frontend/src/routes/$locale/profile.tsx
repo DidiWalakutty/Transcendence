@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@/integrations/trpc/react';
+import { usePresence, usePresenceConnection } from '@/hooks/use-presence';
 import { authClient } from '@/lib/auth-client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,6 +16,15 @@ import { Link } from '@tanstack/react-router';
 export const Route = createFileRoute('/$locale/profile')({
   component: ProfilePage,
 });
+
+function StatusDot({ online }: { online: boolean }) {
+  return (
+    <span
+      className={`inline-block h-2.5 w-2.5 rounded-full ${online ? 'bg-green-500' : 'bg-muted-foreground'}`}
+      aria-hidden="true"
+    />
+  );
+}
 
 function ProfilePage() {
   const trpc = useTRPC();
@@ -75,6 +85,11 @@ function ProfilePage() {
 
   const friends = friendsQuery.data ?? [];
   const pending = pendingQuery.data ?? [];
+  // Derived directly from this tab's own subscription connection state rather
+  // than round-tripping through the server, since that round trip otherwise
+  // races the connection itself and can show "Offline" right after login.
+  const isSelfOnline = usePresenceConnection(!!user);
+  const onlineIds = usePresence(friends.map((f) => f.id));
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -153,6 +168,10 @@ function ProfilePage() {
             {user?.name?.charAt(0).toUpperCase()}
           </div>
           <CardTitle>{user?.displayUsername ?? user?.username}</CardTitle>
+          <p className="flex items-center gap-2 text-sm text-muted-foreground">
+            <StatusDot online={isSelfOnline} />
+            {isSelfOnline ? 'Online' : 'Offline'}
+          </p>
           <p className="text-sm text-muted-foreground">{user?.email}</p>
         </CardHeader>
 
@@ -294,7 +313,13 @@ function ProfilePage() {
             ) : (
               friends.map((person) => (
                 <div key={person.id} className="flex items-center justify-between gap-4">
-                  <span>{person.displayUsername ?? person.username}</span>
+                  <span className="flex items-center gap-2">
+                    <StatusDot online={onlineIds.has(person.id)} />
+                    {person.displayUsername ?? person.username}
+                    <span className="text-xs text-muted-foreground">
+                      {onlineIds.has(person.id) ? 'Online' : 'Offline'}
+                    </span>
+                  </span>
                   <Button
                     size="sm"
                     variant="outline"

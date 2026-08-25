@@ -26,6 +26,7 @@ import {
   userDeletedSubscriptionSchema,
 } from '@repo/schemas/users';
 import { addFriendSchema, friendSchema, removeFriendSchema } from '@repo/schemas/friends';
+import { getOnlineUserIdsSchema, presenceChangedSubscriptionSchema } from '@repo/schemas/presence';
 
 const appRouter = t.router({
   events: t.router({
@@ -59,6 +60,15 @@ const appRouter = t.router({
       .input(removeFriendSchema)
       .output(friendSchema)
       .mutation(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+  }),
+  presence: t.router({
+    getOnlineUserIds: publicProcedure
+      .input(getOnlineUserIdsSchema)
+      .output(z.uuid().array())
+      .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+    onPresenceChanged: publicProcedure
+      .output(presenceChangedSubscriptionSchema)
+      .subscription(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
   }),
   users: t.router({
     createUser: publicProcedure
