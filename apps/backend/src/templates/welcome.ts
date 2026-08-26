@@ -1,5 +1,5 @@
-import { EVENTRA_THEME } from './theme.tokens.js';
-import { WelcomeEmailDictionary } from './welcome.i18n.js';
+import { EVENTRA_THEME } from './theme.tokens';
+import { WelcomeEmailDictionary } from './welcome.i18n';
 
 interface WelcomeEmailProps {
   userName: string;

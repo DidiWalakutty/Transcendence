@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 
-import { WelcomeEmail, welcomeTranslations } from '../templates/index.js';
+import { WelcomeEmail, welcomeTranslations } from '../templates/index';
 
 @Injectable()
 export class NotificationService {

@@ -27,7 +27,10 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
       username: string;
       password: string;
     }) => {
-      const { data, error } = await authClient.signUp.email(values);
+      const { data, error } = await authClient.signUp.email({
+        ...values,
+        preferedLanguage: locale,
+      } as any);
 
       if (error) {
         throw new Error(error.message ?? 'Unable to create an account');

@@ -5,6 +5,7 @@ import type { CreateUserDto, UpdateUserDto, UserDto } from '@repo/schemas/users'
 
 import { UsersRepository } from './repositories/users.repository';
 import { UsersEvents } from './users.events';
+import { NotificationService } from '../notification/notification.service';
 
 const USERS_CACHE_KEY = 'users:all';
 @Injectable()
@@ -14,6 +15,7 @@ export class UsersService {
     @Inject(CACHE_MANAGER)
     private readonly cache: Cache,
     private readonly usersEvents: UsersEvents,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async findByEmail(email: string) {
@@ -43,6 +45,17 @@ export class UsersService {
 
     await this.clearUsersCache();
     this.usersEvents.emitUserCreated(user);
+
+    try {
+      const dbLang = (user as any).preferedLanguage;
+      const userLang = ['nl', 'es'].includes(dbLang) ? (dbLang as 'en' | 'nl' | 'es') : 'en';
+
+      this.notificationService
+        .sendWelcomeEmail(user.email, user.name, userLang)
+        .catch((err) => console.error('Welcome mail failure:', err));
+    } catch (mailError) {
+      console.error('Background welcome notification failure:', mailError);
+    }
 
     return user;
   }
