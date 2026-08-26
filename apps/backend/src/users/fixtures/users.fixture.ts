@@ -15,6 +15,7 @@ const users: UserDto[] = [
     displayUsername: null,
     emailVerified: false,
     updatedAt: new Date('2026-01-12T09:00:00.000Z'),
+    twoFactorEnabled: false,
   },
   {
     id: '64de8cd7-e120-4ad1-b849-4b386f31d599',
@@ -30,6 +31,7 @@ const users: UserDto[] = [
     displayUsername: null,
     emailVerified: false,
     updatedAt: new Date('2026-02-18T14:30:00.000Z'),
+    twoFactorEnabled: false,
   },
   {
     id: 'a5265f78-6e91-4e82-bc39-86e8ec9cd6ca',
@@ -45,6 +47,7 @@ const users: UserDto[] = [
     displayUsername: null,
     emailVerified: false,
     updatedAt: new Date('2026-03-24T11:15:00.000Z'),
+    twoFactorEnabled: false,
   },
 ];
 

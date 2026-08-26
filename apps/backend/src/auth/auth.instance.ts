@@ -2,8 +2,8 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { username } from 'better-auth/plugins';
-import { users, sessions, accounts, verifications } from '@repo/schemas/database';
+import { username, twoFactor } from 'better-auth/plugins';
+import { users, sessions, accounts, verifications, twoFactors } from '@repo/schemas/database';
 import type { Database } from '../database/database.types';
 
 const logger = new Logger('Auth');
@@ -17,11 +17,15 @@ export function createAuth(db: Database, config: ConfigService) {
         session: sessions,
         account: accounts,
         verification: verifications,
+        twoFactor: twoFactors,
       },
     }),
     secret: config.getOrThrow<string>('BETTER_AUTH_SECRET'),
     baseURL: config.getOrThrow<string>('BETTER_AUTH_URL'),
     trustedOrigins: config.getOrThrow<string[]>('CORS_ORIGINS'),
+    rateLimit: {
+      enabled: true,
+    },
     advanced: {
       database: {
         generateId: 'uuid',
@@ -59,7 +63,12 @@ export function createAuth(db: Database, config: ConfigService) {
         logger.log(`Password reset link for ${user.email}: ${url}`);
       },
     },
-    plugins: [username()],
+    plugins: [
+      username(),
+      twoFactor({
+        issuer: 'ft_transcendence',
+      }),
+    ],
   });
 }
 

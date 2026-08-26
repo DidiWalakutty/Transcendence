@@ -23,6 +23,7 @@ export const users = pgTable('users', {
   username: text('username').notNull().unique(),
   displayUsername: text('display_username'),
   emailVerified: boolean('email_verified').notNull().default(false),
+  twoFactorEnabled: boolean('two_factor_enabled').notNull().default(false),
 });
 
 export const sessions = pgTable('sessions', {
@@ -63,6 +64,18 @@ export const verifications = pgTable('verifications', {
   expiresAt: timestamp('expires_at').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
+});
+
+export const twoFactors = pgTable('two_factors', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  userId: uuid('user_id')
+    .notNull()
+    .references(() => users.id),
+  secret: text('secret').notNull(),
+  backupCodes: text('backup_codes').notNull(),
+  verified: boolean('verified').notNull().default(true),
+  failedVerificationCount: integer('failed_verification_count').notNull().default(0),
+  lockedUntil: timestamp('locked_until'),
 });
 
 export const events = pgTable('events', {
@@ -114,6 +127,7 @@ export const schema = {
   sessions,
   accounts,
   verifications,
+  twoFactors,
 };
 
 export type User = typeof users.$inferSelect;
@@ -123,3 +137,4 @@ export type CreateEvent = typeof events.$inferInsert;
 export type friend = typeof friends.$inferSelect;
 export type registration = typeof registrations.$inferSelect;
 export type createRegistration = typeof registrations.$inferInsert;
+export type TwoFactor = typeof twoFactors.$inferSelect;

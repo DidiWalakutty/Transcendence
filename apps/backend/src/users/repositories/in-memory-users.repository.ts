@@ -33,6 +33,7 @@ export class InMemoryUsersRepository extends UsersRepository {
       avatar: 'PLACEHOLDER',
       displayUsername: null,
       emailVerified: false,
+      twoFactorEnabled: false,
       ...data,
       id: randomUUID(),
       createdAt: new Date(),
