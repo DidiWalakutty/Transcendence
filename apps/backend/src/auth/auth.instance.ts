@@ -2,8 +2,8 @@ import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { username } from 'better-auth/plugins';
-import { users, sessions, accounts, verifications } from '@repo/schemas/database';
+import { username, twoFactor } from 'better-auth/plugins';
+import { users, sessions, accounts, verifications, twoFactors } from '@repo/schemas/database';
 import type { Database } from '../database/database.types';
 import type { NotificationService } from '../notification/notification.service';
 
@@ -24,11 +24,15 @@ export function createAuth(
         session: sessions,
         account: accounts,
         verification: verifications,
+        twoFactor: twoFactors,
       },
     }),
     secret: config.getOrThrow<string>('BETTER_AUTH_SECRET'),
     baseURL: config.getOrThrow<string>('BETTER_AUTH_URL'),
     trustedOrigins: config.getOrThrow<string[]>('CORS_ORIGINS'),
+    rateLimit: {
+      enabled: true,
+    },
     advanced: {
       database: {
         generateId: 'uuid',
@@ -66,27 +70,12 @@ export function createAuth(
         logger.log(`Password reset link for ${user.email}: ${url}`);
       },
     },
-    plugins: [username()],
-    databaseHooks: {
-      user: {
-        create: {
-          after: async (user, _) => {
-            try {
-              if (mailerEngine) {
-                const dbLang = (user as any).preferedLanguage;
-                const userLang = ['nl', 'es', 'ru'].includes(dbLang)
-                  ? (dbLang as 'en' | 'nl' | 'es' | 'ru')
-                  : 'en';
-
-                await mailerEngine.sendWelcomeEmail(user.email, user.name, userLang);
-              }
-            } catch (err) {
-              logger.error('Better-Auth database hook failed:', err);
-            }
-          },
-        },
-      },
-    },
+    plugins: [
+      username(),
+      twoFactor({
+        issuer: 'ft_transcendence',
+      }),
+    ],
   });
 }
 

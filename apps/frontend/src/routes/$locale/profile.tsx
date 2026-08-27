@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Spinner } from '@/components/ui/spinner';
 import { Link } from '@tanstack/react-router';
+import { TwoFactorSettings } from '@/components/TwoFactorSettings';
 
 export const Route = createFileRoute('/$locale/profile')({
   component: ProfilePage,
@@ -256,6 +257,7 @@ function ProfilePage() {
           </div>
         </CardContent>
       </Card>
+      <TwoFactorSettings />
       <Card className="mt-8">
         <CardHeader>
           <CardTitle>Friends</CardTitle>

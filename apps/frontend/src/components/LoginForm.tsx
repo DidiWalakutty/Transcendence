@@ -28,7 +28,15 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      if (data && 'twoFactorRedirect' in data && data.twoFactorRedirect) {
+        void navigate({
+          to: '/$locale/verify-2fa',
+          params: { locale },
+        });
+        return;
+      }
+
       void navigate({
         to: '/$locale/profile',
         params: { locale },
