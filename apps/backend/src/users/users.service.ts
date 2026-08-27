@@ -48,7 +48,9 @@ export class UsersService {
 
     try {
       const dbLang = (user as any).preferedLanguage;
-      const userLang = ['nl', 'es'].includes(dbLang) ? (dbLang as 'en' | 'nl' | 'es') : 'en';
+      const userLang = ['nl', 'es', 'ru'].includes(dbLang)
+        ? (dbLang as 'en' | 'nl' | 'es' | 'ru')
+        : 'en';
 
       this.notificationService
         .sendWelcomeEmail(user.email, user.name, userLang)

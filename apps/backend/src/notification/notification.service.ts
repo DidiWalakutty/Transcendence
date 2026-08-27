@@ -18,7 +18,7 @@ export class NotificationService {
   async sendWelcomeEmail(
     toEmail: string,
     userName: string,
-    lang: 'en' | 'nl' | 'es' = 'en',
+    lang: 'en' | 'nl' | 'es' | 'ru' = 'en',
   ): Promise<void> {
     try {
       const selectedDictionary = welcomeTranslations[lang] || welcomeTranslations.en;

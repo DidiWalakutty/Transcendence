@@ -74,8 +74,8 @@ export function createAuth(
             try {
               if (mailerEngine) {
                 const dbLang = (user as any).preferedLanguage;
-                const userLang = ['nl', 'es'].includes(dbLang)
-                  ? (dbLang as 'en' | 'nl' | 'es')
+                const userLang = ['nl', 'es', 'ru'].includes(dbLang)
+                  ? (dbLang as 'en' | 'nl' | 'es' | 'ru')
                   : 'en';
 
                 await mailerEngine.sendWelcomeEmail(user.email, user.name, userLang);
