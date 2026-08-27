@@ -5,10 +5,17 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { username } from 'better-auth/plugins';
 import { users, sessions, accounts, verifications } from '@repo/schemas/database';
 import type { Database } from '../database/database.types';
+import type { NotificationService } from '../notification/notification.service';
 
 const logger = new Logger('Auth');
 
-export function createAuth(db: Database, config: ConfigService) {
+export function createAuth(
+  db: Database,
+  config: ConfigService,
+  notificationService: NotificationService,
+) {
+  const mailerEngine = notificationService;
+
   return betterAuth({
     database: drizzleAdapter(db, {
       provider: 'pg',
@@ -48,7 +55,7 @@ export function createAuth(db: Database, config: ConfigService) {
         preferedLanguage: {
           type: 'string',
           required: false,
-          defaultValue: 'english',
+          defaultValue: 'en',
         },
       },
     },
@@ -60,6 +67,26 @@ export function createAuth(db: Database, config: ConfigService) {
       },
     },
     plugins: [username()],
+    databaseHooks: {
+      user: {
+        create: {
+          after: async (user, _) => {
+            try {
+              if (mailerEngine) {
+                const dbLang = (user as any).preferedLanguage;
+                const userLang = ['nl', 'es', 'ru'].includes(dbLang)
+                  ? (dbLang as 'en' | 'nl' | 'es' | 'ru')
+                  : 'en';
+
+                await mailerEngine.sendWelcomeEmail(user.email, user.name, userLang);
+              }
+            } catch (err) {
+              logger.error('Better-Auth database hook failed:', err);
+            }
+          },
+        },
+      },
+    },
   });
 }
 
