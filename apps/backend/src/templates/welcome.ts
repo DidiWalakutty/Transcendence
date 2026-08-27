@@ -3,16 +3,17 @@ import { WelcomeEmailDictionary } from './welcome.i18n';
 
 interface WelcomeEmailProps {
   userName: string;
+  lang: 'en' | 'nl' | 'es' | 'ru';
   dictionary: WelcomeEmailDictionary;
 }
 
 /**
  * Eventra Multilingual Welcome Email Component
  */
-export const WelcomeEmail = ({ userName, dictionary }: WelcomeEmailProps): string => {
+export const WelcomeEmail = ({ userName, lang, dictionary }: WelcomeEmailProps): string => {
   return `
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="${lang}">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,7 +43,7 @@ export const WelcomeEmail = ({ userName, dictionary }: WelcomeEmailProps): strin
           
           <!-- Call to Action Button Area -->
           <div style="text-align: center; margin: 32px 0 16px;">
-            <a href="http://localhost:5173" style="background-color: ${EVENTRA_THEME.colors.brandPrimary}; color: ${EVENTRA_THEME.colors.textOnBrand}; border-radius: ${EVENTRA_THEME.radius.lg}; font-size: 16px; font-weight: 600; text-decoration: none; display: inline-block; padding: 14px 28px; box-shadow: 0 2px 4px rgba(241, 77, 7, 0.15);">
+            <a href="http://localhost:3000/${lang}/events" style="background-color: ${EVENTRA_THEME.colors.brandPrimary}; color: ${EVENTRA_THEME.colors.textOnBrand}; border-radius: ${EVENTRA_THEME.radius.lg}; font-size: 16px; font-weight: 600; text-decoration: none; display: inline-block; padding: 14px 28px; box-shadow: 0 2px 4px rgba(241, 77, 7, 0.15);">
               ${dictionary.buttonLabel}
             </a>
           </div>

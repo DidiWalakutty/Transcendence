@@ -23,7 +23,7 @@ export const welcomeTranslations: Record<'en' | 'nl' | 'es' | 'ru', WelcomeEmail
       'Thank you for creating an account on Eventra. We are thrilled to have you with us as we organize incredible events together. (NL Placeholder)',
     buttonLabel: 'Go to Dashboard (NL Placeholder)',
     footerNotice:
-      'This is an automated system message. Please do not reply directly to this inbox address. (RU Placeholder)',
+      'This is an automated system message. Please do not reply directly to this inbox address. (NL Placeholder)',
   },
   es: {
     previewText: '¡Bienvenido/a a Eventra!',

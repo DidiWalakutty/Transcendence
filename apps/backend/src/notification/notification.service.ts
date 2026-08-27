@@ -25,6 +25,7 @@ export class NotificationService {
 
       const htmlContent = WelcomeEmail({
         userName,
+        lang,
         dictionary: selectedDictionary,
       });
 
