@@ -2,12 +2,6 @@ import { Link } from '@tanstack/react-router';
 import { getLocale } from '@/@generated/paraglide/runtime';
 
 type CategoryCardProps = {
-  // TODO:
-  // Category key used by the events page filter.
-  // Later, this should come from backend/database, so it's not hardcoded in the frontend.
-  // Example:
-  // /en/events?category=music
-
   category: string;
 
   // TODO:

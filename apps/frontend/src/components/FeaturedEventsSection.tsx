@@ -49,6 +49,7 @@ export function FeaturedEventsSection() {
           {displayedEvents.map((event) => (
             <EventCard
               key={event.id}
+              id={event.id}
               image={event.image}
               title={event.title}
               category={event.category}
