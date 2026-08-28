@@ -8,7 +8,7 @@ export const seedEvents = [
     maxCapacity: 500,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Enjoy live music, food, and activities with summer vibes.',
+      en: 'Enjoy live music, food, and activities with summer vibes.',
     },
   },
   {
@@ -20,7 +20,7 @@ export const seedEvents = [
     maxCapacity: 200,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Discover amazing dishes from local restaurants, chefs, and food creators.',
+      en: 'Discover amazing dishes from local restaurants, chefs, and food creators.',
     },
   },
   {
@@ -32,7 +32,7 @@ export const seedEvents = [
     maxCapacity: 50,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Learn practical software engineering skills through hands-on projects.',
+      en: 'Learn practical software engineering skills through hands-on projects.',
     },
   },
   {
@@ -44,7 +44,7 @@ export const seedEvents = [
     maxCapacity: 300,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Celebrate heritage, traditions, music, and stories from the Moluccan islands.',
+      en: 'Celebrate heritage, traditions, music, and stories from the Moluccan islands.',
     },
   },
   {
@@ -56,7 +56,7 @@ export const seedEvents = [
     maxCapacity: 40,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Join a relaxed evening full of strategy games, new friends, and fun.',
+      en: 'Join a relaxed evening full of strategy games, new friends, and fun.',
     },
   },
   {
@@ -68,7 +68,7 @@ export const seedEvents = [
     maxCapacity: 100,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Explore how AI is changing technology, creativity, and everyday life.',
+      en: 'Explore how AI is changing technology, creativity, and everyday life.',
     },
   },
   {
@@ -80,8 +80,7 @@ export const seedEvents = [
     maxCapacity: 150,
     image: 'PLACEHOLDER',
     description: {
-      english:
-        'An outdoor evening featuring talented jazz musicians, local artists and some vibing food.',
+      en: 'An outdoor evening featuring talented jazz musicians, local artists and some vibing food.',
     },
   },
   {
@@ -93,7 +92,7 @@ export const seedEvents = [
     maxCapacity: 30,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Discover murals, graffiti, and the stories behind urban art.',
+      en: 'Discover murals, graffiti, and the stories behind urban art.',
     },
   },
   {
@@ -105,7 +104,7 @@ export const seedEvents = [
     maxCapacity: 25,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Learn how to create fresh pasta with guidance from experienced chefs.',
+      en: 'Learn how to create fresh pasta with guidance from experienced chefs.',
     },
   },
   {
@@ -117,7 +116,7 @@ export const seedEvents = [
     maxCapacity: 24,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Work together with your team to solve puzzles and escape in time.',
+      en: 'Work together with your team to solve puzzles and escape in time.',
     },
   },
   {
@@ -129,7 +128,7 @@ export const seedEvents = [
     maxCapacity: 50,
     image: 'PLACEHOLDER',
     description: {
-      english: 'A discussion with experts about climate solutions and sustainable choices.',
+      en: 'A discussion with experts about climate solutions and sustainable choices.',
     },
   },
   {
@@ -141,7 +140,7 @@ export const seedEvents = [
     maxCapacity: 30,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Learn photography basics, composition, and creative techniques.',
+      en: 'Learn photography basics, composition, and creative techniques.',
     },
   },
   {
@@ -153,7 +152,7 @@ export const seedEvents = [
     maxCapacity: 100,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Discover upcoming artists performing live in an intimate venue.',
+      en: 'Discover upcoming artists performing live in an intimate venue.',
     },
   },
   {
@@ -165,7 +164,7 @@ export const seedEvents = [
     maxCapacity: 250,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Taste flavors from around the world in one vibrant food market.',
+      en: 'Taste flavors from around the world in one vibrant food market.',
     },
   },
   {
@@ -177,7 +176,7 @@ export const seedEvents = [
     maxCapacity: 15,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Develop your writing skills through creative exercises and storytelling.',
+      en: 'Develop your writing skills through creative exercises and storytelling.',
     },
   },
   {
@@ -189,7 +188,7 @@ export const seedEvents = [
     maxCapacity: 25,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Experience museums after dark with exhibitions, performances, and activities.',
+      en: 'Experience museums after dark with exhibitions, performances, and activities.',
     },
   },
   {
@@ -201,7 +200,7 @@ export const seedEvents = [
     maxCapacity: 80,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Test your knowledge and compete with teams in a fun trivia night.',
+      en: 'Test your knowledge and compete with teams in a fun trivia night.',
     },
   },
   {
@@ -213,7 +212,7 @@ export const seedEvents = [
     maxCapacity: 100,
     image: 'PLACEHOLDER',
     description: {
-      english: 'Hear inspiring stories about community projects and social innovation.',
+      en: 'Hear inspiring stories about community projects and social innovation.',
     },
   },
 ];
