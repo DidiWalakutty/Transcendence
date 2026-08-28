@@ -14,7 +14,7 @@ import superjson from 'superjson';
 
 const t = initTRPC.create({ transformer: superjson });
 const publicProcedure = t.procedure;
-import { eventSortSchema, eventsSchema } from '@repo/schemas/events';
+import { eventSortSchema, eventsSchema, createEventSchema } from '@repo/schemas/events';
 import { eventStatsSchema } from '@repo/schemas/stats';
 import {
   userSchema,
@@ -27,6 +27,7 @@ import {
 } from '@repo/schemas/users';
 import { addFriendSchema, friendSchema, removeFriendSchema } from '@repo/schemas/friends';
 import { getOnlineUserIdsSchema, presenceChangedSubscriptionSchema } from '@repo/schemas/presence';
+import type { EventsRouter } from '/home/diwalaku/Desktop/ft_transcendence/apps/backend/src/events/events.router';
 
 const appRouter = t.router({
   events: t.router({
@@ -40,6 +41,16 @@ const appRouter = t.router({
     getEventStats: publicProcedure
       .output(eventStatsSchema)
       .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+  }),
+  eventCreation: t.router({
+    createEvent: publicProcedure
+      .input(createEventSchema)
+      .mutation(
+        async () =>
+          'PLACEHOLDER_DO_NOT_REMOVE' as unknown as Awaited<
+            ReturnType<EventsRouter['createEvent']>
+          >,
+      ),
   }),
   friends: t.router({
     getFriends: publicProcedure
