@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import { Hero } from '@/components/Hero';
-import { CategorySection } from '@/components/CategorySection';
+import { CategorySection } from '@/components/categories/CategorySection';
 import { FeaturedEventsSection } from '@/components/FeaturedEventsSection';
 import { HowItWorksSection } from '@/components/HowItWorksSection';
 import { HalfwayImage } from '@/components/HalfwayImage';

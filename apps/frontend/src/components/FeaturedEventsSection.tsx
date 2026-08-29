@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { EventCard } from '@/components/EventCard';
+import { EventCard } from '@/components/events/EventCard';
 import * as m from '@/@generated/paraglide/messages';
 import { useTRPC } from '@/integrations/trpc/react';
 
