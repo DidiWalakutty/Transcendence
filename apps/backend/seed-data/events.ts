@@ -7,7 +7,6 @@ export const seedEvents = [
     date: '2026-08-08',
     time: '18:00',
     maxCapacity: 500,
-    registrationsCount: 120,
     image: 'PLACEHOLDER',
     description: {
       en: 'Enjoy live music, food, and activities with summer vibes.',
@@ -22,7 +21,6 @@ export const seedEvents = [
     date: '2026-10-10',
     time: '18:00',
     maxCapacity: 200,
-    registrationsCount: 95,
     image: 'PLACEHOLDER',
     description: {
       en: 'Discover amazing dishes from local restaurants, chefs, and food creators.',
@@ -37,7 +35,6 @@ export const seedEvents = [
     date: '2026-09-15',
     time: '18:00',
     maxCapacity: 50,
-    registrationsCount: 40,
     image: 'PLACEHOLDER',
     description: {
       en: 'Learn practical software engineering skills through hands-on projects.',
@@ -52,7 +49,6 @@ export const seedEvents = [
     date: '2026-10-05',
     time: '18:00',
     maxCapacity: 300,
-    registrationsCount: 110,
     image: 'PLACEHOLDER',
     description: {
       en: 'Celebrate heritage, traditions, music, and stories from the Moluccan islands.',
@@ -67,7 +63,6 @@ export const seedEvents = [
     date: '2026-11-12',
     time: '19:00',
     maxCapacity: 40,
-    registrationsCount: 30,
     image: 'PLACEHOLDER',
     description: {
       en: 'Join a relaxed evening full of strategy games, new friends, and fun.',
@@ -82,7 +77,6 @@ export const seedEvents = [
     date: '2026-12-01',
     time: '19:00',
     maxCapacity: 100,
-    registrationsCount: 80,
     image: 'PLACEHOLDER',
     description: {
       en: 'Explore how AI is changing technology, creativity, and everyday life.',
@@ -97,7 +91,6 @@ export const seedEvents = [
     date: '2026-08-21',
     time: '20:00',
     maxCapacity: 150,
-    registrationsCount: 132,
     image: 'PLACEHOLDER',
     description: {
       en: 'An outdoor evening featuring talented jazz musicians, local artists and some vibing food.',
@@ -112,7 +105,6 @@ export const seedEvents = [
     date: '2026-09-03',
     time: '14:00',
     maxCapacity: 30,
-    registrationsCount: 20,
     image: 'PLACEHOLDER',
     description: {
       en: 'Discover murals, graffiti, and the stories behind urban art.',
@@ -127,7 +119,6 @@ export const seedEvents = [
     date: '2026-09-20',
     time: '17:00',
     maxCapacity: 25,
-    registrationsCount: 18,
     image: 'PLACEHOLDER',
     description: {
       en: 'Learn how to create fresh pasta with guidance from experienced chefs.',
@@ -142,7 +133,6 @@ export const seedEvents = [
     date: '2026-10-18',
     time: '18:00',
     maxCapacity: 24,
-    registrationsCount: 15,
     image: 'PLACEHOLDER',
     description: {
       en: 'Work together with your team to solve puzzles and escape in time.',
@@ -157,7 +147,6 @@ export const seedEvents = [
     date: '2026-11-05',
     time: '19:00',
     maxCapacity: 50,
-    registrationsCount: 40,
     image: 'PLACEHOLDER',
     description: {
       en: 'A discussion with experts about climate solutions and sustainable choices.',
@@ -172,7 +161,6 @@ export const seedEvents = [
     date: '2026-11-22',
     time: '14:00',
     maxCapacity: 30,
-    registrationsCount: 24,
     image: 'PLACEHOLDER',
     description: {
       en: 'Learn photography basics, composition, and creative techniques.',
@@ -187,7 +175,6 @@ export const seedEvents = [
     date: '2026-12-10',
     time: '20:00',
     maxCapacity: 100,
-    registrationsCount: 70,
     image: 'PLACEHOLDER',
     description: {
       en: 'Discover upcoming artists performing live in an intimate venue.',
@@ -202,7 +189,6 @@ export const seedEvents = [
     date: '2026-12-14',
     time: '12:00',
     maxCapacity: 250,
-    registrationsCount: 91,
     image: 'PLACEHOLDER',
     description: {
       en: 'Taste flavors from around the world in one vibrant food market.',
@@ -217,7 +203,6 @@ export const seedEvents = [
     date: '2027-01-10',
     time: '14:00',
     maxCapacity: 15,
-    registrationsCount: 10,
     image: 'PLACEHOLDER',
     description: {
       en: 'Develop your writing skills through creative exercises and storytelling.',
@@ -232,7 +217,6 @@ export const seedEvents = [
     date: '2027-01-22',
     time: '19:00',
     maxCapacity: 25,
-    registrationsCount: 20,
     image: 'PLACEHOLDER',
     description: {
       en: 'Experience museums after dark with exhibitions, performances, and activities.',
@@ -247,7 +231,6 @@ export const seedEvents = [
     date: '2027-02-05',
     time: '19:00',
     maxCapacity: 80,
-    registrationsCount: 60,
     image: 'PLACEHOLDER',
     description: {
       en: 'Test your knowledge and compete with teams in a fun trivia night.',
@@ -262,7 +245,6 @@ export const seedEvents = [
     date: '2027-02-18',
     time: '19:00',
     maxCapacity: 100,
-    registrationsCount: 80,
     image: 'PLACEHOLDER',
     description: {
       en: 'Hear inspiring stories about community projects and social innovation.',

@@ -143,9 +143,15 @@ async function seed() {
     }
 
     await db.insert(schema.events).values({
-      ...event,
+      title: event.title,
+      category: event.category,
+      location: event.location,
+      address: event.address,
+      maxCapacity: event.maxCapacity,
+      image: event.image,
+      description: event.description,
       organizerId: organizer.id,
-      dateTime: new Date(event.dateTime),
+      dateTime: new Date(`${event.date}T${event.time}:00`),
     });
 
     console.log(`Created event: ${event.title}`);
