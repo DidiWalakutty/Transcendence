@@ -23,6 +23,7 @@
   "button_admin_panel": "Admin Paneel",
   "button_spinner_sending": "Versturen...",
   "button_ok": "OK",
+  "button_get_ticket": "Verkrijg Kaartje",
 
   "hero_title_1": "Ontdek leuke evenementen",
   "hero_title_2": "in jouw buurt",
@@ -159,6 +160,10 @@
   "events_page_empty_description": "Probeer je filters te wissen of kom later terug voor nieuwe events.",
   "events_page_pagination_prev": "Vorige",
   "events_page_pagination_next": "Volgende",
+  "events_about_title": "Over dit evenement",
+  "events_tickets_title": "Kaartjes",
+  "events_tickets_available": "kaartjes beschikbaar",
+  "events_tickets_sold_out": "Uitverkocht",
 
   "event_sorting_upcoming": "Binnenkort",
   "event_sorting_popular": "Meest populair",
@@ -255,6 +260,23 @@
   "event_weekday": [
     {
       "declarations": ["input date", "local formattedWeekday = date: datetime weekday=short"],
+      "match": {
+        "date=*": "{formattedWeekday}"
+      }
+    }
+  ],
+  "event_month_long": [
+    {
+      "declarations": ["input date", "local formattedMonth = date: datetime month=long"],
+      "match": {
+        "date=*": "{formattedMonth}"
+      }
+    }
+  ],
+
+  "event_weekday_long": [
+    {
+      "declarations": ["input date", "local formattedWeekday = date: datetime weekday=long"],
       "match": {
         "date=*": "{formattedWeekday}"
       }
