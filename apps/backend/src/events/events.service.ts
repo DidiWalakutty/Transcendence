@@ -1,6 +1,9 @@
+// Handles the main event operations.
+// Connects the event requests to the database and manages event notifications.
+
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-
+import type { EventDto } from '@repo/schemas/events';
 import { EventsRepository, type CreateEventRecord } from './repositories/events.repository';
 
 const MAX_BUFFERED_EVENTS = 100;
@@ -8,14 +11,19 @@ const MAX_BUFFERED_EVENTS = 100;
 @Injectable()
 export class EventsService {
   constructor(
-    private readonly eventEmitter: EventEmitter2,
     // repository handles communication with the database.
+    private readonly eventEmitter: EventEmitter2,
     private readonly repository: EventsRepository,
   ) {}
 
   // Create a new event + store using the repository.
   async create(data: CreateEventRecord): Promise<string> {
     return this.repository.create(data);
+  }
+
+  // Find an event by ID through the repository
+  async findById(id: string): Promise<EventDto | null> {
+    return this.repository.findById(id);
   }
 
   // Emit an event so other parts of the system can listen to it.

@@ -14,7 +14,12 @@ import superjson from 'superjson';
 
 const t = initTRPC.create({ transformer: superjson });
 const publicProcedure = t.procedure;
-import { eventSortSchema, eventsSchema, createEventSchema } from '@repo/schemas/events';
+import {
+  eventSortSchema,
+  eventsSchema,
+  createEventSchema,
+  eventIdSchema,
+} from '@repo/schemas/events';
 import { eventStatsSchema } from '@repo/schemas/stats';
 import {
   userSchema,
@@ -49,6 +54,14 @@ const appRouter = t.router({
         async () =>
           'PLACEHOLDER_DO_NOT_REMOVE' as unknown as Awaited<
             ReturnType<EventsRouter['createEvent']>
+          >,
+      ),
+    getEventById: publicProcedure
+      .input(eventIdSchema)
+      .query(
+        async () =>
+          'PLACEHOLDER_DO_NOT_REMOVE' as unknown as Awaited<
+            ReturnType<EventsRouter['getEventById']>
           >,
       ),
   }),

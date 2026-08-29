@@ -1,9 +1,13 @@
+// Handles saving and retrieving events from the database.
+// Implements the EventRepository using Drizzle ORM.
+
 import { Inject, Injectable } from '@nestjs/common';
 import { events } from '@repo/schemas/database';
-
+import { EventDto } from '@repo/schemas/events';
 import { DATABASE } from '../../database/database.constants';
 import type { Database } from '../../database/database.types';
 import { EventsRepository, type CreateEventRecord } from './events.repository';
+import { eq } from 'drizzle-orm';
 
 @Injectable()
 export class DrizzleEventsRepository extends EventsRepository {
@@ -14,7 +18,7 @@ export class DrizzleEventsRepository extends EventsRepository {
     super();
   }
 
-  // insert the new event into the database
+  // Insert the new event into the database
   async create(data: CreateEventRecord): Promise<string> {
     const [event] = await this.db
       .insert(events)
@@ -27,12 +31,36 @@ export class DrizzleEventsRepository extends EventsRepository {
         organizerId: data.organizerId,
         location: data.location,
         address: data.address,
-        dateTime: new Date(data.dateTime),
+        dateTime: new Date(`${data.date}T${data.time}`),
         maxCapacity: data.maxCapacity,
         category: data.category,
       })
       .returning({ id: events.id });
 
     return event.id;
+  }
+
+  // Find a single event by its ID and return it as an EventDto.
+  async findById(id: string): Promise<EventDto | null> {
+    const [event] = await this.db.select().from(events).where(eq(events.id, id)).limit(1);
+
+    if (!event) {
+      return null;
+    }
+
+    const dateTime = event.dateTime.toISOString();
+
+    return {
+      id: event.id,
+      title: event.title,
+      category: event.category,
+      location: event.location,
+      address: event.address,
+      date: dateTime.split('T')[0],
+      time: dateTime.split('T')[1].slice(0, 5),
+      maxCapacity: event.maxCapacity,
+      image: event.image,
+      description: event.description.en ?? '',
+    };
   }
 }

@@ -34,6 +34,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
         location: events.location,
         address: events.address,
         dateTime: events.dateTime,
+        maxCapacity: events.maxCapacity,
         category: events.category,
         registrationsCount: sql<number>`count(${registrations.eventId})`,
       })
@@ -56,6 +57,8 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       location: row.location,
       address: row.address,
       date: row.dateTime.toISOString().slice(0, 10),
+      time: row.dateTime.toISOString().slice(11, 16),
+      maxCapacity: row.maxCapacity,
       image: row.image,
       description: Object.values(row.description).find((value) => value.length > 0) ?? '',
       createdAt: row.createdAt,
@@ -75,6 +78,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
         location: events.location,
         address: events.address,
         dateTime: events.dateTime,
+        maxCapacity: events.maxCapacity,
         category: events.category,
         registrationsCount: registrationCount,
       })
@@ -91,6 +95,8 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       location: row.location,
       address: row.address,
       date: row.dateTime.toISOString().slice(0, 10),
+      time: row.dateTime.toISOString().slice(11, 16),
+      maxCapacity: row.maxCapacity,
       image: row.image,
       description: Object.values(row.description).find((value) => value.length > 0) ?? '',
       createdAt: row.createdAt,
