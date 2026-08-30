@@ -11,7 +11,10 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { CalendarIcon, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { getLocale } from '@/@generated/paraglide/runtime';
+import { useMutation } from '@tanstack/react-query';
+import { useTRPC } from '@/integrations/trpc/react';
 import * as m from '@/@generated/paraglide/messages';
 
 const DEFAULT_EVENT_IMAGE = placeholderEvent;
@@ -28,6 +31,19 @@ const categories = [
 export function EventForm() {
   const locale = getLocale();
   const calendarLocale = locale == 'nl' ? nl : enUS;
+  const trpc = useTRPC();
+  const navigate = useNavigate();
+  const createEvent = useMutation(
+    trpc.eventCreation.createEvent.mutationOptions({
+      onSuccess: (data) => {
+        console.log('CREATE EVENT: mutation succeeded');
+        console.log('CREATE EVENT: returned data', data);
+      },
+      onError: (error) => {
+        console.error('CREATE EVENT: mutation failed', error);
+      },
+    }),
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [categoryOpen, setCategoryOpen] = useState(false);
@@ -39,6 +55,33 @@ export function EventForm() {
         ? current.filter((item) => item !== category)
         : [...current, category],
     );
+  };
+
+  const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    console.log('CREATE EVENT: submit triggered');
+
+    const formData = new FormData(event.currentTarget);
+    console.log('CREATE EVENT: form data', Object.fromEntries(formData));
+
+    const result = await createEvent.mutateAsync({
+      title: formData.get('title') as string,
+      description: formData.get('description') as string,
+      category: selectedCategories,
+      location: formData.get('location') as string,
+      address: formData.get('address') as string,
+      dateTime: `${formData.get('date')}T${formData.get('time')}`,
+      image: DEFAULT_EVENT_IMAGE,
+      maxCapacity: Number(formData.get('capacity')),
+    });
+    console.log('CREATE EVENT: returned data', result);
+    await navigate({
+      to: '/$locale/events/$eventId',
+      params: {
+        locale,
+        eventId: result.eventId,
+      },
+    });
   };
 
   const selectedCategoryLabel =
@@ -72,7 +115,7 @@ export function EventForm() {
       </CardHeader>
 
       <CardContent>
-        <form className="flex flex-col gap-6">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           {/* Image */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="image">{m.create_event_image()}</Label>

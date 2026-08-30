@@ -20,6 +20,7 @@
   "button_tickets": "Tickets",
   "button_spinner_sending": "Sending...",
   "button_ok": "OK",
+  "button_get_ticket": "Get Tickets",
 
   "button_profile": "Profile",
   "button_my_events": "My Events",
@@ -159,6 +160,10 @@
   "events_page_empty_description": "Try clearing your filters or check back later for new events.",
   "events_page_pagination_prev": "Previous",
   "events_page_pagination_next": "Next",
+  "events_about_title": "About this event",
+  "events_tickets_title": "Tickets",
+  "events_tickets_available": "tickets available",
+  "events_tickets_sold_out": "Sold out",
 
   "event_sorting_upcoming": "Upcoming",
   "event_sorting_popular": "Most popular",
@@ -255,6 +260,23 @@
   "event_weekday": [
     {
       "declarations": ["input date", "local formattedWeekday = date: datetime weekday=short"],
+      "match": {
+        "date=*": "{formattedWeekday}"
+      }
+    }
+  ],
+  "event_month_long": [
+    {
+      "declarations": ["input date", "local formattedMonth = date: datetime month=long"],
+      "match": {
+        "date=*": "{formattedMonth}"
+      }
+    }
+  ],
+
+  "event_weekday_long": [
+    {
+      "declarations": ["input date", "local formattedWeekday = date: datetime weekday=long"],
       "match": {
         "date=*": "{formattedWeekday}"
       }

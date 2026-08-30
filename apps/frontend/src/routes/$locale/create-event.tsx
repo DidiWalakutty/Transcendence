@@ -1,7 +1,19 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { EventForm } from '@/components/events/EventForm';
+import { authClient } from '@/lib/auth-client';
 
 export const Route = createFileRoute('/$locale/create-event')({
+  beforeLoad: async ({ params }) => {
+    const { data: session } = await authClient.getSession();
+    if (!session) {
+      throw redirect({
+        to: '/$locale/login',
+        params: {
+          locale: params.locale,
+        },
+      });
+    }
+  },
   component: CreateEventPage,
 });
 

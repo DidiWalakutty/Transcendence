@@ -1,3 +1,4 @@
+import { Link, useParams } from '@tanstack/react-router';
 import { EventDate } from '@/components/events/EventDate';
 import * as m from '@/@generated/paraglide/messages';
 import { Badge } from '../ui/badge';
@@ -25,47 +26,30 @@ const categoryLabels: Record<string, () => string> = {
 // id must currently be passed as _id, because it's not hooked up to the backend yet.
 // Temp solution.
 export function EventListItem({
-  id: _id,
+  id,
   image,
   title,
   category,
   date,
   description,
 }: EventListItemProps) {
+  const { locale } = useParams({ strict: false });
+  if (!locale) {
+    return null;
+  }
+
   return (
     <div className="grid max-w-5xl grid-cols-[70px_1fr] gap-6">
       {/* Event Date */}
       <EventDate date={date} />
 
-      {/*
-        TODO:
-        When the event detail page exists, wrap ONLY the event rectangle
-        with a TanStack Router <Link> so the entire card becomes clickable.
-
-        Example:
-
-        <Link
-          to="/$locale/events/$eventId"
-          params={{
-            locale,
-            eventId: id,
-          }}
-          className="block"
-        >
-          <Event Rectangle />
-        </Link>
-
-        Notes:
-        - Keep the EventDate outside the Link.
-        - The whole rectangle should be clickable.
-        - The locale should stay dynamic.
-        - The "Tickets" element is visual only and should NOT be a
-          <button>, since interactive elements shouldn't be nested
-          inside a Link.
-      */}
-
       {/* Event Rectangle */}
-      <div
+      <Link
+        to="/$locale/events/$eventId"
+        params={{
+          locale,
+          eventId: id,
+        }}
         className="
           group
           relative
@@ -124,6 +108,7 @@ export function EventListItem({
               {description}
             </p>
           </div>
+
           {/* Category */}
           <div className="mb-4 flex flex-wrap gap-2">
             {category.length > 0 &&
@@ -162,7 +147,7 @@ export function EventListItem({
             </div>
           </div>
         </div>
-      </div>
+      </Link>
     </div>
   );
 }

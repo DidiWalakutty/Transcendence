@@ -1,16 +1,37 @@
+// Handles the main event operations.
+// Connects the event requests to the database and manages event notifications.
+
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import type { EventDto } from '@repo/schemas/events';
+import { EventsRepository, type CreateEventRecord } from './repositories/events.repository';
 
 const MAX_BUFFERED_EVENTS = 100;
 
 @Injectable()
 export class EventsService {
-  constructor(private readonly eventEmitter: EventEmitter2) {}
+  constructor(
+    // repository handles communication with the database.
+    private readonly eventEmitter: EventEmitter2,
+    private readonly repository: EventsRepository,
+  ) {}
 
+  // Create a new event + store using the repository.
+  async create(data: CreateEventRecord): Promise<string> {
+    return this.repository.create(data);
+  }
+
+  // Find an event by ID through the repository
+  async findById(id: string): Promise<EventDto | null> {
+    return this.repository.findById(id);
+  }
+
+  // Emit an event so other parts of the system can listen to it.
   emit<TPayload>(event: string, payload: TPayload) {
     this.eventEmitter.emit(event, payload);
   }
 
+  // Listen for emitted events and provide them to the caller.
   async *listen<TPayload>(
     event: string,
     signal?: AbortSignal,
@@ -19,6 +40,7 @@ export class EventsService {
     let resume: (() => void) | undefined;
     let overflowed = false;
 
+    // Prevent memory overflow by limiting the number of buffered events.
     const onEvent = (payload: TPayload) => {
       if (payloads.length >= MAX_BUFFERED_EVENTS) {
         overflowed = true;
@@ -31,6 +53,7 @@ export class EventsService {
       resume?.();
       resume = undefined;
     };
+    // Wake up the listener when the signal is aborted.
     const onAbort = () => {
       resume?.();
       resume = undefined;
@@ -40,6 +63,7 @@ export class EventsService {
     signal?.addEventListener('abort', onAbort, { once: true });
 
     try {
+      // Wait until a new event arrives instead of continuously waiting.
       while (!signal?.aborted) {
         if (payloads.length === 0) {
           await new Promise<void>((resolve) => {
@@ -51,11 +75,13 @@ export class EventsService {
           throw new Error(`Event subscription exceeded ${MAX_BUFFERED_EVENTS} buffered messages`);
         }
 
+        // Send all buffered events to the caller
         while (payloads.length > 0) {
           yield payloads.shift()!;
         }
       }
     } finally {
+      // Remove listeners when subscription is complete
       this.eventEmitter.off(event, onEvent);
       signal?.removeEventListener('abort', onAbort);
     }

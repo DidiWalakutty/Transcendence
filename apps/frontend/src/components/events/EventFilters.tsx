@@ -1,38 +1,6 @@
 import * as m from '@/@generated/paraglide/messages';
 import { Button } from '../ui/button';
 
-// 1) TODO:
-// This component currently controls the category selection UI.
-//
-// It does not know anything about events or filtering logic.
-// It only reports selected categories back to EventsPage.
-//
-// Later:
-// Categories can come from the backend instead of being hardcoded.
-//   something like:
-//  const categories = await trpc.categories.list.useQuery();
-
-// 2) TODO:
-// These are currently static categories.
-//
-// Later:
-// Fetch available categories from the backend/database.
-//
-// Keep IDs language-independent:
-// Good:
-// "music"
-//
-// Bad:
-// "Muziek"
-//
-// The label is translated with Paraglide.
-
-// 3) TODO: selectedCategories:
-// Stores the currently active filters.
-//
-// onCategoryChange:
-// Sends user changes back to EventsPage.
-
 const categories = [
   {
     id: 'music',
