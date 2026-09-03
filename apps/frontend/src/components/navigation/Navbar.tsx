@@ -6,14 +6,13 @@ import { UserMenu } from './UserMenu';
 import { navigationItems, type UserRole } from './navigation.config';
 
 import { usePresenceConnection } from '@/hooks/use-presence';
-import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
 
 export function Navbar() {
   const { data: session } = authClient.useSession();
-  const role: UserRole = !session ? 'visitor' : session.user.isAdministrator ? 'admin' : 'user';
+  const hasAdminRole = session?.user.role?.split(',').includes('admin');
+  const role: UserRole = !session ? 'visitor' : hasAdminRole ? 'admin' : 'user';
   const links = navigationItems[role];
-  const locale = getLocale();
 
   // Keeps the current user marked online for as long as the app is open in
   // this tab, not just while they're on the profile page.
@@ -42,11 +41,7 @@ export function Navbar() {
     >
       {/* Logo */}
       <div>
-        <Link
-          to="/$locale"
-          params={{ locale }}
-          className="font-bold text-xl 2xl:text-3xl text-brand-primary"
-        >
+        <Link to="/" className="font-bold text-xl 2xl:text-3xl text-brand-primary">
           {m.button_eventra()}
         </Link>
       </div>
@@ -59,10 +54,9 @@ export function Navbar() {
             <Link
               key={link.href}
               to={link.href}
-              params={{ locale }}
               className="transition-colors hover:text-brand-primary"
             >
-              {link.label}
+              {link.label()}
             </Link>
           ))}
         </div>

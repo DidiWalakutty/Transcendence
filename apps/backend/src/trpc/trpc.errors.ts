@@ -20,3 +20,10 @@ export function unauthorizedError(message: string) {
     message,
   });
 }
+
+export function forbiddenError(message: string) {
+  return new TRPCError({
+    code: 'FORBIDDEN',
+    message,
+  });
+}

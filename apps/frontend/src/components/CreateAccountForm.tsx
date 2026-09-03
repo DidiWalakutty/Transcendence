@@ -42,8 +42,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
       toast.success('Account created successfully!');
 
       void navigate({
-        to: '/$locale',
-        params: { locale },
+        to: '/',
       });
     },
     onError: (error: any) => {
@@ -273,11 +272,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
 
                   <FieldDescription className="text-center">
                     {m.create_account_already_have_account()}{' '}
-                    <Link
-                      to="/$locale/login"
-                      params={{ locale }}
-                      className="underline underline-offset-4"
-                    >
+                    <Link to="/login" className="underline underline-offset-4">
                       {m.create_account_sign_in()}
                     </Link>
                   </FieldDescription>
@@ -290,19 +285,11 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
 
       <FieldDescription className="px-6 text-center">
         {m.create_account_info()}{' '}
-        <Link
-          to="/$locale/terms-of-service"
-          params={{ locale }}
-          className="underline underline-offset-4"
-        >
+        <Link to="/terms-of-service" className="underline underline-offset-4">
           {m.create_account_terms()}
         </Link>{' '}
         {m.create_account_and()}{' '}
-        <Link
-          to="/$locale/privacy-policy"
-          params={{ locale }}
-          className="underline underline-offset-4"
-        >
+        <Link to="/privacy-policy" className="underline underline-offset-4">
           {m.create_account_privacy()}
         </Link>
       </FieldDescription>

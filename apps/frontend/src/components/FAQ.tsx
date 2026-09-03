@@ -9,28 +9,28 @@ import * as m from '@/@generated/paraglide/messages';
 
 const faqItems = [
   {
-    question: m.faq_question_1(),
-    answer: m.faq_answer_1(),
+    question: m.faq_question_1,
+    answer: m.faq_answer_1,
   },
   {
-    question: m.faq_question_2(),
-    answer: m.faq_answer_2(),
+    question: m.faq_question_2,
+    answer: m.faq_answer_2,
   },
   {
-    question: m.faq_question_3(),
-    answer: m.faq_answer_3(),
+    question: m.faq_question_3,
+    answer: m.faq_answer_3,
   },
   {
-    question: m.faq_question_4(),
-    answer: m.faq_answer_4(),
+    question: m.faq_question_4,
+    answer: m.faq_answer_4,
   },
   {
-    question: m.faq_question_5(),
-    answer: m.faq_answer_5(),
+    question: m.faq_question_5,
+    answer: m.faq_answer_5,
   },
   {
-    question: m.faq_question_6(),
-    answer: m.faq_answer_6(),
+    question: m.faq_question_6,
+    answer: m.faq_answer_6,
   },
 ];
 
@@ -86,7 +86,7 @@ export function FAQSection() {
 										2xl:text-xl
 										"
               >
-                {item.question}
+                {item.question()}
               </AccordionTrigger>
 
               <AccordionContent
@@ -95,7 +95,7 @@ export function FAQSection() {
 										2xl:text-lg
 										"
               >
-                {item.answer}
+                {item.answer()}
               </AccordionContent>
             </AccordionItem>
           ))}

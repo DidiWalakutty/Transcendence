@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import * as m from '@/@generated/paraglide/messages';
 
-export const Route = createFileRoute('/$locale/contact')({
+export const Route = createFileRoute('/contact')({
   component: Contact,
 });
 

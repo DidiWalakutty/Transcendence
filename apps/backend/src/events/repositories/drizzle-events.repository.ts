@@ -3,7 +3,7 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { events } from '@repo/schemas/database';
-import { EventDto } from '@repo/schemas/events';
+import type { EventDto, UpdateEventDto } from '@repo/schemas/events';
 import { DATABASE } from '../../database/database.constants';
 import type { Database } from '../../database/database.types';
 import { EventsRepository, type CreateEventRecord } from './events.repository';
@@ -52,12 +52,51 @@ export class DrizzleEventsRepository extends EventsRepository {
 
     return {
       id: event.id,
+      organizerId: event.organizerId,
       title: event.title,
       category: event.category,
       location: event.location,
       address: event.address,
       date: dateTime.split('T')[0],
       time: dateTime.split('T')[1].slice(0, 5),
+      maxCapacity: event.maxCapacity,
+      image: event.image,
+      description: event.description.en ?? '',
+    };
+  }
+
+  async update({ id, date, time, description, ...data }: UpdateEventDto): Promise<EventDto | null> {
+    const [event] = await this.db
+      .update(events)
+      .set({
+        ...data,
+        description: { en: description },
+        dateTime: new Date(`${date}T${time}`),
+      })
+      .where(eq(events.id, id))
+      .returning();
+
+    return event ? this.toDto(event) : null;
+  }
+
+  async delete(id: string): Promise<EventDto | null> {
+    const [event] = await this.db.delete(events).where(eq(events.id, id)).returning();
+
+    return event ? this.toDto(event) : null;
+  }
+
+  private toDto(event: typeof events.$inferSelect): EventDto {
+    const dateTime = event.dateTime.toISOString();
+
+    return {
+      id: event.id,
+      organizerId: event.organizerId,
+      title: event.title,
+      category: event.category,
+      location: event.location,
+      address: event.address,
+      date: dateTime.slice(0, 10),
+      time: dateTime.slice(11, 16),
       maxCapacity: event.maxCapacity,
       image: event.image,
       description: event.description.en ?? '',

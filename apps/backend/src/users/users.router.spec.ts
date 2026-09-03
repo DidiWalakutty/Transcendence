@@ -37,4 +37,15 @@ describe('UsersRouter', () => {
       code: 'NOT_FOUND',
     });
   });
+
+  it('prevents a regular user from updating another profile', async () => {
+    const router = new UsersRouter({} as UsersEvents, {} as UsersService);
+
+    await expect(
+      router.updateUser(
+        { id: '2de0f53e-a6a2-4aaf-a47d-0ecaafde7748', name: 'Ada Lovelace' },
+        { user: { id: '64de8cd7-e120-4ad1-b849-4b386f31d599', role: 'user' } },
+      ),
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
 });

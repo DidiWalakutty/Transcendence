@@ -1,15 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { CalendarDays } from 'lucide-react';
-import { LoginForm } from '@/components/LoginForm';
+import { ForgotPassword } from '@/components/ForgotPasswordForm';
 import * as m from '@/@generated/paraglide/messages';
 
-export const Route = createFileRoute('/$locale/login')({
-  component: LoginPage,
+export const Route = createFileRoute('/forgot-password')({
+  component: ForgotPasswordPage,
 });
 
-function LoginPage() {
+function ForgotPasswordPage() {
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
+    <div className="flex flex-1 flex-col items-center justify-center gap-6 px-6 py-40 md:px-10">
       <div className="flex w-full max-w-sm flex-col gap-6 rounded-lg">
         <div className="flex items-center gap-2 self-center font-medium">
           <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
@@ -18,7 +18,7 @@ function LoginPage() {
           {m.button_eventra()}
         </div>
 
-        <LoginForm />
+        <ForgotPassword />
       </div>
     </div>
   );

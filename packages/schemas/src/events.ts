@@ -5,6 +5,7 @@ export const eventSortSchema = z.enum(['upcoming', 'popular', 'newest']);
 // Reading an events
 export const eventSchema = z.object({
   id: z.string(),
+  organizerId: z.string().optional(),
   title: z.string(),
   category: z.string().array(),
   location: z.string(),
@@ -37,6 +38,20 @@ export const createEventSchema = z.object({
   maxCapacity: z.number().int().positive(),
 });
 
+export const updateEventSchema = createEventSchema.extend({
+  id: z.string().uuid(),
+});
+
+export const deleteEventSchema = z.object({
+  id: z.string().uuid(),
+});
+
+export const createEventResultSchema = z.object({
+  eventId: z.string().uuid(),
+});
+
 export type EventDto = z.infer<typeof eventSchema>;
 export type EventSortDto = z.infer<typeof eventSortSchema>;
 export type CreateEventDto = z.infer<typeof createEventSchema>;
+export type UpdateEventDto = z.infer<typeof updateEventSchema>;
+export type DeleteEventDto = z.infer<typeof deleteEventSchema>;

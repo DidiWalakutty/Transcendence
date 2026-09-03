@@ -2,10 +2,8 @@ import halfwayImage from '@/assets/halfway_image.png';
 import { Link } from '@tanstack/react-router';
 import { Button } from '@/components/ui/button';
 import * as m from '@/@generated/paraglide/messages';
-import { getLocale } from '@/@generated/paraglide/runtime';
 
 export function HalfwayImage() {
-  const locale = getLocale();
   return (
     <section
       className="
@@ -78,9 +76,7 @@ export function HalfwayImage() {
           </p>
 
           <Button size="lg" className="mt-10">
-            <Link to="/$locale/events" params={{ locale }}>
-              {m.button_explore()}
-            </Link>
+            <Link to="/events">{m.button_explore()}</Link>
           </Button>
         </div>
       </div>

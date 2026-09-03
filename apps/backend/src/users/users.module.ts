@@ -1,6 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common';
 
 import { DatabaseModule } from '../database/database.module';
+import { AuthModule } from '../auth/auth.module';
 import { EventsModule } from '../events/events.module';
 import { DrizzleUsersRepository } from './repositories/drizzle-users.repository';
 import { InMemoryUsersRepository } from './repositories/in-memory-users.repository';
@@ -24,7 +25,7 @@ export class UsersModule {
 
     return {
       module: UsersModule,
-      imports: [EventsModule, ...(persistence === 'database' ? [DatabaseModule] : [])],
+      imports: [AuthModule, EventsModule, ...(persistence === 'database' ? [DatabaseModule] : [])],
       providers: [
         UsersEvents,
         UsersRouter,

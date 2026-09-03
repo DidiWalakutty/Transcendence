@@ -4,27 +4,27 @@ import { Button } from '../ui/button';
 const categories = [
   {
     id: 'music',
-    title: m.category_music(),
+    title: m.category_music,
   },
   {
     id: 'culture',
-    title: m.category_culture(),
+    title: m.category_culture,
   },
   {
     id: 'food',
-    title: m.category_food(),
+    title: m.category_food,
   },
   {
     id: 'games',
-    title: m.category_games(),
+    title: m.category_games,
   },
   {
     id: 'talks',
-    title: m.category_talks(),
+    title: m.category_talks,
   },
   {
     id: 'workshops',
-    title: m.category_workshops(),
+    title: m.category_workshops,
   },
 ];
 
@@ -95,7 +95,7 @@ export function EventFilters({
                 ✓
               </span>
 
-              {category.title}
+              {category.title()}
             </label>
           ))}
           <Button

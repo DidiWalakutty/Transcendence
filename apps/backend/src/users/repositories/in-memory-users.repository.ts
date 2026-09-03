@@ -1,6 +1,11 @@
 import { randomUUID } from 'node:crypto';
 import { Injectable } from '@nestjs/common';
-import type { CreateUserDto, UpdateUserDto, UserDto } from '@repo/schemas/users';
+import type {
+  AdminUpdateUserDto,
+  CreateUserDto,
+  UpdateUserDto,
+  UserDto,
+} from '@repo/schemas/users';
 
 import { createUserFixtures } from '../fixtures/users.fixture';
 import { UserEmailAlreadyExistsError } from '../errors/user-email-already-exists.error';
@@ -26,7 +31,10 @@ export class InMemoryUsersRepository extends UsersRepository {
     this.assertUniqueEmail(data.email);
 
     const user: UserDto = {
-      isAdministrator: false,
+      role: 'user',
+      banned: false,
+      banReason: null,
+      banExpires: null,
       aboutMe: null,
       location: null,
       preferedLanguage: 'english',
@@ -45,7 +53,7 @@ export class InMemoryUsersRepository extends UsersRepository {
     return user;
   }
 
-  async update({ id, ...data }: UpdateUserDto) {
+  async update({ id, ...data }: UpdateUserDto | AdminUpdateUserDto) {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {

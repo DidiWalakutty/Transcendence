@@ -19,15 +19,6 @@ const config = defineConfig({
       project: './project.inlang',
       outdir: './src/@generated/paraglide',
       strategy: ['url', 'baseLocale'],
-      urlPatterns: [
-        {
-          pattern: ':protocol://:domain(.*)::port?/:path(.*)?',
-          localized: [
-            ['en', ':protocol://:domain(.*)::port?/en/:path(.*)?'],
-            ['nl', ':protocol://:domain(.*)::port?/nl/:path(.*)?'],
-          ],
-        },
-      ],
     }),
     nitro(),
     VitePWA({

@@ -15,7 +15,10 @@ export const users = pgTable('users', {
   name: text('name').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
-  isAdministrator: boolean().notNull().default(false),
+  role: text('role').notNull().default('user'),
+  banned: boolean('banned').notNull().default(false),
+  banReason: text('ban_reason'),
+  banExpires: timestamp('ban_expires'),
   aboutMe: text('about_me'),
   location: text('location'),
   preferedLanguage: text('language').default('english'),
@@ -30,20 +33,21 @@ export const sessions = pgTable('sessions', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   token: text('token').notNull().unique(),
   expiresAt: timestamp('expires_at').notNull(),
   ipAddress: text('ip_address'),
   userAgent: text('user_agent'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
+  impersonatedBy: text('impersonated_by'),
 });
 
 export const accounts = pgTable('accounts', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   accountId: text('account_id').notNull(),
   providerId: text('provider_id').notNull(),
   accessToken: text('access_token'),
@@ -70,7 +74,7 @@ export const twoFactors = pgTable('two_factors', {
   id: uuid('id').primaryKey().defaultRandom(),
   userId: uuid('user_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   secret: text('secret').notNull(),
   backupCodes: text('backup_codes').notNull(),
   verified: boolean('verified').notNull().default(true),
@@ -86,7 +90,7 @@ export const events = pgTable('events', {
   image: text('image_link').notNull(),
   organizerId: uuid('organizer_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   location: text('location').notNull(),
   address: text('address').notNull(),
   dateTime: timestamp('date_time').notNull(),
@@ -100,10 +104,10 @@ export const registrationStatus = pgEnum('registration_status', ['active', 'canc
 export const friends = pgTable('friends', {
   myId: uuid('my_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   friendId: uuid('friend_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   status: friendshipStatus('f_status').notNull().default('pending'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
@@ -111,10 +115,10 @@ export const friends = pgTable('friends', {
 export const registrations = pgTable('registrations', {
   eventId: uuid('event_id')
     .notNull()
-    .references(() => events.id),
+    .references(() => events.id, { onDelete: 'cascade' }),
   userId: uuid('user_id')
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, { onDelete: 'cascade' }),
   status: registrationStatus('r_status').notNull().default('active'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });

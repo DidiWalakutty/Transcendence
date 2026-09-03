@@ -45,7 +45,7 @@ import {
 } from '@/components/ui/table';
 import { removeById, replaceById, upsertById } from '@/lib/collection-by-id';
 
-export const Route = createFileRoute('/$locale/example')({ component: Home });
+export const Route = createFileRoute('/example')({ component: Home });
 
 function Home() {
   const trpc = useTRPC();

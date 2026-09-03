@@ -3,7 +3,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import type { EventDto } from '@repo/schemas/events';
+import type { EventDto, UpdateEventDto } from '@repo/schemas/events';
 import { EventsRepository, type CreateEventRecord } from './repositories/events.repository';
 
 const MAX_BUFFERED_EVENTS = 100;
@@ -24,6 +24,14 @@ export class EventsService {
   // Find an event by ID through the repository
   async findById(id: string): Promise<EventDto | null> {
     return this.repository.findById(id);
+  }
+
+  async update(data: UpdateEventDto): Promise<EventDto | null> {
+    return this.repository.update(data);
+  }
+
+  async delete(id: string): Promise<EventDto | null> {
+    return this.repository.delete(id);
   }
 
   // Emit an event so other parts of the system can listen to it.

@@ -32,6 +32,11 @@ flowchart TD
 6. The NestJS service layer reads or writes data through Drizzle ORM.
 7. PostgreSQL stores the persistent data.
 
+Output schemas that can receive Redis-cached database records must also account for cache
+serialization. Keyv serializes JavaScript `Date` values as ISO strings, so `userSchema` explicitly
+coerces `createdAt`, `updatedAt`, and nullable `banExpires` back to `Date` before tRPC validates and
+returns the response.
+
 ## Why This Matters
 
 - Validation is fast on the client.

@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { useTRPC } from '@/integrations/trpc/react';
 import { Button } from '@/components/ui/button';
 
-export const Route = createFileRoute('/$locale/events/')({
+export const Route = createFileRoute('/events/')({
   validateSearch: z.object({
     page: z.coerce.number().int().positive().optional(),
     category: z.string().optional(),

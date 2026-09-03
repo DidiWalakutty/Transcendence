@@ -4,17 +4,17 @@ import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@/integrations/trpc/react';
 import * as m from '@/@generated/paraglide/messages';
 
-export const Route = createFileRoute('/$locale/events/$eventId')({
+export const Route = createFileRoute('/events/$eventId')({
   component: EventDetailPage,
 });
 
-const categoryTranslations: Record<string, string> = {
-  music: m.category_music(),
-  culture: m.category_culture(),
-  food: m.category_food(),
-  games: m.category_games(),
-  talks: m.category_talks(),
-  workshops: m.category_workshops(),
+const categoryTranslations: Record<string, () => string> = {
+  music: m.category_music,
+  culture: m.category_culture,
+  food: m.category_food,
+  games: m.category_games,
+  talks: m.category_talks,
+  workshops: m.category_workshops,
 };
 
 function EventDetailPage() {
@@ -62,7 +62,7 @@ function EventDetailPage() {
                   key={category}
                   className="rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary"
                 >
-                  {categoryTranslations[category] ?? category}
+                  {categoryTranslations[category]?.() ?? category}
                 </span>
               ))}
             </div>

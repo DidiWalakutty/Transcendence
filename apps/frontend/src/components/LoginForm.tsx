@@ -3,7 +3,6 @@ import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { signInSchema } from '@repo/schemas/auth';
 
-import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -16,7 +15,6 @@ import { cn } from '@/lib/utils';
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
   const navigate = useNavigate();
-  const locale = getLocale();
 
   const signIn = useMutation({
     mutationFn: async (values: { email: string; password: string }) => {
@@ -31,15 +29,13 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
     onSuccess: (data) => {
       if (data && 'twoFactorRedirect' in data && data.twoFactorRedirect) {
         void navigate({
-          to: '/$locale/verify-2fa',
-          params: { locale },
+          to: '/verify-2fa',
         });
         return;
       }
 
       void navigate({
-        to: '/$locale/profile',
-        params: { locale },
+        to: '/profile',
       });
     },
   });
@@ -143,8 +139,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
                       <FieldError errors={errors} />
 
                       <Link
-                        to="/$locale/forgot-password"
-                        params={{ locale }}
+                        to="/forgot-password"
                         className="ml-auto text-right text-sm text-muted-foreground hover:text-primary"
                       >
                         {m.login_forgot_password()}
@@ -184,11 +179,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 
                   <FieldDescription className="text-center">
                     {m.login_no_account()}{' '}
-                    <Link
-                      to="/$locale/create-account"
-                      params={{ locale }}
-                      className="underline underline-offset-4"
-                    >
+                    <Link to="/create-account" className="underline underline-offset-4">
                       {m.login_sign_up()}
                     </Link>
                   </FieldDescription>
@@ -201,19 +192,11 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 
       <FieldDescription className="px-6 text-center">
         {m.login_continue()}{' '}
-        <Link
-          to="/$locale/terms-of-service"
-          params={{ locale }}
-          className="underline underline-offset-4"
-        >
+        <Link to="/terms-of-service" className="underline underline-offset-4">
           {m.button_terms()}
         </Link>{' '}
         {m.create_account_and()}{' '}
-        <Link
-          to="/$locale/privacy-policy"
-          params={{ locale }}
-          className="underline underline-offset-4"
-        >
+        <Link to="/privacy-policy" className="underline underline-offset-4">
           {m.button_privacy()}
         </Link>
       </FieldDescription>

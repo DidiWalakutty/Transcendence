@@ -9,8 +9,8 @@
 export type UserRole = 'visitor' | 'user' | 'admin';
 
 export interface NavigationItem {
-  label: string;
-  href: '/$locale/events' | '/$locale/create-event' | '/$locale/admin';
+  label: () => string;
+  href: '/events' | '/create-event' | '/admin';
 }
 
 /**
@@ -20,14 +20,15 @@ export interface NavigationItem {
  * User-specific actions such as Profile and Logout belong in UserMenu.tsx.
  */
 export const navigationItems: Record<UserRole, NavigationItem[]> = {
-  visitor: [{ label: 'Events', href: '/$locale/events' }],
+  visitor: [{ label: m.button_all_events, href: '/events' }],
   user: [
-    { label: 'Events', href: '/$locale/events' },
-    { label: 'Create Event', href: '/$locale/create-event' },
+    { label: m.button_all_events, href: '/events' },
+    { label: m.button_create, href: '/create-event' },
   ],
   admin: [
-    { label: 'Events', href: '/$locale/events' },
-    { label: 'Create Event', href: '/$locale/create-event' },
-    { label: 'Admin Dashboard', href: '/$locale/admin' },
+    { label: m.button_all_events, href: '/events' },
+    { label: m.button_create, href: '/create-event' },
+    { label: m.admin_title, href: '/admin' },
   ],
 };
+import * as m from '@/@generated/paraglide/messages';

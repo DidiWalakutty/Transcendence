@@ -4,6 +4,8 @@ import { users } from '@repo/schemas/database';
 
 export const userSchema = createSelectSchema(users, {
   createdAt: () => z.coerce.date(),
+  updatedAt: () => z.coerce.date(),
+  banExpires: () => z.coerce.date().nullable(),
 });
 export const userCreatedSubscriptionSchema = z.custom<AsyncIterable<UserDto>>();
 export const userUpdatedSubscriptionSchema = z.custom<AsyncIterable<UserDto>>();
@@ -27,6 +29,10 @@ export const updateUserSchema = createUserSchema.partial().extend({
   displayUsername: z.string().optional(),
 });
 
+export const adminUpdateUserSchema = updateUserSchema.extend({
+  role: z.enum(['user', 'admin']).optional(),
+});
+
 export const deleteUserSchema = z.object({
   id: z.uuid(),
 });
@@ -34,4 +40,5 @@ export const deleteUserSchema = z.object({
 export type UserDto = z.infer<typeof userSchema>;
 export type CreateUserDto = z.infer<typeof createUserSchema>;
 export type UpdateUserDto = z.infer<typeof updateUserSchema>;
+export type AdminUpdateUserDto = z.infer<typeof adminUpdateUserSchema>;
 export type DeleteUserDto = z.infer<typeof deleteUserSchema>;

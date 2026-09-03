@@ -59,11 +59,11 @@ The frontend uses `@t3-oss/env-core`.
 
 Client-side variables must use the `VITE_` prefix.
 
-| Variable         | Required | Purpose                                                   |
-| ---------------- | -------- | --------------------------------------------------------- |
-| `VITE_APP_TITLE` | No       | Optional frontend application title.                      |
-| `VITE_API_URL`   | No       | Optional frontend API URL.                                |
-| `SERVER_URL`     | No       | Optional server-side URL value for frontend runtime code. |
+| Variable         | Required | Purpose                                             |
+| ---------------- | -------- | --------------------------------------------------- |
+| `VITE_APP_TITLE` | No       | Optional frontend application title.                |
+| `VITE_API_URL`   | No       | Optional frontend API URL.                          |
+| `SERVER_URL`     | No       | Backend URL used by the frontend server during SSR. |
 
 ## Compose Variables
 

@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import { schema } from '@repo/schemas/database';
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { username } from 'better-auth/plugins';
+import { admin, username } from 'better-auth/plugins';
 import { seedEvents } from './seed-data/events';
 
 const pool = new Pool({
@@ -39,11 +39,6 @@ const auth = betterAuth({
       image: 'avatar',
     },
     additionalFields: {
-      isAdministrator: {
-        type: 'boolean',
-        input: false,
-        defaultValue: false,
-      },
       aboutMe: {
         type: 'string',
         required: false,
@@ -63,7 +58,7 @@ const auth = betterAuth({
     enabled: true,
     requireEmailVerification: false,
   },
-  plugins: [username()],
+  plugins: [admin(), username()],
 });
 
 const users = [
@@ -72,21 +67,21 @@ const users = [
     email: 'admin@transcendence.local',
     username: 'admin',
     password: environment.SEED_ADMIN_PASSWORD!,
-    isAdministrator: true,
+    role: 'admin',
   },
   {
     name: 'Didi Walakutty',
     email: 'didi@example.com',
     username: 'didi_walakutty',
     password: environment.SEED_DIDI_PASSWORD!,
-    isAdministrator: false,
+    role: 'user',
   },
   {
     name: 'Homer Simpson',
     email: 'homer@example.com',
     username: 'homer_simpson',
     password: environment.SEED_HOMER_PASSWORD!,
-    isAdministrator: false,
+    role: 'user',
   },
 ];
 
@@ -97,6 +92,12 @@ async function seed() {
     });
 
     if (existingUser) {
+      if (existingUser.role !== user.role) {
+        await db
+          .update(schema.users)
+          .set({ role: user.role })
+          .where(eq(schema.users.id, existingUser.id));
+      }
       console.log(`User already exists: ${user.email}`);
       continue;
     }
@@ -114,14 +115,12 @@ async function seed() {
       throw new Error(`Failed to create user: ${user.email}`);
     }
 
-    if (user.isAdministrator) {
-      await db
-        .update(schema.users)
-        .set({ isAdministrator: true })
-        .where(eq(schema.users.id, result.user.id));
-    }
+    await db
+      .update(schema.users)
+      .set({ role: user.role })
+      .where(eq(schema.users.id, result.user.id));
 
-    console.log(`Created ${user.isAdministrator ? 'admin' : 'user'}: ${user.email}`);
+    console.log(`Created ${user.role}: ${user.email}`);
   }
 
   const organizer = await db.query.users.findFirst({

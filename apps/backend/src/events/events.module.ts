@@ -8,9 +8,10 @@ import { EventsRouter } from './events.router';
 import { EventsService } from './events.service';
 import { EventsRepository } from './repositories/events.repository';
 import { DrizzleEventsRepository } from './repositories/drizzle-events.repository';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, AuthModule],
   providers: [
     EventsRouter,
     EventsService,

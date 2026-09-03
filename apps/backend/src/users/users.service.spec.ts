@@ -5,13 +5,17 @@ import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { UsersRepository } from './repositories/users.repository';
 import { UsersEvents } from './users.events';
 import { UsersService } from './users.service';
+import { NotificationService } from '../notification/notification.service';
 
 const user: UserDto = {
   id: '2de0f53e-a6a2-4aaf-a47d-0ecaafde7748',
   name: 'Ada Lovelace',
   email: 'ada@example.com',
   createdAt: new Date('2026-01-12T09:00:00.000Z'),
-  isAdministrator: false,
+  role: 'user',
+  banned: false,
+  banReason: null,
+  banExpires: null,
   aboutMe: null,
   location: null,
   preferedLanguage: 'english',
@@ -20,6 +24,7 @@ const user: UserDto = {
   displayUsername: null,
   emailVerified: false,
   updatedAt: new Date('2026-01-12T09:00:00.000Z'),
+  twoFactorEnabled: false,
 };
 
 describe('UsersService', () => {
@@ -59,7 +64,10 @@ describe('UsersService', () => {
       emitUserUpdated,
       emitUserDeleted,
     } as unknown as UsersEvents;
-    service = new UsersService(repository, cache, events);
+    const notificationService = {
+      sendWelcomeEmail: vi.fn().mockResolvedValue(undefined),
+    } as unknown as NotificationService;
+    service = new UsersService(repository, cache, events, notificationService);
   });
 
   it('uses and populates the configured cache', async () => {

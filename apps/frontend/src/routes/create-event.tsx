@@ -1,16 +1,13 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { EventForm } from '@/components/events/EventForm';
-import { authClient } from '@/lib/auth-client';
+import { getAuthSession } from '@/lib/auth-session.functions';
 
-export const Route = createFileRoute('/$locale/create-event')({
-  beforeLoad: async ({ params }) => {
-    const { data: session } = await authClient.getSession();
+export const Route = createFileRoute('/create-event')({
+  beforeLoad: async () => {
+    const session = await getAuthSession();
     if (!session) {
       throw redirect({
-        to: '/$locale/login',
-        params: {
-          locale: params.locale,
-        },
+        to: '/login',
       });
     }
   },

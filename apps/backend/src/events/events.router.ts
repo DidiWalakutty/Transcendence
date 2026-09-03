@@ -2,26 +2,50 @@
 // Checks the request data and makes sure the user is allowed to perform the action.
 // Passes the request to the EventsService for processing and returns the result to the client.
 
-import { Router, Mutation, Input, Ctx, Query } from 'nestjs-trpc';
-import { createEventSchema, eventIdSchema, type CreateEventDto } from '@repo/schemas/events';
+import { Router, Mutation, Input, Ctx, Query, UseMiddlewares } from 'nestjs-trpc';
+import {
+  createEventResultSchema,
+  createEventSchema,
+  deleteEventSchema,
+  eventIdSchema,
+  eventSchema,
+  updateEventSchema,
+  type CreateEventDto,
+  type DeleteEventDto,
+  type UpdateEventDto,
+} from '@repo/schemas/events';
 import { EventsService } from './events.service';
-import { TRPCError } from '@trpc/server';
+import { ProtectedMiddleware } from '../auth/protected.middleware';
+import { forbiddenError, notFoundError } from '../trpc/trpc.errors';
+
+type EventAuthContext = {
+  user: { id: string; role?: string | null };
+};
+
+async function assertCanManage(
+  eventsService: EventsService,
+  eventId: string,
+  user: EventAuthContext['user'],
+): Promise<void> {
+  const event = await eventsService.findById(eventId);
+
+  if (!event) {
+    throw notFoundError('Event not found');
+  }
+
+  const hasAdminRole = user.role?.split(',').includes('admin');
+  if (!hasAdminRole && event.organizerId !== user.id) {
+    throw forbiddenError('You can only manage your own events');
+  }
+}
 
 @Router({ alias: 'eventCreation' })
 export class EventsRouter {
   constructor(private readonly eventsService: EventsService) {}
 
-  @Mutation({ input: createEventSchema })
-  async createEvent(
-    @Input() input: CreateEventDto,
-    // gives current logged-in user context, including the user ID:
-    @Ctx() ctx: { user: { id: string } | null },
-  ) {
-    console.log('CREATE EVENT: router reached');
-    if (!ctx.user) {
-      throw new TRPCError({ code: 'UNAUTHORIZED' });
-    }
-
+  @UseMiddlewares(ProtectedMiddleware)
+  @Mutation({ input: createEventSchema, output: createEventResultSchema })
+  async createEvent(@Input() input: CreateEventDto, @Ctx() ctx: EventAuthContext) {
     const eventId = await this.eventsService.create({
       ...input,
       organizerId: ctx.user.id,
@@ -35,11 +59,34 @@ export class EventsRouter {
     const event = await this.eventsService.findById(input.id);
 
     if (!event) {
-      throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Event not found',
-      });
+      throw notFoundError('Event not found');
     }
+    return event;
+  }
+
+  @UseMiddlewares(ProtectedMiddleware)
+  @Mutation({ input: updateEventSchema, output: eventSchema })
+  async updateEvent(@Input() input: UpdateEventDto, @Ctx() ctx: EventAuthContext) {
+    await assertCanManage(this.eventsService, input.id, ctx.user);
+    const event = await this.eventsService.update(input);
+
+    if (!event) {
+      throw notFoundError('Event not found');
+    }
+
+    return event;
+  }
+
+  @UseMiddlewares(ProtectedMiddleware)
+  @Mutation({ input: deleteEventSchema, output: eventSchema })
+  async deleteEvent(@Input() input: DeleteEventDto, @Ctx() ctx: EventAuthContext) {
+    await assertCanManage(this.eventsService, input.id, ctx.user);
+    const event = await this.eventsService.delete(input.id);
+
+    if (!event) {
+      throw notFoundError('Event not found');
+    }
+
     return event;
   }
 }

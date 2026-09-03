@@ -7,23 +7,20 @@ import { AUTH } from './auth.constants';
 import { createAuth } from './auth.instance';
 import { AuthContext } from './auth.context';
 import { ProtectedMiddleware } from './protected.middleware';
-import { NotificationService } from '../notification/notification.service';
+import { AdminMiddleware } from './admin.middleware';
 
 @Module({
   imports: [ConfigModule, DatabaseModule],
   providers: [
     {
       provide: AUTH,
-      inject: [DATABASE, ConfigService, NotificationService],
-      useFactory: (
-        database: Database,
-        config: ConfigService,
-        notificationService: NotificationService,
-      ) => createAuth(database, config, notificationService),
+      inject: [DATABASE, ConfigService],
+      useFactory: (database: Database, config: ConfigService) => createAuth(database, config),
     },
     AuthContext,
     ProtectedMiddleware,
+    AdminMiddleware,
   ],
-  exports: [AUTH, AuthContext, ProtectedMiddleware],
+  exports: [AUTH, AuthContext, ProtectedMiddleware, AdminMiddleware],
 })
 export class AuthModule {}

@@ -24,6 +24,7 @@ The tRPC router implementation currently lives in:
 ```text
 apps/backend/src/users/users.router.ts
 apps/backend/src/event-listings/event-listings.router.ts
+apps/backend/src/events/events.router.ts
 ```
 
 Generated client router types live in:
@@ -43,19 +44,26 @@ vp run trpc:generate
 The current router aliases are:
 
 ```text
-events, users
+eventCreation, events, friends, presence, registrations, users
 ```
 
-| Procedure             | Type         | Input              | Output          | Notes                                                    |
-| --------------------- | ------------ | ------------------ | --------------- | -------------------------------------------------------- |
-| `events.getEvents`    | Query        | `eventSortSchema`  | Array of events | Reads events and orders them in the backend by sort key. |
-| `users.getUsers`      | Query        | None               | Array of users  | Reads users through the configured repository.           |
-| `users.createUser`    | Mutation     | `createUserSchema` | User            | Creates a user and rejects duplicate email addresses.    |
-| `users.updateUser`    | Mutation     | `updateUserSchema` | User            | Updates a user and rejects missing or duplicate records. |
-| `users.deleteUser`    | Mutation     | `deleteUserSchema` | User            | Deletes a user and rejects missing records.              |
-| `users.onUserCreated` | Subscription | None               | User stream     | Streams newly created users to subscribed clients.       |
-| `users.onUserUpdated` | Subscription | None               | User stream     | Streams updated users to subscribed clients.             |
-| `users.onUserDeleted` | Subscription | None               | User stream     | Streams deleted users to subscribed clients.             |
+| Procedure                         | Type         | Access         | Notes                                                  |
+| --------------------------------- | ------------ | -------------- | ------------------------------------------------------ |
+| `events.getEvents`                | Query        | Public         | Reads and sorts events.                                |
+| `eventCreation.getEventById`      | Query        | Public         | Reads one event.                                       |
+| `eventCreation.createEvent`       | Mutation     | Authenticated  | Creates an event owned by the current user.            |
+| `eventCreation.updateEvent`       | Mutation     | Owner or admin | Updates an event after checking organizer ownership.   |
+| `eventCreation.deleteEvent`       | Mutation     | Owner or admin | Deletes an event and its registrations.                |
+| `users.getUsers`                  | Query        | Authenticated  | Reads the user directory.                              |
+| `users.getMe`                     | Query        | Public         | Returns the current user, or `null`.                   |
+| `users.updateUser`                | Mutation     | Self or admin  | Updates profile fields.                                |
+| `users.createUser`                | Mutation     | Admin          | Legacy passwordless user creation procedure.           |
+| `users.adminUpdateUser`           | Mutation     | Admin          | Updates any user, including their Better Auth role.    |
+| `users.deleteUser`                | Mutation     | Admin          | Deletes a user; cascades remove related owned records. |
+| `users.onUserCreated/Updated/...` | Subscription | Admin          | Streams user lifecycle changes.                        |
+
+Better Auth's admin plugin additionally exposes its user-management API below `/api/auth/admin/*`.
+The dashboard's tRPC procedures authorize exclusively against Better Auth's `role` model.
 
 ## Shared Contracts
 

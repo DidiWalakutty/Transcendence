@@ -3,18 +3,18 @@ import * as m from '@/@generated/paraglide/messages';
 
 const steps = [
   {
-    title: m.how_it_works_discover_title(),
-    description: m.how_it_works_discover_description(),
+    title: m.how_it_works_discover_title,
+    description: m.how_it_works_discover_description,
     icon: Search,
   },
   {
-    title: m.how_it_works_register_title(),
-    description: m.how_it_works_register_description(),
+    title: m.how_it_works_register_title,
+    description: m.how_it_works_register_description,
     icon: Ticket,
   },
   {
-    title: m.how_it_works_enjoy_title(),
-    description: m.how_it_works_enjoy_description(),
+    title: m.how_it_works_enjoy_title,
+    description: m.how_it_works_enjoy_description,
     icon: Laugh,
   },
 ];
@@ -47,7 +47,7 @@ export function HowItWorksSection() {
 
             return (
               <div
-                key={step.title}
+                key={step.title.name}
                 className="
 								rounded-2xl
 								border
@@ -77,9 +77,9 @@ export function HowItWorksSection() {
                   <Icon className="h-8 w-8 text-brand-primary" />
                 </div>
 
-                <h3 className="text-xl font-semibold text-text-primary">{step.title}</h3>
+                <h3 className="text-xl font-semibold text-text-primary">{step.title()}</h3>
 
-                <p className="mt-3 text-text-muted">{step.description}</p>
+                <p className="mt-3 text-text-muted">{step.description()}</p>
               </div>
             );
           })}

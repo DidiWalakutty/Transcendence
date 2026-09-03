@@ -14,6 +14,8 @@ describe('EventsService', () => {
     const repository = {
       create: async () => 'test-event-id',
       findById: async () => null,
+      update: async () => null,
+      delete: async () => null,
     } as EventsRepository;
 
     const service = new EventsService(emitter, repository);

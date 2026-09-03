@@ -18,13 +18,18 @@ import {
   eventSortSchema,
   eventsSchema,
   createEventSchema,
+  createEventResultSchema,
   eventIdSchema,
+  updateEventSchema,
+  eventSchema,
+  deleteEventSchema,
 } from '@repo/schemas/events';
 import { eventStatsSchema } from '@repo/schemas/stats';
 import {
   userSchema,
   createUserSchema,
   updateUserSchema,
+  adminUpdateUserSchema,
   deleteUserSchema,
   userCreatedSubscriptionSchema,
   userUpdatedSubscriptionSchema,
@@ -32,7 +37,7 @@ import {
 } from '@repo/schemas/users';
 import { addFriendSchema, friendSchema, removeFriendSchema } from '@repo/schemas/friends';
 import { getOnlineUserIdsSchema, presenceChangedSubscriptionSchema } from '@repo/schemas/presence';
-import type { EventsRouter } from '/home/diwalaku/Desktop/ft_transcendence/apps/backend/src/events/events.router';
+import type { EventsRouter } from '/home/muijf/ft_transcendence/apps/backend/src/events/events.router';
 
 const appRouter = t.router({
   events: t.router({
@@ -50,12 +55,8 @@ const appRouter = t.router({
   eventCreation: t.router({
     createEvent: publicProcedure
       .input(createEventSchema)
-      .mutation(
-        async () =>
-          'PLACEHOLDER_DO_NOT_REMOVE' as unknown as Awaited<
-            ReturnType<EventsRouter['createEvent']>
-          >,
-      ),
+      .output(createEventResultSchema)
+      .mutation(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
     getEventById: publicProcedure
       .input(eventIdSchema)
       .query(
@@ -64,6 +65,14 @@ const appRouter = t.router({
             ReturnType<EventsRouter['getEventById']>
           >,
       ),
+    updateEvent: publicProcedure
+      .input(updateEventSchema)
+      .output(eventSchema)
+      .mutation(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+    deleteEvent: publicProcedure
+      .input(deleteEventSchema)
+      .output(eventSchema)
+      .mutation(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
   }),
   friends: t.router({
     getFriends: publicProcedure
@@ -94,6 +103,7 @@ const appRouter = t.router({
       .output(presenceChangedSubscriptionSchema)
       .subscription(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
   }),
+  registrations: t.router({}),
   users: t.router({
     createUser: publicProcedure
       .input(createUserSchema)
@@ -107,6 +117,10 @@ const appRouter = t.router({
       .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
     updateUser: publicProcedure
       .input(updateUserSchema)
+      .output(userSchema)
+      .mutation(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+    adminUpdateUser: publicProcedure
+      .input(adminUpdateUserSchema)
       .output(userSchema)
       .mutation(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
     deleteUser: publicProcedure

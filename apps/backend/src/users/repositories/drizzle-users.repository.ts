@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { asc, eq } from 'drizzle-orm';
 import { users } from '@repo/schemas/database';
-import type { CreateUserDto, UpdateUserDto } from '@repo/schemas/users';
+import type { AdminUpdateUserDto, CreateUserDto, UpdateUserDto } from '@repo/schemas/users';
 
 import { DATABASE } from '../../database/database.constants';
 import { isUniqueViolation } from '../../database/database.errors';
@@ -46,7 +46,7 @@ export class DrizzleUsersRepository extends UsersRepository {
     }
   }
 
-  async update({ id, ...data }: UpdateUserDto) {
+  async update({ id, ...data }: UpdateUserDto | AdminUpdateUserDto) {
     try {
       const [user] = await this.db.update(users).set(data).where(eq(users.id, id)).returning();
 

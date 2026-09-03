@@ -9,13 +9,14 @@ optional bonus module and is not implemented.
 
 Better Auth's backend instance lives in `apps/backend/src/auth/`:
 
-| File                      | Purpose                                                                                                                                                          |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `auth.constants.ts`       | `AUTH` DI token, mirroring `database.constants.ts`'s `DATABASE` token.                                                                                           |
-| `auth.instance.ts`        | Builds the `betterAuth()` instance: Drizzle adapter, plugins, email/password config.                                                                             |
-| `auth.module.ts`          | Provides `AUTH` via a factory injecting the existing `DATABASE` token.                                                                                           |
-| `auth.context.ts`         | tRPC context provider; resolves the session for every tRPC request.                                                                                              |
-| `protected.middleware.ts` | Reusable tRPC middleware that rejects requests with no session. Not currently applied to any router — see [Dual user-creation paths](#dual-user-creation-paths). |
+| File                      | Purpose                                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------------------- |
+| `auth.constants.ts`       | `AUTH` DI token, mirroring `database.constants.ts`'s `DATABASE` token.                    |
+| `auth.instance.ts`        | Builds the `betterAuth()` instance: Drizzle adapter, plugins, email/password config.      |
+| `auth.module.ts`          | Provides `AUTH` via a factory injecting the existing `DATABASE` token.                    |
+| `auth.context.ts`         | tRPC context provider; resolves the session for every tRPC request.                       |
+| `protected.middleware.ts` | Reusable tRPC middleware that rejects requests with no session.                           |
+| `admin.middleware.ts`     | Reusable tRPC middleware that accepts Better Auth's `admin` role and rejects other users. |
 
 ```mermaid
 flowchart LR
@@ -73,6 +74,8 @@ separately, because `users` already has foreign keys from `events`, `friends`, a
 `registrations`:
 
 - `users` gained `emailVerified`, `updatedAt`, and `displayUsername` columns.
+- Better Auth's admin plugin adds `role`, `banned`, `banReason`, and `banExpires` to `users`, plus
+  `impersonatedBy` to `sessions`.
 - New tables: `sessions`, `accounts`, `verifications` — Better Auth's standard shape. Notably, the
   hashed password lives in `accounts` (one row per sign-in method, `provider_id = 'credential'`
   for email/password), **not** on `users`.
@@ -84,6 +87,9 @@ Better Auth to let Postgres's `gen_random_uuid()` generate IDs instead of genera
 The `username` plugin (`better-auth/plugins`) is what makes the existing `username` column work
 as a login credential: it validates the sign-up input, normalizes it for uniqueness, and adds the
 `displayUsername` column to preserve the original casing shown in the UI.
+
+The `admin` plugin is the only source of truth for application roles. Its default `user` and
+`admin` roles are used by the navigation, admin route guard, and backend authorization.
 
 ## Dual user-creation paths
 
@@ -97,9 +103,8 @@ The backend currently has **two** independent ways to create a `users` row:
    Better Auth's signup.
 
 This means a user created via `/example`'s form has no password and cannot log in through
-`/login`. `updateUser`/`deleteUser`/`getUsers` are similarly unguarded — `ProtectedMiddleware`
-exists as ready-to-use infra (`@UseMiddlewares(ProtectedMiddleware)`) for locking these down later,
-but nothing currently uses it.
+`/login`. The legacy create/delete procedures and user subscriptions are admin-only; `getUsers`
+requires a session, and `updateUser` accepts only the account owner or an administrator.
 
 ## Password reset (development)
 
@@ -122,9 +127,8 @@ of `sendResetPassword` with an actual send call — the rest of the flow is unaf
 
 ## Frontend usage
 
-The client lives in `apps/frontend/src/lib/auth-client.ts` (`better-auth/react` +
-`usernameClient()` + `inferAdditionalFields()` for the `isAdministrator` field used to pick the
-navbar role). Common calls:
+The client lives in `apps/frontend/src/lib/auth-client.ts` (`better-auth/react` with
+`usernameClient()`, `twoFactorClient()`, and `adminClient()`). Common calls:
 
 ```ts
 authClient.signUp.email({ name, email, username, password });
@@ -134,10 +138,20 @@ authClient.signOut();
 authClient.useSession(); // { data, isPending, error }
 authClient.requestPasswordReset({ email, redirectTo });
 authClient.resetPassword({ newPassword, token });
+authClient.admin.listUsers({ query: { limit: 100 } });
+authClient.admin.updateUser({ userId, data });
+authClient.admin.setRole({ userId, role: 'admin' });
+authClient.admin.removeUser({ userId });
 ```
 
-`Navbar.tsx` derives the visitor/user/admin role from `authClient.useSession()` and
-`session.user.isAdministrator`. `UserMenu.tsx`'s logout item calls `authClient.signOut()` directly
+Protected route guards must use the `getAuthSession` TanStack server function rather than calling
+`authClient.getSession()` directly. Route `beforeLoad` hooks also run during SSR, where a direct
+client call does not automatically forward the browser's cookie to the separate backend process.
+`getAuthSession` forwards the incoming cookie and uses `SERVER_URL` to reach the backend from the
+frontend server, so authenticated hard refreshes are handled consistently with client navigation.
+
+`Navbar.tsx` derives the visitor/user/admin role from `authClient.useSession()` and the session's
+Better Auth `role`. `UserMenu.tsx`'s logout item calls `authClient.signOut()` directly
 instead of linking to a route.
 
 ## Environment variables

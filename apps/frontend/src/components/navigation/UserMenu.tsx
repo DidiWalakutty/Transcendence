@@ -11,7 +11,6 @@ import {
 
 import { User } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
-import { getLocale } from '@/@generated/paraglide/runtime';
 import type { UserRole } from './navigation.config';
 import * as m from '@/@generated/paraglide/messages';
 
@@ -26,13 +25,12 @@ export function UserMenu({ role }: UserMenuProps) {
     await authClient.signOut();
     void navigate({ to: '/' });
   };
-  const locale = getLocale();
 
   // Visitor is not logged in
   if (role === 'visitor') {
     return (
       <Button variant="ghost" size="icon">
-        <Link to="/$locale/login" params={{ locale }}>
+        <Link to="/login">
           <User className="h-5 w-5 text-text-primary 2xl:h-7 2xl:w-7" />
         </Link>
       </Button>
@@ -48,25 +46,17 @@ export function UserMenu({ role }: UserMenuProps) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-        <DropdownMenuItem>
-          <Link to="/$locale/profile" params={{ locale }}>
-            {m.button_profile()}
-          </Link>
-        </DropdownMenuItem>
+        <DropdownMenuItem render={<Link to="/profile" />}>{m.button_profile()}</DropdownMenuItem>
 
         {role === 'user' && (
-          <DropdownMenuItem>
-            <Link to="/$locale/my-events" params={{ locale }}>
-              {m.button_my_events()}
-            </Link>
+          <DropdownMenuItem render={<Link to="/my-events" />}>
+            {m.button_my_events()}
           </DropdownMenuItem>
         )}
 
         {role === 'admin' && (
-          <DropdownMenuItem>
-            <Link to="/$locale/admin" params={{ locale }}>
-              {m.button_admin_panel()}
-            </Link>
+          <DropdownMenuItem render={<Link to="/admin" />}>
+            {m.button_admin_panel()}
           </DropdownMenuItem>
         )}
 

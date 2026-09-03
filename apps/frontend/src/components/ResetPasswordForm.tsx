@@ -10,7 +10,6 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/c
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
-import { getLocale } from '@/@generated/paraglide/runtime';
 
 export function ResetPasswordForm({
   token,
@@ -18,7 +17,6 @@ export function ResetPasswordForm({
   ...props
 }: { token: string } & React.ComponentProps<'div'>) {
   const navigate = useNavigate();
-  const locale = getLocale();
 
   const resetPassword = useMutation({
     mutationFn: async (values: { newPassword: string }) => {
@@ -34,7 +32,7 @@ export function ResetPasswordForm({
       return data;
     },
     onSuccess: () => {
-      void navigate({ to: '/$locale/login', params: { locale } });
+      void navigate({ to: '/login' });
     },
   });
 
@@ -147,11 +145,7 @@ export function ResetPasswordForm({
                         </Button>
 
                         <FieldDescription className="text-center">
-                          <Link
-                            to="/$locale/login"
-                            params={{ locale }}
-                            className="underline underline-offset-4"
-                          >
+                          <Link to="/login" className="underline underline-offset-4">
                             Back to log in
                           </Link>
                         </FieldDescription>

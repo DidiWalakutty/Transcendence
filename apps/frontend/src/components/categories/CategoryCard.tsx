@@ -1,5 +1,4 @@
 import { Link } from '@tanstack/react-router';
-import { getLocale } from '@/@generated/paraglide/runtime';
 
 type CategoryCardProps = {
   category: string;
@@ -13,12 +12,9 @@ type CategoryCardProps = {
 };
 
 export function CategoryCard({ icon, title, category }: CategoryCardProps) {
-  const locale = getLocale();
-
   return (
     <Link
-      to="/$locale/events"
-      params={{ locale }}
+      to="/events"
       // TODO:
       // Once filtering has been implemented on the events page,
       // read this search parameter and automatically select the matching category filter.

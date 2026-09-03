@@ -1,4 +1,10 @@
-import { HeadContent, Link, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
+import {
+  HeadContent,
+  Link,
+  Scripts,
+  createRootRouteWithContext,
+  useRouterState,
+} from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { useEffect } from 'react';
@@ -102,15 +108,22 @@ function PwaRegistration() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  const locale = useRouterState({
+    select: ({ location }) => {
+      void location.publicHref;
+      return getLocale();
+    },
+  });
+
   return (
-    <html lang={getLocale()}>
+    <html lang={locale}>
       <head>
         <HeadContent />
       </head>
       <body>
         <PwaRegistration />
         <TooltipProvider>
-          <div className="flex min-h-screen flex-col">
+          <div key={locale} className="flex min-h-screen flex-col">
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />

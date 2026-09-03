@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 
-import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -17,7 +16,6 @@ import { cn } from '@/lib/utils';
 
 export function Verify2FAForm({ className, ...props }: React.ComponentProps<'div'>) {
   const navigate = useNavigate();
-  const locale = getLocale();
   const [useBackupCode, setUseBackupCode] = useState(false);
 
   const verify = useMutation({
@@ -33,7 +31,7 @@ export function Verify2FAForm({ className, ...props }: React.ComponentProps<'div
       return data;
     },
     onSuccess: () => {
-      void navigate({ to: '/$locale/profile', params: { locale } });
+      void navigate({ to: '/profile' });
     },
   });
 
@@ -108,11 +106,7 @@ export function Verify2FAForm({ className, ...props }: React.ComponentProps<'div
               ) : null}
 
               <FieldDescription className="text-center">
-                <Link
-                  to="/$locale/login"
-                  params={{ locale }}
-                  className="underline underline-offset-4"
-                >
+                <Link to="/login" className="underline underline-offset-4">
                   {m.verify_2fa_back_to_login()}
                 </Link>
               </FieldDescription>

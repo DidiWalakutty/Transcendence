@@ -11,14 +11,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import * as m from '@/@generated/paraglide/messages';
-import { getLocale } from '@/@generated/paraglide/runtime';
+import { localizeHref } from '@/@generated/paraglide/runtime';
 
 export function ForgotPassword({ className, ...props }: React.ComponentProps<'div'>) {
   const requestReset = useMutation({
     mutationFn: async (values: { email: string }) => {
       const { data, error } = await authClient.requestPasswordReset({
         email: values.email,
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: `${window.location.origin}${localizeHref('/reset-password')}`,
       });
 
       if (error) {
@@ -122,11 +122,7 @@ export function ForgotPassword({ className, ...props }: React.ComponentProps<'di
 
                 <FieldDescription className="text-center">
                   {m.forgot_password_remember()}{' '}
-                  <Link
-                    to="/$locale/login"
-                    params={{ locale: getLocale() }}
-                    className="underline underline-offset-4"
-                  >
+                  <Link to="/login" className="underline underline-offset-4">
                     {m.login_button()}
                   </Link>
                 </FieldDescription>

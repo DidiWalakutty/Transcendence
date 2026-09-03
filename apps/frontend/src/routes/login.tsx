@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { CalendarDays } from 'lucide-react';
-import { Verify2FAForm } from '@/components/Verify2FAForm';
+import { LoginForm } from '@/components/LoginForm';
 import * as m from '@/@generated/paraglide/messages';
 
-export const Route = createFileRoute('/$locale/verify-2fa')({
-  component: Verify2FAPage,
+export const Route = createFileRoute('/login')({
+  component: LoginPage,
 });
 
-function Verify2FAPage() {
+function LoginPage() {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6 rounded-lg">
@@ -18,7 +18,7 @@ function Verify2FAPage() {
           {m.button_eventra()}
         </div>
 
-        <Verify2FAForm />
+        <LoginForm />
       </div>
     </div>
   );

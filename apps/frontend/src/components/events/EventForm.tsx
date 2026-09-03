@@ -20,12 +20,12 @@ import * as m from '@/@generated/paraglide/messages';
 const DEFAULT_EVENT_IMAGE = placeholderEvent;
 
 const categories = [
-  { value: 'music', label: m.category_music() },
-  { value: 'culture', label: m.category_culture() },
-  { value: 'food', label: m.category_food() },
-  { value: 'games', label: m.category_games() },
-  { value: 'talks', label: m.category_talks() },
-  { value: 'workshops', label: m.category_workshops() },
+  { value: 'music', label: m.category_music },
+  { value: 'culture', label: m.category_culture },
+  { value: 'food', label: m.category_food },
+  { value: 'games', label: m.category_games },
+  { value: 'talks', label: m.category_talks },
+  { value: 'workshops', label: m.category_workshops },
 ];
 
 export function EventForm() {
@@ -70,15 +70,15 @@ export function EventForm() {
       category: selectedCategories,
       location: formData.get('location') as string,
       address: formData.get('address') as string,
-      dateTime: `${formData.get('date')}T${formData.get('time')}`,
+      date: formData.get('date') as string,
+      time: formData.get('time') as string,
       image: DEFAULT_EVENT_IMAGE,
       maxCapacity: Number(formData.get('capacity')),
     });
     console.log('CREATE EVENT: returned data', result);
     await navigate({
-      to: '/$locale/events/$eventId',
+      to: '/events/$eventId',
       params: {
-        locale,
         eventId: result.eventId,
       },
     });
@@ -89,7 +89,8 @@ export function EventForm() {
       ? undefined
       : selectedCategories
           .map((value) => categories.find((category) => category.value === value)?.label)
-          .filter(Boolean)
+          .filter((label) => label !== undefined)
+          .map((label) => label())
           .join(', ');
 
   return (
@@ -258,7 +259,7 @@ export function EventForm() {
                             {isSelected && <span className="text-xs text-white">✓</span>}
                           </div>
 
-                          <span>{category.label}</span>
+                          <span>{category.label()}</span>
                         </div>
                       );
                     })}

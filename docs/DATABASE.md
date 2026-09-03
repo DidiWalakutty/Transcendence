@@ -97,9 +97,19 @@ erDiagram
         uuid id PK
         text email UK
         text name
+        text role
+        boolean banned
         timestamp created_at
     }
+    USERS ||--o{ EVENTS : organizes
+    USERS ||--o{ REGISTRATIONS : makes
+    EVENTS ||--o{ REGISTRATIONS : has
 ```
+
+User-owned authentication rows, events, friendships, and registrations use foreign-key cascades.
+Deleting a user therefore removes their sessions/accounts, owned events, friendships, and event
+registrations; deleting an event removes its registrations. Migration `0007` also introduces the
+Better Auth admin-plugin fields and session impersonation metadata.
 
 ## Compose Ownership
 

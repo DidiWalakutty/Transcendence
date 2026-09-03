@@ -1,7 +1,12 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import type { Cache } from 'cache-manager';
-import type { CreateUserDto, UpdateUserDto, UserDto } from '@repo/schemas/users';
+import type {
+  AdminUpdateUserDto,
+  CreateUserDto,
+  UpdateUserDto,
+  UserDto,
+} from '@repo/schemas/users';
 
 import { UsersRepository } from './repositories/users.repository';
 import { UsersEvents } from './users.events';
@@ -62,7 +67,7 @@ export class UsersService {
     return user;
   }
 
-  async update({ id, ...data }: UpdateUserDto) {
+  async update({ id, ...data }: UpdateUserDto | AdminUpdateUserDto) {
     const user = await this.repository.update({ id, ...data });
 
     if (user) {

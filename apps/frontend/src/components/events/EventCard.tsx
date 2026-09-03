@@ -1,4 +1,4 @@
-import { Link, useParams } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { Calendar, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import * as m from '@/@generated/paraglide/messages';
@@ -23,12 +23,6 @@ type EventCardProps = {
 };
 
 export function EventCard({ id, image, title, category, location, date }: EventCardProps) {
-  const { locale } = useParams({ strict: false });
-
-  if (!locale) {
-    return null;
-  }
-
   const eventDate = new Date(date);
 
   const month = m.event_month({
@@ -45,9 +39,8 @@ export function EventCard({ id, image, title, category, location, date }: EventC
 
   return (
     <Link
-      to="/$locale/events/$eventId"
+      to="/events/$eventId"
       params={{
-        locale,
         eventId: id,
       }}
       className="

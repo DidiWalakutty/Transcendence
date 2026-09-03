@@ -1,4 +1,4 @@
-import { Link, useParams } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { EventDate } from '@/components/events/EventDate';
 import * as m from '@/@generated/paraglide/messages';
 import { Badge } from '../ui/badge';
@@ -33,11 +33,6 @@ export function EventListItem({
   date,
   description,
 }: EventListItemProps) {
-  const { locale } = useParams({ strict: false });
-  if (!locale) {
-    return null;
-  }
-
   return (
     <div className="grid max-w-5xl grid-cols-[70px_1fr] gap-6">
       {/* Event Date */}
@@ -45,9 +40,8 @@ export function EventListItem({
 
       {/* Event Rectangle */}
       <Link
-        to="/$locale/events/$eventId"
+        to="/events/$eventId"
         params={{
-          locale,
           eventId: id,
         }}
         className="

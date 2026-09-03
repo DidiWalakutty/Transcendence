@@ -14,7 +14,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Link } from '@tanstack/react-router';
 import { TwoFactorSettings } from '@/components/TwoFactorSettings';
 
-export const Route = createFileRoute('/$locale/profile')({
+export const Route = createFileRoute('/profile')({
   component: ProfilePage,
 });
 
@@ -248,7 +248,7 @@ function ProfilePage() {
 
           {/* Links */}
           <div className="mt-8 flex gap-4 border-t pt-6">
-            <Link to="/$locale/my-events" params={{ locale: 'en' }}>
+            <Link to="/my-events">
               <Button variant="outline">My Events</Button>
             </Link>
             <Button variant="outline" disabled>

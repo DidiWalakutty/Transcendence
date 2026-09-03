@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { App } from 'supertest/types';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, it } from 'vitest';
 
 describe('Backend (e2e)', () => {
   let app: INestApplication<App>;
@@ -52,17 +52,15 @@ describe('Backend (e2e)', () => {
       });
   });
 
-  it('serves users from the fixture-backed tRPC router', async () => {
-    const response = await request(app.getHttpServer())
+  it('protects the user directory from visitors', async () => {
+    await request(app.getHttpServer())
       .get('/api/trpc/users.getUsers')
       .query({
         input: JSON.stringify({
           json: null,
         }),
       })
-      .expect(200);
-
-    expect(response.body.result.data.json).toHaveLength(3);
+      .expect(401);
   });
 
   afterAll(async () => {

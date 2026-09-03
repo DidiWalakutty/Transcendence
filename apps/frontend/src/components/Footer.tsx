@@ -1,10 +1,7 @@
 import { Link } from '@tanstack/react-router';
-import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
 
 export function Footer() {
-  const locale = getLocale();
-
   return (
     <footer
       className="
@@ -28,8 +25,7 @@ export function Footer() {
         {/* Brand */}
         <div className="md:col-span-1">
           <Link
-            to="/$locale"
-            params={{ locale }}
+            to="/"
             className="
 							text-4xl
 							font-bold
@@ -69,7 +65,7 @@ export function Footer() {
 							"
           >
             <li>
-              <Link to="/$locale/events" params={{ locale }} className="hover:text-brand-primary">
+              <Link to="/events" className="hover:text-brand-primary">
                 {m.button_all_events()}
               </Link>
             </li>
@@ -95,27 +91,19 @@ export function Footer() {
 							"
           >
             <li>
-              <Link to="/$locale/login" params={{ locale }} className="hover:text-brand-primary">
+              <Link to="/login" className="hover:text-brand-primary">
                 {m.button_login()}
               </Link>
             </li>
 
             <li>
-              <Link
-                to="/$locale/create-account"
-                params={{ locale }}
-                className="hover:text-brand-primary"
-              >
+              <Link to="/create-account" className="hover:text-brand-primary">
                 {m.button_create_account()}
               </Link>
             </li>
 
             <li>
-              <Link
-                to="/$locale/create-event"
-                params={{ locale }}
-                className="hover:text-brand-primary"
-              >
+              <Link to="/create-event" className="hover:text-brand-primary">
                 {m.button_create()}
               </Link>
             </li>
@@ -141,21 +129,13 @@ export function Footer() {
 							"
           >
             <li>
-              <Link
-                to="/$locale/privacy-policy"
-                params={{ locale }}
-                className="hover:text-brand-primary"
-              >
+              <Link to="/privacy-policy" className="hover:text-brand-primary">
                 {m.button_privacy()}
               </Link>
             </li>
 
             <li>
-              <Link
-                to="/$locale/terms-of-service"
-                params={{ locale }}
-                className="hover:text-brand-primary"
-              >
+              <Link to="/terms-of-service" className="hover:text-brand-primary">
                 {m.button_terms()}
               </Link>
             </li>
@@ -181,7 +161,7 @@ export function Footer() {
 							"
           >
             <li>
-              <Link to="/$locale/contact" params={{ locale }} className="hover:text-brand-primary">
+              <Link to="/contact" className="hover:text-brand-primary">
                 {m.button_contact()}
               </Link>
             </li>

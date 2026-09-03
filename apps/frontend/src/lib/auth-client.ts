@@ -1,18 +1,15 @@
 import { createAuthClient } from 'better-auth/react';
-import { usernameClient, inferAdditionalFields, twoFactorClient } from 'better-auth/client/plugins';
+import { adminClient, usernameClient, twoFactorClient } from 'better-auth/client/plugins';
 import { env } from '@/env';
 
+const baseURL =
+  typeof window === 'undefined'
+    ? (env.SERVER_URL ?? env.VITE_API_URL ?? 'http://localhost:3001')
+    : (env.VITE_API_URL ?? 'http://localhost:3001');
+
 export const authClient = createAuthClient({
-  baseURL: env.VITE_API_URL ?? 'http://localhost:3001',
-  plugins: [
-    usernameClient(),
-    twoFactorClient(),
-    inferAdditionalFields({
-      user: {
-        isAdministrator: { type: 'boolean', input: false },
-      },
-    }),
-  ],
+  baseURL,
+  plugins: [adminClient(), usernameClient(), twoFactorClient()],
   fetchOptions: {
     credentials: 'include',
   },

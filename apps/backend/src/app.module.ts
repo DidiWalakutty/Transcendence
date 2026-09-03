@@ -50,7 +50,6 @@ import { NotificationModule } from './notification/notification.module';
                 ],
               }),
         };
-        EventsModule;
       },
     }),
     ThrottlerModule.forRootAsync({

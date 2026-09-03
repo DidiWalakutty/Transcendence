@@ -28,6 +28,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       .select({
         id: events.id,
         title: events.title,
+        organizerId: events.organizerId,
         createdAt: events.createdAt,
         description: events.description,
         image: events.image,
@@ -52,6 +53,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
 
     return rows.map((row) => ({
       id: row.id,
+      organizerId: row.organizerId,
       title: row.title,
       category: row.category,
       location: row.location,
@@ -72,6 +74,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       .select({
         id: events.id,
         title: events.title,
+        organizerId: events.organizerId,
         createdAt: events.createdAt,
         description: events.description,
         image: events.image,
@@ -90,6 +93,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
 
     return rows.map((row) => ({
       id: row.id,
+      organizerId: row.organizerId,
       title: row.title,
       category: row.category,
       location: row.location,
