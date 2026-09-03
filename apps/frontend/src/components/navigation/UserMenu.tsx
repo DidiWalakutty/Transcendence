@@ -12,6 +12,7 @@ import { User } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
 import type { UserRole } from './navigation.config';
 import * as m from '@/@generated/paraglide/messages';
+import { toast } from 'sonner';
 
 interface UserMenuProps {
   role: UserRole;
@@ -22,7 +23,15 @@ export function UserMenu({ role }: UserMenuProps) {
   const router = useRouter();
 
   const handleLogout = async () => {
-    await authClient.signOut();
+    const signOut = authClient.signOut().then(({ error }) => {
+      if (error) throw new Error(error.message ?? m.toast_server_response_error());
+    });
+    toast.promise(signOut, {
+      loading: m.toast_working(),
+      success: m.toast_complete(),
+      error: (error) => (error instanceof Error ? error.message : String(error)),
+    });
+    await signOut;
     await navigate({ to: '/' });
     await router.invalidate();
   };

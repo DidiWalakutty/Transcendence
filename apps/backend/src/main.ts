@@ -20,8 +20,10 @@ async function bootstrap() {
   // Better Auth reads the raw request body itself, so its handler must be
   // mounted before Nest's own body parser middleware consumes the stream.
   app.use('/api/auth', toNodeHandler(app.get<Auth>(AUTH)));
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  // Event images are currently submitted as compressed data URLs by the shared
+  // image picker. Leave headroom for the rest of the batched tRPC payload.
+  app.use(express.json({ limit: '2mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
   app.enableShutdownHooks();
 

@@ -14,14 +14,13 @@ import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 
-import { toast } from 'sonner';
-
 export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>) {
   const navigate = useNavigate();
   const router = useRouter();
   const locale = getLocale();
 
   const signUp = useMutation({
+    mutationKey: ['auth', 'signUp'],
     mutationFn: async (values: {
       name: string;
       email: string;
@@ -40,15 +39,10 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
       return data;
     },
     onSuccess: async () => {
-      toast.success('Account created successfully!');
-
       await router.invalidate();
       await navigate({
         to: '/',
       });
-    },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to create an account.');
     },
   });
 

@@ -37,6 +37,7 @@ export function TwoFactorSettings() {
     queryClient.invalidateQueries({ queryKey: trpc.users.getMe.queryKey() });
 
   const enable = useMutation({
+    mutationKey: ['auth', 'enableTwoFactor'],
     mutationFn: async () => {
       const { data, error } = await authClient.twoFactor.enable({ password });
 
@@ -52,6 +53,7 @@ export function TwoFactorSettings() {
   });
 
   const confirm = useMutation({
+    mutationKey: ['auth', 'verifyTwoFactor'],
     mutationFn: async () => {
       const { data, error } = await authClient.twoFactor.verifyTotp({ code: confirmCode });
 
@@ -70,6 +72,7 @@ export function TwoFactorSettings() {
   });
 
   const cancelSetup = useMutation({
+    mutationKey: ['auth', 'cancelTwoFactor'],
     mutationFn: async () => {
       const { error } = await authClient.twoFactor.disable({ password });
 
@@ -86,6 +89,7 @@ export function TwoFactorSettings() {
   });
 
   const disable = useMutation({
+    mutationKey: ['auth', 'disableTwoFactor'],
     mutationFn: async () => {
       const { error } = await authClient.twoFactor.disable({ password });
 

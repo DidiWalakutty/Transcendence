@@ -50,7 +50,8 @@ Two details make this mounting non-obvious:
   `NestFactory.create(AppModule)` normally auto-attaches Express's body parser globally before any
   app code runs, which would drain the body stream before Better Auth ever sees it. The app is
   created with `bodyParser: false`, and `express.json()`/`express.urlencoded()` are added back
-  _after_ the Better Auth mount, only for every other route.
+  _after_ the Better Auth mount, only for every other route. Their 2 MB limit leaves headroom for
+  the event image picker's compressed data-URL payloads.
 - **Plain prefix, not a wildcard.** The mount uses the plain string `'/api/auth'`, not an
   Express 5 wildcard pattern like `'/api/auth/{*splat}'`. The wildcard form was tried first and
   broke query-string parsing specifically for Better Auth's password-reset redirect endpoint

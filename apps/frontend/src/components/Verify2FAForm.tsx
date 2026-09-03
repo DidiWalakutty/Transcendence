@@ -20,6 +20,7 @@ export function Verify2FAForm({ className, ...props }: React.ComponentProps<'div
   const [useBackupCode, setUseBackupCode] = useState(false);
 
   const verify = useMutation({
+    mutationKey: ['auth', 'verifyTwoFactor'],
     mutationFn: async (code: string) => {
       const { data, error } = useBackupCode
         ? await authClient.twoFactor.verifyBackupCode({ code })

@@ -15,6 +15,7 @@ import { localizeHref } from '@/@generated/paraglide/runtime';
 
 export function ForgotPassword({ className, ...props }: React.ComponentProps<'div'>) {
   const requestReset = useMutation({
+    mutationKey: ['auth', 'requestPasswordReset'],
     mutationFn: async (values: { email: string }) => {
       const { data, error } = await authClient.requestPasswordReset({
         email: values.email,

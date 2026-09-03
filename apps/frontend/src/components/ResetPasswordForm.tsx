@@ -19,6 +19,7 @@ export function ResetPasswordForm({
   const navigate = useNavigate();
 
   const resetPassword = useMutation({
+    mutationKey: ['auth', 'resetPassword'],
     mutationFn: async (values: { newPassword: string }) => {
       const { data, error } = await authClient.resetPassword({
         newPassword: values.newPassword,

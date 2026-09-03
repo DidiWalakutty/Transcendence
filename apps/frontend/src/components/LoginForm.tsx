@@ -18,6 +18,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
   const router = useRouter();
 
   const signIn = useMutation({
+    mutationKey: ['auth', 'signIn'],
     mutationFn: async (values: { email: string; password: string }) => {
       const { data, error } = await authClient.signIn.email(values);
 

@@ -9,6 +9,7 @@ import { getRequestHeader } from '@tanstack/react-start/server';
 import type { AppRouter } from '@repo/schemas/trpc';
 import { TRPCProvider } from '@/integrations/trpc/react';
 import { env } from '@/env';
+import * as m from '@/@generated/paraglide/messages';
 
 import { MutationCache } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -22,8 +23,48 @@ function getUrl() {
   return `${baseUrl}/api/trpc`;
 }
 
-function fetchWithCredentials(input: RequestInfo | URL, init?: RequestInit) {
-  return fetch(input, { ...init, credentials: 'include' });
+async function fetchWithCredentials(input: RequestInfo | URL, init?: RequestInit) {
+  const response = await fetch(input, { ...init, credentials: 'include' });
+  if (response.status === 413) {
+    throw new Error(m.toast_request_too_large());
+  }
+  return response;
+}
+
+type ToastId = ReturnType<typeof toast.loading>;
+
+const mutationToastIds = new WeakMap<object, ToastId>();
+
+function mutationPath(key: readonly unknown[] | undefined): string {
+  const parts: string[] = [];
+  const visit = (value: unknown) => {
+    if (typeof value === 'string') parts.push(value.toLowerCase());
+    else if (Array.isArray(value)) value.forEach(visit);
+  };
+  visit(key);
+  return parts.join('.');
+}
+
+function mutationToastMessages(key: readonly unknown[] | undefined) {
+  const path = mutationPath(key);
+  if (path.includes('delete') || path.includes('remove')) {
+    return { loading: m.toast_deleting(), success: m.toast_deleted() };
+  }
+  if (path.includes('create') || path.includes('add') || path.includes('signup')) {
+    return { loading: m.toast_creating(), success: m.toast_created() };
+  }
+  if (path.includes('update') || path.includes('reset')) {
+    return { loading: m.toast_saving(), success: m.toast_saved() };
+  }
+  return { loading: m.toast_working(), success: m.toast_complete() };
+}
+
+function mutationErrorMessage(error: unknown): string {
+  if (!(error instanceof Error)) return String(error);
+  if (error.message.includes('Unable to transform response from server')) {
+    return m.toast_server_response_error();
+  }
+  return error.message;
 }
 
 const getServerRequestHeaders = createServerOnlyFn(() => {
@@ -53,20 +94,18 @@ export const trpcClient = createTRPCClient<AppRouter>({
 export function getContext() {
   const queryClient = new QueryClient({
     mutationCache: new MutationCache({
-      onSuccess: (data: any, _variables, _context, mutation) => {
-        // Safely extract the active tRPC endpoint pathway (e.g. ['users', 'createUser'])
-        const pathArray = (mutation.options as any).mutationKey?.[0] || [];
-        const pathName = Array.isArray(pathArray) ? pathArray.join('.').toLowerCase() : '';
-
-        const entryName = data?.name || data?.title || 'Entry';
-
-        if (pathName.includes('create')) {
-          toast.success(`${entryName} was successfully created!`);
-        } else if (pathName.includes('update')) {
-          toast.info(`${entryName} details have been updated.`);
-        } else if (pathName.includes('delete')) {
-          toast.error(`${entryName} has been removed.`);
-        }
+      onMutate: (_variables, mutation) => {
+        const messages = mutationToastMessages(mutation.options.mutationKey);
+        mutationToastIds.set(mutation, toast.loading(messages.loading));
+      },
+      onSuccess: (_data, _variables, _context, mutation) => {
+        const messages = mutationToastMessages(mutation.options.mutationKey);
+        toast.success(messages.success, { id: mutationToastIds.get(mutation) });
+        mutationToastIds.delete(mutation);
+      },
+      onError: (error, _variables, _context, mutation) => {
+        toast.error(mutationErrorMessage(error), { id: mutationToastIds.get(mutation) });
+        mutationToastIds.delete(mutation);
       },
     }),
     defaultOptions: {

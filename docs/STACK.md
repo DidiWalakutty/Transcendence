@@ -40,6 +40,8 @@ dehydrate the TanStack Query cache for hydration in the browser.
 - Server-side tRPC requests forward the incoming browser cookie to the backend. Browser-side tRPC
   requests continue to use credentialed fetches.
 - Mutations, forms, presence, and real-time subscriptions remain client-side interactions.
+- TanStack Query's shared mutation cache presents localized promise-style toasts for pending,
+  successful, and failed mutations across the application.
 - Locale changes use Paraglide's document navigation so the complete application is rendered in
   the new language on the server.
 

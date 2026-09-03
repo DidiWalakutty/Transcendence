@@ -43,6 +43,9 @@ import {
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
+import { EventCategoryCombobox } from '@/components/events/EventCategoryCombobox';
+import { EventDatePicker } from '@/components/events/EventDatePicker';
+import { EventImagePicker } from '@/components/events/EventImagePicker';
 
 type UserDialog = { mode: 'view' | 'edit'; user: UserDto } | null;
 type DeleteTarget = { kind: 'user'; item: UserDto } | { kind: 'event'; item: EventDto } | null;
@@ -528,53 +531,88 @@ function EventDialog({
           <DialogDescription>{m.admin_edit_event_description()}</DialogDescription>
         </DialogHeader>
         {event && (
-          <form key={event.id} onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">
-            <FormField
-              label={m.admin_title_label()}
-              name="title"
-              defaultValue={event.title}
-              className="sm:col-span-2"
-            />
-            <div className="space-y-2 sm:col-span-2">
-              <Label htmlFor="event-description">{m.admin_description()}</Label>
-              <Textarea
-                id="event-description"
-                name="description"
-                required
-                defaultValue={event.description}
-              />
-            </div>
-            <FormField
-              label={m.admin_categories()}
-              name="category"
-              defaultValue={event.category.join(', ')}
-              className="sm:col-span-2"
-            />
-            <FormField label={m.admin_location()} name="location" defaultValue={event.location} />
-            <FormField label={m.admin_address()} name="address" defaultValue={event.address} />
-            <FormField label={m.admin_date()} name="date" type="date" defaultValue={event.date} />
-            <FormField label={m.admin_time()} name="time" type="time" defaultValue={event.time} />
-            <FormField
-              label={m.admin_capacity()}
-              name="maxCapacity"
-              type="number"
-              min={1}
-              defaultValue={event.maxCapacity}
-            />
-            <FormField label={m.admin_image()} name="image" defaultValue={event.image} />
-            <DialogFooter className="sm:col-span-2">
-              <Button type="button" variant="outline" onClick={onClose}>
-                {m.admin_cancel()}
-              </Button>
-              <Button type="submit" disabled={pending}>
-                {pending && <Spinner />}
-                {m.admin_save()}
-              </Button>
-            </DialogFooter>
-          </form>
+          <EventEditForm
+            key={event.id}
+            event={event}
+            pending={pending}
+            onClose={onClose}
+            onSubmit={onSubmit}
+          />
         )}
       </DialogContent>
     </Dialog>
+  );
+}
+
+function EventEditForm({
+  event,
+  pending,
+  onClose,
+  onSubmit,
+}: {
+  event: EventDto;
+  pending: boolean;
+  onClose: () => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+}) {
+  const [categories, setCategories] = useState(event.category);
+  const [date, setDate] = useState(event.date);
+  const [image, setImage] = useState(event.image);
+
+  return (
+    <form onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">
+      <FormField
+        label={m.admin_title_label()}
+        name="title"
+        defaultValue={event.title}
+        className="sm:col-span-2"
+      />
+      <div className="space-y-2 sm:col-span-2">
+        <Label htmlFor="event-description">{m.admin_description()}</Label>
+        <Textarea
+          id="event-description"
+          name="description"
+          required
+          defaultValue={event.description}
+        />
+      </div>
+      <div className="space-y-2 sm:col-span-2">
+        <Label htmlFor="admin-category">{m.admin_categories()}</Label>
+        <EventCategoryCombobox
+          id="admin-category"
+          value={categories}
+          onValueChange={setCategories}
+        />
+        <input type="hidden" name="category" value={categories.join(',')} required />
+      </div>
+      <FormField label={m.admin_location()} name="location" defaultValue={event.location} />
+      <FormField label={m.admin_address()} name="address" defaultValue={event.address} />
+      <div className="space-y-2">
+        <Label htmlFor="admin-date">{m.admin_date()}</Label>
+        <EventDatePicker id="admin-date" name="date" value={date} onValueChange={setDate} />
+      </div>
+      <FormField label={m.admin_time()} name="time" type="time" defaultValue={event.time} />
+      <FormField
+        label={m.admin_capacity()}
+        name="maxCapacity"
+        type="number"
+        min={1}
+        defaultValue={event.maxCapacity}
+      />
+      <div className="space-y-2 sm:col-span-2">
+        <Label htmlFor="admin-image">{m.admin_image()}</Label>
+        <EventImagePicker id="admin-image" name="image" value={image} onValueChange={setImage} />
+      </div>
+      <DialogFooter className="sm:col-span-2">
+        <Button type="button" variant="outline" onClick={onClose}>
+          {m.admin_cancel()}
+        </Button>
+        <Button type="submit" disabled={pending || categories.length === 0 || !date || !image}>
+          {pending && <Spinner />}
+          {m.admin_save()}
+        </Button>
+      </DialogFooter>
+    </form>
   );
 }
 
