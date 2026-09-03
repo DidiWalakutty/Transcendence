@@ -1,5 +1,4 @@
-import { authClient } from '@/lib/auth-client';
-import { Link } from '@tanstack/react-router';
+import { Link, useRouteContext } from '@tanstack/react-router';
 
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { UserMenu } from './UserMenu';
@@ -9,7 +8,7 @@ import { usePresenceConnection } from '@/hooks/use-presence';
 import * as m from '@/@generated/paraglide/messages';
 
 export function Navbar() {
-  const { data: session } = authClient.useSession();
+  const { session } = useRouteContext({ from: '__root__' });
   const hasAdminRole = session?.user.role?.split(',').includes('admin');
   const role: UserRole = !session ? 'visitor' : hasAdminRole ? 'admin' : 'user';
   const links = navigationItems[role];

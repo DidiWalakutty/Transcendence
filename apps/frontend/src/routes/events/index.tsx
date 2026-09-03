@@ -15,6 +15,12 @@ export const Route = createFileRoute('/events/')({
     category: z.string().optional(),
     sort: z.enum(['upcoming', 'popular', 'newest']).optional(),
   }),
+  loaderDeps: ({ search }) => ({ sort: search.sort ?? 'upcoming' }),
+  loader: async ({ context, deps }) => {
+    await context.queryClient.ensureQueryData(
+      context.trpc.events.getEvents.queryOptions(deps.sort),
+    );
+  },
   component: EventsPage,
 });
 

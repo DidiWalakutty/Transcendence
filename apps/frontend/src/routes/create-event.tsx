@@ -1,10 +1,8 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { EventForm } from '@/components/events/EventForm';
-import { getAuthSession } from '@/lib/auth-session.functions';
 
 export const Route = createFileRoute('/create-event')({
-  beforeLoad: async () => {
-    const session = await getAuthSession();
+  beforeLoad: ({ context: { session } }) => {
     if (!session) {
       throw redirect({
         to: '/login',

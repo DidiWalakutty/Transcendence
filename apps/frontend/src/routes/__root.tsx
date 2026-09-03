@@ -1,10 +1,4 @@
-import {
-  HeadContent,
-  Link,
-  Scripts,
-  createRootRouteWithContext,
-  useRouterState,
-} from '@tanstack/react-router';
+import { HeadContent, Link, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { useEffect } from 'react';
@@ -25,6 +19,7 @@ import { Navbar } from '@/components/navigation/Navbar';
 import { buttonVariants } from '@/components/ui/button';
 
 import { Toaster } from 'sonner';
+import { getAuthSession } from '@/lib/auth-session.functions';
 
 interface MyRouterContext {
   queryClient: QueryClient;
@@ -34,11 +29,15 @@ interface MyRouterContext {
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: async () => {
+    const session = await getAuthSession();
+
     // Other redirect strategies are possible; see
     // https://github.com/TanStack/router/tree/main/examples/react/i18n-paraglide#offline-redirect
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('lang', getLocale());
     }
+
+    return { session };
   },
 
   head: () => ({
@@ -108,22 +107,15 @@ function PwaRegistration() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const locale = useRouterState({
-    select: ({ location }) => {
-      void location.publicHref;
-      return getLocale();
-    },
-  });
-
   return (
-    <html lang={locale}>
+    <html lang={getLocale()}>
       <head>
         <HeadContent />
       </head>
       <body>
         <PwaRegistration />
         <TooltipProvider>
-          <div key={locale} className="flex min-h-screen flex-col">
+          <div className="flex min-h-screen flex-col">
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />

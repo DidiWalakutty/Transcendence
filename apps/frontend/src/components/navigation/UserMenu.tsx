@@ -1,5 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
-import { Link } from '@tanstack/react-router';
+import { Link, useNavigate, useRouter } from '@tanstack/react-router';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -20,10 +19,12 @@ interface UserMenuProps {
 
 export function UserMenu({ role }: UserMenuProps) {
   const navigate = useNavigate();
+  const router = useRouter();
 
   const handleLogout = async () => {
     await authClient.signOut();
-    void navigate({ to: '/' });
+    await navigate({ to: '/' });
+    await router.invalidate();
   };
 
   // Visitor is not logged in

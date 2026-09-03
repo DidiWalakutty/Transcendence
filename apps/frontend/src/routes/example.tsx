@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { type FormEvent, useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -45,7 +45,17 @@ import {
 } from '@/components/ui/table';
 import { removeById, replaceById, upsertById } from '@/lib/collection-by-id';
 
-export const Route = createFileRoute('/example')({ component: Home });
+export const Route = createFileRoute('/example')({
+  beforeLoad: ({ context: { session } }) => {
+    if (!session?.user.role?.split(',').includes('admin')) {
+      throw redirect({ to: '/' });
+    }
+  },
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(context.trpc.users.getUsers.queryOptions());
+  },
+  component: Home,
+});
 
 function Home() {
   const trpc = useTRPC();

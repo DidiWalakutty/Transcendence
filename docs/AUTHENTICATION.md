@@ -144,15 +144,15 @@ authClient.admin.setRole({ userId, role: 'admin' });
 authClient.admin.removeUser({ userId });
 ```
 
-Protected route guards must use the `getAuthSession` TanStack server function rather than calling
-`authClient.getSession()` directly. Route `beforeLoad` hooks also run during SSR, where a direct
-client call does not automatically forward the browser's cookie to the separate backend process.
-`getAuthSession` forwards the incoming cookie and uses `SERVER_URL` to reach the backend from the
-frontend server, so authenticated hard refreshes are handled consistently with client navigation.
+The root route loads the session with the `getAuthSession` TanStack server function and exposes it
+through route context. It forwards the incoming request cookie and uses `SERVER_URL` to reach the
+backend from the frontend server. The navbar and protected route guards consume that shared
+server-loaded session, so an authenticated hard refresh is rendered correctly before hydration.
 
-`Navbar.tsx` derives the visitor/user/admin role from `authClient.useSession()` and the session's
-Better Auth `role`. `UserMenu.tsx`'s logout item calls `authClient.signOut()` directly
-instead of linking to a route.
+After sign-up, login, two-factor verification, or logout, the initiating component invalidates the
+router. That refreshes the root session context without reverting route protection to a
+client-only loading state. `UserMenu.tsx` still performs logout through `authClient.signOut()`;
+the destination document is then invalidated to update the shared session.
 
 ## Environment variables
 

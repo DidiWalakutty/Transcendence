@@ -1,9 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@/integrations/trpc/react';
 import { usePresence, usePresenceConnection } from '@/hooks/use-presence';
-import { authClient } from '@/lib/auth-client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,6 +14,19 @@ import { Link } from '@tanstack/react-router';
 import { TwoFactorSettings } from '@/components/TwoFactorSettings';
 
 export const Route = createFileRoute('/profile')({
+  beforeLoad: ({ context: { session } }) => {
+    if (!session) {
+      throw redirect({ to: '/login' });
+    }
+  },
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(context.trpc.users.getMe.queryOptions()),
+      context.queryClient.ensureQueryData(context.trpc.friends.getFriends.queryOptions()),
+      context.queryClient.ensureQueryData(context.trpc.friends.getPendingRequests.queryOptions()),
+      context.queryClient.ensureQueryData(context.trpc.users.getUsers.queryOptions()),
+    ]);
+  },
   component: ProfilePage,
 });
 
@@ -30,7 +42,7 @@ function StatusDot({ online }: { online: boolean }) {
 function ProfilePage() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { data: session } = authClient.useSession();
+  const { session } = Route.useRouteContext();
   const [saved, setSaved] = useState(false);
 
   const userQuery = useQuery(trpc.users.getMe.queryOptions());

@@ -28,6 +28,21 @@ This document defines the primary technology stack for the project.
 - [TanStack Query](https://tanstack.com/query) remains the default solution for asynchronous state management and caching.
 - [Inlang Paraglide](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) provides generated locale-aware message helpers. See [Internationalization](./I18N.md).
 
+### Frontend rendering model
+
+TanStack Start's server rendering is enabled for the application route tree. Initial document
+requests run route `beforeLoad` hooks and loaders on the frontend server, render their HTML, and
+dehydrate the TanStack Query cache for hydration in the browser.
+
+- The root route loads the Better Auth session and exposes it as route context.
+- Routes preload critical page data with `queryClient.ensureQueryData(...)`; components consume
+  the same query options, so hydrated navigation reuses the server result.
+- Server-side tRPC requests forward the incoming browser cookie to the backend. Browser-side tRPC
+  requests continue to use credentialed fetches.
+- Mutations, forms, presence, and real-time subscriptions remain client-side interactions.
+- Locale changes use Paraglide's document navigation so the complete application is rendered in
+  the new language on the server.
+
 ---
 
 ### Backend

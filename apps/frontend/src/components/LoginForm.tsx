@@ -1,4 +1,4 @@
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate, useRouter } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { signInSchema } from '@repo/schemas/auth';
@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 
 export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) {
   const navigate = useNavigate();
+  const router = useRouter();
 
   const signIn = useMutation({
     mutationFn: async (values: { email: string; password: string }) => {
@@ -26,15 +27,16 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
 
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       if (data && 'twoFactorRedirect' in data && data.twoFactorRedirect) {
-        void navigate({
+        await navigate({
           to: '/verify-2fa',
         });
         return;
       }
 
-      void navigate({
+      await router.invalidate();
+      await navigate({
         to: '/profile',
       });
     },

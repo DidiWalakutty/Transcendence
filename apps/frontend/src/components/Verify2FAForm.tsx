@@ -1,4 +1,4 @@
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate, useRouter } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 
 export function Verify2FAForm({ className, ...props }: React.ComponentProps<'div'>) {
   const navigate = useNavigate();
+  const router = useRouter();
   const [useBackupCode, setUseBackupCode] = useState(false);
 
   const verify = useMutation({
@@ -30,8 +31,9 @@ export function Verify2FAForm({ className, ...props }: React.ComponentProps<'div
 
       return data;
     },
-    onSuccess: () => {
-      void navigate({ to: '/profile' });
+    onSuccess: async () => {
+      await router.invalidate();
+      await navigate({ to: '/profile' });
     },
   });
 

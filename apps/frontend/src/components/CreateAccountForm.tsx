@@ -1,4 +1,4 @@
-import { Link, useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate, useRouter } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { signUpSchema } from '@repo/schemas/auth';
@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 
 export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>) {
   const navigate = useNavigate();
+  const router = useRouter();
   const locale = getLocale();
 
   const signUp = useMutation({
@@ -38,10 +39,11 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
 
       return data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success('Account created successfully!');
 
-      void navigate({
+      await router.invalidate();
+      await navigate({
         to: '/',
       });
     },

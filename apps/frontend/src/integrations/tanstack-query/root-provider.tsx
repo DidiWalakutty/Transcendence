@@ -3,6 +3,8 @@ import { QueryClient } from '@tanstack/react-query';
 import superjson from 'superjson';
 import { createTRPCClient, httpBatchLink, httpSubscriptionLink, splitLink } from '@trpc/client';
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
+import { createServerOnlyFn } from '@tanstack/react-start';
+import { getRequestHeader } from '@tanstack/react-start/server';
 
 import type { AppRouter } from '@repo/schemas/trpc';
 import { TRPCProvider } from '@/integrations/trpc/react';
@@ -24,6 +26,11 @@ function fetchWithCredentials(input: RequestInfo | URL, init?: RequestInit) {
   return fetch(input, { ...init, credentials: 'include' });
 }
 
+const getServerRequestHeaders = createServerOnlyFn(() => {
+  const cookie = getRequestHeader('cookie');
+  return cookie ? { cookie } : {};
+});
+
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [
     splitLink({
@@ -37,6 +44,7 @@ export const trpcClient = createTRPCClient<AppRouter>({
         url: getUrl(),
         transformer: superjson,
         fetch: fetchWithCredentials,
+        headers: () => (typeof window === 'undefined' ? getServerRequestHeaders() : {}),
       }),
     }),
   ],
@@ -64,6 +72,7 @@ export function getContext() {
     defaultOptions: {
       queries: {
         retry: false,
+        staleTime: 30_000,
       },
       mutations: {
         retry: false,
