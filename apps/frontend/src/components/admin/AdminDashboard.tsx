@@ -1,5 +1,4 @@
 import { useMemo, useState, type FormEvent } from 'react';
-import { Link } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { EventDto } from '@repo/schemas/events';
 import type { UserDto } from '@repo/schemas/users';
@@ -19,7 +18,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Dialog,
@@ -42,10 +41,14 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
-import { EventCategoryCombobox } from '@/components/events/EventCategoryCombobox';
-import { EventDatePicker } from '@/components/events/EventDatePicker';
-import { EventImagePicker } from '@/components/events/EventImagePicker';
+import {
+  ActionButton,
+  EventEditDialog,
+  EventManagementTable,
+  FormField,
+  formCategories,
+  formString,
+} from '@/components/events/EventManagement';
 
 type UserDialog = { mode: 'view' | 'edit'; user: UserDto } | null;
 type DeleteTarget = { kind: 'user'; item: UserDto } | { kind: 'event'; item: EventDto } | null;
@@ -135,10 +138,7 @@ export function AdminDashboard() {
       id: eventDialog.id,
       title: formString(data, 'title'),
       description: formString(data, 'description'),
-      category: formString(data, 'category')
-        .split(',')
-        .map((category) => category.trim())
-        .filter(Boolean),
+      category: formCategories(data),
       location: formString(data, 'location'),
       address: formString(data, 'address'),
       date: formString(data, 'date'),
@@ -284,60 +284,11 @@ export function AdminDashboard() {
               />
             </CardHeader>
             <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{m.admin_event()}</TableHead>
-                    <TableHead>{m.admin_date()}</TableHead>
-                    <TableHead>{m.admin_location()}</TableHead>
-                    <TableHead className="text-right">{m.admin_actions()}</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {events.map((event) => (
-                    <TableRow key={event.id}>
-                      <TableCell>
-                        <div className="font-medium">{event.title}</div>
-                        <div className="flex gap-1 pt-1">
-                          {event.category.slice(0, 2).map((category) => (
-                            <Badge key={category} variant="outline">
-                              {category}
-                            </Badge>
-                          ))}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {event.date} · {event.time}
-                      </TableCell>
-                      <TableCell>{event.location}</TableCell>
-                      <TableCell>
-                        <div className="flex justify-end gap-1">
-                          <Link
-                            to="/events/$eventId"
-                            params={{ eventId: event.id }}
-                            className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
-                            aria-label={m.admin_view()}
-                            title={m.admin_view()}
-                          >
-                            <Eye />
-                          </Link>
-                          <ActionButton
-                            label={m.admin_edit()}
-                            icon={<Pencil />}
-                            onClick={() => setEventDialog(event)}
-                          />
-                          <ActionButton
-                            destructive
-                            label={m.admin_delete()}
-                            icon={<Trash2 />}
-                            onClick={() => setDeleteTarget({ kind: 'event', item: event })}
-                          />
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <EventManagementTable
+                events={events}
+                onEdit={setEventDialog}
+                onDelete={(event) => setDeleteTarget({ kind: 'event', item: event })}
+              />
               {events.length === 0 && <EmptySearch />}
             </CardContent>
           </Card>
@@ -350,7 +301,7 @@ export function AdminDashboard() {
         onClose={() => setUserDialog(null)}
         onSubmit={submitUser}
       />
-      <EventDialog
+      <EventEditDialog
         event={eventDialog}
         pending={updateEvent.isPending}
         onClose={() => setEventDialog(null)}
@@ -411,38 +362,8 @@ function SearchInput({
   );
 }
 
-function ActionButton({
-  label,
-  icon,
-  onClick,
-  destructive = false,
-}: {
-  label: string;
-  icon: React.ReactNode;
-  onClick: () => void;
-  destructive?: boolean;
-}) {
-  return (
-    <Button
-      type="button"
-      variant={destructive ? 'destructive' : 'ghost'}
-      size="icon-sm"
-      onClick={onClick}
-      aria-label={label}
-      title={label}
-    >
-      {icon}
-    </Button>
-  );
-}
-
 function EmptySearch() {
   return <p className="py-10 text-center text-muted-foreground">{m.admin_no_results()}</p>;
-}
-
-function formString(data: FormData, key: string): string {
-  const value = data.get(key);
-  return typeof value === 'string' ? value : '';
 }
 
 function hasAdminRole(user: UserDto): boolean {
@@ -471,9 +392,20 @@ function UserDialog({
         </DialogHeader>
         {user && editing ? (
           <form key={user.id} onSubmit={onSubmit} className="space-y-4">
-            <FormField label={m.admin_name()} name="name" defaultValue={user.name} />
-            <FormField label={m.admin_username()} name="username" defaultValue={user.username} />
             <FormField
+              idPrefix="admin"
+              label={m.admin_name()}
+              name="name"
+              defaultValue={user.name}
+            />
+            <FormField
+              idPrefix="admin"
+              label={m.admin_username()}
+              name="username"
+              defaultValue={user.username}
+            />
+            <FormField
+              idPrefix="admin"
               label={m.admin_email()}
               name="email"
               type="email"
@@ -509,124 +441,5 @@ function UserDialog({
         ) : null}
       </DialogContent>
     </Dialog>
-  );
-}
-
-function EventDialog({
-  event,
-  pending,
-  onClose,
-  onSubmit,
-}: {
-  event: EventDto | null;
-  pending: boolean;
-  onClose: () => void;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
-}) {
-  return (
-    <Dialog open={event !== null} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>{m.admin_edit_event()}</DialogTitle>
-          <DialogDescription>{m.admin_edit_event_description()}</DialogDescription>
-        </DialogHeader>
-        {event && (
-          <EventEditForm
-            key={event.id}
-            event={event}
-            pending={pending}
-            onClose={onClose}
-            onSubmit={onSubmit}
-          />
-        )}
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function EventEditForm({
-  event,
-  pending,
-  onClose,
-  onSubmit,
-}: {
-  event: EventDto;
-  pending: boolean;
-  onClose: () => void;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
-}) {
-  const [categories, setCategories] = useState(event.category);
-  const [date, setDate] = useState(event.date);
-  const [image, setImage] = useState(event.image);
-
-  return (
-    <form onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">
-      <FormField
-        label={m.admin_title_label()}
-        name="title"
-        defaultValue={event.title}
-        className="sm:col-span-2"
-      />
-      <div className="space-y-2 sm:col-span-2">
-        <Label htmlFor="event-description">{m.admin_description()}</Label>
-        <Textarea
-          id="event-description"
-          name="description"
-          required
-          defaultValue={event.description}
-        />
-      </div>
-      <div className="space-y-2 sm:col-span-2">
-        <Label htmlFor="admin-category">{m.admin_categories()}</Label>
-        <EventCategoryCombobox
-          id="admin-category"
-          value={categories}
-          onValueChange={setCategories}
-        />
-        <input type="hidden" name="category" value={categories.join(',')} required />
-      </div>
-      <FormField label={m.admin_location()} name="location" defaultValue={event.location} />
-      <FormField label={m.admin_address()} name="address" defaultValue={event.address} />
-      <div className="space-y-2">
-        <Label htmlFor="admin-date">{m.admin_date()}</Label>
-        <EventDatePicker id="admin-date" name="date" value={date} onValueChange={setDate} />
-      </div>
-      <FormField label={m.admin_time()} name="time" type="time" defaultValue={event.time} />
-      <FormField
-        label={m.admin_capacity()}
-        name="maxCapacity"
-        type="number"
-        min={1}
-        defaultValue={event.maxCapacity}
-      />
-      <div className="space-y-2 sm:col-span-2">
-        <Label htmlFor="admin-image">{m.admin_image()}</Label>
-        <EventImagePicker id="admin-image" name="image" value={image} onValueChange={setImage} />
-      </div>
-      <DialogFooter className="sm:col-span-2">
-        <Button type="button" variant="outline" onClick={onClose}>
-          {m.admin_cancel()}
-        </Button>
-        <Button type="submit" disabled={pending || categories.length === 0 || !date || !image}>
-          {pending && <Spinner />}
-          {m.admin_save()}
-        </Button>
-      </DialogFooter>
-    </form>
-  );
-}
-
-function FormField({
-  label,
-  name,
-  className,
-  ...props
-}: { label: string; name: string; className?: string } & React.ComponentProps<typeof Input>) {
-  const id = `admin-${name}`;
-  return (
-    <div className={`space-y-2 ${className ?? ''}`}>
-      <Label htmlFor={id}>{label}</Label>
-      <Input id={id} name={name} required {...props} />
-    </div>
   );
 }
