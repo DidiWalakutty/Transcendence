@@ -50,8 +50,26 @@ export const createEventResultSchema = z.object({
   eventId: z.string().uuid(),
 });
 
+// Realtime: one message per create/update/delete, broadcast to every client,
+// plus a periodic heartbeat. The heartbeat carries no event; it exists so a
+// client can tell an idle stream from a dead one, and so idle connections are
+// not dropped by proxies.
+export const eventChangedSchema = z.discriminatedUnion('action', [
+  z.object({ action: z.literal('created'), event: eventSchema }),
+  z.object({ action: z.literal('updated'), event: eventSchema }),
+  z.object({ action: z.literal('deleted'), event: eventSchema }),
+  z.object({ action: z.literal('heartbeat') }),
+]);
+
+export const EVENT_HEARTBEAT_INTERVAL_MS = 10_000;
+
+// tRPC v11 subscriptions type `output` as the yielded item; nestjs-trpc wraps
+// it as an AsyncIterable, so this must not be the top-level entity schema.
+export const eventChangedSubscriptionSchema = z.custom<AsyncIterable<EventChangedDto>>();
+
 export type EventDto = z.infer<typeof eventSchema>;
 export type EventSortDto = z.infer<typeof eventSortSchema>;
 export type CreateEventDto = z.infer<typeof createEventSchema>;
 export type UpdateEventDto = z.infer<typeof updateEventSchema>;
 export type DeleteEventDto = z.infer<typeof deleteEventSchema>;
+export type EventChangedDto = z.infer<typeof eventChangedSchema>;

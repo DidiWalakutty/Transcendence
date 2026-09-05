@@ -20,6 +20,7 @@ import {
   createEventSchema,
   createEventResultSchema,
   eventIdSchema,
+  eventChangedSubscriptionSchema,
   updateEventSchema,
   eventSchema,
   deleteEventSchema,
@@ -65,6 +66,9 @@ const appRouter = t.router({
             ReturnType<EventsRouter['getEventById']>
           >,
       ),
+    onEventChanged: publicProcedure
+      .output(eventChangedSubscriptionSchema)
+      .subscription(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
     getMyEvents: publicProcedure
       .output(eventsSchema)
       .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),

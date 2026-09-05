@@ -7,6 +7,7 @@ import { EventSort } from '@/components/events/EventSort';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
 import { z } from 'zod';
 import { useTRPC } from '@/integrations/trpc/react';
+import { useEventStream } from '@/hooks/use-event-stream';
 import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/events/')({
@@ -32,6 +33,9 @@ function EventsPage() {
   const selectedCategories = category ? category.split(',') : [];
   const selectedSort = sort ?? 'upcoming';
   const trpc = useTRPC();
+  // Keeps this listing current while it is open: another user creating,
+  // editing or deleting an event patches the cache here without a refetch.
+  const { connected, failed } = useEventStream();
   const eventsQuery = useQuery(trpc.events.getEvents.queryOptions(selectedSort));
   const events = eventsQuery.data ?? [];
 
@@ -92,6 +96,16 @@ function EventsPage() {
             </h1>
 
             <p className="mt-3 text-surface-footer/80">{m.events_page_subtitle()}</p>
+
+            <p className="mt-4 flex items-center gap-2 text-sm text-surface-footer/70">
+              <span
+                aria-hidden="true"
+                className={`inline-block size-2 rounded-full ${
+                  connected ? 'bg-green-500' : failed ? 'bg-destructive' : 'bg-surface-footer/40'
+                }`}
+              />
+              {connected ? m.events_live_connected() : m.events_live_reconnecting()}
+            </p>
           </div>
 
           <div />
