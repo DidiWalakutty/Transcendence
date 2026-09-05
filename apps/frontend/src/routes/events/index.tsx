@@ -18,9 +18,13 @@ export const Route = createFileRoute('/events/')({
   }),
   loaderDeps: ({ search }) => ({ sort: search.sort ?? 'upcoming' }),
   loader: async ({ context, deps }) => {
-    await context.queryClient.ensureQueryData(
-      context.trpc.events.getEvents.queryOptions(deps.sort),
-    );
+    // A loader throw fails the whole route, so a backend that is down turns
+    // this page into an error screen. Render the shell instead and let the
+    // query retry on the client, which is also what the realtime watchdog
+    // does after a reconnect.
+    await context.queryClient
+      .ensureQueryData(context.trpc.events.getEvents.queryOptions(deps.sort))
+      .catch(() => undefined);
   },
   component: EventsPage,
 });

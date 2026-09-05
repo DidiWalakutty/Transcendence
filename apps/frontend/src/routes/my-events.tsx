@@ -28,9 +28,11 @@ export const Route = createFileRoute('/my-events')({
     }
   },
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(
-      context.trpc.eventCreation.getMyEvents.queryOptions(),
-    );
+    // Same reasoning as the events listing: an unreachable backend should not
+    // turn the page into an error screen.
+    await context.queryClient
+      .ensureQueryData(context.trpc.eventCreation.getMyEvents.queryOptions())
+      .catch(() => undefined);
   },
   component: MyEventsPage,
 });
