@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSubscription } from '@trpc/tanstack-react-query';
 import {
@@ -13,6 +13,11 @@ import { useTRPC } from '@/integrations/trpc/react';
 // noticed within half a minute.
 const STALE_AFTER_MS = EVENT_HEARTBEAT_INTERVAL_MS * 2.5;
 const WATCHDOG_INTERVAL_MS = 5_000;
+
+// Module scope on purpose. A ref would be reset every time the component
+// remounts, and an unreachable backend can remount the tree repeatedly, which
+// would keep pushing the deadline forward and hide the outage forever.
+let lastMessageAt = Date.now();
 
 // Updates and deletes are patched straight into the cached lists: neither can
 // change an event's position under any of the server's sort orders, so the
@@ -43,7 +48,6 @@ function patchList(events: EventDto[] | undefined, event: EventDto, remove: bool
 export function useEventStream(options?: { onlyOrganizerId?: string }) {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const lastMessageAt = useRef(Date.now());
   const [stale, setStale] = useState(false);
 
   const listingsKey = trpc.events.getEvents.queryKey();
@@ -57,7 +61,7 @@ export function useEventStream(options?: { onlyOrganizerId?: string }) {
   const subscription = useSubscription(
     trpc.eventCreation.onEventChanged.subscriptionOptions(undefined, {
       onData: (change: EventChangedDto) => {
-        lastMessageAt.current = Date.now();
+        lastMessageAt = Date.now();
         setStale(false);
 
         if (change.action === 'heartbeat') {
@@ -103,12 +107,12 @@ export function useEventStream(options?: { onlyOrganizerId?: string }) {
 
   useEffect(() => {
     const watchdog = setInterval(() => {
-      if (Date.now() - lastMessageAt.current <= STALE_AFTER_MS) {
+      if (Date.now() - lastMessageAt <= STALE_AFTER_MS) {
         return;
       }
 
       setStale(true);
-      lastMessageAt.current = Date.now();
+      lastMessageAt = Date.now();
       // Tear the dead stream down and start a new one, then resync: anything
       // that changed while the connection was gone never reached this client.
       reset();
@@ -120,7 +124,7 @@ export function useEventStream(options?: { onlyOrganizerId?: string }) {
 
   useEffect(() => {
     if (status === 'pending') {
-      lastMessageAt.current = Date.now();
+      lastMessageAt = Date.now();
     }
   }, [status]);
 
