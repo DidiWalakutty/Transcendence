@@ -49,8 +49,7 @@
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.3.7",
-    "nodemailer": "^9.0.5",
-    "sync": "^0.2.5"
+    "nodemailer": "^9.0.5"
   },
   "devDependencies": {
     "@repo/tsconfig": "workspace:*",
