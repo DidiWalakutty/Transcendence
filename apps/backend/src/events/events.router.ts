@@ -9,6 +9,7 @@ import {
   deleteEventSchema,
   eventIdSchema,
   eventSchema,
+  eventsSchema,
   updateEventSchema,
   type CreateEventDto,
   type DeleteEventDto,
@@ -62,6 +63,12 @@ export class EventsRouter {
       throw notFoundError('Event not found');
     }
     return event;
+  }
+
+  @UseMiddlewares(ProtectedMiddleware)
+  @Query({ output: eventsSchema })
+  async getMyEvents(@Ctx() ctx: EventAuthContext) {
+    return this.eventsService.findByOrganizer(ctx.user.id);
   }
 
   @UseMiddlewares(ProtectedMiddleware)

@@ -37,7 +37,7 @@ import {
 } from '@repo/schemas/users';
 import { addFriendSchema, friendSchema, removeFriendSchema } from '@repo/schemas/friends';
 import { getOnlineUserIdsSchema, presenceChangedSubscriptionSchema } from '@repo/schemas/presence';
-import type { EventsRouter } from '/home/muijf/ft_transcendence/apps/backend/src/events/events.router';
+import type { EventsRouter } from '/home/corin/projects/ft_transcendence/apps/backend/src/events/events.router';
 
 const appRouter = t.router({
   events: t.router({
@@ -65,6 +65,9 @@ const appRouter = t.router({
             ReturnType<EventsRouter['getEventById']>
           >,
       ),
+    getMyEvents: publicProcedure
+      .output(eventsSchema)
+      .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
     updateEvent: publicProcedure
       .input(updateEventSchema)
       .output(eventSchema)

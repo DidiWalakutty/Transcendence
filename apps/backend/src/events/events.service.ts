@@ -26,6 +26,11 @@ export class EventsService {
     return this.repository.findById(id);
   }
 
+  // Find every event organized by a specific user through the repository
+  async findByOrganizer(organizerId: string): Promise<EventDto[]> {
+    return this.repository.findByOrganizer(organizerId);
+  }
+
   async update(data: UpdateEventDto): Promise<EventDto | null> {
     return this.repository.update(data);
   }

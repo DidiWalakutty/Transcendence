@@ -160,6 +160,12 @@
   "events_page_empty_description": "Try clearing your filters or check back later for new events.",
   "events_page_pagination_prev": "Previous",
   "events_page_pagination_next": "Next",
+
+  "my_events_page_title": "My Events",
+  "my_events_page_subtitle": "The events you have created.",
+  "my_events_page_empty_title": "You have not created any events yet",
+  "my_events_page_empty_description": "Create your first event and it will show up here.",
+
   "events_about_title": "About this event",
   "events_tickets_title": "Tickets",
   "events_tickets_available": "tickets available",

@@ -51,6 +51,7 @@ eventCreation, events, friends, presence, registrations, users
 | --------------------------------- | ------------ | -------------- | ------------------------------------------------------ |
 | `events.getEvents`                | Query        | Public         | Reads and sorts events.                                |
 | `eventCreation.getEventById`      | Query        | Public         | Reads one event.                                       |
+| `eventCreation.getMyEvents`       | Query        | Authenticated  | Lists the events the current user organizes.           |
 | `eventCreation.createEvent`       | Mutation     | Authenticated  | Creates an event owned by the current user.            |
 | `eventCreation.updateEvent`       | Mutation     | Owner or admin | Updates an event after checking organizer ownership.   |
 | `eventCreation.deleteEvent`       | Mutation     | Owner or admin | Deletes an event and its registrations.                |
