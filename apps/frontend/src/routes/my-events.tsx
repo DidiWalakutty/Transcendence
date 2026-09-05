@@ -14,7 +14,7 @@ import {
   formString,
 } from '@/components/events/EventManagement';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
 import { Input } from '@/components/ui/input';
@@ -122,10 +122,10 @@ function MyEventsPage() {
           <p className="text-muted-foreground">{m.my_events_page_subtitle()}</p>
         </div>
 
-        <Button render={<Link to="/create-event" />}>
+        <Link to="/create-event" className={buttonVariants()}>
           <Plus />
           {m.create_event_create_button()}
-        </Button>
+        </Link>
       </div>
 
       <Card size="sm" className="mb-8 sm:max-w-xs">
@@ -151,7 +151,9 @@ function MyEventsPage() {
             <EmptyDescription>{m.my_events_page_empty_description()}</EmptyDescription>
           </EmptyHeader>
 
-          <Button render={<Link to="/create-event" />}>{m.create_event_create_button()}</Button>
+          <Link to="/create-event" className={buttonVariants()}>
+            {m.create_event_create_button()}
+          </Link>
         </Empty>
       ) : (
         <Card>
