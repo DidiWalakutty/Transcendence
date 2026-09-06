@@ -4,24 +4,27 @@ This directory contains the project documentation for local development, archite
 
 ## Start Here
 
-| Document                        | Purpose                                                                |
-| ------------------------------- | ---------------------------------------------------------------------- |
-| [Development](./DEVELOPMENT.md) | Local setup, install steps, development commands, and troubleshooting. |
-| [Stack](./STACK.md)             | The approved technology stack and architecture principles.             |
-| [Subject](./SUBJECT.md)         | The 42 subject summary and evaluation requirements.                    |
+| Document                                    | Purpose                                                                     |
+| ------------------------------------------- | --------------------------------------------------------------------------- |
+| [Development](./DEVELOPMENT.md)             | Local setup, install steps, development commands, and troubleshooting.      |
+| [Stack](./STACK.md)                         | The approved technology stack and architecture principles.                  |
+| [Architecture Tour](./ARCHITECTURE_TOUR.md) | Start here to learn the codebase: how every layer connects, end to end.     |
+| [Learning Path](./LEARNING_PATH.md)         | Seven guided sessions with exercises, from first run to shipping a feature. |
+| [Subject](./SUBJECT.md)                     | The 42 subject summary and evaluation requirements.                         |
 
 ## Architecture
 
-| Document                              | Purpose                                                                     |
-| ------------------------------------- | --------------------------------------------------------------------------- |
-| [API](./API.md)                       | Current tRPC API surface and generated router types.                        |
-| [Authentication](./AUTHENTICATION.md) | Better Auth wiring, schema, dual user-creation paths, and password reset.   |
-| [Validation](./VALIDATION.md)         | Shared schema validation flow across frontend, tRPC, backend, and database. |
-| [Database](./DATABASE.md)             | PostgreSQL, Drizzle ORM, migrations, and local database commands.           |
-| [Environment](./ENVIRONMENT.md)       | Environment variables used by backend, frontend, Drizzle, and Compose.      |
-| [Internationalization](./I18N.md)     | Inlang Paraglide locales, message files, generated runtime, and switcher.   |
-| [Monorepo](./MONOREPO.md)             | Workspace layout and Vite+ task orchestration.                              |
-| [Ports](./PORTS.md)                   | Reserved local ports for app and infrastructure services.                   |
+| Document                                    | Purpose                                                                     |
+| ------------------------------------------- | --------------------------------------------------------------------------- |
+| [Architecture Tour](./ARCHITECTURE_TOUR.md) | How the layers connect: layer map, diagrams, and end-to-end request traces. |
+| [API](./API.md)                             | Current tRPC API surface and generated router types.                        |
+| [Authentication](./AUTHENTICATION.md)       | Better Auth wiring, schema, dual user-creation paths, and password reset.   |
+| [Validation](./VALIDATION.md)               | Shared schema validation flow across frontend, tRPC, backend, and database. |
+| [Database](./DATABASE.md)                   | PostgreSQL, Drizzle ORM, migrations, and local database commands.           |
+| [Environment](./ENVIRONMENT.md)             | Environment variables used by backend, frontend, Drizzle, and Compose.      |
+| [Internationalization](./I18N.md)           | Inlang Paraglide locales, message files, generated runtime, and switcher.   |
+| [Monorepo](./MONOREPO.md)                   | Workspace layout and Vite+ task orchestration.                              |
+| [Ports](./PORTS.md)                         | Reserved local ports for app and infrastructure services.                   |
 
 ## Tooling
 
