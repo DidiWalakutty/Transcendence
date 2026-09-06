@@ -63,6 +63,26 @@ export const eventChangedSchema = z.discriminatedUnion('action', [
 
 export const EVENT_HEARTBEAT_INTERVAL_MS = 10_000;
 
+// An event's date and time cross the wire as the wall-clock strings the organiser
+// typed, and the column behind them is a `timestamp` with no zone — a naive wall
+// clock. Encoding and decoding must therefore agree on how to read that clock.
+// They previously did not: writes parsed as local time while reads formatted with
+// `toISOString()`, so every event came back shifted by the server's UTC offset
+// (18:00 entered in Amsterdam read back as 16:00). Containers run UTC, which made
+// the shift invisible in Docker and visible only on a developer's machine.
+export function toEventDateTime(date: string, time: string): Date {
+  return new Date(`${date}T${time}`);
+}
+
+export function fromEventDateTime(dateTime: Date): { date: string; time: string } {
+  const pad = (value: number) => String(value).padStart(2, '0');
+
+  return {
+    date: `${dateTime.getFullYear()}-${pad(dateTime.getMonth() + 1)}-${pad(dateTime.getDate())}`,
+    time: `${pad(dateTime.getHours())}:${pad(dateTime.getMinutes())}`,
+  };
+}
+
 // tRPC v11 subscriptions type `output` as the yielded item; nestjs-trpc wraps
 // it as an AsyncIterable, so this must not be the top-level entity schema.
 export const eventChangedSubscriptionSchema = z.custom<AsyncIterable<EventChangedDto>>();

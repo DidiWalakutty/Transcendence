@@ -3,7 +3,12 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { events } from '@repo/schemas/database';
-import type { EventDto, UpdateEventDto } from '@repo/schemas/events';
+import {
+  fromEventDateTime,
+  toEventDateTime,
+  type EventDto,
+  type UpdateEventDto,
+} from '@repo/schemas/events';
 import { DATABASE } from '../../database/database.constants';
 import type { Database } from '../../database/database.types';
 import { EventsRepository, type CreateEventRecord } from './events.repository';
@@ -31,7 +36,7 @@ export class DrizzleEventsRepository extends EventsRepository {
         organizerId: data.organizerId,
         location: data.location,
         address: data.address,
-        dateTime: new Date(`${data.date}T${data.time}`),
+        dateTime: toEventDateTime(data.date, data.time),
         maxCapacity: data.maxCapacity,
         category: data.category,
       })
@@ -44,25 +49,7 @@ export class DrizzleEventsRepository extends EventsRepository {
   async findById(id: string): Promise<EventDto | null> {
     const [event] = await this.db.select().from(events).where(eq(events.id, id)).limit(1);
 
-    if (!event) {
-      return null;
-    }
-
-    const dateTime = event.dateTime.toISOString();
-
-    return {
-      id: event.id,
-      organizerId: event.organizerId,
-      title: event.title,
-      category: event.category,
-      location: event.location,
-      address: event.address,
-      date: dateTime.split('T')[0],
-      time: dateTime.split('T')[1].slice(0, 5),
-      maxCapacity: event.maxCapacity,
-      image: event.image,
-      description: event.description.en ?? '',
-    };
+    return event ? this.toDto(event) : null;
   }
 
   // Find every event a user organizes, soonest first.
@@ -82,7 +69,7 @@ export class DrizzleEventsRepository extends EventsRepository {
       .set({
         ...data,
         description: { en: description },
-        dateTime: new Date(`${date}T${time}`),
+        dateTime: toEventDateTime(date, time),
       })
       .where(eq(events.id, id))
       .returning();
@@ -97,8 +84,6 @@ export class DrizzleEventsRepository extends EventsRepository {
   }
 
   private toDto(event: typeof events.$inferSelect): EventDto {
-    const dateTime = event.dateTime.toISOString();
-
     return {
       id: event.id,
       organizerId: event.organizerId,
@@ -106,8 +91,7 @@ export class DrizzleEventsRepository extends EventsRepository {
       category: event.category,
       location: event.location,
       address: event.address,
-      date: dateTime.slice(0, 10),
-      time: dateTime.slice(11, 16),
+      ...fromEventDateTime(event.dateTime),
       maxCapacity: event.maxCapacity,
       image: event.image,
       description: event.description.en ?? '',
