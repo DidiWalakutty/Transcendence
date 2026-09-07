@@ -169,6 +169,9 @@
   "my_events_manage_description": "Edit or delete the events you organize.",
   "my_events_search": "Search your events",
 
+  "profile_avatar_upload": "Upload avatar",
+  "profile_avatar_remove": "Remove avatar",
+
   "events_about_title": "About this event",
   "events_tickets_title": "Tickets",
   "events_tickets_available": "tickets available",

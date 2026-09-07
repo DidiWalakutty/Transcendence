@@ -169,6 +169,9 @@
   "my_events_manage_description": "Bewerk of verwijder de events die je organiseert.",
   "my_events_search": "Zoek in je events",
 
+  "profile_avatar_upload": "Avatar uploaden",
+  "profile_avatar_remove": "Avatar verwijderen",
+
   "events_about_title": "Over dit evenement",
   "events_tickets_title": "Kaartjes",
   "events_tickets_available": "kaartjes beschikbaar",
