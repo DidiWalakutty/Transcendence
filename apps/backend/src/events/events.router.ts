@@ -66,7 +66,7 @@ export class EventsRouter {
     return { eventId };
   }
 
-  @Query({ input: eventIdSchema })
+  @Query({ input: eventIdSchema, output: eventSchema })
   async getEventById(@Input() input: { id: string }) {
     const event = await this.eventsService.findById(input.id);
 
