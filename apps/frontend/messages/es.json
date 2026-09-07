@@ -159,6 +159,9 @@
   "events_page_pagination_prev": "Previous",
   "events_page_pagination_next": "Next",
 
+  "events_live_connected": "En vivo — se actualiza cuando cambian los eventos",
+  "events_live_reconnecting": "Reconectando a las actualizaciones en vivo…",
+
   "my_events_page_title": "Mis Eventos",
   "my_events_page_subtitle": "Los eventos que has creado.",
   "my_events_page_empty_title": "Todavía no has creado ningún evento",

@@ -6,6 +6,7 @@ import { CalendarDays, Plus, Search } from 'lucide-react';
 
 import * as m from '@/@generated/paraglide/messages';
 import { useTRPC } from '@/integrations/trpc/react';
+import { useEventStream } from '@/hooks/use-event-stream';
 import {
   EventDeleteDialog,
   EventEditDialog,
@@ -27,9 +28,11 @@ export const Route = createFileRoute('/my-events')({
     }
   },
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(
-      context.trpc.eventCreation.getMyEvents.queryOptions(),
-    );
+    // Same reasoning as the events listing: an unreachable backend should not
+    // turn the page into an error screen.
+    await context.queryClient
+      .ensureQueryData(context.trpc.eventCreation.getMyEvents.queryOptions())
+      .catch(() => undefined);
   },
   component: MyEventsPage,
 });
@@ -37,6 +40,9 @@ export const Route = createFileRoute('/my-events')({
 function MyEventsPage() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const { session } = Route.useRouteContext();
+  // Own events only: a change to somebody else's event must not appear here.
+  useEventStream({ onlyOrganizerId: session?.user.id });
   const [search, setSearch] = useState('');
   const [editTarget, setEditTarget] = useState<EventDto | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<EventDto | null>(null);

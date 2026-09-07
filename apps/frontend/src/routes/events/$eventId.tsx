@@ -2,6 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import placeholderEvent from '@/assets/placeholder_event.png';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@/integrations/trpc/react';
+import { useEventStream } from '@/hooks/use-event-stream';
 import * as m from '@/@generated/paraglide/messages';
 
 export const Route = createFileRoute('/events/$eventId')({
@@ -25,6 +26,8 @@ const categoryTranslations: Record<string, () => string> = {
 function EventDetailPage() {
   const { eventId } = Route.useParams();
   const trpc = useTRPC();
+  // An edit by the organizer updates this page while it is open.
+  useEventStream();
 
   const eventQuery = useQuery(
     trpc.eventCreation.getEventById.queryOptions({

@@ -161,6 +161,9 @@
   "events_page_pagination_prev": "Vorige",
   "events_page_pagination_next": "Volgende",
 
+  "events_live_connected": "Live — werkt bij zodra events wijzigen",
+  "events_live_reconnecting": "Opnieuw verbinden met live updates…",
+
   "my_events_page_title": "Mijn Events",
   "my_events_page_subtitle": "De events die je hebt aangemaakt.",
   "my_events_page_empty_title": "Je hebt nog geen events aangemaakt",

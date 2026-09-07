@@ -6,6 +6,8 @@ import { CalendarDays, Eye, Pencil, Search, Trash2, Users } from 'lucide-react';
 
 import * as m from '@/@generated/paraglide/messages';
 import { useTRPC } from '@/integrations/trpc/react';
+import { useEventStream } from '@/hooks/use-event-stream';
+import { useUserStream } from '@/hooks/use-user-stream';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   AlertDialog,
@@ -61,6 +63,12 @@ export function AdminDashboard() {
   const [userDialog, setUserDialog] = useState<UserDialog>(null);
   const [eventDialog, setEventDialog] = useState<EventDto | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
+
+  // Both tables follow the backend's own broadcasts, so a change made by
+  // another administrator, or by an organizer on their own event, lands here
+  // without a refetch.
+  useUserStream();
+  useEventStream();
 
   const usersQuery = useQuery(trpc.users.getUsers.queryOptions());
   const eventsQuery = useQuery(trpc.events.getEvents.queryOptions('newest'));
