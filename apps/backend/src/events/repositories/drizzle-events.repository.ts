@@ -7,7 +7,7 @@ import type { EventDto, UpdateEventDto } from '@repo/schemas/events';
 import { DATABASE } from '../../database/database.constants';
 import type { Database } from '../../database/database.types';
 import { EventsRepository, type CreateEventRecord } from './events.repository';
-import { eq } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 
 @Injectable()
 export class DrizzleEventsRepository extends EventsRepository {
@@ -63,6 +63,17 @@ export class DrizzleEventsRepository extends EventsRepository {
       image: event.image,
       description: event.description.en ?? '',
     };
+  }
+
+  // Find every event a user organizes, soonest first.
+  async findByOrganizer(organizerId: string): Promise<EventDto[]> {
+    const organizerEvents = await this.db
+      .select()
+      .from(events)
+      .where(eq(events.organizerId, organizerId))
+      .orderBy(asc(events.dateTime));
+
+    return organizerEvents.map((event) => this.toDto(event));
   }
 
   async update({ id, date, time, description, ...data }: UpdateEventDto): Promise<EventDto | null> {

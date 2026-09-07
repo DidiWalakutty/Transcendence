@@ -159,6 +159,14 @@
   "events_page_pagination_prev": "Previous",
   "events_page_pagination_next": "Next",
 
+  "my_events_page_title": "Mis Eventos",
+  "my_events_page_subtitle": "Los eventos que has creado.",
+  "my_events_page_empty_title": "Todavía no has creado ningún evento",
+  "my_events_page_empty_description": "Crea tu primer evento y aparecerá aquí.",
+  "my_events_manage_title": "Gestiona tus eventos",
+  "my_events_manage_description": "Edita o elimina los eventos que organizas.",
+  "my_events_search": "Busca en tus eventos",
+
   "event_sorting_upcoming": "Upcoming",
   "event_sorting_popular": "Most popular",
   "event_sorting_newest": "Recently added",

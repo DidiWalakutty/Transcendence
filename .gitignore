@@ -12,3 +12,5 @@ dev-dist
 !packages/schemas/src/@generated/server.ts
 apps/frontend/src/routeTree.gen.ts
 caddy/certs/
+.claude/
+CLAUDE.md

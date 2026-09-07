@@ -160,6 +160,15 @@
   "events_page_empty_description": "Probeer je filters te wissen of kom later terug voor nieuwe events.",
   "events_page_pagination_prev": "Vorige",
   "events_page_pagination_next": "Volgende",
+
+  "my_events_page_title": "Mijn Events",
+  "my_events_page_subtitle": "De events die je hebt aangemaakt.",
+  "my_events_page_empty_title": "Je hebt nog geen events aangemaakt",
+  "my_events_page_empty_description": "Maak je eerste event aan, dan verschijnt het hier.",
+  "my_events_manage_title": "Beheer je events",
+  "my_events_manage_description": "Bewerk of verwijder de events die je organiseert.",
+  "my_events_search": "Zoek in je events",
+
   "events_about_title": "Over dit evenement",
   "events_tickets_title": "Kaartjes",
   "events_tickets_available": "kaartjes beschikbaar",
