@@ -4,6 +4,10 @@ This directory contains the project documentation for local development, archite
 
 ## Start Here
 
+New to web development? Open the [Beginner's Project Guide](./PROJECT_GUIDE.html) in a browser.
+It explains the application, tools, terminology, and request flow with diagrams and examples.
+The page works offline and includes links into the source code and the guides below.
+
 | Document                                    | Purpose                                                                     |
 | ------------------------------------------- | --------------------------------------------------------------------------- |
 | [Development](./DEVELOPMENT.md)             | Local setup, install steps, development commands, and troubleshooting.      |

@@ -1,0 +1,2151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="A beginner-friendly guide to ft_transcendence: how the event platform works, its tools, its data, and its development workflow."
+    />
+    <title>How this project works | ft_transcendence</title>
+    <style>
+      :root {
+        --paper: #f7f6f0;
+        --ink: #24342e;
+        --muted: #58675f;
+        --line: #dce2d7;
+        --green: #21614d;
+        --tint: #e7eee4;
+        --white: #fffef9;
+        --gold: #ece2bc;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+        scroll-padding-top: 28px;
+      }
+      body {
+        margin: 0;
+        color: var(--ink);
+        background: var(--paper);
+        font:
+          17px/1.75 system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          sans-serif;
+      }
+      a {
+        color: var(--green);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 4px;
+      }
+      a:hover {
+        color: #103f31;
+      }
+      a:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid #a26413;
+        outline-offset: 5px;
+      }
+      p {
+        margin: 0 0 1.2em;
+      }
+      strong {
+        font-weight: 650;
+      }
+      code {
+        font:
+          0.84em/1.6 ui-monospace,
+          SFMono-Regular,
+          Consolas,
+          monospace;
+        background: #eaf0e6;
+        border-radius: 4px;
+        padding: 0.12em 0.32em;
+        overflow-wrap: anywhere;
+      }
+      h1,
+      h2,
+      h3 {
+        line-height: 1.2;
+      }
+      h1,
+      h2 {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-weight: 400;
+        letter-spacing: -0.035em;
+      }
+      h1 {
+        font-size: clamp(44px, 6vw, 76px);
+        max-width: 900px;
+        margin: 20px 0 28px;
+      }
+      h2 {
+        font-size: clamp(31px, 3.5vw, 44px);
+        margin: 9px 0 30px;
+        max-width: 820px;
+      }
+      h3 {
+        font-size: 20px;
+        letter-spacing: -0.02em;
+        margin: 26px 0 12px;
+      }
+      .eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: var(--green);
+      }
+      .masthead {
+        border-bottom: 1px solid var(--line);
+        padding: 20px max(24px, calc((100vw - 1340px) / 2));
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: center;
+        font-size: 13px;
+      }
+      .masthead a {
+        text-decoration: none;
+        font-weight: 700;
+      }
+      .hero {
+        max-width: 1340px;
+        margin: 0 auto;
+        padding: 70px 34px 55px;
+      }
+      .hero .intro {
+        font-size: 21px;
+        max-width: 760px;
+        color: var(--muted);
+      }
+      .hero-meta {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 28px;
+        font-size: 12px;
+      }
+      .hero-meta span {
+        background: var(--tint);
+        border-radius: 30px;
+        padding: 5px 13px;
+      }
+      .layout {
+        display: grid;
+        grid-template-columns: 225px minmax(0, 900px);
+        gap: 60px;
+        max-width: 1272px;
+        margin: 0 auto;
+        padding: 0 24px 80px;
+        align-items: start;
+      }
+      .contents {
+        position: sticky;
+        top: 24px;
+        max-height: calc(100vh - 48px);
+        overflow: auto;
+        padding: 0 16px 0 0;
+        font-size: 13px;
+      }
+      .contents h2 {
+        font: 700 11px system-ui;
+        text-transform: uppercase;
+        letter-spacing: 0.13em;
+        margin: 5px 0 18px;
+      }
+      .contents ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        counter-reset: toc;
+      }
+      .contents li {
+        counter-increment: toc;
+        border-bottom: 1px solid var(--line);
+      }
+      .contents a {
+        display: flex;
+        gap: 10px;
+        padding: 9px 0;
+        text-decoration: none;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+      .contents a:before {
+        content: counter(toc, decimal-leading-zero);
+        font-size: 10px;
+        color: var(--green);
+        padding-top: 3px;
+      }
+      .contents a:hover {
+        color: var(--green);
+      }
+      main {
+        min-width: 0;
+      }
+      section {
+        padding: 50px 0;
+        border-top: 1px solid var(--line);
+      }
+      section:first-child {
+        padding-top: 20px;
+      }
+      section > p,
+      section > .lead {
+        max-width: 790px;
+      }
+      .lead {
+        font-size: 21px;
+        line-height: 1.6;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin: 28px 0;
+      }
+      .card {
+        background: var(--white);
+        border: 1px solid var(--line);
+        padding: 24px;
+        border-radius: 9px;
+      }
+      .card h3 {
+        margin-top: 0;
+      }
+      .card p {
+        margin-bottom: 0;
+        font-size: 15px;
+      }
+      .table-scroll {
+        overflow-x: auto;
+        margin: 25px 0 30px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 14px;
+        line-height: 1.65;
+        background: var(--white);
+      }
+      th,
+      td {
+        text-align: left;
+        vertical-align: top;
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--line);
+      }
+      th {
+        font-size: 12px;
+        letter-spacing: 0.03em;
+        background: var(--tint);
+        color: #31523f;
+      }
+      td:first-child {
+        font-weight: 600;
+        min-width: 130px;
+        width: 23%;
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+      .note,
+      .example {
+        border-left: 3px solid #6f9477;
+        background: var(--tint);
+        padding: 22px 26px;
+        margin: 30px 0;
+        font-size: 15px;
+      }
+      .note h3,
+      .example h3 {
+        margin-top: 0;
+        font-size: 18px;
+      }
+      .note p:last-child,
+      .example p:last-child {
+        margin-bottom: 0;
+      }
+      .example {
+        background: #f2eddc;
+        border-color: #b7a568;
+      }
+      .sources {
+        font-size: 12px;
+        line-height: 1.8;
+        color: var(--muted);
+        margin-top: 28px !important;
+      }
+      .steps {
+        list-style: none;
+        counter-reset: step;
+        padding: 0;
+        margin: 30px 0;
+      }
+      .steps li {
+        position: relative;
+        padding: 0 0 26px 58px;
+        counter-increment: step;
+      }
+      .steps li:before {
+        content: counter(step);
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 34px;
+        height: 34px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: var(--green);
+        color: white;
+        font-size: 14px;
+      }
+      .steps li:not(:last-child):after {
+        content: '';
+        position: absolute;
+        left: 16px;
+        top: 40px;
+        bottom: 7px;
+        border-left: 1px solid #b8caba;
+      }
+      .steps h3 {
+        margin: 0 0 10px;
+        padding-top: 3px;
+        font-size: 19px;
+      }
+      .steps p {
+        font-size: 16px;
+        margin: 0;
+      }
+      .system-map {
+        background: #e8eee3;
+        padding: 28px;
+        border-radius: 12px;
+        margin: 30px 0;
+      }
+      .map-row {
+        display: grid;
+        grid-template-columns: 1fr 36px 1fr;
+        gap: 10px;
+        align-items: stretch;
+      }
+      .map-node {
+        padding: 20px;
+        background: var(--white);
+        border: 1px solid #b2c4b4;
+        border-radius: 8px;
+      }
+      .map-node > span {
+        text-transform: uppercase;
+        letter-spacing: 0.09em;
+        font-size: 10px;
+      }
+      .map-node h3 {
+        margin: 9px 0;
+        font-size: 22px;
+      }
+      .map-node p {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.6;
+      }
+      .map-node.backend {
+        background: var(--green);
+        color: white;
+        border: 0;
+      }
+      .connector {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        color: var(--green);
+      }
+      .map-caption {
+        text-align: center;
+        font-size: 13px;
+        padding: 20px 0;
+        margin: 0;
+      }
+      .support {
+        border-top: 1px dashed #9db09a;
+        margin-top: 24px;
+        padding-top: 20px;
+        font-size: 13px;
+      }
+      .system-map figcaption {
+        font-size: 12px;
+        margin-top: 18px;
+        color: var(--muted);
+      }
+      .relations {
+        background: var(--white);
+        padding: 25px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        margin: 28px 0;
+      }
+      .relation {
+        display: grid;
+        grid-template-columns: 110px 1fr 110px;
+        align-items: center;
+        text-align: center;
+        margin: 10px 0;
+        gap: 16px;
+        font-size: 14px;
+      }
+      .relation strong {
+        background: var(--tint);
+        padding: 14px;
+        border-radius: 5px;
+      }
+      .relation span {
+        border-bottom: 1px solid #91ac91;
+        padding: 8px;
+        color: var(--muted);
+      }
+      figcaption {
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.6;
+        margin-top: 20px;
+      }
+      .live-flow {
+        display: grid;
+        grid-template-columns: 1fr 20px 1fr 20px 1fr;
+        align-items: center;
+        gap: 12px;
+        background: var(--green);
+        color: white;
+        margin: 30px 0;
+        padding: 28px;
+        border-radius: 10px;
+      }
+      .live-flow div {
+        align-self: stretch;
+        border: 1px solid #75a38c;
+        padding: 16px;
+        border-radius: 6px;
+      }
+      .live-flow strong {
+        display: block;
+        font-size: 16px;
+      }
+      .live-flow div span {
+        display: block;
+        font-size: 13px;
+        line-height: 1.6;
+        margin-top: 10px;
+        color: #deeadb;
+      }
+      .live-flow figcaption {
+        grid-column: 1/-1;
+        color: #deeadb;
+        margin-top: 5px;
+      }
+      .flow-arrow {
+        text-align: center;
+      }
+      details {
+        background: var(--white);
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 0 20px;
+        margin: 10px 0;
+        font-size: 15px;
+      }
+      summary {
+        cursor: pointer;
+        padding: 17px 0;
+        color: var(--green);
+        font-weight: 600;
+      }
+      details > p {
+        padding-bottom: 6px;
+      }
+      details[open] summary {
+        margin-bottom: 8px;
+        border-bottom: 1px solid var(--line);
+      }
+      .reading {
+        padding-left: 22px;
+      }
+      .reading li {
+        margin: 10px 0;
+      }
+      .glossary {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        align-items: start;
+      }
+      .glossary details {
+        margin: 0;
+      }
+      .next-links {
+        display: grid;
+        gap: 12px;
+        margin: 30px 0;
+      }
+      .next-links a {
+        padding: 20px 24px;
+        border: 1px solid var(--line);
+        background: var(--white);
+        border-radius: 8px;
+        text-decoration: none;
+      }
+      .next-links span {
+        display: block;
+        font-size: 14px;
+        color: var(--muted);
+        margin-top: 5px;
+      }
+      footer {
+        padding: 28px 24px;
+        text-align: center;
+        border-top: 1px solid var(--line);
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .skip {
+        position: fixed;
+        left: 15px;
+        top: -80px;
+        background: white;
+        padding: 12px;
+        z-index: 20;
+      }
+      .skip:focus {
+        top: 12px;
+      }
+      @media (max-width: 1000px) {
+        .layout {
+          grid-template-columns: 180px minmax(0, 1fr);
+          gap: 30px;
+        }
+        .hero {
+          padding: 48px 24px;
+        }
+        .contents {
+          font-size: 12px;
+        }
+        .live-flow {
+          padding: 18px;
+          gap: 8px;
+        }
+        .live-flow div {
+          padding: 12px;
+        }
+      }
+      @media (max-width: 760px) {
+        body {
+          font-size: 16px;
+        }
+        .layout {
+          display: block;
+          padding: 0 20px 45px;
+        }
+        .contents {
+          position: static;
+          max-height: none;
+          margin: 0 0 32px;
+          padding: 20px;
+          background: var(--tint);
+          border-radius: 8px;
+        }
+        .contents ol {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 0 20px;
+        }
+        .hero {
+          padding: 40px 20px;
+        }
+        .hero .intro {
+          font-size: 18px;
+        }
+        .cards,
+        .glossary {
+          grid-template-columns: 1fr;
+        }
+        .masthead {
+          padding: 15px 20px;
+        }
+        .masthead span {
+          font-size: 11px;
+        }
+        section {
+          padding: 35px 0;
+        }
+        .map-row {
+          grid-template-columns: 1fr;
+        }
+        .connector {
+          font-size: 22px;
+          transform: rotate(90deg);
+        }
+        .system-map {
+          padding: 18px;
+        }
+        .map-caption {
+          text-align: left;
+        }
+        .relation {
+          grid-template-columns: 70px 1fr 70px;
+          gap: 8px;
+          font-size: 12px;
+        }
+        .relations {
+          padding: 15px;
+        }
+        .live-flow {
+          grid-template-columns: 1fr;
+        }
+        .live-flow .flow-arrow {
+          transform: rotate(90deg);
+        }
+        .live-flow figcaption {
+          grid-column: auto;
+        }
+        .steps li {
+          padding-left: 48px;
+        }
+        td,
+        th {
+          padding: 12px;
+        }
+        .note,
+        .example {
+          padding: 18px 20px;
+        }
+        .table-scroll {
+          max-width: 100%;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+      @media print {
+        body {
+          background: white;
+          color: black;
+          font-size: 10pt;
+          line-height: 1.55;
+        }
+        .masthead,
+        .contents,
+        .skip,
+        .hero-meta {
+          display: none;
+        }
+        .hero {
+          padding: 0 0 20px;
+        }
+        .hero h1 {
+          font-size: 32pt;
+        }
+        .hero .intro {
+          font-size: 12pt;
+        }
+        .layout {
+          display: block;
+          padding: 0;
+          max-width: none;
+        }
+        section {
+          padding: 20px 0;
+        }
+        h2 {
+          font-size: 22pt;
+          break-after: avoid;
+        }
+        h3 {
+          break-after: avoid;
+        }
+        table {
+          font-size: 9pt;
+        }
+        .table-scroll {
+          overflow: visible;
+        }
+        figure,
+        .card,
+        .note,
+        .steps li,
+        details {
+          break-inside: avoid;
+        }
+        .map-node.backend,
+        .live-flow {
+          background: #eee;
+          color: black;
+        }
+        .live-flow div span,
+        .live-flow figcaption {
+          color: black;
+        }
+        a {
+          color: inherit;
+        }
+        details > p,
+        details > ol {
+          display: block !important;
+        }
+        summary {
+          font-size: 10pt;
+        }
+        footer {
+          padding: 15px;
+        }
+        .glossary {
+          display: block;
+        }
+        .sources {
+          font-size: 8pt;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip" href="#purpose">Skip to the guide</a>
+    <div class="masthead">
+      <a href="README.md">ft_transcendence / Documentation</a
+      ><span>Beginner's guide · docs-onboarding</span>
+    </div>
+    <header class="hero">
+      <div class="eyebrow">A guide for your first web project</div>
+      <h1>How this project works.</h1>
+      <p class="intro">
+        Start with a person clicking a button. Follow the request through the website, the backend,
+        and the database. Learn the tools as you meet the jobs they do.
+      </p>
+      <div class="hero-meta">
+        <span>No web-development experience needed</span><span>15 short chapters</span
+        ><span>Read offline · Print from your browser</span>
+      </div>
+    </header>
+    <div class="layout">
+      <nav class="contents" aria-label="Chapters">
+        <h2>In this guide</h2>
+        <ol>
+          <li><a href="#purpose">What are we building?</a></li>
+          <li><a href="#web">What happens when you open a website?</a></li>
+          <li><a href="#map">The project has three places where work happens</a></li>
+          <li><a href="#pages">How a page gets its content</a></li>
+          <li><a href="#requests">How the frontend asks for data</a></li>
+          <li><a href="#backend">What the backend does with a request</a></li>
+          <li><a href="#storage">Where information is stored</a></li>
+          <li><a href="#journey">Follow one event from form to database</a></li>
+          <li><a href="#identity">How login and permissions work</a></li>
+          <li><a href="#live">How an open page hears about a change</a></li>
+          <li><a href="#tools">Meet the tools, grouped by their job</a></li>
+          <li><a href="#files">Find your way around the repository</a></li>
+          <li><a href="#development">How developers run and change the project</a></li>
+          <li><a href="#glossary">A glossary you can return to</a></li>
+          <li><a href="#next">Where to go after this guide</a></li>
+        </ol>
+      </nav>
+      <main>
+        <section id="purpose" aria-labelledby="heading-purpose">
+          <div class="eyebrow">01 / Start with the product</div>
+          <h2 id="heading-purpose">What are we building?</h2>
+          <p class="lead">
+            ft_transcendence is an event platform. An organizer can publish an event, and other
+            people can discover it, read its details, and connect with people they know.
+          </p>
+          <p>
+            Imagine Maya organizing a board-game evening. She creates an account, enters the
+            location and date, chooses a category, and publishes the event. Leo opens the website to
+            browse. He sees Maya's event and opens its detail page. If Maya changes the description,
+            an open page that subscribes to event updates can receive that change without a manual
+            refresh.
+          </p>
+          <p>
+            This guide explains the code on the <code>docs-onboarding</code> branch. It separates
+            behavior present in the code from work that is only partly connected. It is a reading
+            guide, not a claim that every feature has passed a live end-to-end test.
+          </p>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Area</th>
+                  <th scope="col">What exists in this branch</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Events</td>
+                  <td>
+                    Browse and sort events, view details, create an event, and edit or delete events
+                    you own. Administrators can also manage events.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Accounts</td>
+                  <td>
+                    Sign up, log in, manage a profile, and enable two-factor authentication. Better
+                    Auth handles account and session machinery.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Friends and presence</td>
+                  <td>
+                    Send and manage friend requests. Presence tracks whether a user has an active
+                    connection to this backend process.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Live event updates</td>
+                  <td>
+                    Event changes travel to subscribed browsers. The frontend also detects an
+                    unresponsive event stream.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Registration and tickets</td>
+                  <td>
+                    The database table and persistence operations exist, but the registration router
+                    and service are empty. A complete ticket-booking flow is still unfinished.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Email and languages</td>
+                  <td>
+                    Welcome-email code exists, with limited signup integration. The website config
+                    enables English and Dutch. These details are explained below.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <aside class="note">
+            You do not need to memorize the tool names. First learn which job each part performs.
+            Return to the tool table and glossary when a name is unfamiliar.
+          </aside>
+        </section>
+        <section id="web" aria-labelledby="heading-web">
+          <div class="eyebrow">02 / The web in plain language</div>
+          <h2 id="heading-web">What happens when you open a website?</h2>
+          <p>
+            A <strong>browser</strong> is the program you use to visit websites. It asks another
+            program for a page. That other program is a <strong>server</strong>: software that waits
+            for requests and sends responses. During development, the browser and servers can all
+            run on your own computer.
+          </p>
+          <p>
+            An address such as <code>http://localhost:3000/events</code> tells the browser where to
+            go. <code>localhost</code> means this computer. <code>3000</code> is a
+            <strong>port</strong>, a number that identifies which listening program should receive
+            the request. <code>/events</code> is the path that identifies the page.
+          </p>
+          <div class="cards">
+            <div class="card">
+              <h3>HTML gives the page structure</h3>
+              <p>
+                HTML describes headings, paragraphs, links, forms, and buttons. This guide itself is
+                an HTML document.
+              </p>
+            </div>
+            <div class="card">
+              <h3>CSS controls its appearance</h3>
+              <p>
+                CSS describes color, spacing, typography, and layout. A narrow phone screen can use
+                a different layout from a desktop.
+              </p>
+            </div>
+            <div class="card">
+              <h3>JavaScript adds behavior</h3>
+              <p>
+                JavaScript responds to clicks, submits forms, requests data, and changes what the
+                browser displays.
+              </p>
+            </div>
+            <div class="card">
+              <h3>TypeScript helps the developers</h3>
+              <p>
+                Most application code here is TypeScript. It adds checks about data types while
+                developers work. Build tools turn it into JavaScript that can run.
+              </p>
+            </div>
+          </div>
+          <p>
+            <strong>HTTP</strong> is the set of rules the browser and server use to exchange
+            requests and responses. <strong>HTTPS</strong> adds encryption in transit. A response
+            can contain a page, an image, or structured data such as an event title and date.
+          </p>
+          <p>
+            Structured data often travels as <strong>JSON</strong>, a text format with named values.
+            For example, <code>{"title": "Board-game evening", "maxCapacity": 20}</code> carries two
+            pieces of information. It does not describe how to draw the event card.
+          </p>
+          <aside class="note">
+            A page appearing in your browser does not mean its data has been saved. A change becomes
+            durable only when the backend successfully writes it to the database.
+          </aside>
+        </section>
+        <section id="map" aria-labelledby="heading-map">
+          <div class="eyebrow">03 / The whole system</div>
+          <h2 id="heading-map">The project has three places where work happens</h2>
+          <p>
+            The word <strong>frontend</strong> means the part responsible for presenting the
+            website. In this project, frontend code runs both in the browser and on a frontend
+            server. The <strong>backend</strong> is a separate application that handles data
+            requests and permissions.
+          </p>
+          <figure class="system-map">
+            <div class="map-row">
+              <div class="map-node browser">
+                <span>Your device</span>
+                <h3>Browser</h3>
+                <p>Displays pages, runs forms, remembers recently fetched data.</p>
+              </div>
+              <div class="connector" aria-hidden="true">↔</div>
+              <div class="map-node">
+                <span>Application process</span>
+                <h3>Frontend server</h3>
+                <p>Prepares the initial page and loads data before sending the page.</p>
+              </div>
+            </div>
+            <p class="map-caption">
+              Both the browser and frontend server can send requests to the backend.
+            </p>
+            <div class="map-row">
+              <div class="map-node backend">
+                <span>Application process</span>
+                <h3>Backend server</h3>
+                <p>Validates input, checks the user, handles events and friends.</p>
+              </div>
+              <div class="connector" aria-hidden="true">↔</div>
+              <div class="map-node storage">
+                <span>Durable storage</span>
+                <h3>PostgreSQL</h3>
+                <p>Keeps users, events, sessions, friendships, and registrations.</p>
+              </div>
+            </div>
+            <div class="support">
+              <strong>Redis supports the backend.</strong> It holds cached results and request-limit
+              counters. It does not deliver the live event messages in this implementation.
+            </div>
+            <figcaption>
+              The boxes describe different jobs. Locally, all of them can run on one computer.
+            </figcaption>
+          </figure>
+          <p>
+            The normal development addresses are <code>localhost:3000</code> for the frontend and
+            <code>localhost:3001</code> for the backend. The user visits the frontend; the frontend
+            sends data requests to the backend.
+          </p>
+          <p>
+            Another important piece does not run as its own server: <code>packages/schemas</code>.
+            It contains definitions that both applications import. Those definitions describe the
+            structure of users, events, and other data.
+          </p>
+          <p class="sources">
+            Explore the project: <a href="MONOREPO.md">Repository layout</a> ·
+            <a href="STACK.md">Technology choices</a> · <a href="PORTS.md">Local ports</a>
+          </p>
+        </section>
+        <section id="pages" aria-labelledby="heading-pages">
+          <div class="eyebrow">04 / Frontend</div>
+          <h2 id="heading-pages">How a page gets its content</h2>
+          <p>
+            <strong>React</strong> lets developers describe a screen as smaller reusable pieces
+            called components. An event card is one component; a navigation bar is another. A
+            component takes information and describes what the screen should show. When that
+            information changes, React updates the relevant display.
+          </p>
+          <p>
+            <strong>TanStack Router</strong> matches a URL to a page. In this repository, files
+            inside <code>apps/frontend/src/routes</code> define the routes. The route
+            <code>/events/$eventId</code> has a changing part: the ID selects which event to load. A
+            route can also check the session before showing a protected page.
+          </p>
+          <ol class="steps">
+            <li>
+              <h3>First visit: prepare the page</h3>
+              <p>
+                TanStack Start runs page preparation on the frontend server. The root route reads
+                the session, and page loaders request important data from the backend. A loader is
+                code that gets data ready for a page.
+              </p>
+            </li>
+            <li>
+              <h3>Send useful HTML</h3>
+              <p>
+                The frontend server builds HTML from that data and sends it to the browser. This is
+                server-side rendering, often shortened to SSR. The visitor can receive meaningful
+                page content in the first document.
+              </p>
+            </li>
+            <li>
+              <h3>Make the page interactive</h3>
+              <p>
+                The browser loads JavaScript and connects behavior to the server-rendered page. This
+                step is called hydration. The fetched data also transfers into the browser's query
+                cache.
+              </p>
+            </li>
+            <li>
+              <h3>Handle later interactions</h3>
+              <p>
+                Forms, navigation, and subscriptions run in the browser. React updates the view as
+                data changes. Some navigations can reuse already loaded information.
+              </p>
+            </li>
+          </ol>
+          <h3>Remembering results with TanStack Query</h3>
+          <p>
+            A <strong>cache</strong> is a saved copy that avoids repeating work. TanStack Query
+            keeps a frontend cache of data fetched from the backend. It also tracks whether a
+            request is waiting, succeeded, or failed. A <strong>query key</strong> identifies an
+            entry, such as an event list with a particular sort order.
+          </p>
+          <p>
+            When data changes, code can replace the cached copy or mark it outdated so it will be
+            fetched again. That second action is called <strong>invalidation</strong>. The cache is
+            useful, but the database remains the durable record. A cache can be stale.
+          </p>
+          <h3>Forms and appearance</h3>
+          <p>
+            TanStack Form manages values and validation in several forms, including authentication
+            forms. The event forms currently collect values more directly using the browser's
+            <code>FormData</code> facility. Tailwind CSS controls layout and styling. The local
+            <code>components/ui</code> folder provides reusable controls such as inputs, dialogs,
+            and buttons.
+          </p>
+          <p class="sources">
+            Explore the project:
+            <a href="../apps/frontend/src/routes/__root.tsx">Root page setup</a> ·
+            <a href="../apps/frontend/src/integrations/tanstack-query/root-provider.tsx"
+              >Requests and query cache</a
+            >
+            · <a href="../apps/frontend/src/components/events/EventForm.tsx">Event form</a>
+          </p>
+        </section>
+        <section id="requests" aria-labelledby="heading-requests">
+          <div class="eyebrow">05 / Requests and shared rules</div>
+          <h2 id="heading-requests">How the frontend asks for data</h2>
+          <p>
+            An <strong>API</strong> is the set of operations one program makes available to another.
+            Here, the backend offers operations such as reading events and creating an event.
+            <strong>tRPC</strong> connects those operations to a TypeScript client in the frontend.
+          </p>
+          <p>
+            The frontend call can look like a normal function call in code, but it crosses the
+            network. It can be slow or fail. The frontend must still handle loading states, errors,
+            and lost connections.
+          </p>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Kind of operation</th>
+                  <th scope="col">Meaning</th>
+                  <th scope="col">Project example</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Query</td>
+                  <td>Ask for existing information.</td>
+                  <td>Get the events organized by the logged-in user.</td>
+                </tr>
+                <tr>
+                  <td>Mutation</td>
+                  <td>Ask to change information.</td>
+                  <td>Create an event, change its title, or delete it.</td>
+                </tr>
+                <tr>
+                  <td>Subscription</td>
+                  <td>Keep receiving messages after the initial connection.</td>
+                  <td>Listen for event changes and update an open page.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Types and validation solve different problems</h3>
+          <p>
+            A <strong>type</strong> tells developers what a value should look like. For example,
+            capacity should be a number. TypeScript can catch many mismatched values before the
+            application runs. Those development checks do not prove that a request from the internet
+            is valid.
+          </p>
+          <p>
+            <strong>Zod</strong> checks actual values while the application runs. A
+            <strong>schema</strong> is a description of acceptable data. The event creation schema
+            requires a nonempty title and a positive whole-number capacity. The backend validates
+            input because a person can send a request without using our form.
+          </p>
+          <p>
+            The shared package contains both database table definitions and request/response
+            schemas. Some schemas, such as user schemas, are derived from database definitions with
+            <code>drizzle-zod</code>. Event request schemas are written separately. Sharing a
+            package does not mean every rule is generated automatically.
+          </p>
+          <aside class="example">
+            <h3>A small example</h3>
+            <p>
+              Maya enters a capacity of <code>-5</code>. A browser check can help her notice the
+              mistake immediately. If that check is bypassed, the backend schema still rejects the
+              value. Separately, the backend checks whether Maya is allowed to perform the
+              operation.
+            </p>
+          </aside>
+          <p>
+            A <strong>DTO</strong>, or data transfer object, is simply the shape of data sent
+            between parts of the program. An event DTO has separate date and time fields, while the
+            database stores a date/time field. The repository converts between these shapes.
+          </p>
+          <p>
+            Generated tRPC types tell the frontend which operations and values are available. They
+            do not copy the backend into the browser. SuperJSON helps requests and responses
+            preserve values such as dates during conversion to transportable text.
+          </p>
+          <p class="sources">
+            Explore the project: <a href="VALIDATION.md">Validation flow</a> ·
+            <a href="../packages/schemas/src/events.ts">Event validation rules</a> ·
+            <a href="API.md">Backend operations</a>
+          </p>
+        </section>
+        <section id="backend" aria-labelledby="heading-backend">
+          <div class="eyebrow">06 / Backend</div>
+          <h2 id="heading-backend">What the backend does with a request</h2>
+          <p>
+            <strong>NestJS</strong> organizes the backend into related groups of code. The
+            application starts in <code>main.ts</code>, and <code>app.module.ts</code> connects its
+            feature groups. Express provides the underlying HTTP request handling.
+          </p>
+          <p>
+            Inside a feature folder, names describe different responsibilities. Following those
+            names helps you trace a request even before you understand the TypeScript syntax.
+          </p>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">File role</th>
+                  <th scope="col">Plain-language job</th>
+                  <th scope="col">Example in this project</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Router</td>
+                  <td>Receive a named operation and connect it to the work that handles it.</td>
+                  <td>The events router receives create, edit, delete, and detail requests.</td>
+                </tr>
+                <tr>
+                  <td>Middleware</td>
+                  <td>Run a check around request handling.</td>
+                  <td>ProtectedMiddleware rejects a request without an authenticated session.</td>
+                </tr>
+                <tr>
+                  <td>Service</td>
+                  <td>Coordinate the feature's behavior.</td>
+                  <td>
+                    The events service saves a new event, reads it back, and publishes a change
+                    message.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Repository</td>
+                  <td>Read or write stored records.</td>
+                  <td>The Drizzle events repository inserts an event into PostgreSQL.</td>
+                </tr>
+                <tr>
+                  <td>Module</td>
+                  <td>Register the pieces and how they connect.</td>
+                  <td>EventsModule supplies the events router, service, and repository.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            <strong>Dependency injection</strong> means that a piece of code receives the helpers it
+            needs instead of constructing them itself. Nest connects the event service to a
+            repository. Some feature modules can choose an in-memory repository for sample data
+            instead of a database repository.
+          </p>
+          <p>
+            Such a concrete replacement is often called an <strong>adapter</strong>. It performs a
+            known job using a particular tool or storage system. Not every feature currently has an
+            in-memory adapter.
+          </p>
+          <h3>Two names that can be confusing</h3>
+          <p>
+            The <code>events</code> folder handles event creation, editing, and detail reads, but
+            its tRPC name is <code>eventCreation</code>. The <code>event-listings</code> folder
+            publishes the tRPC name <code>events</code> for lists and statistics. These are existing
+            names; the guide uses them so you can find the code.
+          </p>
+          <p>
+            The word <em>event</em> also has two meanings. A calendar event is something people
+            attend. A software event is a message that something happened, such as a user going
+            online. The current EventsService contains both calendar-event behavior and generic
+            message delivery.
+          </p>
+          <p class="sources">
+            Explore the project:
+            <a href="../apps/backend/src/app.module.ts">Application wiring</a> ·
+            <a href="../apps/backend/src/events/events.router.ts">Event request handlers</a> ·
+            <a href="../apps/backend/src/events/events.service.ts">Event behavior</a>
+          </p>
+        </section>
+        <section id="storage" aria-labelledby="heading-storage">
+          <div class="eyebrow">07 / Database and cache</div>
+          <h2 id="heading-storage">Where information is stored</h2>
+          <p>
+            <strong>PostgreSQL</strong>, also called Postgres, is the database. It stores records in
+            tables. You can picture a table as rows and named columns: each event row has an ID,
+            title, organizer, location, date/time, and other fields.
+          </p>
+          <p>
+            A <strong>primary key</strong> identifies a record. A
+            <strong>foreign key</strong> refers to a record in another table. The organizer ID on an
+            event refers to a user. These links let the database preserve relationships instead of
+            relying on a copied user name.
+          </p>
+          <figure class="relations">
+            <div class="relation">
+              <strong>User</strong><span>organizes</span><strong>Event</strong>
+            </div>
+            <div class="relation">
+              <strong>User</strong><span>joins through a registration</span><strong>Event</strong>
+            </div>
+            <div class="relation">
+              <strong>User</strong><span>connects through a friendship</span><strong>User</strong>
+            </div>
+            <figcaption>
+              A user can organize several events. A registration connects one user to one event; a
+              friendship connects two users.
+            </figcaption>
+          </figure>
+          <p>
+            Additional tables support authentication. <code>accounts</code> holds login-method
+            information, including password hashes for password login. <code>sessions</code> records
+            active sessions. Verification and two-factor tables support the related security
+            workflows.
+          </p>
+          <h3>Drizzle and SQL</h3>
+          <p>
+            <strong>SQL</strong> is the language used to ask a relational database to read or change
+            records. <strong>Drizzle</strong> is an ORM, an object-relational mapping tool. It lets
+            this TypeScript application describe tables and construct database operations in code.
+            PostgreSQL still stores the data and executes the resulting work.
+          </p>
+          <h3>Changing a table</h3>
+          <p>
+            A <strong>migration</strong> is a recorded change to database structure. Suppose a new
+            feature needs an extra event field. A developer changes the shared table definition,
+            generates a migration, reviews it, and applies it to the database. Editing a TypeScript
+            definition alone does not alter an existing database.
+          </p>
+          <p>
+            This repository generates migrations with <code>vp run db:generate</code>. Developers
+            must not manually edit the generated Drizzle migration SQL files.
+            <strong>Seed data</strong> is sample data inserted to make local development useful
+            before real users have created records.
+          </p>
+          <h3>There are two different caches</h3>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Storage</th>
+                  <th scope="col">Used for</th>
+                  <th scope="col">What to remember</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>PostgreSQL</td>
+                  <td>Durable users, events, and other records.</td>
+                  <td>Application restarts do not by themselves erase these records.</td>
+                </tr>
+                <tr>
+                  <td>TanStack Query cache</td>
+                  <td>Frontend copies of recently fetched data.</td>
+                  <td>Pages use this to render and update. It is not the database.</td>
+                </tr>
+                <tr>
+                  <td>Redis</td>
+                  <td>Backend cached results and rate-limit counters.</td>
+                  <td>
+                    Rate limiting means limiting how many requests a caller can make in a period.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Backend memory</td>
+                  <td>Presence connections and software-event delivery.</td>
+                  <td>This state belongs to the running process and is lost when it restarts.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="sources">
+            Explore the project: <a href="DATABASE.md">Database guide</a> ·
+            <a href="../packages/schemas/src/database.ts">Table definitions</a>
+          </p>
+        </section>
+        <section id="journey" aria-labelledby="heading-journey">
+          <div class="eyebrow">08 / A complete example</div>
+          <h2 id="heading-journey">Follow one event from form to database</h2>
+          <p>
+            Maya is ready to publish her board-game evening. Here is the full trip through this
+            branch. Each step names the tool only after explaining the job.
+          </p>
+          <ol class="steps">
+            <li>
+              <h3>Maya opens the create-event page</h3>
+              <p>
+                The route checks the session supplied by the root route. If no session is available,
+                it sends her to the login page. This makes the interface helpful; the backend will
+                check again.
+              </p>
+            </li>
+            <li>
+              <h3>She fills in and submits the form</h3>
+              <p>
+                EventForm collects the title, description, categories, location, address, date,
+                time, image, and capacity. TanStack Query tracks the mutation, and the shared
+                notification setup displays progress.
+              </p>
+            </li>
+            <li>
+              <h3>The request reaches the backend</h3>
+              <p>
+                The tRPC client sends the input to the backend and includes browser credentials. The
+                backend resolves the session, rejects an anonymous request, and validates the
+                submitted input.
+              </p>
+            </li>
+            <li>
+              <h3>The backend assigns the organizer</h3>
+              <p>
+                EventsRouter adds the authenticated user's ID. Maya does not supply an organizer ID
+                in the event-creation payload. This prevents that field from choosing someone else
+                as the owner.
+              </p>
+            </li>
+            <li>
+              <h3>The database stores the event</h3>
+              <p>
+                EventsService asks its repository to create the record. The Drizzle repository
+                converts the input into the database shape and inserts it. PostgreSQL returns the
+                new ID.
+              </p>
+            </li>
+            <li>
+              <h3>The backend announces the stored change</h3>
+              <p>
+                On this branch, the service reads the new record back, then emits an event-created
+                message. Subscribers can receive the stored representation rather than an input that
+                lacks the new ID.
+              </p>
+            </li>
+            <li>
+              <h3>Maya sees the result</h3>
+              <p>
+                The response contains the event ID. The frontend navigates to its detail page. Other
+                subscribed event pages can refresh their lists after receiving the creation message.
+              </p>
+            </li>
+          </ol>
+          <aside class="note">
+            <strong>Editing has another rule.</strong> For an update or deletion, the backend checks
+            that the requester is the organizer or an administrator. A hidden button alone cannot
+            enforce ownership.
+          </aside>
+          <details>
+            <summary>Open the files in the same order</summary>
+            <ol class="reading">
+              <li>
+                <a href="../apps/frontend/src/routes/create-event.tsx">create-event.tsx</a> checks
+                access to the page.
+              </li>
+              <li>
+                <a href="../apps/frontend/src/components/events/EventForm.tsx">EventForm.tsx</a>
+                collects input.
+              </li>
+              <li>
+                <a href="../apps/backend/src/events/events.router.ts">events.router.ts</a> handles
+                the request.
+              </li>
+              <li>
+                <a href="../apps/backend/src/events/events.service.ts">events.service.ts</a> saves
+                and announces the event.
+              </li>
+              <li>
+                <a href="../apps/backend/src/events/repositories/drizzle-events.repository.ts"
+                  >drizzle-events.repository.ts</a
+                >
+                talks to storage.
+              </li>
+              <li>
+                <a href="../packages/schemas/src/database.ts">database.ts</a> defines the table.
+              </li>
+            </ol>
+          </details>
+        </section>
+        <section id="identity" aria-labelledby="heading-identity">
+          <div class="eyebrow">09 / Accounts</div>
+          <h2 id="heading-identity">How login and permissions work</h2>
+          <p>
+            <strong>Authentication</strong> answers &quot;Who are you?&quot;
+            <strong>Authorization</strong> answers &quot;Are you allowed to do this?&quot; A
+            logged-in user has an identity, but does not automatically have permission to edit every
+            event.
+          </p>
+          <p>
+            <strong>Better Auth</strong> implements account creation, login, sessions, and
+            password-related workflows. Its requests go through <code>/api/auth</code>. Most other
+            application data requests go through tRPC at <code>/api/trpc</code>. Login is therefore
+            a separate route into the backend.
+          </p>
+          <ol class="steps">
+            <li>
+              <h3>Create an account</h3>
+              <p>
+                The signup form calls Better Auth. For password login, the password is stored as a
+                hash in the account records. A hash is a derived value used for verification, rather
+                than a readable copy of the password.
+              </p>
+            </li>
+            <li>
+              <h3>Log in</h3>
+              <p>
+                Better Auth verifies the submitted credentials. A successful login establishes a
+                session. The browser keeps a cookie, a small value it sends on later requests to
+                help identify that session.
+              </p>
+            </li>
+            <li>
+              <h3>Visit a protected page</h3>
+              <p>
+                The frontend reads the session to present the right page and navigation. Backend
+                request handling also resolves the session before protected operations.
+              </p>
+            </li>
+            <li>
+              <h3>Check permission for an action</h3>
+              <p>
+                An ordinary user can manage their own event. An administrator has broader
+                permissions. The backend checks the role or ownership when it receives the request.
+              </p>
+            </li>
+            <li>
+              <h3>Log out</h3>
+              <p>
+                The frontend calls Better Auth to end the login session and refreshes the page's
+                session information. Being logged out changes which actions are available.
+              </p>
+            </li>
+          </ol>
+          <p>
+            <strong>Two-factor authentication</strong>, or 2FA, adds a verification step after the
+            password. This project supports authenticator codes and backup codes. An authenticator
+            code changes over time; backup codes provide another verification path.
+          </p>
+          <p>
+            Cookies must reach the backend from both the browser and server-rendered page requests.
+            The project forwards incoming cookies when appropriate. <strong>CORS</strong> is the
+            browser permission mechanism involved when the frontend and backend use different
+            origins, such as different local ports. It is separate from user authorization.
+          </p>
+          <aside class="note">
+            <h3>Two account-creation paths currently exist</h3>
+            <p>
+              The real signup form uses Better Auth. The older admin-only
+              <code>users.createUser</code> operation creates a user record without password
+              credentials. That record alone cannot log in through the password form.
+            </p>
+            <p>
+              Password-reset code currently logs its reset link to the backend console.
+              Welcome-email sending is connected to the legacy user-creation path, not to a Better
+              Auth signup hook. These are current integration limits.
+            </p>
+          </aside>
+          <p class="sources">
+            Explore the project: <a href="AUTHENTICATION.md">Authentication details</a> ·
+            <a href="../apps/backend/src/auth/auth.instance.ts">Better Auth configuration</a> ·
+            <a href="../apps/backend/src/users/users.service.ts">Legacy user creation and email</a>
+          </p>
+        </section>
+        <section id="live" aria-labelledby="heading-live">
+          <div class="eyebrow">10 / Realtime and presence</div>
+          <h2 id="heading-live">How an open page hears about a change</h2>
+          <p>
+            A normal query ends when the server returns its answer. A
+            <strong>subscription</strong> keeps a connection open for later messages. This branch
+            uses <strong>Server-Sent Events</strong>, or SSE, through tRPC. The backend sends
+            messages down that connection to the browser.
+          </p>
+          <figure class="live-flow">
+            <div><strong>Maya saves</strong><span>The event record changes.</span></div>
+            <span class="flow-arrow" aria-hidden="true">→</span>
+            <div>
+              <strong>Backend emits</strong><span>A software message announces the change.</span>
+            </div>
+            <span class="flow-arrow" aria-hidden="true">→</span>
+            <div>
+              <strong>Leo receives</strong><span>His subscription updates cached data.</span>
+            </div>
+            <figcaption>
+              React then redraws the page from the changed cache. This is a notification path in
+              addition to the normal save response.
+            </figcaption>
+          </figure>
+          <p>
+            The <code>useEventStream</code> hook connects event messages to the frontend cache. A
+            <strong>hook</strong> is reusable React code for state or other behavior. Creation
+            messages trigger list refetches. Update and deletion messages patch existing list
+            entries, and detail-cache entries are updated or removed.
+          </p>
+          <p>
+            A <strong>heartbeat</strong> is a periodic message saying the stream is still alive,
+            even when no one is editing an event. The frontend watches for missed heartbeats. If the
+            stream appears stale, it resets the subscription and refetches event lists.
+          </p>
+          <p>
+            This mechanism is process-local: the emitter delivers messages within one backend
+            process. Redis does not distribute those messages across backend instances. Running
+            several backend instances would require additional coordination. The stream also does
+            not provide a permanent history of messages missed while disconnected.
+          </p>
+          <h3>Online status is a different kind of live data</h3>
+          <p>
+            Presence tracks active user connections in memory. One user can have multiple
+            connections, such as several browser tabs. Removing one connection does not mark the
+            user offline while another remains. When the last tracked connection closes, the user
+            becomes offline.
+          </p>
+          <h3>When the backend is unavailable</h3>
+          <p>
+            On this branch, session loading returns no session when the authentication request
+            fails, so public pages can still render as a visitor. Event listing routes allow their
+            page to render when the initial data request fails. The interface can then show an error
+            or connection state. This does not mean the database contents have disappeared.
+          </p>
+          <p class="sources">
+            Explore the project:
+            <a href="../apps/frontend/src/hooks/use-event-stream.ts"
+              >Event stream and cache updates</a
+            >
+            ·
+            <a href="../apps/backend/src/presence/presence.service.ts"
+              >Presence connection tracking</a
+            >
+            · <a href="API.md">Realtime conventions</a>
+          </p>
+        </section>
+        <section id="tools" aria-labelledby="heading-tools">
+          <div class="eyebrow">11 / Tool reference</div>
+          <h2 id="heading-tools">Meet the tools, grouped by their job</h2>
+          <p>
+            A <strong>library</strong> is reusable code that an application calls. A
+            <strong>framework</strong> also gives the application an organizing structure. A
+            <strong>runtime</strong> executes code. A <strong>package manager</strong> downloads and
+            records the dependencies the project needs. One tool can perform more than one of these
+            jobs.
+          </p>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Tool</th>
+                  <th scope="col">What it is</th>
+                  <th scope="col">What it does here</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>React</td>
+                  <td>UI library</td>
+                  <td>Builds reusable screens and controls, then updates them as state changes.</td>
+                </tr>
+                <tr>
+                  <td>TanStack Start and Router</td>
+                  <td>Web framework and routing tools</td>
+                  <td>Prepare pages on the server and select the page for a URL.</td>
+                </tr>
+                <tr>
+                  <td>TanStack Query</td>
+                  <td>Remote-data state library</td>
+                  <td>Loads, caches, and refreshes backend data; tracks request results.</td>
+                </tr>
+                <tr>
+                  <td>TanStack Form</td>
+                  <td>Form state library</td>
+                  <td>Manages values, submission, and validation in forms that use it.</td>
+                </tr>
+                <tr>
+                  <td>Tailwind CSS and local UI controls</td>
+                  <td>Styling tools and reusable controls</td>
+                  <td>Provide spacing, colors, layout, dialogs, buttons, and input controls.</td>
+                </tr>
+                <tr>
+                  <td>TypeScript</td>
+                  <td>Programming language built on JavaScript</td>
+                  <td>
+                    Checks data types during development. The application ultimately runs
+                    JavaScript.
+                  </td>
+                </tr>
+                <tr>
+                  <td>NestJS and Express</td>
+                  <td>Backend framework and HTTP server framework</td>
+                  <td>Organize backend features and receive HTTP requests.</td>
+                </tr>
+                <tr>
+                  <td>tRPC and nestjs-trpc</td>
+                  <td>Typed request tooling</td>
+                  <td>
+                    Connect frontend operations to backend handlers. Generated types describe
+                    available operations.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Zod and drizzle-zod</td>
+                  <td>Validation libraries</td>
+                  <td>
+                    Check data shapes; derive some validation schemas from database definitions.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Better Auth</td>
+                  <td>Authentication library</td>
+                  <td>Handles signup, login, sessions, roles, and two-factor setup.</td>
+                </tr>
+                <tr>
+                  <td>PostgreSQL and Drizzle</td>
+                  <td>Database and ORM</td>
+                  <td>Store durable data and describe database operations in TypeScript.</td>
+                </tr>
+                <tr>
+                  <td>Redis</td>
+                  <td>Separate data store</td>
+                  <td>Supports backend caching and rate limiting.</td>
+                </tr>
+                <tr>
+                  <td>Inlang Paraglide</td>
+                  <td>Translation tooling</td>
+                  <td>
+                    Generates helpers from message files. The configured website languages are
+                    English and Dutch.
+                  </td>
+                </tr>
+                <tr>
+                  <td>SuperJSON</td>
+                  <td>Data serialization library</td>
+                  <td>
+                    Preserves supported richer values, such as dates, when sending data as text.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Sonner</td>
+                  <td>Notification library</td>
+                  <td>Displays short loading, success, and error messages called toasts.</td>
+                </tr>
+                <tr>
+                  <td>Mailer and Nodemailer</td>
+                  <td>Email tooling</td>
+                  <td>Send generated email content through the configured mail transport.</td>
+                </tr>
+                <tr>
+                  <td>Bun and Node.js</td>
+                  <td>JavaScript runtimes; Bun also manages packages</td>
+                  <td>
+                    Support scripts, tooling, and application execution. Bun manages project
+                    dependencies; Node is also used by the environment and runtime commands.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Vite+ and Vite</td>
+                  <td>Development and build tooling</td>
+                  <td>
+                    Coordinate tasks and prepare application code for development or deployment.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Vitest and Testing Library</td>
+                  <td>Testing tools</td>
+                  <td>Run automated checks and provide ways to exercise code and UI behavior.</td>
+                </tr>
+                <tr>
+                  <td>Docker Compose</td>
+                  <td>Local infrastructure orchestration</td>
+                  <td>
+                    Starts related containers, including the database and Redis. Deployment tasks
+                    also build and run the apps.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Nix</td>
+                  <td>Development environment tool</td>
+                  <td>Provides a reproducible shell with the project's required tools.</td>
+                </tr>
+                <tr>
+                  <td>Git</td>
+                  <td>Version-control system</td>
+                  <td>Records commits and branches so changes can be reviewed and combined.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The repository has more small dependencies for icons, dates, tables, email templates,
+            and other controls. You do not need to study each one to understand the main request
+            flow.
+          </p>
+          <h3>A note about translations</h3>
+          <p>
+            A <strong>locale</strong> identifies a language or regional choice. The current website
+            config enables <code>en</code> and <code>nl</code>. A Spanish message file exists, but
+            its presence alone does not enable Spanish in the website. Email language choices are
+            configured separately. Changing the website locale triggers a document navigation so the
+            next page is rendered in the selected language.
+          </p>
+          <p class="sources">
+            Explore the project: <a href="STACK.md">Full stack reference</a> ·
+            <a href="I18N.md">Languages and generated messages</a>
+          </p>
+        </section>
+        <section id="files" aria-labelledby="heading-files">
+          <div class="eyebrow">12 / Code map</div>
+          <h2 id="heading-files">Find your way around the repository</h2>
+          <p>
+            A <strong>repository</strong> can mean the whole Git project, while a file named
+            <code>*.repository.ts</code> means a data-access helper. Context tells you which meaning
+            is intended. A <strong>monorepo</strong> is one repository containing multiple related
+            applications or packages.
+          </p>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Location</th>
+                  <th scope="col">What you will find</th>
+                  <th scope="col">Start here when…</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>apps/frontend/src/routes</code></td>
+                  <td>Page definitions and initial data loading.</td>
+                  <td>You want to know which code owns a URL.</td>
+                </tr>
+                <tr>
+                  <td><code>apps/frontend/src/components</code></td>
+                  <td>Forms, event cards, navigation, and other UI.</td>
+                  <td>You want to understand something visible on a page.</td>
+                </tr>
+                <tr>
+                  <td><code>apps/frontend/src/hooks</code></td>
+                  <td>Reusable behavior such as subscriptions and presence.</td>
+                  <td>You want to understand live updates.</td>
+                </tr>
+                <tr>
+                  <td><code>apps/frontend/src/integrations</code></td>
+                  <td>tRPC and query-cache setup.</td>
+                  <td>You want to follow requests out of the frontend.</td>
+                </tr>
+                <tr>
+                  <td><code>apps/backend/src</code></td>
+                  <td>Feature folders plus authentication, configuration, and database setup.</td>
+                  <td>You want to understand a rule or backend operation.</td>
+                </tr>
+                <tr>
+                  <td><code>packages/schemas/src</code></td>
+                  <td>Shared data definitions, validation, and generated request types.</td>
+                  <td>You want to know what an event or user contains.</td>
+                </tr>
+                <tr>
+                  <td><code>apps/backend/drizzle</code></td>
+                  <td>Generated database migrations and metadata.</td>
+                  <td>You want to see how database structure changed.</td>
+                </tr>
+                <tr>
+                  <td><code>docs</code></td>
+                  <td>Setup instructions, architecture explanations, and learning material.</td>
+                  <td>You need the project's documented workflow.</td>
+                </tr>
+                <tr>
+                  <td><code>package.json</code> and <code>vite.config.ts</code></td>
+                  <td>Dependencies, commands, and task order.</td>
+                  <td>You want to understand what a development command runs.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <h3>Generated files</h3>
+          <p>
+            Some files are produced by tools. The tRPC router type, frontend route tree, and
+            Paraglide runtime are examples. Edit the source definitions and run the generation task.
+            Editing generated output directly can lose your changes the next time generation runs.
+          </p>
+          <p>
+            A <strong>package</strong> groups code with its dependencies and commands. A
+            <strong>workspace</strong> is a package managed as part of this monorepo.
+            <code>@repo/schemas/events</code> is an import name for shared event definitions, not a
+            website address.
+          </p>
+          <p class="sources">
+            Explore the project: <a href="README.md">Documentation index</a> ·
+            <a href="ARCHITECTURE_TOUR.md">Technical architecture tour</a>
+          </p>
+        </section>
+        <section id="development" aria-labelledby="heading-development">
+          <div class="eyebrow">13 / From code to a running app</div>
+          <h2 id="heading-development">How developers run and change the project</h2>
+          <p>
+            A <strong>terminal</strong> accepts written commands. The project's development commands
+            perform several tasks in a defined order. You do not have to start each application and
+            generate each file by hand.
+          </p>
+          <ol class="steps">
+            <li>
+              <h3>Prepare the environment</h3>
+              <p>
+                Follow the Development guide to use Nix or the Vite+ installation path. Install the
+                dependencies. A dependency is another package the project needs.
+              </p>
+            </li>
+            <li>
+              <h3>Start the development stack</h3>
+              <p>
+                Run vp run dev, or bun dev in the documented Bun workflow. The task starts
+                PostgreSQL and Redis, applies migrations, generates required code, and launches the
+                frontend and backend.
+              </p>
+            </li>
+            <li>
+              <h3>Open the website</h3>
+              <p>
+                Visit http://localhost:3000 in a browser. Keep the terminal available because its
+                logs explain failures that a page may only summarize.
+              </p>
+            </li>
+            <li>
+              <h3>Change and check code</h3>
+              <p>
+                During development, file watchers pick up changes. Developers also run formatting,
+                type checks, and tests before treating the change as ready.
+              </p>
+            </li>
+            <li>
+              <h3>Build and deploy</h3>
+              <p>
+                A build prepares runnable application output. Deployment runs that output in its
+                target environment. The project's local deployment command uses Docker Compose.
+              </p>
+            </li>
+          </ol>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Command</th>
+                  <th scope="col">Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>vp run dev</code></td>
+                  <td>Start the normal local development stack.</td>
+                </tr>
+                <tr>
+                  <td><code>vp run check</code></td>
+                  <td>Run the configured formatting, linting, and type checks.</td>
+                </tr>
+                <tr>
+                  <td><code>vp run test</code></td>
+                  <td>Run the configured tests.</td>
+                </tr>
+                <tr>
+                  <td><code>vp run build</code></td>
+                  <td>Prepare application build output.</td>
+                </tr>
+                <tr>
+                  <td><code>vp run deploy</code></td>
+                  <td>Build and run the local Docker Compose deployment.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            An <strong>environment variable</strong> is configuration supplied to a program, such as
+            the backend address or database connection string. It lets the same code run in
+            different environments. Secret configuration belongs outside published browser code and
+            committed documentation.
+          </p>
+          <p>
+            A <strong>container</strong> is an isolated process environment with its required
+            software. Docker Compose describes how several containers start and connect. A
+            <strong>volume</strong> stores data outside a container's replaceable filesystem, so
+            replacing a database container need not erase its records.
+          </p>
+          <p>
+            <strong>Linting</strong> checks code against rules.
+            <strong>Formatting</strong> standardizes layout. <strong>Tests</strong> execute
+            scenarios and compare results with expectations. <strong>CI</strong>, continuous
+            integration, runs configured checks automatically when changes are submitted. Passing
+            checks is useful evidence, but only for what those checks cover.
+          </p>
+          <aside class="note">
+            <h3>Use the normal development path first</h3>
+            <p>
+              Fixture mode is intended to use temporary sample data. On this branch, some module
+              dependencies still require database configuration. Treat the no-database fixture path
+              as incomplete rather than a guaranteed first-run shortcut. Use the normal setup
+              instructions for onboarding.
+            </p>
+          </aside>
+          <p class="sources">
+            Explore the project: <a href="DEVELOPMENT.md">Setup instructions</a> ·
+            <a href="DEVENVIRONMENT.md">Nix environment</a> · <a href="TOOLING.md">Commands</a> ·
+            <a href="CI.md">Automated checks</a>
+          </p>
+        </section>
+        <section id="glossary" aria-labelledby="heading-glossary">
+          <div class="eyebrow">14 / Terminology</div>
+          <h2 id="heading-glossary">A glossary you can return to</h2>
+          <p>
+            These definitions focus on the meanings used in this project. Expand any term for a
+            short reminder.
+          </p>
+          <div class="glossary">
+            <details>
+              <summary>API</summary>
+              <p>
+                The operations one program makes available to another. The frontend uses the
+                backend's operations to read or change data.
+              </p>
+            </details>
+            <details>
+              <summary>Branch, commit, merge</summary>
+              <p>
+                A commit records a version of tracked files. A branch names a line of work. A merge
+                combines histories. A branch can contain all of main and still have additional
+                changes.
+              </p>
+            </details>
+            <details>
+              <summary>Cache and invalidation</summary>
+              <p>
+                A cache keeps a reusable copy. Invalidation marks a copy outdated so it can be
+                refreshed. An event saved in PostgreSQL and a cached event in a browser can
+                temporarily differ.
+              </p>
+            </details>
+            <details>
+              <summary>Client and server</summary>
+              <p>
+                A client requests work; a server answers. The browser is a client of the frontend
+                server. The frontend server is itself a client when it requests backend data.
+              </p>
+            </details>
+            <details>
+              <summary>Component and hook</summary>
+              <p>
+                A React component describes part of the interface. A hook shares behavior or
+                stateful logic between components.
+              </p>
+            </details>
+            <details>
+              <summary>CRUD</summary>
+              <p>Create, read, update, and delete: the four common operations on stored records.</p>
+            </details>
+            <details>
+              <summary>Database schema and validation schema</summary>
+              <p>
+                A database schema describes tables and columns. A validation schema describes which
+                input or output values are acceptable. They are related definitions with different
+                jobs.
+              </p>
+            </details>
+            <details>
+              <summary>DTO and serialization</summary>
+              <p>
+                A DTO is data arranged for transfer. Serialization converts a value into a form that
+                can travel or be stored, such as text.
+              </p>
+            </details>
+            <details>
+              <summary>Error and status code</summary>
+              <p>
+                An error says an operation could not complete. HTTP status codes give categories,
+                such as 401 for missing valid authentication, 403 for forbidden access, and 404 for
+                something not found.
+              </p>
+            </details>
+            <details>
+              <summary>Frontend and backend</summary>
+              <p>
+                The frontend presents pages and interactions. The backend processes data requests
+                and enforces permissions. Some frontend work happens on its own server.
+              </p>
+            </details>
+            <details>
+              <summary>Function, type, and state</summary>
+              <p>
+                A function is a named piece of work. A type describes expected values. State is
+                information a program currently remembers, such as which dialog is open.
+              </p>
+            </details>
+            <details>
+              <summary>Hydration and SSR</summary>
+              <p>
+                SSR builds initial page HTML on the server. Hydration connects browser behavior to
+                that HTML. The query cache can also be restored from the server's fetched data.
+              </p>
+            </details>
+            <details>
+              <summary>ID and relationship</summary>
+              <p>
+                An ID identifies a record. One record can store another record's ID to express a
+                relationship, such as which user organized an event.
+              </p>
+            </details>
+            <details>
+              <summary>Middleware and dependency injection</summary>
+              <p>
+                Middleware runs around request handling. Dependency injection supplies a piece of
+                code with its required helpers, such as a repository.
+              </p>
+            </details>
+            <details>
+              <summary>Migration and seed</summary>
+              <p>
+                A migration changes database structure. A seed supplies initial or sample records. A
+                fixture is sample data used for development or tests.
+              </p>
+            </details>
+            <details>
+              <summary>Module and interface</summary>
+              <p>
+                A module groups related implementation behind a way to use it. That way to use it is
+                its interface. In NestJS, a module also registers and connects application pieces.
+              </p>
+            </details>
+            <details>
+              <summary>Mutation, query, and subscription</summary>
+              <p>
+                A mutation changes data. A query reads it. A subscription keeps receiving later
+                messages.
+              </p>
+            </details>
+            <details>
+              <summary>Route and router</summary>
+              <p>
+                A route connects a path or operation to code. The frontend router selects pages; a
+                backend tRPC router groups data operations.
+              </p>
+            </details>
+            <details>
+              <summary>Session, cookie, and role</summary>
+              <p>
+                A session records a login. A cookie helps the browser identify that session on later
+                requests. A role, such as admin, contributes to permission decisions.
+              </p>
+            </details>
+            <details>
+              <summary>Terminal, script, and build</summary>
+              <p>
+                The terminal accepts commands. A script is a reusable command sequence. A build
+                prepares code and assets to run outside the development workflow.
+              </p>
+            </details>
+          </div>
+        </section>
+        <section id="next" aria-labelledby="heading-next">
+          <div class="eyebrow">15 / Continue learning</div>
+          <h2 id="heading-next">Where to go after this guide</h2>
+          <p>
+            You can now trace a user action through the system without needing to read every file.
+            To build confidence, use these questions as checkpoints. The answers are hidden until
+            you open them.
+          </p>
+          <details>
+            <summary>Why does the backend check input if the form already checks it?</summary>
+            <p>
+              Requests can come from outside our form. Browser checks help the user; backend checks
+              protect the operation from invalid input.
+            </p>
+          </details>
+          <details>
+            <summary>Where does a saved event survive an application restart?</summary>
+            <p>
+              In PostgreSQL. A frontend cache and backend presence state are not the durable event
+              record.
+            </p>
+          </details>
+          <details>
+            <summary>How does another browser learn that Maya edited an event?</summary>
+            <p>
+              The backend saves it and emits a change. An SSE subscription receives the message, the
+              event-stream hook updates the cache, and React updates the display.
+            </p>
+          </details>
+          <details>
+            <summary>Does a user record always mean that person can log in?</summary>
+            <p>
+              No. The legacy user-creation operation does not create password credentials. The real
+              signup path goes through Better Auth.
+            </p>
+          </details>
+          <details>
+            <summary>
+              Can someone register for tickets just because the registrations table exists?
+            </summary>
+            <p>
+              No. Storage is only one part of the feature. This branch still lacks the connected
+              registration request handlers and full user flow.
+            </p>
+          </details>
+          <div class="next-links">
+            <a href="ARCHITECTURE_TOUR.md"
+              ><strong>Read the architecture tour</strong
+              ><span>Follow the implementation with more technical detail.</span></a
+            ><a href="LEARNING_PATH.md"
+              ><strong>Try the learning path</strong
+              ><span>Use guided sessions and exercises when you are ready to change code.</span></a
+            ><a href="README.md"
+              ><strong>Browse the documentation index</strong
+              ><span>Find the detailed guide for each part of the project.</span></a
+            >
+          </div>
+          <aside class="note">
+            <h3>Version context</h3>
+            <p>
+              Before writing this guide, the remote references were fetched on 10 September 2026.
+              Main was at <code>44fe84c</code>. The starting docs-onboarding commit was
+              <code>f7ee787</code>, five commits ahead and zero behind main. Its extra changes
+              include event subscriptions, outage handling, and onboarding documents. No merge was
+              required.
+            </p>
+            <p>
+              The descriptions above reflect that branch's implementation. For later changes,
+              consult the linked source files and Git history. Existing documentation can lag behind
+              the code, especially feature-status lists.
+            </p>
+          </aside>
+        </section>
+      </main>
+    </div>
+    <footer>
+      ft_transcendence · Beginner's project guide · Prepared 10 September 2026<br />This page is
+      self-contained. The linked source files and Markdown guides need the rest of the repository.
+    </footer>
+  </body>
+</html>
