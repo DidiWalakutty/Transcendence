@@ -169,6 +169,13 @@
   "event_sorting_popular": "Most popular",
   "event_sorting_newest": "Recently added",
 
+  "events_registration_success": "You're registered!",
+  "events_registration_error": "Could not register for the event.",
+  "events_registration_already_registered": "Registered",
+  "events_registration_not_logged_in": "Log in first",
+  "events_registration_loading": "Registering...",
+  "events_registration_get_ticket": "Get Ticket",
+
   "filter_title": "Filters",
   "filter_category_text": "Category",
   "filter_clear": "Clear filters",
