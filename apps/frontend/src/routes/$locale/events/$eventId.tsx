@@ -1,7 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 import placeholderEvent from '@/assets/placeholder_event.png';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { useTRPC } from '@/integrations/trpc/react';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import * as m from '@/@generated/paraglide/messages';
 
 export const Route = createFileRoute('/$locale/events/$eventId')({
@@ -24,6 +26,34 @@ function EventDetailPage() {
   const eventQuery = useQuery(
     trpc.eventCreation.getEventById.queryOptions({
       id: eventId,
+    }),
+  );
+
+  const meQuery = useQuery(trpc.users.getMe.queryOptions());
+
+  const ticketQuery = useQuery(
+    trpc.registrations.getAvailableTickets.queryOptions({
+      id: eventId,
+    }),
+  );
+
+  const registrationQuery = useQuery(
+    trpc.registrations.getMyRegistration.queryOptions({
+      id: eventId,
+    }),
+  );
+
+  const registerMutation = useMutation(
+    trpc.registrations.register.mutationOptions({
+      onSuccess: async () => {
+        await Promise.all([ticketQuery.refetch(), registrationQuery.refetch()]);
+
+        toast.success(m.events_registration_success());
+      },
+
+      onError: () => {
+        toast.error(m.events_registration_error());
+      },
     }),
   );
 
@@ -157,16 +187,47 @@ function EventDetailPage() {
               <h2 className="text-2xl font-bold text-text-primary">{m.events_tickets_title()}</h2>
 
               <p className="mt-4 text-text-muted">
-                <span className="text-3xl font-bold text-primary">42</span>{' '}
+                <span className="text-3xl font-bold text-primary">{ticketQuery.data ?? '...'}</span>{' '}
                 {m.events_tickets_available()}
               </p>
 
-              <button
+              <Button
+                size="hero"
                 type="button"
+                onClick={() => {
+                  // User must be logged in to register
+                  if (!meQuery.data) {
+                    toast.info(m.events_registration_not_logged_in());
+                    return;
+                  }
+
+                  // User is already registered
+                  if (registrationQuery.data) {
+                    return;
+                  }
+
+                  // If sold out
+                  if (ticketQuery.data === 0) {
+                    return;
+                  }
+
+                  registerMutation.mutate({ eventId });
+                }}
+                disabled={
+                  registerMutation.isPending || !!registrationQuery.data || ticketQuery.data === 0
+                }
                 className="mt-6 w-full rounded-xl bg-primary px-6 py-4 text-lg font-bold text-white transition hover:opacity-90"
               >
-                {m.button_get_ticket()}
-              </button>
+                {!meQuery.data
+                  ? m.events_registration_not_logged_in()
+                  : registrationQuery.data
+                    ? m.events_registration_already_registered()
+                    : ticketQuery.data === 0
+                      ? m.events_tickets_sold_out()
+                      : registerMutation.isPending
+                        ? m.events_registration_loading()
+                        : m.events_registration_get_ticket()}
+              </Button>
             </div>
           </aside>
         </div>
