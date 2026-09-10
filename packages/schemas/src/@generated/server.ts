@@ -32,6 +32,7 @@ import {
 } from '@repo/schemas/users';
 import { addFriendSchema, friendSchema, removeFriendSchema } from '@repo/schemas/friends';
 import { getOnlineUserIdsSchema, presenceChangedSubscriptionSchema } from '@repo/schemas/presence';
+import { createRegistrationSchema, registrationSchema } from '@repo/schemas/registrations';
 import type { EventsRouter } from '/home/diwalaku/Desktop/ft_transcendence/apps/backend/src/events/events.router';
 
 const appRouter = t.router({
@@ -93,6 +94,24 @@ const appRouter = t.router({
     onPresenceChanged: publicProcedure
       .output(presenceChangedSubscriptionSchema)
       .subscription(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+  }),
+  registrations: t.router({
+    register: publicProcedure
+      .input(createRegistrationSchema)
+      .output(registrationSchema)
+      .mutation(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+    cancel: publicProcedure
+      .input(createRegistrationSchema)
+      .output(registrationSchema)
+      .mutation(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+    getAvailableTickets: publicProcedure
+      .input(eventIdSchema)
+      .output(z.number())
+      .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
+    getMyRegistration: publicProcedure
+      .input(eventIdSchema)
+      .output(registrationSchema.nullable())
+      .query(async () => 'PLACEHOLDER_DO_NOT_REMOVE' as any),
   }),
   users: t.router({
     createUser: publicProcedure
