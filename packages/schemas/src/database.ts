@@ -7,7 +7,10 @@ import {
   integer,
   boolean,
   pgEnum,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
+
+import { sql } from 'drizzle-orm';
 
 export const users = pgTable('users', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -112,16 +115,27 @@ export const friends = pgTable('friends', {
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
 
-export const registrations = pgTable('registrations', {
-  eventId: uuid('event_id')
-    .notNull()
-    .references(() => events.id, { onDelete: 'cascade' }),
-  userId: uuid('user_id')
-    .notNull()
-    .references(() => users.id, { onDelete: 'cascade' }),
-  status: registrationStatus('r_status').notNull().default('active'),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-});
+export const registrations = pgTable(
+  'registrations',
+  {
+    eventId: uuid('event_id')
+      .notNull()
+      .references(() => events.id, { onDelete: 'cascade' }),
+
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+
+    status: registrationStatus('r_status').notNull().default('active'),
+
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex('registrations_event_user_active_idx')
+      .on(table.eventId, table.userId)
+      .where(sql`${table.status} = 'active'`),
+  ],
+);
 
 export const schema = {
   users,

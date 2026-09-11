@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "registrations_event_user_active_idx" ON "registrations" USING btree ("event_id","user_id") WHERE "registrations"."r_status" = 'active';
