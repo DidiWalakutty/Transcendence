@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RegistrationsRepository } from './repositories/registrations.repository';
-import { conflictError } from '../trpc/trpc.errors';
+import { conflictError, notFoundError } from '../trpc/trpc.errors';
 
 @Injectable()
 export class RegistrationsService {
@@ -16,21 +16,20 @@ export class RegistrationsService {
     return this.repository.findActiveRegistration(eventId, userId);
   }
 
-  // Registers a user for an event if not already registered and if tickets are available
+  // Registers a user for an event and handles the possible registration results.
   async register(eventId: string, userId: string) {
-    const existingRegistration = await this.repository.findActiveRegistration(eventId, userId);
+    const result = await this.repository.register(eventId, userId);
 
-    if (existingRegistration) {
-      throw conflictError('User is already registered for this event.');
+    switch (result.type) {
+      case 'event-not-found':
+        throw notFoundError('Event not found.');
+      case 'already-registered':
+        throw conflictError('User is already registered for this event.');
+      case 'sold-out':
+        throw conflictError('No tickets available for this event.');
+      case 'success':
+        return result.registration;
     }
-
-    const availableTickets = await this.getAvailableTickets(eventId);
-
-    if (availableTickets <= 0) {
-      throw conflictError('No tickets available for this event.');
-    }
-
-    return this.repository.create(eventId, userId);
   }
 
   // Cancels the user's active registration.
