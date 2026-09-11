@@ -21,10 +21,22 @@ export const Route = createFileRoute('/profile')({
   },
   loader: async ({ context }) => {
     await Promise.all([
-      context.queryClient.ensureQueryData(context.trpc.users.getMe.queryOptions()),
-      context.queryClient.ensureQueryData(context.trpc.friends.getFriends.queryOptions()),
-      context.queryClient.ensureQueryData(context.trpc.friends.getPendingRequests.queryOptions()),
-      context.queryClient.ensureQueryData(context.trpc.users.getUsers.queryOptions()),
+      context.queryClient.query({
+        ...context.trpc.users.getMe.queryOptions(),
+        staleTime: 'static',
+      }),
+      context.queryClient.query({
+        ...context.trpc.friends.getFriends.queryOptions(),
+        staleTime: 'static',
+      }),
+      context.queryClient.query({
+        ...context.trpc.friends.getPendingRequests.queryOptions(),
+        staleTime: 'static',
+      }),
+      context.queryClient.query({
+        ...context.trpc.users.getUsers.queryOptions(),
+        staleTime: 'static',
+      }),
     ]);
   },
   component: ProfilePage,

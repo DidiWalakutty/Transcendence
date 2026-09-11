@@ -27,9 +27,10 @@ export const Route = createFileRoute('/my-events')({
     }
   },
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(
-      context.trpc.eventCreation.getMyEvents.queryOptions(),
-    );
+    await context.queryClient.query({
+      ...context.trpc.eventCreation.getMyEvents.queryOptions(),
+      staleTime: 'static',
+    });
   },
   component: MyEventsPage,
 });

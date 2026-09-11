@@ -17,9 +17,10 @@ export const Route = createFileRoute('/events/')({
   }),
   loaderDeps: ({ search }) => ({ sort: search.sort ?? 'upcoming' }),
   loader: async ({ context, deps }) => {
-    await context.queryClient.ensureQueryData(
-      context.trpc.events.getEvents.queryOptions(deps.sort),
-    );
+    await context.queryClient.query({
+      ...context.trpc.events.getEvents.queryOptions(deps.sort),
+      staleTime: 'static',
+    });
   },
   component: EventsPage,
 });

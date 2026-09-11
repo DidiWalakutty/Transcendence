@@ -35,7 +35,7 @@ requests run route `beforeLoad` hooks and loaders on the frontend server, render
 dehydrate the TanStack Query cache for hydration in the browser.
 
 - The root route loads the Better Auth session and exposes it as route context.
-- Routes preload critical page data with `queryClient.ensureQueryData(...)`; components consume
+- Routes preload critical page data with `queryClient.query({ ...queryOptions, staleTime: 'static' })`; components consume
   the same query options, so hydrated navigation reuses the server result.
 - Server-side tRPC requests forward the incoming browser cookie to the backend. Browser-side tRPC
   requests continue to use credentialed fetches.

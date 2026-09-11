@@ -52,7 +52,10 @@ export const Route = createFileRoute('/example')({
     }
   },
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(context.trpc.users.getUsers.queryOptions());
+    await context.queryClient.query({
+      ...context.trpc.users.getUsers.queryOptions(),
+      staleTime: 'static',
+    });
   },
   component: Home,
 });

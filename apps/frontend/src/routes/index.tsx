@@ -11,8 +11,14 @@ import { FAQSection } from '@/components/FAQ';
 export const Route = createFileRoute('/')({
   loader: async ({ context }) => {
     await Promise.all([
-      context.queryClient.ensureQueryData(context.trpc.events.getFeaturedEvents.queryOptions()),
-      context.queryClient.ensureQueryData(context.trpc.events.getEventStats.queryOptions()),
+      context.queryClient.query({
+        ...context.trpc.events.getFeaturedEvents.queryOptions(),
+        staleTime: 'static',
+      }),
+      context.queryClient.query({
+        ...context.trpc.events.getEventStats.queryOptions(),
+        staleTime: 'static',
+      }),
     ]);
   },
   component: LandingPage,

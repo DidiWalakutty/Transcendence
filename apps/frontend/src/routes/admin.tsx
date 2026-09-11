@@ -13,8 +13,14 @@ export const Route = createFileRoute('/admin')({
   },
   loader: async ({ context }) => {
     await Promise.all([
-      context.queryClient.ensureQueryData(context.trpc.users.getUsers.queryOptions()),
-      context.queryClient.ensureQueryData(context.trpc.events.getEvents.queryOptions('newest')),
+      context.queryClient.query({
+        ...context.trpc.users.getUsers.queryOptions(),
+        staleTime: 'static',
+      }),
+      context.queryClient.query({
+        ...context.trpc.events.getEvents.queryOptions('newest'),
+        staleTime: 'static',
+      }),
     ]);
   },
   component: AdminPage,

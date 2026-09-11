@@ -8,9 +8,10 @@ import * as m from '@/@generated/paraglide/messages';
 
 export const Route = createFileRoute('/events/$eventId')({
   loader: async ({ context, params }) => {
-    await context.queryClient.ensureQueryData(
-      context.trpc.eventCreation.getEventById.queryOptions({ id: params.eventId }),
-    );
+    await context.queryClient.query({
+      ...context.trpc.eventCreation.getEventById.queryOptions({ id: params.eventId }),
+      staleTime: 'static',
+    });
   },
   component: EventDetailPage,
 });
