@@ -8,8 +8,6 @@ dev-dist
 .tanstack
 .output
 @generated
-!packages/schemas/src/@generated/
-!packages/schemas/src/@generated/server.ts
 apps/frontend/src/routeTree.gen.ts
 caddy/certs/
 .claude/

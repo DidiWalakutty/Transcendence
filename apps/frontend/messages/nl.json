@@ -178,6 +178,13 @@
   "event_sorting_popular": "Meest populair",
   "event_sorting_newest": "Recent toegevoegd",
 
+  "events_registration_success": "Je bent geregistreerd!",
+  "events_registration_error": "Kon niet registreren voor het evenement.",
+  "events_registration_already_registered": "Geregistreerd",
+  "events_registration_not_logged_in": "Log eerst in",
+  "events_registration_loading": "Registreren...",
+  "events_registration_get_ticket": "Ticket verkrijgen",
+
   "filter_title": "Filters",
   "filter_category_text": "Categorie",
   "filter_clear": "Reset filters",

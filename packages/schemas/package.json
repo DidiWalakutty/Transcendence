@@ -40,6 +40,10 @@
     "./presence": {
       "types": "./src/presence.ts",
       "default": "./src/presence.ts"
+    },
+    "./registrations": {
+      "types": "./src/registrations.ts",
+      "default": "./src/registrations.ts"
     }
   },
   "dependencies": {
