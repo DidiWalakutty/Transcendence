@@ -13,7 +13,7 @@ import type { registration } from '@repo/schemas/database';
 import { DATABASE } from '../../database/database.constants';
 import type { Database } from '../../database/database.types';
 
-import { RegistrationsRepository } from './registrations.repository';
+import { RegistrationsRepository, type RegisterResult } from './registrations.repository';
 
 @Injectable()
 export class DrizzleRegistrationsRepository extends RegistrationsRepository {
@@ -63,6 +63,68 @@ export class DrizzleRegistrationsRepository extends RegistrationsRepository {
     return registration ?? null;
   }
 
+  // Registers a user for an event while preventing overbooking/race conditions.
+  async register(eventId: string, userId: string): Promise<RegisterResult> {
+    return this.db.transaction(async (tx) => {
+      const [event] = await tx
+        .select({
+          maxCapacity: events.maxCapacity,
+        })
+        .from(events)
+        .where(eq(events.id, eventId))
+        .for('update');
+
+      if (!event) {
+        return { type: 'event-not-found' };
+      }
+
+      const [existingRegistration] = await tx
+        .select()
+        .from(registrations)
+        .where(
+          and(
+            eq(registrations.eventId, eventId),
+            eq(registrations.userId, userId),
+            eq(registrations.status, 'active'),
+          ),
+        )
+        .limit(1);
+
+      if (existingRegistration) {
+        return { type: 'already-registered' };
+      }
+
+      const [{ registeredCount }] = await tx
+        .select({
+          registeredCount: sql<number>`
+			count(*) filter (
+				where ${registrations.status} = 'active'
+			)
+			`,
+        })
+        .from(registrations)
+        .where(eq(registrations.eventId, eventId));
+
+      if (Number(registeredCount) >= event.maxCapacity) {
+        return { type: 'sold-out' };
+      }
+
+      const [newRegistration] = await tx
+        .insert(registrations)
+        .values({
+          eventId,
+          userId,
+          status: 'active',
+        })
+        .returning();
+
+      return {
+        type: 'success',
+        registration: newRegistration,
+      };
+    });
+  }
+
   // Creates a new active registration for a user and event.
   async create(eventId: string, userId: string): Promise<registration> {
     const [registration] = await this.db
@@ -76,7 +138,7 @@ export class DrizzleRegistrationsRepository extends RegistrationsRepository {
     return registration;
   }
 
-  // Changes an active registration to canceled so the ticket becomes available again.
+  // Marks an active registration as canceled, making the ticket available again.
   async cancel(eventId: string, userId: string): Promise<registration | null> {
     const [registration] = await this.db
       .update(registrations)

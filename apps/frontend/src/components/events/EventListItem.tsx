@@ -45,23 +45,22 @@ export function EventListItem({
           eventId: id,
         }}
         className="
-          group
-          relative
-          cursor-pointer
-          rounded-2xl
-          border
-          border-border
-          bg-white
-          p-6
-          flex
-          shadow-md
-          transition-all
-          duration-300
-          hover:-translate-y-1
-          hover:bg-surface-footer
-          hover:shadow-xl
-		  hover:border-transparent
-        "
+			group
+			relative
+			cursor-pointer
+			rounded-2xl
+			border
+			border-border
+			bg-white
+			p-6
+			shadow-md
+			transition-all
+			duration-300
+			hover:-translate-y-1
+			hover:bg-surface-footer
+			hover:shadow-xl
+			hover:border-transparent
+		"
       >
         {/* Event Content */}
         <div className="flex min-h-40 gap-6">
@@ -78,64 +77,64 @@ export function EventListItem({
           <div className="flex flex-1 flex-col justify-center pr-28">
             <h2
               className="
-                text-2xl
-                font-bold
-                text-primary
-                transition-colors
-                duration-300
-                group-hover:text-white
-              "
+				text-2xl
+				font-bold
+				text-primary
+				transition-colors
+				duration-300
+				group-hover:text-white
+				"
             >
               {title}
             </h2>
 
             <p
               className="
-                mt-2
+				mt-2
 				line-clamp-2
-                text-surface-footer/80
-                transition-colors
-                duration-300
-                group-hover:text-white/90
-              "
+				text-surface-footer/80
+				transition-colors
+				duration-300
+				group-hover:text-white/90
+				"
             >
               {description}
             </p>
           </div>
 
           {/* Category */}
-          <div className="mb-4 flex flex-wrap gap-2">
+          <div className="absolute right-6 top-6 flex max-w-[200px] flex-wrap justify-end gap-2">
             {category.length > 0 &&
               category.map((cat) => <Badge key={cat}>{categoryLabels[cat]?.() ?? cat}</Badge>)}
           </div>
 
-          {/* Tickets CTA (visual only) */}
+          {/* Tickets CTA */}
           <div
             className="
-            absolute
-            right-20
-            top-1/2
-            translate-x-4
-            -translate-y-1/2
-            opacity-0
-            transition-all
-            duration-300
-            group-hover:translate-x-0
-            group-hover:opacity-100
-          "
+				absolute
+				right-20
+				top-1/2
+				translate-x-4
+				-translate-y-1/2
+				opacity-0
+				transition-all
+				duration-300
+				group-hover:translate-x-0
+				group-hover:opacity-100
+			"
           >
             <div
               className="
-              rounded-2xl
-              bg-white
-              px-15
-              py-5
-              text-center
-              text-xl
-              font-bold
-              text-brand-primary
-              shadow-xl
-            "
+				rounded-2xl
+				bg-white
+				px-15
+				py-5
+				text-center
+				text-xl
+				font-bold
+				text-brand-primary
+				shadow-xl
+				"
             >
               {m.button_tickets()}
             </div>
