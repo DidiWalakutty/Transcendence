@@ -62,6 +62,20 @@ function EventDetailPage() {
     }),
   );
 
+  const cancelMutation = useMutation(
+    trpc.registrations.cancel.mutationOptions({
+      onSuccess: async () => {
+        await Promise.all([ticketQuery.refetch(), registrationQuery.refetch()]);
+
+        toast.success(m.events_registration_cancel_success());
+      },
+
+      onError: () => {
+        toast.error(m.events_registration_cancel_error());
+      },
+    }),
+  );
+
   const event = eventQuery.data;
 
   const eventImage = event?.image && event.image !== 'PLACEHOLDER' ? event.image : placeholderEvent;
@@ -233,6 +247,23 @@ function EventDetailPage() {
                         ? m.events_registration_loading()
                         : m.events_registration_get_ticket()}
               </Button>
+
+              {registrationQuery.data && (
+                <Button
+                  size="lg"
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    cancelMutation.mutate({ eventId });
+                  }}
+                  disabled={cancelMutation.isPending}
+                  className="mt-3 w-full rounded-xl px-6 py-3 text-lg font-bold"
+                >
+                  {cancelMutation.isPending
+                    ? m.events_registration_cancel_loading()
+                    : m.events_registration_cancel()}
+                </Button>
+              )}
             </div>
           </aside>
         </div>

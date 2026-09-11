@@ -184,6 +184,10 @@
   "events_registration_not_logged_in": "Log eerst in",
   "events_registration_loading": "Registreren...",
   "events_registration_get_ticket": "Ticket verkrijgen",
+  "events_registration_cancel": "Annuleer registratie",
+  "events_registration_cancel_loading": "Annuleren...",
+  "events_registration_cancel_success": "Je registratie is geannuleerd.",
+  "events_registration_cancel_error": "Kon je registratie niet annuleren.",
 
   "filter_title": "Filters",
   "filter_category_text": "Categorie",

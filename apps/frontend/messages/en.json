@@ -184,6 +184,10 @@
   "events_registration_not_logged_in": "Please log in first",
   "events_registration_loading": "Registering...",
   "events_registration_get_ticket": "Get ticket",
+  "events_registration_cancel": "Cancel registration",
+  "events_registration_cancel_loading": "Cancelling...",
+  "events_registration_cancel_success": "Your registration has been canceled.",
+  "events_registration_cancel_error": "Could not cancel your registration.",
 
   "filter_title": "Filters",
   "filter_category_text": "Category",
