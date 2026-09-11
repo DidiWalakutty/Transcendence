@@ -56,21 +56,34 @@ export function UserMenu({ role }: UserMenuProps) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-        <DropdownMenuItem render={<Link to="/profile" />}>{m.button_profile()}</DropdownMenuItem>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          render={<Link to="/profile" className="w-full" />}
+        >
+          {m.button_profile()}
+        </DropdownMenuItem>
 
         {role === 'user' && (
-          <DropdownMenuItem render={<Link to="/my-events" />}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            render={<Link to="/my-events" className="w-full" />}
+          >
             {m.button_my_events()}
           </DropdownMenuItem>
         )}
 
         {role === 'admin' && (
-          <DropdownMenuItem render={<Link to="/admin" />}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            render={<Link to="/admin" className="w-full" />}
+          >
             {m.button_admin_panel()}
           </DropdownMenuItem>
         )}
 
-        <DropdownMenuItem onClick={() => void handleLogout()}>Logout</DropdownMenuItem>
+        <DropdownMenuItem className="cursor-pointer" onClick={() => void handleLogout()}>
+          {m.button_logout()}
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
