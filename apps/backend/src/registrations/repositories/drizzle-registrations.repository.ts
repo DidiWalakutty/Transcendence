@@ -7,8 +7,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, eq, sql } from 'drizzle-orm';
 
-import { events, registrations } from '@repo/schemas/database';
+import { events, registrations, users } from '@repo/schemas/database';
 import type { registration } from '@repo/schemas/database';
+import type { EventAttendeeDto } from '@repo/schemas/registrations';
 
 import { DATABASE } from '../../database/database.constants';
 import type { Database } from '../../database/database.types';
@@ -154,5 +155,28 @@ export class DrizzleRegistrationsRepository extends RegistrationsRepository {
       )
       .returning();
     return registration ?? null;
+  }
+
+  // Retrieves a list of users who have active registrations for an event.
+  async getEventAttendees(eventId: string): Promise<EventAttendeeDto[]> {
+    return this.db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+      })
+      .from(registrations)
+      .innerJoin(users, eq(registrations.userId, users.id))
+      .where(and(eq(registrations.eventId, eventId), eq(registrations.status, 'active')));
+  }
+
+  // Checks if a user is the organizer of an event.
+  async isEventOrganizer(eventId: string, userId: string): Promise<boolean> {
+    const [event] = await this.db
+      .select({ id: events.id })
+      .from(events)
+      .where(and(eq(events.id, eventId), eq(events.organizerId, userId)))
+      .limit(1);
+    return !!event;
   }
 }
