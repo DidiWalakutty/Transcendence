@@ -195,7 +195,6 @@ export function EventForm() {
                   onChange={(event) => setAddress(event.target.value)}
                   placeholder={m.create_event_address_placeholder()}
                   className="border-0 bg-transparent focus-visible:ring-0"
-                  required
                 />
               </div>
 
@@ -235,7 +234,6 @@ export function EventForm() {
                   value={time}
                   onChange={(event) => setTime(event.target.value)}
                   className="w-full border-0 bg-transparent focus-visible:ring-0"
-                  required
                 />
               </div>
 
@@ -259,7 +257,6 @@ export function EventForm() {
                 onChange={(event) => setCapacity(event.target.value)}
                 placeholder={m.create_event_capacity_placeholder()}
                 className="w-full border-0 bg-transparent focus-visible:ring-0"
-                required
               />
             </div>
 
