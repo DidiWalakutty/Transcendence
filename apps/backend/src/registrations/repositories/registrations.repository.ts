@@ -1,4 +1,4 @@
-// Defines what operatoins are available.
+// Defines what operations are available.
 // Repository for managing event registrations.
 // Performs database operations related to registrations,
 // such as checking ticket availability, creating,
@@ -6,10 +6,18 @@
 
 import type { registration } from '@repo/schemas/database';
 
+export type RegisterResult =
+  | { type: 'success'; registration: registration }
+  | { type: 'event-not-found' }
+  | { type: 'already-registered' }
+  | { type: 'sold-out' };
+
 export abstract class RegistrationsRepository {
   abstract getAvailableTickets(eventId: string): Promise<number>;
 
   abstract findActiveRegistration(eventId: string, userId: string): Promise<registration | null>;
+
+  abstract register(eventId: string, userId: string): Promise<RegisterResult>;
 
   abstract create(eventId: string, userId: string): Promise<registration>;
 
