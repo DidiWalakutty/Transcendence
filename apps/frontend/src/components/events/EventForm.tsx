@@ -19,26 +19,49 @@ export function EventForm() {
   const trpc = useTRPC();
   const navigate = useNavigate();
   const createEvent = useMutation(trpc.eventCreation.createEvent.mutationOptions());
+
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedImage, setSelectedImage] = useState(DEFAULT_EVENT_IMAGE);
+  const [showErrors, setShowErrors] = useState(false);
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
+  const [address, setAddress] = useState('');
+  const [time, setTime] = useState('');
+  const [capacity, setCapacity] = useState('');
 
   const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
+    setShowErrors(true);
+
+    if (
+      !title.trim() ||
+      !description.trim() ||
+      selectedCategories.length === 0 ||
+      !location.trim() ||
+      !address.trim() ||
+      !selectedDate ||
+      !time ||
+      !capacity
+    ) {
+      return;
+    }
 
     const result = await createEvent.mutateAsync({
-      title: formData.get('title') as string,
-      description: formData.get('description') as string,
+      title,
+      description,
       category: selectedCategories,
-      location: formData.get('location') as string,
-      address: formData.get('address') as string,
-      date: formData.get('date') as string,
-      time: formData.get('time') as string,
+      location,
+      address,
+      date: selectedDate,
+      time,
       image: selectedImage,
-      maxCapacity: Number(formData.get('capacity')),
+      maxCapacity: Number(capacity),
     });
+
     await navigate({
       to: '/events/$eventId',
       params: {
@@ -74,6 +97,7 @@ export function EventForm() {
           {/* Image */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="image">{m.create_event_image()}</Label>
+
             <EventImagePicker
               id="image"
               name="image"
@@ -90,11 +114,16 @@ export function EventForm() {
               <Input
                 id="title"
                 name="title"
+                value={title}
+                onChange={(event) => setTitle(event.target.value)}
                 placeholder={m.create_event_event_title_placeholder()}
                 className="border-0 bg-transparent focus-visible:ring-0"
-                required
               />
             </div>
+
+            {showErrors && !title.trim() && (
+              <p className="text-sm text-red-500">{m.create_event_event_title_required()}</p>
+            )}
           </div>
 
           {/* Description */}
@@ -105,21 +134,31 @@ export function EventForm() {
               <Textarea
                 id="description"
                 name="description"
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
                 placeholder={m.create_event_event_description_placeholder()}
                 className="min-h-32 resize-y border-0 bg-transparent focus-visible:ring-0"
-                required
               />
             </div>
+
+            {showErrors && !description.trim() && (
+              <p className="text-sm text-red-500">{m.create_event_event_description_required()}</p>
+            )}
           </div>
 
           {/* Category */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="category">{m.create_event_category()}</Label>
+
             <EventCategoryCombobox
               id="category"
               value={selectedCategories}
               onValueChange={setSelectedCategories}
             />
+
+            {showErrors && selectedCategories.length === 0 && (
+              <p className="text-sm text-red-500">{m.create_event_category_required()}</p>
+            )}
           </div>
 
           {/* Location + Address */}
@@ -132,11 +171,16 @@ export function EventForm() {
                 <Input
                   id="location"
                   name="location"
+                  value={location}
+                  onChange={(event) => setLocation(event.target.value)}
                   placeholder={m.create_event_location_placeholder()}
                   className="border-0 bg-transparent focus-visible:ring-0"
-                  required
                 />
               </div>
+
+              {showErrors && !location.trim() && (
+                <p className="text-sm text-red-500">{m.create_event_location_required()}</p>
+              )}
             </div>
 
             {/* Address */}
@@ -147,11 +191,17 @@ export function EventForm() {
                 <Input
                   id="address"
                   name="address"
+                  value={address}
+                  onChange={(event) => setAddress(event.target.value)}
                   placeholder={m.create_event_address_placeholder()}
                   className="border-0 bg-transparent focus-visible:ring-0"
                   required
                 />
               </div>
+
+              {showErrors && !address.trim() && (
+                <p className="text-sm text-red-500">{m.create_event_address_required()}</p>
+              )}
             </div>
           </div>
 
@@ -160,12 +210,17 @@ export function EventForm() {
             {/* Date */}
             <div className="flex flex-col gap-2">
               <Label htmlFor="date">{m.create_event_date()}</Label>
+
               <EventDatePicker
                 id="date"
                 name="date"
                 value={selectedDate}
                 onValueChange={setSelectedDate}
               />
+
+              {showErrors && !selectedDate && (
+                <p className="text-sm text-red-500">{m.create_event_date_required()}</p>
+              )}
             </div>
 
             {/* Time */}
@@ -177,10 +232,16 @@ export function EventForm() {
                   id="time"
                   name="time"
                   type="time"
-                  className="w-full text-text-primary border-0 bg-transparent focus-visible:ring-0"
+                  value={time}
+                  onChange={(event) => setTime(event.target.value)}
+                  className="w-full border-0 bg-transparent focus-visible:ring-0"
                   required
                 />
               </div>
+
+              {showErrors && !time && (
+                <p className="text-sm text-red-500">{m.create_event_time_required()}</p>
+              )}
             </div>
           </div>
 
@@ -194,11 +255,17 @@ export function EventForm() {
                 name="capacity"
                 type="number"
                 min="1"
+                value={capacity}
+                onChange={(event) => setCapacity(event.target.value)}
                 placeholder={m.create_event_capacity_placeholder()}
                 className="w-full border-0 bg-transparent focus-visible:ring-0"
                 required
               />
             </div>
+
+            {showErrors && !capacity && (
+              <p className="text-sm text-red-500">{m.create_event_capacity_required()}</p>
+            )}
           </div>
 
           {/* Submit */}
@@ -207,7 +274,7 @@ export function EventForm() {
               type="submit"
               className="w-fit px-15"
               size="lg"
-              disabled={createEvent.isPending || selectedCategories.length === 0 || !selectedDate}
+              disabled={createEvent.isPending}
             >
               {m.create_event_create_button()}
             </Button>
