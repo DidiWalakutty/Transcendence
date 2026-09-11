@@ -346,6 +346,7 @@
   "admin_date": "Datum",
   "admin_time": "Tijd",
   "admin_location": "Locatie",
+  "admin_attendees": "Deelnemers",
   "admin_view": "Bekijken",
   "admin_edit": "Bewerken",
   "admin_delete": "Verwijderen",

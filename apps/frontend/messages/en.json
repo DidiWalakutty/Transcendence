@@ -346,6 +346,7 @@
   "admin_date": "Date",
   "admin_time": "Time",
   "admin_location": "Location",
+  "admin_attendees": "Attendees",
   "admin_view": "View",
   "admin_edit": "Edit",
   "admin_delete": "Delete",
