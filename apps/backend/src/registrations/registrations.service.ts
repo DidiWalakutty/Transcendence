@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RegistrationsRepository } from './repositories/registrations.repository';
+import { conflictError } from '../trpc/trpc.errors';
 
 @Injectable()
 export class RegistrationsService {
@@ -20,13 +21,13 @@ export class RegistrationsService {
     const existingRegistration = await this.repository.findActiveRegistration(eventId, userId);
 
     if (existingRegistration) {
-      throw new Error('User is already registered for this event.');
+      throw conflictError('User is already registered for this event.');
     }
 
     const availableTickets = await this.getAvailableTickets(eventId);
 
     if (availableTickets <= 0) {
-      throw new Error('No tickets available for this event.');
+      throw conflictError('No tickets available for this event.');
     }
 
     return this.repository.create(eventId, userId);
@@ -39,7 +40,7 @@ export class RegistrationsService {
     const registration = await this.repository.cancel(eventId, userId);
 
     if (!registration) {
-      throw new Error('Registration not found.');
+      throw conflictError('Registration not found.');
     }
 
     return registration;
