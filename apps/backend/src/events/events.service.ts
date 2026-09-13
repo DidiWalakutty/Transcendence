@@ -3,10 +3,20 @@
 
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import type { EventDto, UpdateEventDto } from '@repo/schemas/events';
+import {
+  EVENT_HEARTBEAT_INTERVAL_MS,
+  type EventChangedDto,
+  type EventDto,
+  type UpdateEventDto,
+} from '@repo/schemas/events';
 import { EventsRepository, type CreateEventRecord } from './repositories/events.repository';
 
 const MAX_BUFFERED_EVENTS = 100;
+
+// Realtime channel for the event feature. Kept in this file so the name lives
+// in exactly one place; routers subscribe through listenEventChanged() rather
+// than passing the string around.
+const EVENT_CHANGED_EVENT = 'event.changed';
 
 @Injectable()
 export class EventsService {
@@ -17,8 +27,17 @@ export class EventsService {
   ) {}
 
   // Create a new event + store using the repository.
+  // The row is read back so subscribers receive the stored event, not the
+  // input, which has no id and no normalised date/time.
   async create(data: CreateEventRecord): Promise<string> {
-    return this.repository.create(data);
+    const id = await this.repository.create(data);
+    const event = await this.repository.findById(id);
+
+    if (event) {
+      this.emitChanged('created', event);
+    }
+
+    return id;
   }
 
   // Find an event by ID through the repository
@@ -32,11 +51,77 @@ export class EventsService {
   }
 
   async update(data: UpdateEventDto): Promise<EventDto | null> {
-    return this.repository.update(data);
+    const event = await this.repository.update(data);
+
+    if (event) {
+      this.emitChanged('updated', event);
+    }
+
+    return event;
   }
 
   async delete(id: string): Promise<EventDto | null> {
-    return this.repository.delete(id);
+    const event = await this.repository.delete(id);
+
+    if (event) {
+      this.emitChanged('deleted', event);
+    }
+
+    return event;
+  }
+
+  // Broadcasts through this same service's emitter. Kept private so callers go
+  // through create/update/delete and cannot publish a change that never
+  // happened.
+  private emitChanged(action: EventChangedDto['action'], event: EventDto) {
+    this.emit<EventChangedDto>(EVENT_CHANGED_EVENT, { action, event });
+  }
+
+  // Every create, update and delete of an event, for subscribers.
+  listenEventChanged(signal?: AbortSignal) {
+    return this.listen<EventChangedDto>(EVENT_CHANGED_EVENT, signal);
+  }
+
+  // The same stream with a heartbeat woven in. Without it a client cannot
+  // distinguish "nothing has happened" from "the connection died", because a
+  // dropped SSE stream looks exactly like an idle one.
+  async *listenEventChangedWithHeartbeat(
+    signal?: AbortSignal,
+    intervalMs: number = EVENT_HEARTBEAT_INTERVAL_MS,
+  ): AsyncGenerator<EventChangedDto, void, void> {
+    const changes = this.listenEventChanged(signal)[Symbol.asyncIterator]();
+    let pending = changes.next();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+
+    try {
+      while (!signal?.aborted) {
+        const tick = new Promise<'tick'>((resolve) => {
+          timer = setTimeout(() => resolve('tick'), intervalMs);
+        });
+
+        const winner = await Promise.race([pending, tick]);
+
+        // The timer is this generator's own resource, so it is cleared here
+        // rather than left to the listener's cleanup.
+        clearTimeout(timer);
+        timer = undefined;
+
+        if (winner === 'tick') {
+          yield { action: 'heartbeat' };
+          continue;
+        }
+
+        if (winner.done) {
+          return;
+        }
+
+        yield winner.value;
+        pending = changes.next();
+      }
+    } finally {
+      clearTimeout(timer);
+      await changes.return?.();
+    }
   }
 
   // Emit an event so other parts of the system can listen to it.

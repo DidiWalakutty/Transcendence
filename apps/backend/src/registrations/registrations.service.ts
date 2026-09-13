@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { RegistrationsRepository } from './repositories/registrations.repository';
-import { conflictError, notFoundError } from '../trpc/trpc.errors';
+import { conflictError, forbiddenError, notFoundError } from '../trpc/trpc.errors';
 
 @Injectable()
 export class RegistrationsService {
@@ -43,5 +43,16 @@ export class RegistrationsService {
     }
 
     return registration;
+  }
+
+  // Returns a list of users who are registered for an event
+  async getEventAttendees(eventId: string, userId: string) {
+    const isOrganizer = await this.repository.isEventOrganizer(eventId, userId);
+
+    if (!isOrganizer) {
+      throw forbiddenError('User is not the organizer of this event.');
+    }
+
+    return this.repository.getEventAttendees(eventId);
   }
 }

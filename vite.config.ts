@@ -258,6 +258,7 @@ export default defineConfig({
         },
       },
       {
+        resolve: { alias: { '@': fileURLToPath(new URL('./apps/frontend/src', import.meta.url)) } },
         test: {
           name: 'frontend',
           environment: 'jsdom',

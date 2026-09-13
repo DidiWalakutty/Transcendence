@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { asc, desc, eq, sql, and } from 'drizzle-orm';
 
 import { events, registrations } from '@repo/schemas/database';
-import { type EventSortDto } from '@repo/schemas/events';
+import { fromEventDateTime, type EventSortDto } from '@repo/schemas/events';
 
 import { DATABASE } from '../../database/database.constants';
 import type { Database } from '../../database/database.types';
@@ -51,23 +51,8 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
         asc(events.createdAt),
       );
 
-    return rows.map((row) => ({
-      id: row.id,
-      organizerId: row.organizerId,
-      title: row.title,
-      category: row.category,
-      location: row.location,
-      address: row.address,
-      date: row.dateTime.toISOString().slice(0, 10),
-      time: row.dateTime.toISOString().slice(11, 16),
-      maxCapacity: row.maxCapacity,
-      image: row.image,
-      description: Object.values(row.description).find((value) => value.length > 0) ?? '',
-      createdAt: row.createdAt,
-      registrationsCount: Number(row.registrationsCount),
-    }));
+    return rows.map((row) => this.toRecord(row));
   }
-
   async findFeatured(): Promise<EventListingRecord[]> {
     const registrationCount = sql<number>`count(${registrations.eventId})`;
 
@@ -92,23 +77,8 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       .orderBy(asc(events.dateTime))
       .limit(4);
 
-    return rows.map((row) => ({
-      id: row.id,
-      organizerId: row.organizerId,
-      title: row.title,
-      category: row.category,
-      location: row.location,
-      address: row.address,
-      date: row.dateTime.toISOString().slice(0, 10),
-      time: row.dateTime.toISOString().slice(11, 16),
-      maxCapacity: row.maxCapacity,
-      image: row.image,
-      description: Object.values(row.description).find((value) => value.length > 0) ?? '',
-      createdAt: row.createdAt,
-      registrationsCount: Number(row.registrationsCount),
-    }));
+    return rows.map((row) => this.toRecord(row));
   }
-
   async getStats(): Promise<EventStats> {
     const [eventCountResult] = await this.db
       .select({
@@ -157,27 +127,36 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       .where(and(eq(registrations.userId, userId), eq(registrations.status, 'active')))
       .orderBy(asc(events.dateTime));
 
-    return rows.map((row) => ({
+    return rows.map((row) => this.toRecord({ ...row, registrationsCount: 0 }));
+  }
+
+  private toRecord(row: {
+    id: string;
+    organizerId: string;
+    title: string;
+    category: string[];
+    location: string;
+    address: string;
+    dateTime: Date;
+    maxCapacity: number;
+    image: string;
+    description: Record<string, string>;
+    createdAt: Date;
+    registrationsCount: number;
+  }): EventListingRecord {
+    return {
       id: row.id,
       organizerId: row.organizerId,
       title: row.title,
       category: row.category,
       location: row.location,
       address: row.address,
-      date: row.dateTime.toISOString().slice(0, 10),
-      time: row.dateTime.toISOString().slice(11, 16),
+      ...fromEventDateTime(row.dateTime),
       maxCapacity: row.maxCapacity,
       image: row.image,
       description: Object.values(row.description).find((value) => value.length > 0) ?? '',
       createdAt: row.createdAt,
-      registrationsCount: 0,
-    }));
-  }
-
-  async cancelUserRegistration(eventId: string, userId: string): Promise<void> {
-    await this.db
-      .update(registrations)
-      .set({ status: 'canceled' })
-      .where(and(eq(registrations.eventId, eventId), eq(registrations.userId, userId)));
+      registrationsCount: Number(row.registrationsCount),
+    };
   }
 }

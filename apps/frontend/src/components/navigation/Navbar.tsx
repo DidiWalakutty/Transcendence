@@ -64,7 +64,12 @@ export function Navbar() {
         <LanguageSwitcher />
 
         {/* User Menu */}
-        <UserMenu role={role} />
+        <UserMenu
+          role={role}
+          name={session?.user.name}
+          username={session?.user.username}
+          avatar={session?.user.image}
+        />
       </div>
     </nav>
   );

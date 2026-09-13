@@ -1,5 +1,5 @@
-import { Query, Mutation, Router, Input, Ctx } from 'nestjs-trpc';
-import { z } from 'zod';
+import { Query, Router, Input, Ctx } from 'nestjs-trpc';
+import { unauthorizedError } from '../trpc/trpc.errors';
 import { eventsSchema, eventSortSchema, type EventSortDto } from '@repo/schemas/events';
 import { EventListingsService } from './event-listings.service';
 import { eventStatsSchema } from '@repo/schemas/stats';
@@ -24,17 +24,9 @@ export class EventListingsRouter {
   }
 
   @Query({ output: eventsSchema })
-  async getMyRegisteredEvents(@Ctx() ctx: any) {
+  async getMyRegisteredEvents(@Ctx() ctx: { user: { id: string } | null }) {
     const userId = ctx.user?.id;
-    if (!userId) return [];
+    if (!userId) throw unauthorizedError('Not logged in');
     return this.eventListingsService.findRegisteredByUser(userId);
-  }
-
-  @Mutation({ input: z.object({ eventId: z.string() }), output: z.boolean() })
-  async cancelRegistration(@Input() input: { eventId: string }, @Ctx() ctx: any) {
-    const userId = ctx.user?.id;
-    if (!userId) return false;
-    await this.eventListingsService.cancelUserRegistration(input.eventId, userId);
-    return true;
   }
 }

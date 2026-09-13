@@ -2,17 +2,28 @@
 // Checks the request data and makes sure the user is allowed to perform the action.
 // Passes the request to the EventsService for processing and returns the result to the client.
 
-import { Router, Mutation, Input, Ctx, Query, UseMiddlewares } from 'nestjs-trpc';
+import {
+  Router,
+  Mutation,
+  Input,
+  Ctx,
+  Options,
+  Query,
+  Subscription,
+  UseMiddlewares,
+} from 'nestjs-trpc';
 import {
   createEventResultSchema,
   createEventSchema,
   deleteEventSchema,
   eventIdSchema,
+  eventChangedSubscriptionSchema,
   eventSchema,
   eventsSchema,
   updateEventSchema,
   type CreateEventDto,
   type DeleteEventDto,
+  type EventChangedDto,
   type UpdateEventDto,
 } from '@repo/schemas/events';
 import { EventsService } from './events.service';
@@ -55,7 +66,7 @@ export class EventsRouter {
     return { eventId };
   }
 
-  @Query({ input: eventIdSchema })
+  @Query({ input: eventIdSchema, output: eventSchema })
   async getEventById(@Input() input: { id: string }) {
     const event = await this.eventsService.findById(input.id);
 
@@ -63,6 +74,17 @@ export class EventsRouter {
       throw notFoundError('Event not found');
     }
     return event;
+  }
+
+  // Public: browsing events needs no session, so neither does watching them
+  // change. The stream carries only data getEvents already exposes.
+  @Subscription({ output: eventChangedSubscriptionSchema })
+  async *onEventChanged(
+    @Options() opts: { signal?: AbortSignal },
+  ): AsyncGenerator<EventChangedDto, void, void> {
+    for await (const change of this.eventsService.listenEventChangedWithHeartbeat(opts.signal)) {
+      yield change;
+    }
   }
 
   @UseMiddlewares(ProtectedMiddleware)

@@ -7,7 +7,8 @@
 import { useState, type ComponentProps, type FormEvent, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import type { EventDto } from '@repo/schemas/events';
-import { Eye, Pencil, Trash2 } from 'lucide-react';
+import type { EventAttendeeDto } from '@repo/schemas/registrations';
+import { Eye, Pencil, Trash2, Users } from 'lucide-react';
 
 import * as m from '@/@generated/paraglide/messages';
 import {
@@ -91,10 +92,14 @@ export function FormField({
 
 export function EventManagementTable({
   events,
+  attendeeCounts,
+  onAttendees,
   onEdit,
   onDelete,
 }: {
   events: EventDto[];
+  attendeeCounts?: Map<string, number>;
+  onAttendees?: (event: EventDto) => void;
   onEdit: (event: EventDto) => void;
   onDelete: (event: EventDto) => void;
 }) {
@@ -105,6 +110,7 @@ export function EventManagementTable({
           <TableHead>{m.admin_event()}</TableHead>
           <TableHead>{m.admin_date()}</TableHead>
           <TableHead>{m.admin_location()}</TableHead>
+          {attendeeCounts && <TableHead>{m.admin_attendees()}</TableHead>}
           <TableHead className="text-right">{m.admin_actions()}</TableHead>
         </TableRow>
       </TableHeader>
@@ -125,6 +131,23 @@ export function EventManagementTable({
               {event.date} · {event.time}
             </TableCell>
             <TableCell>{event.location}</TableCell>
+
+            {attendeeCounts && (
+              <TableCell>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="h-auto gap-2 px-2"
+                  onClick={() => onAttendees?.(event)}
+                >
+                  <Users className="size-4 text-muted-foreground" />
+                  <span>
+                    {attendeeCounts.get(event.id) ?? 0}/{event.maxCapacity}
+                  </span>
+                </Button>
+              </TableCell>
+            )}
+
             <TableCell>
               <div className="flex justify-end gap-1">
                 <Link
@@ -306,6 +329,47 @@ export function EventDeleteDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
+  );
+}
+
+export function EventAttendeeDialog({
+  event,
+  attendees,
+  onClose,
+}: {
+  event: EventDto | null;
+  attendees: EventAttendeeDto[];
+  onClose: () => void;
+}) {
+  return (
+    <Dialog open={event !== null} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{m.admin_attendees()}</DialogTitle>
+          <DialogDescription>
+            {event ? `${attendees.length}/${event.maxCapacity}` : ''}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="max-h-80 overflow-y-auto">
+          {attendees.length === 0 ? (
+            <p className="py-6 text-center text-muted-foreground">{m.admin_no_results()}</p>
+          ) : (
+            <div className="space-y-2">
+              {attendees.map((attendee) => (
+                <div
+                  key={attendee.id}
+                  className="flex items-center justify-between rounded-md border px-3 py-2"
+                >
+                  <span className="font-medium">{attendee.name}</span>
+                  <span className="text-muted-foreground">@{attendee.username}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

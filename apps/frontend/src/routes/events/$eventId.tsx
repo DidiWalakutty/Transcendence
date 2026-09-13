@@ -1,8 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
 import placeholderEvent from '@/assets/placeholder_event.png';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@/integrations/trpc/react';
 import { Button } from '@/components/ui/button';
+import { useEventStream } from '@/hooks/use-event-stream';
+import { useRegistrationMutations } from '@/hooks/use-registration-mutations';
 import { toast } from 'sonner';
 import * as m from '@/@generated/paraglide/messages';
 
@@ -28,6 +30,8 @@ const categoryTranslations: Record<string, () => string> = {
 function EventDetailPage() {
   const { eventId } = Route.useParams();
   const trpc = useTRPC();
+  // An edit by the organizer updates this page while it is open.
+  useEventStream();
 
   const eventQuery = useQuery(
     trpc.eventCreation.getEventById.queryOptions({
@@ -49,33 +53,7 @@ function EventDetailPage() {
     }),
   );
 
-  const registerMutation = useMutation(
-    trpc.registrations.register.mutationOptions({
-      onSuccess: async () => {
-        await Promise.all([ticketQuery.refetch(), registrationQuery.refetch()]);
-
-        toast.success(m.events_registration_success());
-      },
-
-      onError: () => {
-        toast.error(m.events_registration_error());
-      },
-    }),
-  );
-
-  const cancelMutation = useMutation(
-    trpc.registrations.cancel.mutationOptions({
-      onSuccess: async () => {
-        await Promise.all([ticketQuery.refetch(), registrationQuery.refetch()]);
-
-        toast.success(m.events_registration_cancel_success());
-      },
-
-      onError: () => {
-        toast.error(m.events_registration_cancel_error());
-      },
-    }),
-  );
+  const { register: registerMutation, cancel: cancelMutation } = useRegistrationMutations();
 
   const event = eventQuery.data;
 

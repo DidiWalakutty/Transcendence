@@ -17,6 +17,16 @@ export const registrationSchema = z.object({
 // Array of registrations
 export const registrationsSchema = registrationSchema.array();
 
+// Event attendee
+export const eventAttendeeSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  username: z.string(),
+});
+
+// List of event attendees
+export const eventAttendeesList = eventAttendeeSchema.array();
+
 // Event ticket availability
 export const ticketAvailabilitySchema = z.object({
   eventId: z.string(),
@@ -27,4 +37,5 @@ export const ticketAvailabilitySchema = z.object({
 
 export type CreateRegistrationDto = z.infer<typeof createRegistrationSchema>;
 export type RegistrationDto = z.infer<typeof registrationSchema>;
+export type EventAttendeeDto = z.infer<typeof eventAttendeeSchema>;
 export type TicketAvailabilityDto = z.infer<typeof ticketAvailabilitySchema>;

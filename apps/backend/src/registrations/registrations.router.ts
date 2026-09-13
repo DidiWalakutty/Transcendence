@@ -13,6 +13,7 @@ import { Router, Mutation, Query, Input, Ctx } from 'nestjs-trpc';
 import { createRegistrationSchema, registrationSchema } from '@repo/schemas/registrations';
 
 import type { CreateRegistrationDto } from '@repo/schemas/registrations';
+import { eventAttendeesList } from '@repo/schemas/registrations';
 import { unauthorizedError } from '../trpc/trpc.errors';
 import { RegistrationsService } from './registrations.service';
 import { eventIdSchema } from '@repo/schemas/events';
@@ -60,6 +61,7 @@ export class RegistrationsRouter {
     return this.registrationsService.getAvailableTickets(input.id);
   }
 
+  // Gets the logged-in user's active registration for an event
   @Query({
     input: eventIdSchema,
     output: registrationSchema.nullable(),
@@ -72,5 +74,20 @@ export class RegistrationsRouter {
       return null;
     }
     return this.registrationsService.getMyRegistration(input.id, ctx.user.id);
+  }
+
+  // Gets a list of users who are registered for an event
+  @Query({
+    input: eventIdSchema,
+    output: eventAttendeesList,
+  })
+  async getEventAttendees(
+    @Input() input: { id: string },
+    @Ctx() ctx: { user: { id: string } | null },
+  ) {
+    if (!ctx.user) {
+      throw unauthorizedError('Not logged in');
+    }
+    return this.registrationsService.getEventAttendees(input.id, ctx.user.id);
   }
 }

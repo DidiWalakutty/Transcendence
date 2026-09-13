@@ -47,11 +47,7 @@ export class InMemoryEventListingsRepository extends EventListingsRepository {
     };
   }
 
-  async findRegisteredByUser(_userId: string): Promise<any[]> {
+  async findRegisteredByUser(_userId: string): Promise<EventListingRecord[]> {
     return [];
-  }
-
-  async cancelUserRegistration(_eventId: string, _userId: string): Promise<void> {
-    return;
   }
 }

@@ -16,5 +16,4 @@ export abstract class EventListingsRepository {
   abstract findFeatured(): Promise<EventListingRecord[]>;
   abstract getStats(): Promise<EventStats>;
   abstract findRegisteredByUser(userId: string): Promise<EventListingRecord[]>;
-  abstract cancelUserRegistration(eventId: string, userId: string): Promise<void>;
 }

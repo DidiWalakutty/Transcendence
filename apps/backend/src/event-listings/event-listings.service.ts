@@ -33,8 +33,4 @@ export class EventListingsService {
       ({ createdAt: _createdAt, registrationsCount: _registrationsCount, ...event }) => event,
     );
   }
-
-  async cancelUserRegistration(eventId: string, userId: string): Promise<void> {
-    await this.repository.cancelUserRegistration(eventId, userId);
-  }
 }

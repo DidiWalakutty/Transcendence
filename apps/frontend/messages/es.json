@@ -159,6 +159,9 @@
   "events_page_pagination_prev": "Previous",
   "events_page_pagination_next": "Next",
 
+  "events_live_connected": "En vivo — se actualiza cuando cambian los eventos",
+  "events_live_reconnecting": "Reconectando a las actualizaciones en vivo…",
+
   "my_events_page_title": "Mis Eventos",
   "my_events_page_subtitle": "Los eventos que has creado.",
   "my_events_page_empty_title": "Todavía no has creado ningún evento",
@@ -166,6 +169,9 @@
   "my_events_manage_title": "Gestiona tus eventos",
   "my_events_manage_description": "Edita o elimina los eventos que organizas.",
   "my_events_search": "Busca en tus eventos",
+
+  "profile_avatar_upload": "Subir avatar",
+  "profile_avatar_remove": "Eliminar avatar",
 
   "event_sorting_upcoming": "Upcoming",
   "event_sorting_popular": "Most popular",

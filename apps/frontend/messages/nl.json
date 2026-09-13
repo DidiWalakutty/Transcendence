@@ -162,6 +162,9 @@
   "events_page_pagination_prev": "Vorige",
   "events_page_pagination_next": "Volgende",
 
+  "events_live_connected": "Live — werkt bij zodra events wijzigen",
+  "events_live_reconnecting": "Opnieuw verbinden met live updates…",
+
   "my_events_page_title": "Mijn Events",
   "my_events_page_subtitle": "De events die je hebt aangemaakt.",
   "my_events_page_empty_title": "Je hebt nog geen events aangemaakt",
@@ -169,6 +172,9 @@
   "my_events_manage_title": "Beheer je events",
   "my_events_manage_description": "Bewerk of verwijder de events die je organiseert.",
   "my_events_search": "Zoek in je events",
+
+  "profile_avatar_upload": "Avatar uploaden",
+  "profile_avatar_remove": "Avatar verwijderen",
 
   "events_about_title": "Over dit evenement",
   "events_tickets_title": "Kaartjes",
@@ -364,6 +370,7 @@
   "admin_date": "Datum",
   "admin_time": "Tijd",
   "admin_location": "Locatie",
+  "admin_attendees": "Deelnemers",
   "admin_view": "Bekijken",
   "admin_edit": "Bewerken",
   "admin_delete": "Verwijderen",
@@ -394,5 +401,8 @@
         "date=*": "{formattedDate}"
       }
     }
-  ]
+  ],
+  "my_tickets_empty_title": "Je hebt nog geen tickets",
+  "my_tickets_empty_description": "Bekijk de evenementen en meld je aan voor een evenement dat je wilt bezoeken.",
+  "my_tickets_browse_events": "Bekijk evenementen"
 }

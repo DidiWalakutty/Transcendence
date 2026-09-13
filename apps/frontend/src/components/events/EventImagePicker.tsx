@@ -5,56 +5,14 @@ import placeholderEvent from '@/assets/placeholder_event.png';
 import * as m from '@/@generated/paraglide/messages';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { compressImage } from '@/lib/image';
 
 const MAX_SOURCE_IMAGE_SIZE = 10 * 1024 * 1024;
-const MAX_STORED_IMAGE_SIZE = 72 * 1024;
-const MAX_IMAGE_WIDTH = 1280;
-const MAX_IMAGE_HEIGHT = 720;
-
-function readFile(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () =>
-      typeof reader.result === 'string' ? resolve(reader.result) : reject(new Error());
-    reader.onerror = () => reject(reader.error ?? new Error());
-    reader.readAsDataURL(file);
-  });
-}
-
-function loadImage(source: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error());
-    image.src = source;
-  });
-}
-
-async function compressImage(file: File): Promise<string> {
-  const source = await readFile(file);
-  const image = await loadImage(source);
-  let scale = Math.min(1, MAX_IMAGE_WIDTH / image.width, MAX_IMAGE_HEIGHT / image.height);
-  let lastResult = source;
-
-  for (let resizeAttempt = 0; resizeAttempt < 5; resizeAttempt += 1) {
-    const canvas = document.createElement('canvas');
-    canvas.width = Math.max(1, Math.round(image.width * scale));
-    canvas.height = Math.max(1, Math.round(image.height * scale));
-    const context = canvas.getContext('2d');
-    if (!context) throw new Error();
-    context.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-    for (const quality of [0.82, 0.68, 0.54, 0.4]) {
-      lastResult = canvas.toDataURL('image/webp', quality);
-      if (lastResult.length <= MAX_STORED_IMAGE_SIZE) return lastResult;
-    }
-
-    scale *= 0.75;
-  }
-
-  if (lastResult.length > MAX_STORED_IMAGE_SIZE) throw new Error();
-  return lastResult;
-}
+const COMPRESS_OPTIONS = {
+  maxWidth: 1280,
+  maxHeight: 720,
+  maxBytes: 72 * 1024,
+};
 
 export function EventImagePicker({
   id,
@@ -82,7 +40,7 @@ export function EventImagePicker({
     }
 
     try {
-      onValueChange(await compressImage(file));
+      onValueChange(await compressImage(file, COMPRESS_OPTIONS));
       setError(undefined);
     } catch {
       setError(m.event_image_read_error());
