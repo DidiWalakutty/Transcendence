@@ -761,14 +761,15 @@
           <h2 id="heading-purpose">What are we building?</h2>
           <p class="lead">
             ft_transcendence is an event platform. An organizer can publish an event, and other
-            people can discover it, read its details, and connect with people they know.
+            people can discover it, reserve a place, manage their tickets, and connect with people
+            they know.
           </p>
           <p>
             Imagine Maya organizing a board-game evening. She creates an account, enters the
             location and date, chooses a category, and publishes the event. Leo opens the website to
-            browse. He sees Maya's event and opens its detail page. If Maya changes the description,
-            an open page that subscribes to event updates can receive that change without a manual
-            refresh.
+            browse. He sees Maya's event, opens its detail page, and registers for a place. Maya can
+            see him in the attendee list. If Maya changes the description, an open page that
+            subscribes to event updates can receive that change without a manual refresh.
           </p>
           <p>
             This guide explains the code on the <code>docs-onboarding</code> branch. It separates
@@ -794,8 +795,8 @@
                 <tr>
                   <td>Accounts</td>
                   <td>
-                    Sign up, log in, manage a profile, and enable two-factor authentication. Better
-                    Auth handles account and session machinery.
+                    Sign up, log in, edit a profile, upload or remove a profile picture, and enable
+                    two-factor authentication. Better Auth handles accounts and sessions.
                   </td>
                 </tr>
                 <tr>
@@ -815,8 +816,9 @@
                 <tr>
                   <td>Registration and tickets</td>
                   <td>
-                    The database table and persistence operations exist, but the registration router
-                    and service are empty. A complete ticket-booking flow is still unfinished.
+                    Register from an event page, see available places, and cancel a registration. My
+                    Tickets lists your active registrations by event date and lets you search or
+                    cancel. Organizers can view attendees in My Events.
                   </td>
                 </tr>
                 <tr>
@@ -1016,6 +1018,19 @@
             fetched again. That second action is called <strong>invalidation</strong>. The cache is
             useful, but the database remains the durable record. A cache can be stale.
           </p>
+          <h3>Two personal event pages</h3>
+          <p>
+            <code>/my-events</code> shows events you organize. You can edit or delete them and open
+            their attendee lists. <code>/my-tickets</code> shows events you have registered for,
+            ordered by event date. You can search by title, location, address, or category and
+            cancel a ticket after confirming your choice. Both pages require a login and are linked
+            from the user menu and profile.
+          </p>
+          <p>
+            If you have no tickets, the page offers a Browse Events link. If you have tickets but
+            your search matches none, it shows a different message. These are different situations:
+            one invites you to register, while the other tells you to change your search.
+          </p>
           <h3>Forms and appearance</h3>
           <p>
             TanStack Form manages values and validation in several forms, including authentication
@@ -1105,7 +1120,11 @@
           <p>
             A <strong>DTO</strong>, or data transfer object, is simply the shape of data sent
             between parts of the program. An event DTO has separate date and time fields, while the
-            database stores a date/time field. The repository converts between these shapes.
+            database stores a date/time field. The repository converts between these shapes. Shared
+            <code>toEventDateTime</code> and <code>fromEventDateTime</code> helpers keep the entered
+            clock time consistent when saving and reading. For example, an organizer's 18:00 should
+            still display as 18:00. The database column does not store a time zone; these helpers do
+            not convert an event to each visitor's local time zone.
           </p>
           <p>
             Generated tRPC types tell the frontend which operations and values are available. They
@@ -1397,6 +1416,88 @@
               </li>
             </ol>
           </details>
+          <h3 id="ticket-journey">Follow Leo's ticket from click to confirmation</h3>
+          <p>
+            A ticket here is a saved registration linking a user to an event. This flow reserves a
+            place; it does not include a payment checkout or a downloadable ticket.
+          </p>
+          <ol class="steps">
+            <li>
+              <h3>Leo checks availability</h3>
+              <p>
+                The event page asks for the remaining places and whether Leo already has an active
+                registration. Available places equal the event capacity minus active registrations.
+              </p>
+            </li>
+            <li>
+              <h3>He asks to register</h3>
+              <p>
+                The frontend calls <code>registrations.register</code> with the event ID. The
+                backend checks the session and takes Leo's user ID from it. The shared registration
+                schema checks the input before the service handles it.
+              </p>
+            </li>
+            <li>
+              <h3>The database checks and reserves a place</h3>
+              <p>
+                The repository checks that the event exists, Leo has not already registered, and
+                capacity remains. It groups these checks and the insert in a
+                <strong>transaction</strong>, a database operation whose changes succeed or fail
+                together. It also locks the event row while registering so two people competing for
+                the last place are handled in turn.
+              </p>
+            </li>
+            <li>
+              <h3>The pages fetch current information</h3>
+              <p>
+                Both the event page and My Tickets use <code>useRegistrationMutations</code>, shared
+                React code for registration changes. After success it marks the ticket list, event
+                lists, featured events, registration status, availability, and attendee data as
+                outdated. Open queries can fetch again; inactive ones refresh when used again.
+              </p>
+            </li>
+            <li>
+              <h3>Leo can cancel later</h3>
+              <p>
+                Both pages call <code>registrations.cancel</code>. The database changes his active
+                registration to <code>canceled</code>, so it no longer uses a place. A missing login
+                or missing active registration produces an error. My Tickets shows the error and
+                keeps the confirmation dialog open if cancellation fails.
+              </p>
+            </li>
+          </ol>
+          <p>
+            The shared notification setup displays progress and the result. The pages do not add
+            another set of popup messages for the same request. My Tickets also rejects an expired
+            session when loading the list, rather than showing it as an empty collection.
+          </p>
+          <h3>What Maya can see as organizer</h3>
+          <p>
+            My Events shows attendee counts and lets Maya open a list of active attendees with their
+            names and usernames. The backend checks event ownership before returning this list. This
+            check requires the organizer, even though administrators have broader permissions for
+            editing events.
+          </p>
+          <p class="sources">
+            Follow the ticket code:
+            <a href="../apps/frontend/src/routes/my-tickets.tsx">My Tickets page</a> ·
+            <a href="../apps/frontend/src/hooks/use-registration-mutations.ts"
+              >Shared registration requests</a
+            >
+            ·
+            <a href="../apps/backend/src/registrations/registrations.router.ts"
+              >Registration request handlers</a
+            >
+            ·
+            <a href="../apps/backend/src/registrations/registrations.service.ts"
+              >Registration rules</a
+            >
+            ·
+            <a
+              href="../apps/backend/src/registrations/repositories/drizzle-registrations.repository.ts"
+              >Registration storage</a
+            >
+          </p>
         </section>
         <section id="identity" aria-labelledby="heading-identity">
           <div class="eyebrow">09 / Accounts</div>
@@ -1456,6 +1557,28 @@
             <strong>Two-factor authentication</strong>, or 2FA, adds a verification step after the
             password. This project supports authenticator codes and backup codes. An authenticator
             code changes over time; backup codes provide another verification path.
+          </p>
+          <h3>Adding a profile picture</h3>
+          <p>
+            The profile editor lets you choose or remove an image. <code>AvatarPicker</code>
+            checks the selected file, crops it to a centered square, and reduces its size in the
+            browser. Saving the profile stores the result in the user's avatar field.
+          </p>
+          <p>
+            The image becomes a <strong>data URL</strong>, text containing the image itself.
+            PostgreSQL stores that text rather than a path to a separate uploaded file. Event images
+            use the same compression helper with different size settings. The shared
+            <code>UserAvatar</code> component displays a picture when available and initials
+            otherwise, including after the picture is removed.
+          </p>
+          <p class="sources">
+            Explore profile images:
+            <a href="../apps/frontend/src/routes/profile.tsx">Profile page</a> ·
+            <a href="../apps/frontend/src/components/AvatarPicker.tsx">Image selection</a> ·
+            <a href="../apps/frontend/src/lib/image.ts">Image compression</a> ·
+            <a href="../apps/frontend/src/components/UserAvatar.tsx"
+              >Picture and initials display</a
+            >
           </p>
           <p>
             Cookies must reach the backend from both the browser and server-rendered page requests.
@@ -1522,6 +1645,18 @@
             process. Redis does not distribute those messages across backend instances. Running
             several backend instances would require additional coordination. The stream also does
             not provide a permanent history of messages missed while disconnected.
+          </p>
+          <h3>Ticket refreshes and user updates</h3>
+          <p>
+            Registering or cancelling refreshes related queries in the browser that made the
+            request. That is separate from the event-change subscription. The registration service
+            does not broadcast ticket changes to every other browser, so another visitor's ticket
+            count is not guaranteed to change immediately.
+          </p>
+          <p>
+            The admin dashboard also uses <code>useUserStream</code>. It listens for user creation,
+            editing, and deletion messages and updates the cached user directory. These user
+            subscriptions require administrator access.
           </p>
           <h3>Online status is a different kind of live data</h3>
           <p>
@@ -2105,12 +2240,11 @@
             </p>
           </details>
           <details>
-            <summary>
-              Can someone register for tickets just because the registrations table exists?
-            </summary>
+            <summary>What happens if two people try to reserve the last place?</summary>
             <p>
-              No. Storage is only one part of the feature. This branch still lacks the connected
-              registration request handlers and full user flow.
+              The registration repository locks the event row inside a transaction. It checks
+              availability and saves the registration before the next competing registration can
+              check that event. The next request then sees that no places remain.
             </p>
           </details>
           <div class="next-links">
@@ -2128,11 +2262,11 @@
           <aside class="note">
             <h3>Version context</h3>
             <p>
-              Before writing this guide, the remote references were fetched on 10 September 2026.
-              Main was at <code>44fe84c</code>. The starting docs-onboarding commit was
-              <code>f7ee787</code>, five commits ahead and zero behind main. Its extra changes
-              include event subscriptions, outage handling, and onboarding documents. No merge was
-              required.
+              Updated on 13 September 2026 after merging main at <code>026f557</code> into
+              docs-onboarding in commit <code>adff9cc</code>. The application code at that point
+              matches main; the branch adds the onboarding documents. This guide now covers
+              registration and cancellation, My Tickets, attendee lists, profile images, shared date
+              handling, and the latest query-refresh behavior.
             </p>
             <p>
               The descriptions above reflect that branch's implementation. For later changes,
@@ -2144,7 +2278,7 @@
       </main>
     </div>
     <footer>
-      ft_transcendence · Beginner's project guide · Prepared 10 September 2026<br />This page is
+      ft_transcendence · Beginner's project guide · Updated 13 September 2026<br />This page is
       self-contained. The linked source files and Markdown guides need the rest of the repository.
     </footer>
   </body>
