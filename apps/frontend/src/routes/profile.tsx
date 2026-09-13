@@ -12,6 +12,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Spinner } from '@/components/ui/spinner';
 import { Link } from '@tanstack/react-router';
 import { TwoFactorSettings } from '@/components/TwoFactorSettings';
+import { AvatarPicker } from '@/components/AvatarPicker';
+import { NO_AVATAR, UserAvatar } from '@/components/UserAvatar';
 
 export const Route = createFileRoute('/profile')({
   beforeLoad: ({ context: { session } }) => {
@@ -65,6 +67,9 @@ function ProfilePage() {
   const [aboutMe, setAboutMe] = useState('');
   const [location, setLocation] = useState('');
   const [language, setLanguage] = useState('');
+  // Seeded from the loader-prefetched user so the avatar renders server-side
+  // instead of flashing initials until the sync effect runs.
+  const [avatar, setAvatar] = useState<string>(user?.avatar ?? NO_AVATAR);
 
   // Sync form state when user loads
   useEffect(() => {
@@ -74,6 +79,7 @@ function ProfilePage() {
       setAboutMe(user.aboutMe ?? '');
       setLocation(user.location ?? '');
       setLanguage(user.preferedLanguage ?? '');
+      setAvatar(user.avatar ?? NO_AVATAR);
     }
   }, [user]);
 
@@ -125,6 +131,7 @@ function ProfilePage() {
       aboutMe,
       location,
       preferedLanguage: language,
+      avatar,
     });
   };
 
@@ -189,9 +196,12 @@ function ProfilePage() {
       <Card>
         {/* Avatar */}
         <CardHeader className="flex flex-col items-center gap-4">
-          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-primary text-4xl font-bold text-white">
-            {user?.name?.charAt(0).toUpperCase()}
-          </div>
+          <AvatarPicker
+            value={avatar}
+            name={user?.name}
+            username={user?.username}
+            onValueChange={setAvatar}
+          />
           <CardTitle>{user?.displayUsername ?? user?.username}</CardTitle>
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
             <StatusDot online={isSelfOnline} />
@@ -320,7 +330,15 @@ function ProfilePage() {
               <h3 className="text-sm font-medium text-muted-foreground">Pending requests</h3>
               {pending.map((person) => (
                 <div key={person.id} className="flex items-center justify-between gap-4">
-                  <span>{person.displayUsername ?? person.username}</span>
+                  <span className="flex items-center gap-2">
+                    <UserAvatar
+                      name={person.name}
+                      username={person.username}
+                      avatar={person.avatar}
+                      className="size-8"
+                    />
+                    {person.displayUsername ?? person.username}
+                  </span>
                   <Button
                     size="sm"
                     disabled={acceptFriend.isPending}
@@ -340,6 +358,12 @@ function ProfilePage() {
               friends.map((person) => (
                 <div key={person.id} className="flex items-center justify-between gap-4">
                   <span className="flex items-center gap-2">
+                    <UserAvatar
+                      name={person.name}
+                      username={person.username}
+                      avatar={person.avatar}
+                      className="size-8"
+                    />
                     <StatusDot online={onlineIds.has(person.id)} />
                     {person.displayUsername ?? person.username}
                     <span className="text-xs text-muted-foreground">

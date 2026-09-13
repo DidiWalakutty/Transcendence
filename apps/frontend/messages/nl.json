@@ -161,6 +161,9 @@
   "events_page_pagination_prev": "Vorige",
   "events_page_pagination_next": "Volgende",
 
+  "events_live_connected": "Live — werkt bij zodra events wijzigen",
+  "events_live_reconnecting": "Opnieuw verbinden met live updates…",
+
   "my_events_page_title": "Mijn Events",
   "my_events_page_subtitle": "De events die je hebt aangemaakt.",
   "my_events_page_empty_title": "Je hebt nog geen events aangemaakt",
@@ -168,6 +171,9 @@
   "my_events_manage_title": "Beheer je events",
   "my_events_manage_description": "Bewerk of verwijder de events die je organiseert.",
   "my_events_search": "Zoek in je events",
+
+  "profile_avatar_upload": "Avatar uploaden",
+  "profile_avatar_remove": "Avatar verwijderen",
 
   "events_about_title": "Over dit evenement",
   "events_tickets_title": "Kaartjes",

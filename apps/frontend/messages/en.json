@@ -161,6 +161,9 @@
   "events_page_pagination_prev": "Previous",
   "events_page_pagination_next": "Next",
 
+  "events_live_connected": "Live — updates as events change",
+  "events_live_reconnecting": "Reconnecting to live updates…",
+
   "my_events_page_title": "My Events",
   "my_events_page_subtitle": "The events you have created.",
   "my_events_page_empty_title": "You have not created any events yet",
@@ -168,6 +171,9 @@
   "my_events_manage_title": "Manage your events",
   "my_events_manage_description": "Edit or delete the events you organize.",
   "my_events_search": "Search your events",
+
+  "profile_avatar_upload": "Upload avatar",
+  "profile_avatar_remove": "Remove avatar",
 
   "events_about_title": "About this event",
   "events_tickets_title": "Tickets",
