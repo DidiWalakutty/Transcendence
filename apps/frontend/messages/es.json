@@ -170,6 +170,9 @@
   "my_events_manage_description": "Edita o elimina los eventos que organizas.",
   "my_events_search": "Busca en tus eventos",
 
+  "profile_avatar_upload": "Subir avatar",
+  "profile_avatar_remove": "Eliminar avatar",
+
   "event_sorting_upcoming": "Upcoming",
   "event_sorting_popular": "Most popular",
   "event_sorting_newest": "Recently added",

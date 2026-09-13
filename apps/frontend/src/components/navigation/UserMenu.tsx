@@ -10,15 +10,19 @@ import {
 
 import { User } from 'lucide-react';
 import { authClient } from '@/lib/auth-client';
+import { UserAvatar } from '@/components/UserAvatar';
 import type { UserRole } from './navigation.config';
 import * as m from '@/@generated/paraglide/messages';
 import { toast } from 'sonner';
 
 interface UserMenuProps {
   role: UserRole;
+  name?: string | null;
+  username?: string | null;
+  avatar?: string | null;
 }
 
-export function UserMenu({ role }: UserMenuProps) {
+export function UserMenu({ role, name, username, avatar }: UserMenuProps) {
   const navigate = useNavigate();
   const router = useRouter();
 
@@ -52,7 +56,7 @@ export function UserMenu({ role }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
-        <User className="h-5 w-5 text-text-primary 2xl:h-7 2xl:w-7" />
+        <UserAvatar name={name} username={username} avatar={avatar} className="size-7 2xl:size-9" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
