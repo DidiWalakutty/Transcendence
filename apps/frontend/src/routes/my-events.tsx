@@ -1,13 +1,15 @@
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { useMemo, useState, type FormEvent } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { EventDto } from '@repo/schemas/events';
+import type { EventAttendeeDto } from '@repo/schemas/registrations';
 import { CalendarDays, Plus, Search } from 'lucide-react';
 
 import * as m from '@/@generated/paraglide/messages';
 import { useTRPC } from '@/integrations/trpc/react';
 import { useEventStream } from '@/hooks/use-event-stream';
 import {
+  EventAttendeeDialog,
   EventDeleteDialog,
   EventEditDialog,
   EventManagementTable,
@@ -49,8 +51,15 @@ function MyEventsPage() {
   const [search, setSearch] = useState('');
   const [editTarget, setEditTarget] = useState<EventDto | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<EventDto | null>(null);
+  const [attendeeTarget, setAttendeeTarget] = useState<EventDto | null>(null);
 
   const myEventsQuery = useQuery(trpc.eventCreation.getMyEvents.queryOptions());
+
+  const attendeeQueries = useQueries({
+    queries: (myEventsQuery.data ?? []).map((event) =>
+      trpc.registrations.getEventAttendees.queryOptions({ id: event.id }),
+    ),
+  });
 
   // Both mutations are owner-or-admin on the server; getMyEvents only ever
   // returns events this user organizes, so the table cannot offer someone
@@ -87,6 +96,34 @@ function MyEventsPage() {
       ),
     );
   }, [search, myEventsQuery.data]);
+
+  const attendeeCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+
+    (myEventsQuery.data ?? []).forEach((event, index) => {
+      const attendees = attendeeQueries[index]?.data;
+
+      if (attendees) {
+        counts.set(event.id, attendees.length);
+      }
+    });
+
+    return counts;
+  }, [myEventsQuery.data, attendeeQueries]);
+
+  const attendees = useMemo(() => {
+    const attendeeMap = new Map<string, EventAttendeeDto[]>();
+
+    (myEventsQuery.data ?? []).forEach((event, index) => {
+      const eventAttendees = attendeeQueries[index]?.data;
+
+      if (eventAttendees) {
+        attendeeMap.set(event.id, eventAttendees);
+      }
+    });
+
+    return attendeeMap;
+  }, [myEventsQuery.data, attendeeQueries]);
 
   function submitEvent(submitEvent: FormEvent<HTMLFormElement>) {
     submitEvent.preventDefault();
@@ -183,6 +220,8 @@ function MyEventsPage() {
           <CardContent>
             <EventManagementTable
               events={events}
+              attendeeCounts={attendeeCounts}
+              onAttendees={setAttendeeTarget}
               onEdit={setEditTarget}
               onDelete={setDeleteTarget}
             />
@@ -204,6 +243,12 @@ function MyEventsPage() {
         pending={deleteEvent.isPending}
         onCancel={() => setDeleteTarget(null)}
         onConfirm={() => deleteTarget && deleteEvent.mutate({ id: deleteTarget.id })}
+      />
+
+      <EventAttendeeDialog
+        event={attendeeTarget}
+        attendees={attendeeTarget ? (attendees.get(attendeeTarget.id) ?? []) : []}
+        onClose={() => setAttendeeTarget(null)}
       />
     </div>
   );
