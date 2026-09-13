@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { asc, desc, eq, sql } from 'drizzle-orm';
+import { asc, desc, eq, sql, and } from 'drizzle-orm';
 
 import { events, registrations } from '@repo/schemas/database';
 import { type EventSortDto } from '@repo/schemas/events';
@@ -67,6 +67,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       registrationsCount: Number(row.registrationsCount),
     }));
   }
+
   async findFeatured(): Promise<EventListingRecord[]> {
     const registrationCount = sql<number>`count(${registrations.eventId})`;
 
@@ -107,6 +108,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       registrationsCount: Number(row.registrationsCount),
     }));
   }
+
   async getStats(): Promise<EventStats> {
     const [eventCountResult] = await this.db
       .select({
@@ -133,5 +135,49 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       locationCount: Number(locationCountResult.count),
       categoryCount: Number(categoryCountResult.rows[0]?.count ?? 0),
     };
+  }
+
+  async findRegisteredByUser(userId: string): Promise<EventListingRecord[]> {
+    const rows = await this.db
+      .select({
+        id: events.id,
+        title: events.title,
+        organizerId: events.organizerId,
+        createdAt: events.createdAt,
+        description: events.description,
+        image: events.image,
+        location: events.location,
+        address: events.address,
+        dateTime: events.dateTime,
+        maxCapacity: events.maxCapacity,
+        category: events.category,
+      })
+      .from(registrations)
+      .innerJoin(events, eq(registrations.eventId, events.id))
+      .where(and(eq(registrations.userId, userId), eq(registrations.status, 'active')))
+      .orderBy(asc(events.dateTime));
+
+    return rows.map((row) => ({
+      id: row.id,
+      organizerId: row.organizerId,
+      title: row.title,
+      category: row.category,
+      location: row.location,
+      address: row.address,
+      date: row.dateTime.toISOString().slice(0, 10),
+      time: row.dateTime.toISOString().slice(11, 16),
+      maxCapacity: row.maxCapacity,
+      image: row.image,
+      description: Object.values(row.description).find((value) => value.length > 0) ?? '',
+      createdAt: row.createdAt,
+      registrationsCount: 0,
+    }));
+  }
+
+  async cancelUserRegistration(eventId: string, userId: string): Promise<void> {
+    await this.db
+      .update(registrations)
+      .set({ status: 'canceled' })
+      .where(and(eq(registrations.eventId, eventId), eq(registrations.userId, userId)));
   }
 }

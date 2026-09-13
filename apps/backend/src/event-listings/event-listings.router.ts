@@ -1,5 +1,5 @@
-import { Query, Router, Input } from 'nestjs-trpc';
-
+import { Query, Mutation, Router, Input, Ctx } from 'nestjs-trpc';
+import { z } from 'zod';
 import { eventsSchema, eventSortSchema, type EventSortDto } from '@repo/schemas/events';
 import { EventListingsService } from './event-listings.service';
 import { eventStatsSchema } from '@repo/schemas/stats';
@@ -21,5 +21,20 @@ export class EventListingsRouter {
   @Query({ output: eventStatsSchema })
   async getEventStats() {
     return this.eventListingsService.getStats();
+  }
+
+  @Query({ output: eventsSchema })
+  async getMyRegisteredEvents(@Ctx() ctx: any) {
+    const userId = ctx.user?.id;
+    if (!userId) return [];
+    return this.eventListingsService.findRegisteredByUser(userId);
+  }
+
+  @Mutation({ input: z.object({ eventId: z.string() }), output: z.boolean() })
+  async cancelRegistration(@Input() input: { eventId: string }, @Ctx() ctx: any) {
+    const userId = ctx.user?.id;
+    if (!userId) return false;
+    await this.eventListingsService.cancelUserRegistration(input.eventId, userId);
+    return true;
   }
 }

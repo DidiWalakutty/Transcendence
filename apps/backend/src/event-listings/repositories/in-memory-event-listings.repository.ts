@@ -46,4 +46,12 @@ export class InMemoryEventListingsRepository extends EventListingsRepository {
       categoryCount,
     };
   }
+
+  async findRegisteredByUser(_userId: string): Promise<any[]> {
+    return [];
+  }
+
+  async cancelUserRegistration(_eventId: string, _userId: string): Promise<void> {
+    return;
+  }
 }
