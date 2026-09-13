@@ -7,6 +7,7 @@ import { EventSort } from '@/components/events/EventSort';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
 import { z } from 'zod';
 import { useTRPC } from '@/integrations/trpc/react';
+import { useEventStream } from '@/hooks/use-event-stream';
 import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute('/events/')({
@@ -17,10 +18,16 @@ export const Route = createFileRoute('/events/')({
   }),
   loaderDeps: ({ search }) => ({ sort: search.sort ?? 'upcoming' }),
   loader: async ({ context, deps }) => {
-    await context.queryClient.query({
-      ...context.trpc.events.getEvents.queryOptions(deps.sort),
-      staleTime: 'static',
-    });
+    // A loader throw fails the whole route, so a backend that is down turns
+    // this page into an error screen. Render the shell instead and let the
+    // query retry on the client, which is also what the realtime watchdog
+    // does after a reconnect.
+    await context.queryClient
+      .query({
+        ...context.trpc.events.getEvents.queryOptions(deps.sort),
+        staleTime: 'static',
+      })
+      .catch(() => undefined);
   },
   component: EventsPage,
 });
@@ -33,6 +40,9 @@ function EventsPage() {
   const selectedCategories = category ? category.split(',') : [];
   const selectedSort = sort ?? 'upcoming';
   const trpc = useTRPC();
+  // Keeps this listing current while it is open: another user creating,
+  // editing or deleting an event patches the cache here without a refetch.
+  const { connected, failed } = useEventStream();
   const eventsQuery = useQuery(trpc.events.getEvents.queryOptions(selectedSort));
   const events = eventsQuery.data ?? [];
 
@@ -93,6 +103,16 @@ function EventsPage() {
             </h1>
 
             <p className="mt-3 text-surface-footer/80">{m.events_page_subtitle()}</p>
+
+            <p className="mt-4 flex items-center gap-2 text-sm text-surface-footer/70">
+              <span
+                aria-hidden="true"
+                className={`inline-block size-2 rounded-full ${
+                  connected ? 'bg-green-500' : failed ? 'bg-destructive' : 'bg-surface-footer/40'
+                }`}
+              />
+              {connected ? m.events_live_connected() : m.events_live_reconnecting()}
+            </p>
           </div>
 
           <div />
