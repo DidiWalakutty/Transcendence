@@ -386,3 +386,94 @@ export function formCategories(data: FormData): string[] {
     .map((category) => category.trim())
     .filter(Boolean);
 }
+
+export function TicketManagementTable({
+  tickets,
+  onCancel,
+}: {
+  tickets: EventDto[];
+  onCancel: (ticket: EventDto) => void;
+}) {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>{m.my_tickets_table_event()}</TableHead>
+          <TableHead>{m.my_tickets_table_date()}</TableHead>
+          <TableHead>{m.my_tickets_table_location()}</TableHead>
+          <TableHead className="text-right">{m.my_tickets_table_actions()}</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {tickets.map((ticket) => (
+          <TableRow key={ticket.id}>
+            <TableCell>
+              <div className="font-medium">{ticket.title}</div>
+              <div className="flex gap-1 pt-1">
+                {ticket.category.slice(0, 2).map((category) => (
+                  <Badge key={category} variant="outline">
+                    {category}
+                  </Badge>
+                ))}
+              </div>
+            </TableCell>
+            <TableCell>
+              {ticket.date} · {ticket.time}
+            </TableCell>
+            <TableCell>{ticket.location}</TableCell>
+            <TableCell>
+              <div className="flex justify-end gap-1">
+                <Link
+                  to="/events/$eventId"
+                  params={{ eventId: ticket.id }}
+                  className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}
+                  aria-label={m.my_tickets_action_view()}
+                  title={m.my_tickets_action_view()}
+                >
+                  <Eye />
+                </Link>
+                <ActionButton
+                  destructive
+                  label={m.my_tickets_cancel_action()}
+                  icon={<Trash2 />}
+                  onClick={() => onCancel(ticket)}
+                />
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+export function TicketCancelDialog({
+  ticket,
+  pending,
+  onCancel,
+  onConfirm,
+}: {
+  ticket: EventDto | null;
+  pending: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  return (
+    <AlertDialog open={ticket !== null} onOpenChange={(open) => !open && onCancel()}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{m.my_tickets_cancel_title()}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {m.my_tickets_cancel_description({ name: ticket?.title ?? '' })}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{m.my_tickets_cancel_abort()}</AlertDialogCancel>
+          <AlertDialogAction variant="destructive" disabled={pending} onClick={onConfirm}>
+            {pending ? <Spinner /> : m.my_tickets_cancel_confirm()}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}

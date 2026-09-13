@@ -21,6 +21,7 @@
   "button_tickets": "Tickets",
   "button_profile": "Profile",
   "button_my_events": "My Events",
+  "button_my_tickets": "My Tickets",
   "button_admin_panel": "Admin Panel",
   "button_spinner_sending": "Sending...",
   "button_ok": "OK",
@@ -242,6 +243,23 @@
   "toast_server_response_error": "The server returned an unreadable response. Please try again.",
   "create_event_create_button": "Create event",
 
+  "my_tickets_page_title": "My Tickets",
+  "my_tickets_page_subtitle": "Manage and view admission tokens for events you are attending.",
+  "my_tickets_card_title": "Manage your tickets",
+  "my_tickets_card_description": "View details or cancel registrations for your upcoming events.",
+  "my_tickets_search_placeholder": "Search your tickets",
+  "my_tickets_table_event": "Event",
+  "my_tickets_table_date": "Date",
+  "my_tickets_table_location": "Location",
+  "my_tickets_table_actions": "Actions",
+  "my_tickets_action_view": "View Ticket",
+  "my_tickets_no_results": "No matching results.",
+  "my_tickets_cancel_action": "Cancel Ticket",
+  "my_tickets_cancel_title": "Cancel Ticket",
+  "my_tickets_cancel_description": "Are you sure you want to cancel your registration for {name}? This will release your spot back to the public pool.",
+  "my_tickets_cancel_confirm": "Cancel Ticket",
+  "my_tickets_cancel_abort": "Abort Cancel",
+
   "privacy_policy_title": "Privacy Policy",
   "privacy_policy_date": "Effective date: July 22, 2026",
   "privacy_policy_1": "1. Introduction",
@@ -383,5 +401,8 @@
         "date=*": "{formattedDate}"
       }
     }
-  ]
+  ],
+  "my_tickets_empty_title": "You have no tickets yet",
+  "my_tickets_empty_description": "Browse events and register for one you would like to attend.",
+  "my_tickets_browse_events": "Browse Events"
 }

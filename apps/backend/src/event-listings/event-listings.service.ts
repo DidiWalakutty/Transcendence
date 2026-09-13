@@ -26,4 +26,11 @@ export class EventListingsService {
   async getStats() {
     return this.repository.getStats();
   }
+
+  async findRegisteredByUser(userId: string): Promise<EventDto[]> {
+    const records = await this.repository.findRegisteredByUser(userId);
+    return records.map(
+      ({ createdAt: _createdAt, registrationsCount: _registrationsCount, ...event }) => event,
+    );
+  }
 }

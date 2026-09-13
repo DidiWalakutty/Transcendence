@@ -1,5 +1,5 @@
-import { Query, Router, Input } from 'nestjs-trpc';
-
+import { Query, Router, Input, Ctx } from 'nestjs-trpc';
+import { unauthorizedError } from '../trpc/trpc.errors';
 import { eventsSchema, eventSortSchema, type EventSortDto } from '@repo/schemas/events';
 import { EventListingsService } from './event-listings.service';
 import { eventStatsSchema } from '@repo/schemas/stats';
@@ -21,5 +21,12 @@ export class EventListingsRouter {
   @Query({ output: eventStatsSchema })
   async getEventStats() {
     return this.eventListingsService.getStats();
+  }
+
+  @Query({ output: eventsSchema })
+  async getMyRegisteredEvents(@Ctx() ctx: { user: { id: string } | null }) {
+    const userId = ctx.user?.id;
+    if (!userId) throw unauthorizedError('Not logged in');
+    return this.eventListingsService.findRegisteredByUser(userId);
   }
 }

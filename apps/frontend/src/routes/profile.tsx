@@ -12,6 +12,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Spinner } from '@/components/ui/spinner';
 import { Link } from '@tanstack/react-router';
 import { TwoFactorSettings } from '@/components/TwoFactorSettings';
+import * as m from '@/@generated/paraglide/messages';
 import { AvatarPicker } from '@/components/AvatarPicker';
 import { NO_AVATAR, UserAvatar } from '@/components/UserAvatar';
 
@@ -283,11 +284,12 @@ function ProfilePage() {
           {/* Links */}
           <div className="mt-8 flex gap-4 border-t pt-6">
             <Link to="/my-events">
-              <Button variant="outline">My Events</Button>
+              <Button variant="outline">{m.button_my_events()}</Button>
             </Link>
-            <Button variant="outline" disabled>
-              My Registered Events
-            </Button>
+
+            <Link to="/my-tickets">
+              <Button variant="outline">{m.button_my_tickets()}</Button>
+            </Link>
           </div>
         </CardContent>
       </Card>

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { asc, desc, eq, sql } from 'drizzle-orm';
+import { asc, desc, eq, sql, and } from 'drizzle-orm';
 
 import { events, registrations } from '@repo/schemas/database';
 import { fromEventDateTime, type EventSortDto } from '@repo/schemas/events';
@@ -105,6 +105,29 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       locationCount: Number(locationCountResult.count),
       categoryCount: Number(categoryCountResult.rows[0]?.count ?? 0),
     };
+  }
+
+  async findRegisteredByUser(userId: string): Promise<EventListingRecord[]> {
+    const rows = await this.db
+      .select({
+        id: events.id,
+        title: events.title,
+        organizerId: events.organizerId,
+        createdAt: events.createdAt,
+        description: events.description,
+        image: events.image,
+        location: events.location,
+        address: events.address,
+        dateTime: events.dateTime,
+        maxCapacity: events.maxCapacity,
+        category: events.category,
+      })
+      .from(registrations)
+      .innerJoin(events, eq(registrations.eventId, events.id))
+      .where(and(eq(registrations.userId, userId), eq(registrations.status, 'active')))
+      .orderBy(asc(events.dateTime));
+
+    return rows.map((row) => this.toRecord({ ...row, registrationsCount: 0 }));
   }
 
   private toRecord(row: {
