@@ -62,6 +62,15 @@ export function createAuth(db: Database, config: ConfigService) {
         issuer: 'ft_transcendence',
       }),
     ],
+    databaseHooks: {
+      user: {
+        create: {
+          after: async (user) => {
+            process.emit('user.created' as any, user);
+          },
+        },
+      },
+    },
   });
 }
 
