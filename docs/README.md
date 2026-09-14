@@ -14,6 +14,7 @@ The page works offline and includes links into the source code and the guides be
 | [Stack](./STACK.md)                         | The approved technology stack and architecture principles.                  |
 | [Architecture Tour](./ARCHITECTURE_TOUR.md) | Start here to learn the codebase: how every layer connects, end to end.     |
 | [Learning Path](./LEARNING_PATH.md)         | Seven guided sessions with exercises, from first run to shipping a feature. |
+| [Evaluation Prep](./EVAL_PREP.md)           | 15-hour plan to explain the repo at evaluation, plus a compliance audit.    |
 | [Subject](./SUBJECT.md)                     | The 42 subject summary and evaluation requirements.                         |
 
 ## Architecture
