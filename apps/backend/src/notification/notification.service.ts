@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 
 import { WelcomeEmail, welcomeTranslations } from '../templates/index';
+import { TicketConfirmationEmail, ticketConfirmationTranslations } from '../templates/index';
 
 @Injectable()
 export class NotificationService {
@@ -43,6 +44,47 @@ export class NotificationService {
         `Failed to execute welcome email routine for ${toEmail}`,
         error instanceof Error ? error.stack : error,
       );
+      throw error;
+    }
+  }
+
+  /**
+   * Compiles and dispatches an event ticket confirmation notice
+   */
+  async sendTicketConfirmationEmail(
+    toEmail: string,
+    userName: string,
+    eventTitle: string,
+    eventDate: string,
+    eventTime: string,
+    eventLocation: string,
+    lang: 'en' | 'nl' | 'es' | 'ru' = 'en',
+  ): Promise<void> {
+    try {
+      const selectedDictionary =
+        ticketConfirmationTranslations[lang] || ticketConfirmationTranslations.en;
+
+      const htmlContent = TicketConfirmationEmail({
+        userName,
+        eventTitle,
+        eventDate,
+        eventTime,
+        eventLocation,
+        lang,
+        dictionary: selectedDictionary,
+      });
+
+      await this.mailerService.sendMail({
+        to: toEmail,
+        subject: `${selectedDictionary.subjectText} ${eventTitle}`,
+        html: htmlContent,
+      });
+
+      this.logger.log(
+        `Ticket confirmation email (${lang.toUpperCase()}) successfully dispatched to ${toEmail}`,
+      );
+    } catch (error) {
+      this.logger.error(`Failed to execute ticket confirmation routine for ${toEmail}`, error);
       throw error;
     }
   }
