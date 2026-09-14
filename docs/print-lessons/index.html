@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Printable code lessons | ft_transcendence</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        color: #202020;
+        background: #eee;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.55;
+      }
+      body {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 2.8rem;
+        background: #fff;
+      }
+      h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+      }
+      h2 {
+        margin-top: 2rem;
+        font-size: 1.35rem;
+      }
+      h3 {
+        margin-top: 1.4rem;
+        font-size: 1.08rem;
+      }
+      p,
+      li {
+        max-width: 78ch;
+      }
+      a {
+        color: #90330a;
+      }
+      pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        tab-size: 2;
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        padding: 1rem;
+        font: 12px/1.55 monospace;
+      }
+      code {
+        font-family: monospace;
+        font-size: 0.94em;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.2rem 0;
+        font-size: 0.92rem;
+      }
+      th,
+      td {
+        border: 1px solid #bbb;
+        padding: 0.6rem;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #f4eee9;
+      }
+      aside {
+        border-left: 4px solid #d15a20;
+        background: #faf5ef;
+        padding: 0.5rem 1rem;
+        margin: 1.3rem 0;
+      }
+      .meta,
+      .caption {
+        color: #555;
+        font-size: 0.88rem;
+      }
+      .source-name {
+        overflow-wrap: anywhere;
+      }
+      .source-code {
+        background: #fff;
+        font-size: 10px;
+        line-height: 1.6;
+      }
+      .source-line {
+        display: block;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .line-number {
+        color: #777;
+        user-select: none;
+      }
+      .toolbar {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+      button {
+        padding: 0.6rem 1rem;
+        border: 1px solid #888;
+        background: white;
+        cursor: pointer;
+      }
+      .answers,
+      .appendix {
+        border-top: 2px solid #777;
+        margin-top: 3rem;
+        padding-top: 1rem;
+      }
+      li {
+        margin: 0.45rem 0;
+      }
+      footer {
+        border-top: 1px solid #ccc;
+        margin-top: 3rem;
+        padding-top: 1rem;
+        font-size: 0.8rem;
+      }
+      @page {
+        size: A4;
+        margin: 17mm 16mm 18mm;
+      }
+      @media print {
+        html {
+          background: white;
+          font-size: 10.5pt;
+        }
+        body {
+          max-width: none;
+          margin: 0;
+          padding: 0;
+        }
+        .toolbar {
+          display: none;
+        }
+        h1 {
+          font-size: 23pt;
+        }
+        h2 {
+          font-size: 15pt;
+        }
+        h3 {
+          font-size: 12pt;
+        }
+        h1,
+        h2,
+        h3,
+        .source-name {
+          break-after: avoid;
+        }
+        p,
+        li {
+          orphans: 3;
+          widows: 3;
+        }
+        pre {
+          font-size: 9pt;
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
+          overflow: visible;
+        }
+        table {
+          font-size: 9pt;
+        }
+        thead {
+          display: table-header-group;
+        }
+        tr {
+          break-inside: avoid;
+        }
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+        .answers,
+        .appendix {
+          break-before: page;
+        }
+        aside {
+          background: white;
+          border-color: #777;
+        }
+        .source-code {
+          font-size: 8pt;
+          padding: 8pt;
+        }
+        .source-line {
+          break-inside: avoid;
+        }
+        footer {
+          font-size: 8pt;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <p class="meta">ft_transcendence · Source snapshot efb3807 · 14 September 2026</p>
+      <h1>Printable code walkthroughs</h1>
+      <p>
+        Five separate lessons following reading topics 3 through 7. Each includes explanations of
+        the syntax and control flow, questions, answers, and the relevant source code with line
+        numbers.
+      </p>
+    </header>
+    <ol start="3">
+      <li>
+        <a href="03-event-stream.html"
+          ><strong>The event-stream hook, from message to screen</strong></a
+        >
+        <p>
+          A full walkthrough of use-event-stream.ts, with the module-scope clock, cache updates, and
+          watchdog explained together.
+        </p>
+      </li>
+      <li>
+        <a href="04-trpc-transport.html"><strong>How splitLink chooses the transport</strong></a>
+        <p>
+          Read the subscription-versus-request decision, cookie forwarding, and SuperJSON together.
+        </p>
+      </li>
+      <li>
+        <a href="05-presence-service.html"
+          ><strong>PresenceService and its connection map</strong></a
+        >
+        <p>
+          A complete explanation of the small service, including the nested generic type and
+          multi-connection behavior.
+        </p>
+      </li>
+      <li>
+        <a href="06-presence-router.html"
+          ><strong>The presence generator and resource cleanup</strong></a
+        >
+        <p>
+          A full explanation of the initial yield, later messages, cancellation signal, and finally
+          block.
+        </p>
+      </li>
+      <li>
+        <a href="07-friends-flow.html"
+          ><strong>Friends: router, service, repository and schemas</strong></a
+        >
+        <p>
+          A complete request-to-database walkthrough of friendship creation, acceptance, listing and
+          removal.
+        </p>
+      </li>
+    </ol>
+    <h2>How to print</h2>
+    <p>
+      Open a lesson in a browser and press Ctrl+P, or use its Print / save as PDF button. Choose a
+      printer or Save as PDF. A4 portrait is configured, and the layout also wraps for other paper
+      sizes. Turn off browser headers and footers if you do not want the file URL on each page.
+      Background graphics are optional; the pages remain readable in black and white.
+    </p>
+    <p>
+      Answers and source code start on new pages, so you can print the explanation first and choose
+      later pages separately in the print dialog. There are no external fonts, scripts or images
+      required to read the lessons. Repository links need the rest of the checkout.
+    </p>
+    <p>
+      These notes explain the actual inspected implementation, including limitations visible in the
+      code. They do not silently fix application behavior or treat every source comment as a
+      verified guarantee.
+    </p>
+    <p><a href="../README.md">Documentation index</a></p>
+  </body>
+</html>

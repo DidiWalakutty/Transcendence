@@ -1,0 +1,832 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The event-stream hook, from message to screen | Printable lesson</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        color: #202020;
+        background: #eee;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.55;
+      }
+      body {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 2.8rem;
+        background: #fff;
+      }
+      h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+      }
+      h2 {
+        margin-top: 2rem;
+        font-size: 1.35rem;
+      }
+      h3 {
+        margin-top: 1.4rem;
+        font-size: 1.08rem;
+      }
+      p,
+      li {
+        max-width: 78ch;
+      }
+      a {
+        color: #90330a;
+      }
+      pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        tab-size: 2;
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        padding: 1rem;
+        font: 12px/1.55 monospace;
+      }
+      code {
+        font-family: monospace;
+        font-size: 0.94em;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.2rem 0;
+        font-size: 0.92rem;
+      }
+      th,
+      td {
+        border: 1px solid #bbb;
+        padding: 0.6rem;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #f4eee9;
+      }
+      aside {
+        border-left: 4px solid #d15a20;
+        background: #faf5ef;
+        padding: 0.5rem 1rem;
+        margin: 1.3rem 0;
+      }
+      .meta,
+      .caption {
+        color: #555;
+        font-size: 0.88rem;
+      }
+      .source-name {
+        overflow-wrap: anywhere;
+      }
+      .source-code {
+        background: #fff;
+        font-size: 10px;
+        line-height: 1.6;
+      }
+      .source-line {
+        display: block;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .line-number {
+        color: #777;
+        user-select: none;
+      }
+      .toolbar {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+      button {
+        padding: 0.6rem 1rem;
+        border: 1px solid #888;
+        background: white;
+        cursor: pointer;
+      }
+      .answers,
+      .appendix {
+        border-top: 2px solid #777;
+        margin-top: 3rem;
+        padding-top: 1rem;
+      }
+      li {
+        margin: 0.45rem 0;
+      }
+      footer {
+        border-top: 1px solid #ccc;
+        margin-top: 3rem;
+        padding-top: 1rem;
+        font-size: 0.8rem;
+      }
+      @page {
+        size: A4;
+        margin: 17mm 16mm 18mm;
+      }
+      @media print {
+        html {
+          background: white;
+          font-size: 10.5pt;
+        }
+        body {
+          max-width: none;
+          margin: 0;
+          padding: 0;
+        }
+        .toolbar {
+          display: none;
+        }
+        h1 {
+          font-size: 23pt;
+        }
+        h2 {
+          font-size: 15pt;
+        }
+        h3 {
+          font-size: 12pt;
+        }
+        h1,
+        h2,
+        h3,
+        .source-name {
+          break-after: avoid;
+        }
+        p,
+        li {
+          orphans: 3;
+          widows: 3;
+        }
+        pre {
+          font-size: 9pt;
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
+          overflow: visible;
+        }
+        table {
+          font-size: 9pt;
+        }
+        thead {
+          display: table-header-group;
+        }
+        tr {
+          break-inside: avoid;
+        }
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+        .answers,
+        .appendix {
+          break-before: page;
+        }
+        aside {
+          background: white;
+          border-color: #777;
+        }
+        .source-code {
+          font-size: 8pt;
+          padding: 8pt;
+        }
+        .source-line {
+          break-inside: avoid;
+        }
+        footer {
+          font-size: 8pt;
+        }
+      }
+
+      /* Embedded syntax colors work offline and in print. */
+      pre {
+        line-height: 125%;
+      }
+      td.linenos .normal {
+        color: inherit;
+        background-color: transparent;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      span.linenos {
+        color: inherit;
+        background-color: transparent;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      td.linenos .special {
+        color: #000000;
+        background-color: #ffffc0;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      span.linenos.special {
+        color: #000000;
+        background-color: #ffffc0;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      .syntax .hll {
+        background-color: #ffffcc;
+      }
+      .syntax {
+        background: #f8f8f8;
+      }
+      .syntax .c {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment */
+      .syntax .err {
+        border: 1px solid #f00;
+      } /* Error */
+      .syntax .k {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword */
+      .syntax .o {
+        color: #666;
+      } /* Operator */
+      .syntax .ch {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Hashbang */
+      .syntax .cm {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Multiline */
+      .syntax .cp {
+        color: #9c6500;
+      } /* Comment.Preproc */
+      .syntax .cpf {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.PreprocFile */
+      .syntax .c1 {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Single */
+      .syntax .cs {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Special */
+      .syntax .gd {
+        color: #a00000;
+      } /* Generic.Deleted */
+      .syntax .ge {
+        font-style: italic;
+      } /* Generic.Emph */
+      .syntax .ges {
+        font-weight: bold;
+        font-style: italic;
+      } /* Generic.EmphStrong */
+      .syntax .gr {
+        color: #e40000;
+      } /* Generic.Error */
+      .syntax .gh {
+        color: #000080;
+        font-weight: bold;
+      } /* Generic.Heading */
+      .syntax .gi {
+        color: #008400;
+      } /* Generic.Inserted */
+      .syntax .go {
+        color: #717171;
+      } /* Generic.Output */
+      .syntax .gp {
+        color: #000080;
+        font-weight: bold;
+      } /* Generic.Prompt */
+      .syntax .gs {
+        font-weight: bold;
+      } /* Generic.Strong */
+      .syntax .gu {
+        color: #800080;
+        font-weight: bold;
+      } /* Generic.Subheading */
+      .syntax .gt {
+        color: #04d;
+      } /* Generic.Traceback */
+      .syntax .kc {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Constant */
+      .syntax .kd {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Declaration */
+      .syntax .kn {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Namespace */
+      .syntax .kp {
+        color: #008000;
+      } /* Keyword.Pseudo */
+      .syntax .kr {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Reserved */
+      .syntax .kt {
+        color: #b00040;
+      } /* Keyword.Type */
+      .syntax .m {
+        color: #666;
+      } /* Literal.Number */
+      .syntax .s {
+        color: #ba2121;
+      } /* Literal.String */
+      .syntax .na {
+        color: #687822;
+      } /* Name.Attribute */
+      .syntax .nb {
+        color: #008000;
+      } /* Name.Builtin */
+      .syntax .nc {
+        color: #00f;
+        font-weight: bold;
+      } /* Name.Class */
+      .syntax .no {
+        color: #800;
+      } /* Name.Constant */
+      .syntax .nd {
+        color: #a2f;
+      } /* Name.Decorator */
+      .syntax .ni {
+        color: #717171;
+        font-weight: bold;
+      } /* Name.Entity */
+      .syntax .ne {
+        color: #cb3f38;
+        font-weight: bold;
+      } /* Name.Exception */
+      .syntax .nf {
+        color: #00f;
+      } /* Name.Function */
+      .syntax .nl {
+        color: #767600;
+      } /* Name.Label */
+      .syntax .nn {
+        color: #00f;
+        font-weight: bold;
+      } /* Name.Namespace */
+      .syntax .nt {
+        color: #008000;
+        font-weight: bold;
+      } /* Name.Tag */
+      .syntax .nv {
+        color: #19177c;
+      } /* Name.Variable */
+      .syntax .ow {
+        color: #a2f;
+        font-weight: bold;
+      } /* Operator.Word */
+      .syntax .w {
+        color: #bbb;
+      } /* Text.Whitespace */
+      .syntax .mb {
+        color: #666;
+      } /* Literal.Number.Bin */
+      .syntax .mf {
+        color: #666;
+      } /* Literal.Number.Float */
+      .syntax .mh {
+        color: #666;
+      } /* Literal.Number.Hex */
+      .syntax .mi {
+        color: #666;
+      } /* Literal.Number.Integer */
+      .syntax .mo {
+        color: #666;
+      } /* Literal.Number.Oct */
+      .syntax .sa {
+        color: #ba2121;
+      } /* Literal.String.Affix */
+      .syntax .sb {
+        color: #ba2121;
+      } /* Literal.String.Backtick */
+      .syntax .sc {
+        color: #ba2121;
+      } /* Literal.String.Char */
+      .syntax .dl {
+        color: #ba2121;
+      } /* Literal.String.Delimiter */
+      .syntax .sd {
+        color: #ba2121;
+        font-style: italic;
+      } /* Literal.String.Doc */
+      .syntax .s2 {
+        color: #ba2121;
+      } /* Literal.String.Double */
+      .syntax .se {
+        color: #aa5d1f;
+        font-weight: bold;
+      } /* Literal.String.Escape */
+      .syntax .sh {
+        color: #ba2121;
+      } /* Literal.String.Heredoc */
+      .syntax .si {
+        color: #a45a77;
+        font-weight: bold;
+      } /* Literal.String.Interpol */
+      .syntax .sx {
+        color: #008000;
+      } /* Literal.String.Other */
+      .syntax .sr {
+        color: #a45a77;
+      } /* Literal.String.Regex */
+      .syntax .s1 {
+        color: #ba2121;
+      } /* Literal.String.Single */
+      .syntax .ss {
+        color: #19177c;
+      } /* Literal.String.Symbol */
+      .syntax .bp {
+        color: #008000;
+      } /* Name.Builtin.Pseudo */
+      .syntax .fm {
+        color: #00f;
+      } /* Name.Function.Magic */
+      .syntax .vc {
+        color: #19177c;
+      } /* Name.Variable.Class */
+      .syntax .vg {
+        color: #19177c;
+      } /* Name.Variable.Global */
+      .syntax .vi {
+        color: #19177c;
+      } /* Name.Variable.Instance */
+      .syntax .vm {
+        color: #19177c;
+      } /* Name.Variable.Magic */
+      .syntax .il {
+        color: #666;
+      } /* Literal.Number.Integer.Long */
+      .syntax {
+        color: #202020;
+      }
+      .syntax .c,
+      .syntax .c1,
+      .syntax .cm,
+      .syntax .cs {
+        color: #48614c;
+      }
+      .syntax .s,
+      .syntax .s1,
+      .syntax .s2,
+      .syntax .sb {
+        color: #9a3412;
+      }
+      .syntax .err {
+        border: 0;
+      }
+      @media print {
+        .syntax {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar">
+      <a href="index.html">All lessons</a
+      ><button onclick="window.print()">Print / save as PDF</button>
+    </div>
+    <header>
+      <p class="meta">
+        ft_transcendence · Reading topic 3 · 14 September 2026 · docs-onboarding at efb3807
+      </p>
+      <h1>The event-stream hook, from message to screen</h1>
+      <p>
+        A full walkthrough of use-event-stream.ts, with the module-scope clock, cache updates, and
+        watchdog explained together.
+      </p>
+    </header>
+    <h2>1. What this hook connects</h2>
+    <p>
+      A hook is reusable React code that can use state, effects, and other hooks.
+      <code>useEventStream</code> listens for backend event-change messages and updates the frontend
+      query cache. It also returns connection flags so a page can show whether the stream looks
+      healthy. It does not change the database or implement the network transport itself.
+    </p>
+    <pre><code>Backend saves an event
+  → subscription delivers a message
+  → onData updates cached event data
+  → React renders the new data</code></pre>
+    <h2>2. Imports and the two clocks</h2>
+    <p>
+      <code>useState</code> remembers a value and triggers rendering when it changes.
+      <code>useEffect</code> starts work connected to a component lifecycle and can return cleanup
+      code. <code>useCallback</code> keeps a function reference while its dependencies stay equal.
+      <code>useQueryClient</code> supplies the cache manager, <code>useTRPC</code> supplies typed
+      operation helpers, and <code>useSubscription</code> manages a tRPC subscription.
+    </p>
+    <pre
+      class="syntax"
+    ><code><span class="kd">const</span><span class="w"> </span><span class="nx">STALE_AFTER_MS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">EVENT_HEARTBEAT_INTERVAL_MS</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2.5</span><span class="p">;</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">WATCHDOG_INTERVAL_MS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5</span><span class="nx">_000</span><span class="p">;</span>
+<span class="kd">let</span><span class="w"> </span><span class="nx">lastMessageAt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span></code></pre>
+    <p>
+      The shared heartbeat interval is 10,000 milliseconds. The stale threshold is therefore 25,000
+      milliseconds. The watchdog checks every 5,000 milliseconds. Underscores in numeric literals
+      only improve readability: <code>5_000</code> and <code>5000</code> are the same number.
+      <code>Date.now()</code> returns the current time in milliseconds since the Unix epoch;
+      subtracting two such values measures elapsed time.
+    </p>
+    <h2>3. Why lastMessageAt is at module scope</h2>
+    <p>
+      Module scope means outside the hook function, at the top level of this JavaScript module. Its
+      value survives one component being removed and a new instance being created, as long as that
+      module instance remains loaded.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Storage</th>
+          <th>Survives an ordinary rerender?</th>
+          <th>Survives a component remount?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>A plain local variable initialized in the hook</td>
+          <td>No, its initialization runs again</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td>useRef value</td>
+          <td>Yes</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td>This module-level variable</td>
+          <td>Yes</td>
+          <td>Yes, within the same module instance</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      A rerender updates an existing component. A remount destroys one component instance and
+      creates another. The outage bug involved repeated remounts. With a ref initialized to the
+      current time, every remount restarted the silence measurement. Remounting every few seconds
+      could keep the apparent silence below 25 seconds indefinitely.
+    </p>
+    <pre><code>Backend stops sending at time 0.
+Component remounts at 5, 10, 15, 20 seconds.
+A newly initialized ref would repeatedly forget time 0.
+Module-level storage can retain the earlier timestamp.</code></pre>
+    <aside>
+      <p>
+        This is a tradeoff, not a universal rule to replace refs with globals. All hook instances
+        using this loaded module share the timestamp. A message received by one can refresh the
+        clock seen by another. A full page reload resets it, and separate browser tabs do not share
+        it. The status effect later in this file can also reset the timestamp.
+      </p>
+    </aside>
+    <h2>4. patchList changes an array without fetching</h2>
+    <pre
+      class="syntax"
+    ><code><span class="kd">const</span><span class="w"> </span><span class="nx">current</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">events</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="p">[];</span>
+<span class="k">return</span><span class="w"> </span><span class="nx">remove</span>
+<span class="w">  </span><span class="o">?</span><span class="w"> </span><span class="nx">current</span><span class="p">.</span><span class="nx">filter</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="nx">event</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+<span class="w">  </span><span class="o">:</span><span class="w"> </span><span class="nx">current</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">event</span><span class="p">.</span><span class="nx">id</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nx">event</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">item</span><span class="p">));</span></code></pre>
+    <p>
+      <code>events ?? []</code> uses an empty array only when events is null or undefined. The
+      ternary expression chooses between two branches. When remove is true,
+      <code>filter</code> keeps every item with a different ID. Otherwise <code>map</code> replaces
+      the matching event and keeps other items. Both operations produce a new array, which is
+      suitable for a cache update. Neither inserts a previously missing event nor sorts the result.
+    </p>
+    <p>
+      <code>(item) =&gt; ...</code> is an arrow function passed as a callback.
+      <code>===</code> compares without type conversion; <code>!==</code> checks strict inequality.
+      The function return type <code>EventDto[]</code> means an array of event objects.
+    </p>
+    <h2>5. Hook options, state, and query keys</h2>
+    <p>
+      <code>options?: { onlyOrganizerId?: string }</code> means the entire options argument is
+      optional, and its organizer filter is optional too. The hook stores a local boolean
+      <code>stale</code> for rendering. This is separate from whether a TanStack Query cache entry
+      is stale.
+    </p>
+    <p>
+      The listing key identifies the family of general event-list queries. Different sort orders can
+      have separate matching cache entries. The My Events key identifies the organizer list. The
+      hook works with generated keys instead of inventing unrelated strings.
+    </p>
+    <p>
+      <code>refetchLists</code> invalidates these two query groups. Invalidation marks cached
+      answers outdated and normally refetches active eligible queries. Inactive entries can refresh
+      when used again. The function uses <code>void</code> because it intentionally does not await
+      the returned promises. Its name describes the aim; calling it does not mean every network
+      request has already finished.
+    </p>
+    <p>
+      The dependency array <code>[queryClient, listingsKey, myEventsKey]</code> tells useCallback
+      when to replace its stored function reference. useCallback does not call the function by
+      itself.
+    </p>
+    <h2>6. What subscriptionOptions and onData do</h2>
+    <pre
+      class="syntax"
+    ><code><span class="nx">trpc</span><span class="p">.</span><span class="nx">eventCreation</span><span class="p">.</span><span class="nx">onEventChanged</span><span class="p">.</span><span class="nx">subscriptionOptions</span><span class="p">(</span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">onData</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">change</span><span class="o">:</span><span class="w"> </span><span class="kt">EventChangedDto</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">},</span>
+<span class="p">})</span></code></pre>
+    <p>
+      The first argument is undefined because this subscription has no input payload. The second
+      argument contains callbacks. <code>onData</code> runs when a message arrives. Every message,
+      including a heartbeat, updates lastMessageAt and sets stale to false.
+    </p>
+    <p>
+      The early return for a heartbeat is important. Heartbeats carry only an action, with no event
+      object. After that branch, TypeScript can narrow the message type to a created, updated, or
+      deleted message, each of which has an event.
+    </p>
+    <pre
+      class="syntax"
+    ><code><span class="kd">const</span><span class="w"> </span><span class="nx">mine</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="o">!</span><span class="nx">options</span><span class="o">?</span><span class="p">.</span><span class="nx">onlyOrganizerId</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">change</span><span class="p">.</span><span class="nx">event</span><span class="p">.</span><span class="nx">organizerId</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">options</span><span class="p">.</span><span class="nx">onlyOrganizerId</span><span class="p">;</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">removed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">change</span><span class="p">.</span><span class="nx">action</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;deleted&#39;</span><span class="p">;</span></code></pre>
+    <p>
+      mine is true when no organizer filter was supplied or the message belongs to the requested
+      organizer. This limits My Events cache updates. It is a frontend filter, not a backend
+      authorization check. General public-list updates still happen.
+    </p>
+    <h2>7. Why created takes a different path</h2>
+    <p>
+      A new event has no existing list position to replace. The server owns the query sorting and
+      can use database fields that are not all present in EventDto. The hook invalidates lists so
+      the server can return the correct placement. This request is triggered by a pushed message; it
+      is not regular polling for new events.
+    </p>
+    <p>
+      An update usually has an existing row, so the hook replaces that row. A deletion removes it.
+      <code>setQueriesData</code> patches matching general-list entries, including cached sort
+      variants. <code>setQueryData</code> handles the particular My Events entry when mine is true.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Message</th>
+          <th>General event lists</th>
+          <th>My Events</th>
+          <th>Event detail</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>created</td>
+          <td>Invalidate</td>
+          <td>Invalidate if mine</td>
+          <td>Store event</td>
+        </tr>
+        <tr>
+          <td>updated</td>
+          <td>Replace existing matching rows</td>
+          <td>Replace if mine</td>
+          <td>Store event</td>
+        </tr>
+        <tr>
+          <td>deleted</td>
+          <td>Remove matching rows</td>
+          <td>Remove if mine</td>
+          <td>Remove cache entry</td>
+        </tr>
+        <tr>
+          <td>heartbeat</td>
+          <td>No data change</td>
+          <td>No data change</td>
+          <td>No data change</td>
+        </tr>
+      </tbody>
+    </table>
+    <aside>
+      <p>
+        The source comment overstates the sorting guarantee. Editing an event date can change its
+        correct position in an upcoming list, but map replaces it in place. EventDto does contain
+        date and time, although it lacks creation time and registration counts. The reason for
+        refetching creation is server-owned ordering, not that the DTO has literally no sorting
+        information. An update can leave ordering stale until a later refetch. Removing a detail
+        cache entry also does not itself navigate the browser away.
+      </p>
+    </aside>
+    <h2>8. The watchdog, step by step</h2>
+    <pre
+      class="syntax"
+    ><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">lastMessageAt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="nx">STALE_AFTER_MS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nx">setStale</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span>
+<span class="nx">lastMessageAt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span>
+<span class="nx">reset</span><span class="p">();</span>
+<span class="nx">refetchLists</span><span class="p">();</span></code></pre>
+    <ol>
+      <li>
+        The interval callback checks how long it has been since the last timestamp update. At 25
+        seconds or less, it does nothing.
+      </li>
+      <li>If the elapsed time is greater than 25 seconds, it marks the stream stale for the UI.</li>
+      <li>
+        It resets the timestamp so subsequent checks do not immediately repeat the reset every five
+        seconds.
+      </li>
+      <li>It calls the subscription reset function to restart the stream.</li>
+      <li>
+        It invalidates the general event lists and My Events because messages may have been missed.
+      </li>
+    </ol>
+    <p>
+      Detection is not exactly at second 25. The comparison is strictly greater than 25 seconds and
+      the check runs periodically. In a normally scheduled browser it will happen on a later tick,
+      often around 25 to 30 seconds after the last update; suspended or throttled tabs can take
+      longer. The invalidation does not explicitly include every event-detail query, My Tickets, or
+      ticket availability.
+    </p>
+    <p>
+      The effect returns <code>() =&gt; clearInterval(watchdog)</code>. React runs this cleanup when
+      the effect is replaced or the component unmounts. It prevents an abandoned component from
+      leaving its interval running. The dependency array contains reset and refetchLists because the
+      effect uses those functions.
+    </p>
+    <h2>9. The second effect and returned flags</h2>
+    <p>
+      When subscription status becomes pending, the second effect updates lastMessageAt, giving the
+      newly active connection time to deliver a message. In this subscription API, pending is
+      treated by this code as an active stream, not a query still waiting for its first result. The
+      watchdog exists because that status alone may not reveal a silent broken connection.
+    </p>
+    <pre
+      class="syntax"
+    ><code><span class="k">return</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">connected</span><span class="o">:</span><span class="w"> </span><span class="kt">status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;pending&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="nx">stale</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">reconnecting</span><span class="o">:</span><span class="w"> </span><span class="kt">stale</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;connecting&#39;</span><span class="p">,</span>
+<span class="w">  </span><span class="nx">failed</span><span class="o">:</span><span class="w"> </span><span class="kt">status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;error&#39;</span><span class="p">,</span>
+<span class="p">};</span></code></pre>
+    <p>
+      These are three booleans, not a single exclusive status value. For example, an error and a
+      stale flag can make both failed and reconnecting true. A page must decide how it presents
+      them. Updating these flags changes the UI; it does not itself change server data.
+    </p>
+    <h2>Questions to answer before reading the solutions</h2>
+    <ol>
+      <li>How is a rerender different from a remount, and why did that matter to lastMessageAt?</li>
+      <li>
+        What happens to a created message for another organizer when onlyOrganizerId is supplied?
+      </li>
+      <li>
+        If an event moves from next month to tomorrow, does patchList move it to the correct
+        position?
+      </li>
+      <li>List every action taken when the watchdog sees more than 25 seconds of silence.</li>
+      <li>Does resetting the stream replay every missed event or refetch every cache entry?</li>
+    </ol>
+    <section class="answers">
+      <h2>Answers and reasoning</h2>
+      <ol>
+        <li>
+          A rerender preserves the existing hook instance and its refs. A remount creates a fresh
+          instance. A fresh timestamp on every remount could postpone outage detection indefinitely.
+          Module scope retains a timestamp across those remounts but shares it across hook
+          instances.
+        </li>
+        <li>
+          The general event list is invalidated. My Events is not invalidated for that organizer
+          filter. The event detail cache is still written.
+        </li>
+        <li>
+          No. It replaces the object at its existing position. Correct date ordering needs sorting
+          or a server refetch; this is a visible limitation of the current algorithm.
+        </li>
+        <li>
+          Mark stale, reset the timestamp, restart the subscription, and invalidate the general and
+          organizer lists. The interval keeps running until effect cleanup.
+        </li>
+        <li>
+          Neither. The stream has no durable replay in this implementation, and refetchLists targets
+          only two query groups. Refreshing selected queries helps recover current state, but is not
+          replay of all missed messages.
+        </li>
+      </ol>
+    </section>
+    <section class="appendix">
+      <h2>Source code for reading on paper</h2>
+      <p>
+        Line numbers are from the inspected checkout. The explanations distinguish intended behavior
+        from limitations visible in this code. Source comments are reproduced as written, including
+        comments discussed critically in the lesson.
+      </p>
+      <h3 class="source-name">apps/frontend/src/hooks/use-event-stream.ts · lines 1–136</h3>
+      <p class="caption">
+        Source snapshot at efb3807.
+        <a href="../../apps/frontend/src/hooks/use-event-stream.ts">Open the repository file</a>.
+      </p>
+      <pre
+        class="source-code syntax"
+      ><code><span class="source-line"><span class="line-number">  1  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useCallback</span><span class="p">,</span><span class="w"> </span><span class="nx">useEffect</span><span class="p">,</span><span class="w"> </span><span class="nx">useState</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;react&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  2  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useQueryClient</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@tanstack/react-query&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  3  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useSubscription</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@trpc/tanstack-react-query&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  4  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">  5  </span><span class="w">  </span><span class="nx">EVENT_HEARTBEAT_INTERVAL_MS</span><span class="p">,</span></span><span class="source-line"><span class="line-number">  6  </span><span class="w">  </span><span class="kr">type</span><span class="w"> </span><span class="nx">EventChangedDto</span><span class="p">,</span></span><span class="source-line"><span class="line-number">  7  </span><span class="w">  </span><span class="kr">type</span><span class="w"> </span><span class="nx">EventDto</span><span class="p">,</span></span><span class="source-line"><span class="line-number">  8  </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@repo/schemas/events&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  9  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">useTRPC</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@/integrations/trpc/react&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 10  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 11  </span><span class="c1">// Two and a half missed heartbeats before the stream is treated as dead: long</span></span><span class="source-line"><span class="line-number"> 12  </span><span class="c1">// enough to ride out a slow network, short enough that a restarted backend is</span></span><span class="source-line"><span class="line-number"> 13  </span><span class="c1">// noticed within half a minute.</span></span><span class="source-line"><span class="line-number"> 14  </span><span class="kd">const</span><span class="w"> </span><span class="nx">STALE_AFTER_MS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">EVENT_HEARTBEAT_INTERVAL_MS</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">2.5</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 15  </span><span class="kd">const</span><span class="w"> </span><span class="nx">WATCHDOG_INTERVAL_MS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">5</span><span class="nx">_000</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 16  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 17  </span><span class="c1">// Module scope on purpose. A ref would be reset every time the component</span></span><span class="source-line"><span class="line-number"> 18  </span><span class="c1">// remounts, and an unreachable backend can remount the tree repeatedly, which</span></span><span class="source-line"><span class="line-number"> 19  </span><span class="c1">// would keep pushing the deadline forward and hide the outage forever.</span></span><span class="source-line"><span class="line-number"> 20  </span><span class="kd">let</span><span class="w"> </span><span class="nx">lastMessageAt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 21  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 22  </span><span class="c1">// Updates and deletes are patched straight into the cached lists: neither can</span></span><span class="source-line"><span class="line-number"> 23  </span><span class="c1">// change an event&#39;s position under any of the server&#39;s sort orders, so the</span></span><span class="source-line"><span class="line-number"> 24  </span><span class="c1">// list stays correct without a refetch.</span></span><span class="source-line"><span class="line-number"> 25  </span><span class="c1">//</span></span><span class="source-line"><span class="line-number"> 26  </span><span class="c1">// Creates are different. The server decides where a new event belongs</span></span><span class="source-line"><span class="line-number"> 27  </span><span class="c1">// (upcoming by date, newest by creation time, popular by registration count)</span></span><span class="source-line"><span class="line-number"> 28  </span><span class="c1">// and the DTO carries none of those fields, so the client cannot place the row</span></span><span class="source-line"><span class="line-number"> 29  </span><span class="c1">// itself. Those refetch instead — still push-driven, not polling.</span></span><span class="source-line"><span class="line-number"> 30  </span><span class="kd">function</span><span class="w"> </span><span class="nx">patchList</span><span class="p">(</span><span class="nx">events</span><span class="o">:</span><span class="w"> </span><span class="kt">EventDto</span><span class="p">[]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="nx">event</span><span class="o">:</span><span class="w"> </span><span class="kt">EventDto</span><span class="p">,</span><span class="w"> </span><span class="nx">remove</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">EventDto</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 31  </span><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">current</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">events</span><span class="w"> </span><span class="o">??</span><span class="w"> </span><span class="p">[];</span></span><span class="source-line"><span class="line-number"> 32  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 33  </span><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">remove</span></span><span class="source-line"><span class="line-number"> 34  </span><span class="w">    </span><span class="o">?</span><span class="w"> </span><span class="nx">current</span><span class="p">.</span><span class="nx">filter</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="w"> </span><span class="o">!==</span><span class="w"> </span><span class="nx">event</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span></span><span class="source-line"><span class="line-number"> 35  </span><span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="nx">current</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">item</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">id</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">event</span><span class="p">.</span><span class="nx">id</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nx">event</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="kt">item</span><span class="p">));</span></span><span class="source-line"><span class="line-number"> 36  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 37  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 38  </span><span class="cm">/**</span></span><span class="source-line"><span class="line-number"> 39  </span><span class="cm"> * Subscribes to event create/update/delete and keeps the event caches current.</span></span><span class="source-line"><span class="line-number"> 40  </span><span class="cm"> * Mount it once per page that shows events; `onlyOrganizerId` limits organizer</span></span><span class="source-line"><span class="line-number"> 41  </span><span class="cm"> * list updates to that user&#39;s own events.</span></span><span class="source-line"><span class="line-number"> 42  </span><span class="cm"> *</span></span><span class="source-line"><span class="line-number"> 43  </span><span class="cm"> * A dropped SSE stream looks identical to an idle one, so the server sends</span></span><span class="source-line"><span class="line-number"> 44  </span><span class="cm"> * heartbeats and this hook watches for their absence: when they stop, it</span></span><span class="source-line"><span class="line-number"> 45  </span><span class="cm"> * resubscribes and refetches, since changes made while disconnected were</span></span><span class="source-line"><span class="line-number"> 46  </span><span class="cm"> * missed.</span></span><span class="source-line"><span class="line-number"> 47  </span><span class="cm"> */</span></span><span class="source-line"><span class="line-number"> 48  </span><span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">useEventStream</span><span class="p">(</span><span class="nx">options</span><span class="o">?:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">onlyOrganizerId?</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 49  </span><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">trpc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useTRPC</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 50  </span><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">queryClient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useQueryClient</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 51  </span><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">stale</span><span class="p">,</span><span class="w"> </span><span class="nx">setStale</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useState</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 52  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 53  </span><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">listingsKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">trpc</span><span class="p">.</span><span class="nx">events</span><span class="p">.</span><span class="nx">getEvents</span><span class="p">.</span><span class="nx">queryKey</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 54  </span><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">myEventsKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">trpc</span><span class="p">.</span><span class="nx">eventCreation</span><span class="p">.</span><span class="nx">getMyEvents</span><span class="p">.</span><span class="nx">queryKey</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 55  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 56  </span><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">refetchLists</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useCallback</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 57  </span><span class="w">    </span><span class="ow">void</span><span class="w"> </span><span class="nx">queryClient</span><span class="p">.</span><span class="nx">invalidateQueries</span><span class="p">({</span><span class="w"> </span><span class="nx">queryKey</span><span class="o">:</span><span class="w"> </span><span class="kt">listingsKey</span><span class="w"> </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 58  </span><span class="w">    </span><span class="ow">void</span><span class="w"> </span><span class="nx">queryClient</span><span class="p">.</span><span class="nx">invalidateQueries</span><span class="p">({</span><span class="w"> </span><span class="nx">queryKey</span><span class="o">:</span><span class="w"> </span><span class="kt">myEventsKey</span><span class="w"> </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 59  </span><span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="nx">queryClient</span><span class="p">,</span><span class="w"> </span><span class="nx">listingsKey</span><span class="p">,</span><span class="w"> </span><span class="nx">myEventsKey</span><span class="p">]);</span></span><span class="source-line"><span class="line-number"> 60  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 61  </span><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">subscription</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">useSubscription</span><span class="p">(</span></span><span class="source-line"><span class="line-number"> 62  </span><span class="w">    </span><span class="nx">trpc</span><span class="p">.</span><span class="nx">eventCreation</span><span class="p">.</span><span class="nx">onEventChanged</span><span class="p">.</span><span class="nx">subscriptionOptions</span><span class="p">(</span><span class="kc">undefined</span><span class="p">,</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 63  </span><span class="w">      </span><span class="nx">onData</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">change</span><span class="o">:</span><span class="w"> </span><span class="kt">EventChangedDto</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 64  </span><span class="w">        </span><span class="nx">lastMessageAt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 65  </span><span class="w">        </span><span class="nx">setStale</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 66  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 67  </span><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">change</span><span class="p">.</span><span class="nx">action</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;heartbeat&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 68  </span><span class="w">          </span><span class="k">return</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 69  </span><span class="w">        </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 70  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 71  </span><span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">mine</span><span class="w"> </span><span class="o">=</span></span><span class="source-line"><span class="line-number"> 72  </span><span class="w">          </span><span class="o">!</span><span class="nx">options</span><span class="o">?</span><span class="p">.</span><span class="nx">onlyOrganizerId</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">change</span><span class="p">.</span><span class="nx">event</span><span class="p">.</span><span class="nx">organizerId</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">options</span><span class="p">.</span><span class="nx">onlyOrganizerId</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 73  </span><span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">removed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">change</span><span class="p">.</span><span class="nx">action</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;deleted&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 74  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 75  </span><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">change</span><span class="p">.</span><span class="nx">action</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;created&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 76  </span><span class="w">          </span><span class="ow">void</span><span class="w"> </span><span class="nx">queryClient</span><span class="p">.</span><span class="nx">invalidateQueries</span><span class="p">({</span><span class="w"> </span><span class="nx">queryKey</span><span class="o">:</span><span class="w"> </span><span class="kt">listingsKey</span><span class="w"> </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 77  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 78  </span><span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">mine</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 79  </span><span class="w">            </span><span class="ow">void</span><span class="w"> </span><span class="nx">queryClient</span><span class="p">.</span><span class="nx">invalidateQueries</span><span class="p">({</span><span class="w"> </span><span class="nx">queryKey</span><span class="o">:</span><span class="w"> </span><span class="kt">myEventsKey</span><span class="w"> </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 80  </span><span class="w">          </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 81  </span><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 82  </span><span class="w">          </span><span class="c1">// One cache entry per sort order, all patched together.</span></span><span class="source-line"><span class="line-number"> 83  </span><span class="w">          </span><span class="nx">queryClient</span><span class="p">.</span><span class="nx">setQueriesData</span><span class="o">&lt;</span><span class="nx">EventDto</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">({</span><span class="w"> </span><span class="nx">queryKey</span><span class="o">:</span><span class="w"> </span><span class="kt">listingsKey</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="p">(</span><span class="nx">events</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span></span><span class="source-line"><span class="line-number"> 84  </span><span class="w">            </span><span class="nx">patchList</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span><span class="w"> </span><span class="nx">change</span><span class="p">.</span><span class="nx">event</span><span class="p">,</span><span class="w"> </span><span class="nx">removed</span><span class="p">),</span></span><span class="source-line"><span class="line-number"> 85  </span><span class="w">          </span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 86  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 87  </span><span class="w">          </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">mine</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 88  </span><span class="w">            </span><span class="nx">queryClient</span><span class="p">.</span><span class="nx">setQueryData</span><span class="o">&lt;</span><span class="nx">EventDto</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">myEventsKey</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="nx">events</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span></span><span class="source-line"><span class="line-number"> 89  </span><span class="w">              </span><span class="nx">patchList</span><span class="p">(</span><span class="nx">events</span><span class="p">,</span><span class="w"> </span><span class="nx">change</span><span class="p">.</span><span class="nx">event</span><span class="p">,</span><span class="w"> </span><span class="nx">removed</span><span class="p">),</span></span><span class="source-line"><span class="line-number"> 90  </span><span class="w">            </span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 91  </span><span class="w">          </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 92  </span><span class="w">        </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 93  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 94  </span><span class="w">        </span><span class="c1">// A detail page open on this event.</span></span><span class="source-line"><span class="line-number"> 95  </span><span class="w">        </span><span class="kd">const</span><span class="w"> </span><span class="nx">detailKey</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">trpc</span><span class="p">.</span><span class="nx">eventCreation</span><span class="p">.</span><span class="nx">getEventById</span><span class="p">.</span><span class="nx">queryKey</span><span class="p">({</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">change.event.id</span><span class="w"> </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 96  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 97  </span><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">removed</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 98  </span><span class="w">          </span><span class="nx">queryClient</span><span class="p">.</span><span class="nx">removeQueries</span><span class="p">({</span><span class="w"> </span><span class="nx">queryKey</span><span class="o">:</span><span class="w"> </span><span class="kt">detailKey</span><span class="w"> </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 99  </span><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">100  </span><span class="w">          </span><span class="nx">queryClient</span><span class="p">.</span><span class="nx">setQueryData</span><span class="p">(</span><span class="nx">detailKey</span><span class="p">,</span><span class="w"> </span><span class="nx">change</span><span class="p">.</span><span class="nx">event</span><span class="p">);</span></span><span class="source-line"><span class="line-number">101  </span><span class="w">        </span><span class="p">}</span></span><span class="source-line"><span class="line-number">102  </span><span class="w">      </span><span class="p">},</span></span><span class="source-line"><span class="line-number">103  </span><span class="w">    </span><span class="p">}),</span></span><span class="source-line"><span class="line-number">104  </span><span class="w">  </span><span class="p">);</span></span><span class="source-line"><span class="line-number">105  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">106  </span><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">status</span><span class="p">,</span><span class="w"> </span><span class="nx">reset</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">subscription</span><span class="p">;</span></span><span class="source-line"><span class="line-number">107  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">108  </span><span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">109  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">watchdog</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">setInterval</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">110  </span><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nx">lastMessageAt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="nx">STALE_AFTER_MS</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">111  </span><span class="w">        </span><span class="k">return</span><span class="p">;</span></span><span class="source-line"><span class="line-number">112  </span><span class="w">      </span><span class="p">}</span></span><span class="source-line"><span class="line-number">113  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">114  </span><span class="w">      </span><span class="nx">setStale</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span></span><span class="source-line"><span class="line-number">115  </span><span class="w">      </span><span class="nx">lastMessageAt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span></span><span class="source-line"><span class="line-number">116  </span><span class="w">      </span><span class="c1">// Tear the dead stream down and start a new one, then resync: anything</span></span><span class="source-line"><span class="line-number">117  </span><span class="w">      </span><span class="c1">// that changed while the connection was gone never reached this client.</span></span><span class="source-line"><span class="line-number">118  </span><span class="w">      </span><span class="nx">reset</span><span class="p">();</span></span><span class="source-line"><span class="line-number">119  </span><span class="w">      </span><span class="nx">refetchLists</span><span class="p">();</span></span><span class="source-line"><span class="line-number">120  </span><span class="w">    </span><span class="p">},</span><span class="w"> </span><span class="nx">WATCHDOG_INTERVAL_MS</span><span class="p">);</span></span><span class="source-line"><span class="line-number">121  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">122  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">clearInterval</span><span class="p">(</span><span class="nx">watchdog</span><span class="p">);</span></span><span class="source-line"><span class="line-number">123  </span><span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="nx">reset</span><span class="p">,</span><span class="w"> </span><span class="nx">refetchLists</span><span class="p">]);</span></span><span class="source-line"><span class="line-number">124  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">125  </span><span class="w">  </span><span class="nx">useEffect</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">126  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;pending&#39;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">127  </span><span class="w">      </span><span class="nx">lastMessageAt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Date</span><span class="p">.</span><span class="nx">now</span><span class="p">();</span></span><span class="source-line"><span class="line-number">128  </span><span class="w">    </span><span class="p">}</span></span><span class="source-line"><span class="line-number">129  </span><span class="w">  </span><span class="p">},</span><span class="w"> </span><span class="p">[</span><span class="nx">status</span><span class="p">]);</span></span><span class="source-line"><span class="line-number">130  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">131  </span><span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">132  </span><span class="w">    </span><span class="nx">connected</span><span class="o">:</span><span class="w"> </span><span class="kt">status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;pending&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="nx">stale</span><span class="p">,</span></span><span class="source-line"><span class="line-number">133  </span><span class="w">    </span><span class="nx">reconnecting</span><span class="o">:</span><span class="w"> </span><span class="kt">stale</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;connecting&#39;</span><span class="p">,</span></span><span class="source-line"><span class="line-number">134  </span><span class="w">    </span><span class="nx">failed</span><span class="o">:</span><span class="w"> </span><span class="kt">status</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;error&#39;</span><span class="p">,</span></span><span class="source-line"><span class="line-number">135  </span><span class="w">  </span><span class="p">};</span></span><span class="source-line"><span class="line-number">136  </span><span class="p">}</span></span></code></pre>
+    </section>
+    <footer>
+      Prepared from the local source files. This is an explanation, not a claim that all edge cases
+      have been tested. Code and prose print without an internet connection. Answers and source code
+      start on new pages.
+    </footer>
+  </body>
+</html>

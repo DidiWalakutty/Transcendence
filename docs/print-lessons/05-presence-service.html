@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PresenceService and its connection map | Printable lesson</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        color: #202020;
+        background: #eee;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.55;
+      }
+      body {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 2.8rem;
+        background: #fff;
+      }
+      h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+      }
+      h2 {
+        margin-top: 2rem;
+        font-size: 1.35rem;
+      }
+      h3 {
+        margin-top: 1.4rem;
+        font-size: 1.08rem;
+      }
+      p,
+      li {
+        max-width: 78ch;
+      }
+      a {
+        color: #90330a;
+      }
+      pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        tab-size: 2;
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        padding: 1rem;
+        font: 12px/1.55 monospace;
+      }
+      code {
+        font-family: monospace;
+        font-size: 0.94em;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.2rem 0;
+        font-size: 0.92rem;
+      }
+      th,
+      td {
+        border: 1px solid #bbb;
+        padding: 0.6rem;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #f4eee9;
+      }
+      aside {
+        border-left: 4px solid #d15a20;
+        background: #faf5ef;
+        padding: 0.5rem 1rem;
+        margin: 1.3rem 0;
+      }
+      .meta,
+      .caption {
+        color: #555;
+        font-size: 0.88rem;
+      }
+      .source-name {
+        overflow-wrap: anywhere;
+      }
+      .source-code {
+        background: #fff;
+        font-size: 10px;
+        line-height: 1.6;
+      }
+      .source-line {
+        display: block;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .line-number {
+        color: #777;
+        user-select: none;
+      }
+      .toolbar {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+      button {
+        padding: 0.6rem 1rem;
+        border: 1px solid #888;
+        background: white;
+        cursor: pointer;
+      }
+      .answers,
+      .appendix {
+        border-top: 2px solid #777;
+        margin-top: 3rem;
+        padding-top: 1rem;
+      }
+      li {
+        margin: 0.45rem 0;
+      }
+      footer {
+        border-top: 1px solid #ccc;
+        margin-top: 3rem;
+        padding-top: 1rem;
+        font-size: 0.8rem;
+      }
+      @page {
+        size: A4;
+        margin: 17mm 16mm 18mm;
+      }
+      @media print {
+        html {
+          background: white;
+          font-size: 10.5pt;
+        }
+        body {
+          max-width: none;
+          margin: 0;
+          padding: 0;
+        }
+        .toolbar {
+          display: none;
+        }
+        h1 {
+          font-size: 23pt;
+        }
+        h2 {
+          font-size: 15pt;
+        }
+        h3 {
+          font-size: 12pt;
+        }
+        h1,
+        h2,
+        h3,
+        .source-name {
+          break-after: avoid;
+        }
+        p,
+        li {
+          orphans: 3;
+          widows: 3;
+        }
+        pre {
+          font-size: 9pt;
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
+          overflow: visible;
+        }
+        table {
+          font-size: 9pt;
+        }
+        thead {
+          display: table-header-group;
+        }
+        tr {
+          break-inside: avoid;
+        }
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+        .answers,
+        .appendix {
+          break-before: page;
+        }
+        aside {
+          background: white;
+          border-color: #777;
+        }
+        .source-code {
+          font-size: 8pt;
+          padding: 8pt;
+        }
+        .source-line {
+          break-inside: avoid;
+        }
+        footer {
+          font-size: 8pt;
+        }
+      }
+
+      /* Embedded syntax colors work offline and in print. */
+      pre {
+        line-height: 125%;
+      }
+      td.linenos .normal {
+        color: inherit;
+        background-color: transparent;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      span.linenos {
+        color: inherit;
+        background-color: transparent;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      td.linenos .special {
+        color: #000000;
+        background-color: #ffffc0;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      span.linenos.special {
+        color: #000000;
+        background-color: #ffffc0;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      .syntax .hll {
+        background-color: #ffffcc;
+      }
+      .syntax {
+        background: #f8f8f8;
+      }
+      .syntax .c {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment */
+      .syntax .err {
+        border: 1px solid #f00;
+      } /* Error */
+      .syntax .k {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword */
+      .syntax .o {
+        color: #666;
+      } /* Operator */
+      .syntax .ch {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Hashbang */
+      .syntax .cm {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Multiline */
+      .syntax .cp {
+        color: #9c6500;
+      } /* Comment.Preproc */
+      .syntax .cpf {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.PreprocFile */
+      .syntax .c1 {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Single */
+      .syntax .cs {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Special */
+      .syntax .gd {
+        color: #a00000;
+      } /* Generic.Deleted */
+      .syntax .ge {
+        font-style: italic;
+      } /* Generic.Emph */
+      .syntax .ges {
+        font-weight: bold;
+        font-style: italic;
+      } /* Generic.EmphStrong */
+      .syntax .gr {
+        color: #e40000;
+      } /* Generic.Error */
+      .syntax .gh {
+        color: #000080;
+        font-weight: bold;
+      } /* Generic.Heading */
+      .syntax .gi {
+        color: #008400;
+      } /* Generic.Inserted */
+      .syntax .go {
+        color: #717171;
+      } /* Generic.Output */
+      .syntax .gp {
+        color: #000080;
+        font-weight: bold;
+      } /* Generic.Prompt */
+      .syntax .gs {
+        font-weight: bold;
+      } /* Generic.Strong */
+      .syntax .gu {
+        color: #800080;
+        font-weight: bold;
+      } /* Generic.Subheading */
+      .syntax .gt {
+        color: #04d;
+      } /* Generic.Traceback */
+      .syntax .kc {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Constant */
+      .syntax .kd {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Declaration */
+      .syntax .kn {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Namespace */
+      .syntax .kp {
+        color: #008000;
+      } /* Keyword.Pseudo */
+      .syntax .kr {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Reserved */
+      .syntax .kt {
+        color: #b00040;
+      } /* Keyword.Type */
+      .syntax .m {
+        color: #666;
+      } /* Literal.Number */
+      .syntax .s {
+        color: #ba2121;
+      } /* Literal.String */
+      .syntax .na {
+        color: #687822;
+      } /* Name.Attribute */
+      .syntax .nb {
+        color: #008000;
+      } /* Name.Builtin */
+      .syntax .nc {
+        color: #00f;
+        font-weight: bold;
+      } /* Name.Class */
+      .syntax .no {
+        color: #800;
+      } /* Name.Constant */
+      .syntax .nd {
+        color: #a2f;
+      } /* Name.Decorator */
+      .syntax .ni {
+        color: #717171;
+        font-weight: bold;
+      } /* Name.Entity */
+      .syntax .ne {
+        color: #cb3f38;
+        font-weight: bold;
+      } /* Name.Exception */
+      .syntax .nf {
+        color: #00f;
+      } /* Name.Function */
+      .syntax .nl {
+        color: #767600;
+      } /* Name.Label */
+      .syntax .nn {
+        color: #00f;
+        font-weight: bold;
+      } /* Name.Namespace */
+      .syntax .nt {
+        color: #008000;
+        font-weight: bold;
+      } /* Name.Tag */
+      .syntax .nv {
+        color: #19177c;
+      } /* Name.Variable */
+      .syntax .ow {
+        color: #a2f;
+        font-weight: bold;
+      } /* Operator.Word */
+      .syntax .w {
+        color: #bbb;
+      } /* Text.Whitespace */
+      .syntax .mb {
+        color: #666;
+      } /* Literal.Number.Bin */
+      .syntax .mf {
+        color: #666;
+      } /* Literal.Number.Float */
+      .syntax .mh {
+        color: #666;
+      } /* Literal.Number.Hex */
+      .syntax .mi {
+        color: #666;
+      } /* Literal.Number.Integer */
+      .syntax .mo {
+        color: #666;
+      } /* Literal.Number.Oct */
+      .syntax .sa {
+        color: #ba2121;
+      } /* Literal.String.Affix */
+      .syntax .sb {
+        color: #ba2121;
+      } /* Literal.String.Backtick */
+      .syntax .sc {
+        color: #ba2121;
+      } /* Literal.String.Char */
+      .syntax .dl {
+        color: #ba2121;
+      } /* Literal.String.Delimiter */
+      .syntax .sd {
+        color: #ba2121;
+        font-style: italic;
+      } /* Literal.String.Doc */
+      .syntax .s2 {
+        color: #ba2121;
+      } /* Literal.String.Double */
+      .syntax .se {
+        color: #aa5d1f;
+        font-weight: bold;
+      } /* Literal.String.Escape */
+      .syntax .sh {
+        color: #ba2121;
+      } /* Literal.String.Heredoc */
+      .syntax .si {
+        color: #a45a77;
+        font-weight: bold;
+      } /* Literal.String.Interpol */
+      .syntax .sx {
+        color: #008000;
+      } /* Literal.String.Other */
+      .syntax .sr {
+        color: #a45a77;
+      } /* Literal.String.Regex */
+      .syntax .s1 {
+        color: #ba2121;
+      } /* Literal.String.Single */
+      .syntax .ss {
+        color: #19177c;
+      } /* Literal.String.Symbol */
+      .syntax .bp {
+        color: #008000;
+      } /* Name.Builtin.Pseudo */
+      .syntax .fm {
+        color: #00f;
+      } /* Name.Function.Magic */
+      .syntax .vc {
+        color: #19177c;
+      } /* Name.Variable.Class */
+      .syntax .vg {
+        color: #19177c;
+      } /* Name.Variable.Global */
+      .syntax .vi {
+        color: #19177c;
+      } /* Name.Variable.Instance */
+      .syntax .vm {
+        color: #19177c;
+      } /* Name.Variable.Magic */
+      .syntax .il {
+        color: #666;
+      } /* Literal.Number.Integer.Long */
+      .syntax {
+        color: #202020;
+      }
+      .syntax .c,
+      .syntax .c1,
+      .syntax .cm,
+      .syntax .cs {
+        color: #48614c;
+      }
+      .syntax .s,
+      .syntax .s1,
+      .syntax .s2,
+      .syntax .sb {
+        color: #9a3412;
+      }
+      .syntax .err {
+        border: 0;
+      }
+      @media print {
+        .syntax {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar">
+      <a href="index.html">All lessons</a
+      ><button onclick="window.print()">Print / save as PDF</button>
+    </div>
+    <header>
+      <p class="meta">
+        ft_transcendence · Reading topic 5 · 14 September 2026 · docs-onboarding at efb3807
+      </p>
+      <h1>PresenceService and its connection map</h1>
+      <p>
+        A complete explanation of the small service, including the nested generic type and
+        multi-connection behavior.
+      </p>
+    </header>
+    <h2>1. What online means in this implementation</h2>
+    <p>
+      PresenceService records active tracked connections in one backend process. A user is
+      considered online if that process has at least one connection ID for them. It does not store a
+      permanent online flag in PostgreSQL, measure whether the person is watching the screen, or
+      query Redis.
+    </p>
+    <p>
+      The router tells this service when a subscription begins and ends. The service changes its
+      collection and reports whether the user crossed between online and offline. A separate class
+      sends presence messages.
+    </p>
+    <h2>2. Imports, decorator and class property</h2>
+    <pre
+      class="syntax"
+    ><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">randomUUID</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:crypto&#39;</span><span class="p">;</span>
+<span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Injectable</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@nestjs/common&#39;</span><span class="p">;</span>
+
+<span class="kd">@Injectable</span><span class="p">()</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">PresenceService</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Map</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nb">Set</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;&gt;</span><span class="p">();</span>
+<span class="p">}</span></code></pre>
+    <p>
+      randomUUID generates a fresh identifier for a connection. Injectable lets Nest manage the
+      service as a dependency. export allows other files to import it. The private property is
+      internal to the service. readonly prevents replacing the map reference after initialization;
+      it does not prevent changing map entries.
+    </p>
+    <h2>3. Read Map&lt;string, Set&lt;string&gt;&gt; from the inside out</h2>
+    <p>
+      A Set holds unique values. Here those values are connection-ID strings. A Map associates keys
+      with values. Here the key is a user-ID string, and its value is a Set of connection-ID
+      strings. The angle brackets are generic type arguments telling TypeScript what belongs in the
+      collection.
+    </p>
+    <pre><code>// A conceptual picture, not a JSON encoding of Map and Set:
+user-A → Set { connection-1, connection-2 }
+user-B → Set { connection-3 }</code></pre>
+    <table>
+      <thead>
+        <tr>
+          <th>Expression</th>
+          <th>Meaning</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>connections.get(userId)</td>
+          <td>Get that user’s Set, or undefined if absent</td>
+        </tr>
+        <tr>
+          <td>connections.set(userId, set)</td>
+          <td>Associate the user with a Set</td>
+        </tr>
+        <tr>
+          <td>connections.has(userId)</td>
+          <td>Check whether the map contains this user</td>
+        </tr>
+        <tr>
+          <td>connections.delete(userId)</td>
+          <td>Remove the user entry</td>
+        </tr>
+        <tr>
+          <td>aSet.add(connectionId)</td>
+          <td>Add one connection ID</td>
+        </tr>
+        <tr>
+          <td>aSet.delete(connectionId)</td>
+          <td>Remove one connection ID</td>
+        </tr>
+        <tr>
+          <td>aSet.size</td>
+          <td>Count the remaining IDs</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      The invariant, meaning the rule the methods keep true, is that each stored user has a nonempty
+      connection set. An empty set is removed. That is why checking map membership is enough to
+      decide who is online.
+    </p>
+    <h2>4. Why a Set of users or one boolean would be insufficient</h2>
+    <p>
+      Suppose Maya has two tracked connections. If the server stored only Maya → true, closing one
+      connection could incorrectly set Maya → false even while the second remained active. A
+      connection set lets the server remove exactly the connection that ended.
+    </p>
+    <p>
+      A counter could track a total, but storing unique connection IDs makes repeated disconnect
+      handling safer: deleting an ID that is already absent does not decrement a counter below its
+      correct value. One browser tab can also have more than one subscription; this design counts
+      connections, not assumed tabs.
+    </p>
+    <h2>5. connect adds one connection and reports a transition</h2>
+    <pre
+      class="syntax"
+    ><code><span class="nx">connect</span><span class="p">(</span><span class="nx">userId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">connectionId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w"> </span><span class="nx">wasOffline</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">connectionId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">randomUUID</span><span class="p">();</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">userId</span><span class="p">);</span>
+<span class="w">  </span><span class="c1">// ...</span>
+<span class="p">}</span></code></pre>
+    <p>
+      The method is synchronous: it does not await a database or network request. The return
+      annotation describes an object with the new connection ID and a boolean. The local variable
+      named connections is the user’s Set. <code>this.connections</code> is the Map for all users.
+      Distinguishing those two names prevents confusion.
+    </p>
+    <p>
+      If the map has no entry, the local value is undefined and <code>if (!connections)</code> is
+      true. The method creates a Set containing the new ID, stores it, and returns wasOffline: true.
+      This means the user was offline before this call and is online now.
+    </p>
+    <p>
+      If an entry exists, <code>connections.add(connectionId)</code> mutates that stored Set. It
+      need not call map.set again because get returned the same Set object held by the map. It
+      returns wasOffline: false because the user already had an active connection.
+    </p>
+    <aside>
+      <p>
+        wasOffline: false does not mean the user is offline now. Both successful connect branches
+        leave the user online. The flag tells the caller whether it needs to announce an
+        offline-to-online transition.
+      </p>
+    </aside>
+    <h2>6. disconnect removes one connection</h2>
+    <p>
+      disconnect accepts a user ID and the particular connection ID. It gets that user’s Set. If the
+      user entry is absent, it returns becameOffline: false, because this call did not cause an
+      online-to-offline transition.
+    </p>
+    <pre
+      class="syntax"
+    ><code><span class="nx">connections</span><span class="p">.</span><span class="ow">delete</span><span class="p">(</span><span class="nx">connectionId</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">connections</span><span class="p">.</span><span class="nx">size</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="ow">delete</span><span class="p">(</span><span class="nx">userId</span><span class="p">);</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">becameOffline</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="w"> </span><span class="p">};</span>
+<span class="p">}</span>
+<span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">becameOffline</span><span class="o">:</span><span class="w"> </span><span class="kt">false</span><span class="w"> </span><span class="p">};</span></code></pre>
+    <p>
+      Deleting one ID can leave others active. Only when the Set becomes empty does it remove the
+      map entry and return true. The returned boolean describes what changed, not simply the final
+      online state. An unknown user is offline, but disconnecting that unknown user still returns
+      false because nothing changed.
+    </p>
+    <h2>7. Trace two connections by hand</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Stored connections for A</th>
+          <th>Return flag</th>
+          <th>A online afterwards?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>connect(A)</td>
+          <td>{c1}</td>
+          <td>wasOffline: true</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>connect(A)</td>
+          <td>{c1, c2}</td>
+          <td>wasOffline: false</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>disconnect(A, c1)</td>
+          <td>{c2}</td>
+          <td>becameOffline: false</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>disconnect(A, c1) again</td>
+          <td>{c2}</td>
+          <td>becameOffline: false</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td>disconnect(A, c2)</td>
+          <td>No map entry</td>
+          <td>becameOffline: true</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td>disconnect(A, c2) again</td>
+          <td>No map entry</td>
+          <td>becameOffline: false</td>
+          <td>No</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      c1 and c2 are short teaching labels. The implementation returns UUID strings. No timer
+      automatically expires these entries inside PresenceService. Correct cleanup in the router is
+      therefore part of correctness, not optional housekeeping.
+    </p>
+    <h2>8. getOnlineUserIds filters a requested list</h2>
+    <pre
+      class="syntax"
+    ><code><span class="nx">getOnlineUserIds</span><span class="p">(</span><span class="nx">userIds</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[])</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">userIds</span><span class="p">.</span><span class="nx">filter</span><span class="p">((</span><span class="nx">userId</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">userId</span><span class="p">));</span>
+<span class="p">}</span></code></pre>
+    <p>
+      The input and output are arrays of strings. filter keeps IDs for which map.has returns true.
+      The callback does not create connections or announce changes. It asks about the present state.
+    </p>
+    <pre class="syntax"><code><span class="c1">// If only user-A is online:</span>
+<span class="nx">getOnlineUserIds</span><span class="p">([</span><span class="s1">&#39;user-A&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;user-B&#39;</span><span class="p">])</span>
+<span class="c1">// returns [&#39;user-A&#39;]</span></code></pre>
+    <p>
+      The method preserves input order and does not remove duplicate input IDs. It returns only the
+      requested online users, not a dump of every map entry. Authentication and UUID validation are
+      the router’s responsibility.
+    </p>
+    <h2>9. Lifetimes and existing tests</h2>
+    <p>
+      A backend process restart loses this map. Separate backend instances have separate maps unless
+      a shared presence mechanism is added. A singleton service in one process lets its routers see
+      the same connections, but does not make that state global across machines.
+    </p>
+    <p>
+      The existing service tests cover the first connection, multiple connections, the last
+      disconnect, repeated or unknown disconnects, and filtering requested users. They establish
+      local collection behavior. They do not establish that every network-disconnection path
+      triggers router cleanup.
+    </p>
+    <h2>Questions to answer before reading the solutions</h2>
+    <ol>
+      <li>What are the key and value types in the map?</li>
+      <li>Why does the second connect return wasOffline: false even though the user is online?</li>
+      <li>Why does calling Set.add after Map.get change the stored state?</li>
+      <li>What happens when one of two connections disconnects?</li>
+      <li>Why can an unknown-user disconnect return becameOffline: false?</li>
+      <li>What happens to online state after a backend restart?</li>
+    </ol>
+    <section class="answers">
+      <h2>Answers and reasoning</h2>
+      <ol>
+        <li>
+          The key is a user-ID string. The value is a Set of connection-ID strings. Each user can
+          have several independently removable connections.
+        </li>
+        <li>
+          The flag describes the state before this connect call. The user was already online, so
+          this call did not cause a new online transition.
+        </li>
+        <li>
+          The Set is an object. Map.get returns the stored object reference, not a cloned Set.
+          Adding to it changes the same Set the map holds.
+        </li>
+        <li>Only that connection ID is removed. The remaining connection keeps the user online.</li>
+        <li>No online-to-offline transition occurred. The user was not tracked before the call.</li>
+        <li>The in-memory map disappears. New subscriptions need to register connections again.</li>
+      </ol>
+    </section>
+    <section class="appendix">
+      <h2>Source code for reading on paper</h2>
+      <p>
+        Line numbers are from the inspected checkout. The explanations distinguish intended behavior
+        from limitations visible in this code. Source comments are reproduced as written, including
+        comments discussed critically in the lesson.
+      </p>
+      <h3 class="source-name">apps/backend/src/presence/presence.service.ts · lines 1–41</h3>
+      <p class="caption">
+        Source snapshot at efb3807.
+        <a href="../../apps/backend/src/presence/presence.service.ts">Open the repository file</a>.
+      </p>
+      <pre
+        class="source-code syntax"
+      ><code><span class="source-line"><span class="line-number">  1  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">randomUUID</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;node:crypto&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  2  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Injectable</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@nestjs/common&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  3  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  4  </span><span class="kd">@Injectable</span><span class="p">()</span></span><span class="source-line"><span class="line-number">  5  </span><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">PresenceService</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">  6  </span><span class="w">  </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Map</span><span class="o">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nb">Set</span><span class="o">&lt;</span><span class="kt">string</span><span class="o">&gt;&gt;</span><span class="p">();</span></span><span class="source-line"><span class="line-number">  7  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  8  </span><span class="w">  </span><span class="nx">connect</span><span class="p">(</span><span class="nx">userId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">connectionId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">;</span><span class="w"> </span><span class="nx">wasOffline</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">  9  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">connectionId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">randomUUID</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 10  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">userId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 11  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 12  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">connections</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 13  </span><span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">userId</span><span class="p">,</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nb">Set</span><span class="p">([</span><span class="nx">connectionId</span><span class="p">]));</span></span><span class="source-line"><span class="line-number"> 14  </span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">connectionId</span><span class="p">,</span><span class="w"> </span><span class="nx">wasOffline</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="w"> </span><span class="p">};</span></span><span class="source-line"><span class="line-number"> 15  </span><span class="w">    </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 16  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 17  </span><span class="w">    </span><span class="nx">connections</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">connectionId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 18  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">connectionId</span><span class="p">,</span><span class="w"> </span><span class="nx">wasOffline</span><span class="o">:</span><span class="w"> </span><span class="kt">false</span><span class="w"> </span><span class="p">};</span></span><span class="source-line"><span class="line-number"> 19  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 20  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 21  </span><span class="w">  </span><span class="nx">disconnect</span><span class="p">(</span><span class="nx">userId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">connectionId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">becameOffline</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 22  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">connections</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">userId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 23  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 24  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">connections</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 25  </span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">becameOffline</span><span class="o">:</span><span class="w"> </span><span class="kt">false</span><span class="w"> </span><span class="p">};</span></span><span class="source-line"><span class="line-number"> 26  </span><span class="w">    </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 27  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 28  </span><span class="w">    </span><span class="nx">connections</span><span class="p">.</span><span class="ow">delete</span><span class="p">(</span><span class="nx">connectionId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 29  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 30  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">connections</span><span class="p">.</span><span class="nx">size</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="mf">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 31  </span><span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="ow">delete</span><span class="p">(</span><span class="nx">userId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 32  </span><span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">becameOffline</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="w"> </span><span class="p">};</span></span><span class="source-line"><span class="line-number"> 33  </span><span class="w">    </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 34  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 35  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">becameOffline</span><span class="o">:</span><span class="w"> </span><span class="kt">false</span><span class="w"> </span><span class="p">};</span></span><span class="source-line"><span class="line-number"> 36  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 37  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 38  </span><span class="w">  </span><span class="nx">getOnlineUserIds</span><span class="p">(</span><span class="nx">userIds</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[])</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">[]</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 39  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">userIds</span><span class="p">.</span><span class="nx">filter</span><span class="p">((</span><span class="nx">userId</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">userId</span><span class="p">));</span></span><span class="source-line"><span class="line-number"> 40  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 41  </span><span class="p">}</span></span></code></pre>
+      <h3 class="source-name">apps/backend/src/presence/presence.service.spec.ts · lines 1–47</h3>
+      <p class="caption">
+        Source snapshot at efb3807.
+        <a href="../../apps/backend/src/presence/presence.service.spec.ts"
+          >Open the repository file</a
+        >.
+      </p>
+      <pre
+        class="source-code syntax"
+      ><code><span class="source-line"><span class="line-number">  1  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">describe</span><span class="p">,</span><span class="w"> </span><span class="nx">expect</span><span class="p">,</span><span class="w"> </span><span class="nx">it</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;vitest&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  2  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  3  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">PresenceService</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./presence.service&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  4  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  5  </span><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;PresenceService&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">  6  </span><span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;reports a user online only once, on their first connection&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">  7  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">PresenceService</span><span class="p">();</span></span><span class="source-line"><span class="line-number">  8  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  9  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">service</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="s1">&#39;user-1&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 10  </span><span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">first</span><span class="p">.</span><span class="nx">wasOffline</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 11  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 12  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">second</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">service</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="s1">&#39;user-1&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 13  </span><span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">second</span><span class="p">.</span><span class="nx">wasOffline</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 14  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 15  </span><span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">service</span><span class="p">.</span><span class="nx">getOnlineUserIds</span><span class="p">([</span><span class="s1">&#39;user-1&#39;</span><span class="p">])).</span><span class="nx">toEqual</span><span class="p">([</span><span class="s1">&#39;user-1&#39;</span><span class="p">]);</span></span><span class="source-line"><span class="line-number"> 16  </span><span class="w">  </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 17  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 18  </span><span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;only reports offline once the last connection for a user closes&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 19  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">PresenceService</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 20  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">service</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="s1">&#39;user-1&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 21  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">second</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">service</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="s1">&#39;user-1&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 22  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 23  </span><span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">service</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">(</span><span class="s1">&#39;user-1&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">first</span><span class="p">.</span><span class="nx">connectionId</span><span class="p">).</span><span class="nx">becameOffline</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 24  </span><span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">service</span><span class="p">.</span><span class="nx">getOnlineUserIds</span><span class="p">([</span><span class="s1">&#39;user-1&#39;</span><span class="p">])).</span><span class="nx">toEqual</span><span class="p">([</span><span class="s1">&#39;user-1&#39;</span><span class="p">]);</span></span><span class="source-line"><span class="line-number"> 25  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 26  </span><span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">service</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">(</span><span class="s1">&#39;user-1&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">second</span><span class="p">.</span><span class="nx">connectionId</span><span class="p">).</span><span class="nx">becameOffline</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="kc">true</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 27  </span><span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">service</span><span class="p">.</span><span class="nx">getOnlineUserIds</span><span class="p">([</span><span class="s1">&#39;user-1&#39;</span><span class="p">])).</span><span class="nx">toEqual</span><span class="p">([]);</span></span><span class="source-line"><span class="line-number"> 28  </span><span class="w">  </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 29  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 30  </span><span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;ignores disconnects for unknown users or connections&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 31  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">PresenceService</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 32  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 33  </span><span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">service</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">(</span><span class="s1">&#39;unknown-user&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;unknown-connection&#39;</span><span class="p">).</span><span class="nx">becameOffline</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 34  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 35  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">connectionId</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">service</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="s1">&#39;user-1&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 36  </span><span class="w">    </span><span class="nx">service</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">(</span><span class="s1">&#39;user-1&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">connectionId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 37  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 38  </span><span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">service</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">(</span><span class="s1">&#39;user-1&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">connectionId</span><span class="p">).</span><span class="nx">becameOffline</span><span class="p">).</span><span class="nx">toBe</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 39  </span><span class="w">  </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 40  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 41  </span><span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">&#39;filters requested ids down to those currently online&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 42  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">service</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ow">new</span><span class="w"> </span><span class="nx">PresenceService</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 43  </span><span class="w">    </span><span class="nx">service</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="s1">&#39;user-1&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 44  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 45  </span><span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">service</span><span class="p">.</span><span class="nx">getOnlineUserIds</span><span class="p">([</span><span class="s1">&#39;user-1&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;user-2&#39;</span><span class="p">])).</span><span class="nx">toEqual</span><span class="p">([</span><span class="s1">&#39;user-1&#39;</span><span class="p">]);</span></span><span class="source-line"><span class="line-number"> 46  </span><span class="w">  </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 47  </span><span class="p">});</span></span></code></pre>
+    </section>
+    <footer>
+      Prepared from the local source files. This is an explanation, not a claim that all edge cases
+      have been tested. Code and prose print without an internet connection. Answers and source code
+      start on new pages.
+    </footer>
+  </body>
+</html>

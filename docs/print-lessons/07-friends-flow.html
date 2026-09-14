@@ -1,0 +1,1041 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Friends: router, service, repository and schemas | Printable lesson</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        color: #202020;
+        background: #eee;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.55;
+      }
+      body {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 2.8rem;
+        background: #fff;
+      }
+      h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+      }
+      h2 {
+        margin-top: 2rem;
+        font-size: 1.35rem;
+      }
+      h3 {
+        margin-top: 1.4rem;
+        font-size: 1.08rem;
+      }
+      p,
+      li {
+        max-width: 78ch;
+      }
+      a {
+        color: #90330a;
+      }
+      pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        tab-size: 2;
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        padding: 1rem;
+        font: 12px/1.55 monospace;
+      }
+      code {
+        font-family: monospace;
+        font-size: 0.94em;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.2rem 0;
+        font-size: 0.92rem;
+      }
+      th,
+      td {
+        border: 1px solid #bbb;
+        padding: 0.6rem;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #f4eee9;
+      }
+      aside {
+        border-left: 4px solid #d15a20;
+        background: #faf5ef;
+        padding: 0.5rem 1rem;
+        margin: 1.3rem 0;
+      }
+      .meta,
+      .caption {
+        color: #555;
+        font-size: 0.88rem;
+      }
+      .source-name {
+        overflow-wrap: anywhere;
+      }
+      .source-code {
+        background: #fff;
+        font-size: 10px;
+        line-height: 1.6;
+      }
+      .source-line {
+        display: block;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .line-number {
+        color: #777;
+        user-select: none;
+      }
+      .toolbar {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+      button {
+        padding: 0.6rem 1rem;
+        border: 1px solid #888;
+        background: white;
+        cursor: pointer;
+      }
+      .answers,
+      .appendix {
+        border-top: 2px solid #777;
+        margin-top: 3rem;
+        padding-top: 1rem;
+      }
+      li {
+        margin: 0.45rem 0;
+      }
+      footer {
+        border-top: 1px solid #ccc;
+        margin-top: 3rem;
+        padding-top: 1rem;
+        font-size: 0.8rem;
+      }
+      @page {
+        size: A4;
+        margin: 17mm 16mm 18mm;
+      }
+      @media print {
+        html {
+          background: white;
+          font-size: 10.5pt;
+        }
+        body {
+          max-width: none;
+          margin: 0;
+          padding: 0;
+        }
+        .toolbar {
+          display: none;
+        }
+        h1 {
+          font-size: 23pt;
+        }
+        h2 {
+          font-size: 15pt;
+        }
+        h3 {
+          font-size: 12pt;
+        }
+        h1,
+        h2,
+        h3,
+        .source-name {
+          break-after: avoid;
+        }
+        p,
+        li {
+          orphans: 3;
+          widows: 3;
+        }
+        pre {
+          font-size: 9pt;
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
+          overflow: visible;
+        }
+        table {
+          font-size: 9pt;
+        }
+        thead {
+          display: table-header-group;
+        }
+        tr {
+          break-inside: avoid;
+        }
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+        .answers,
+        .appendix {
+          break-before: page;
+        }
+        aside {
+          background: white;
+          border-color: #777;
+        }
+        .source-code {
+          font-size: 8pt;
+          padding: 8pt;
+        }
+        .source-line {
+          break-inside: avoid;
+        }
+        footer {
+          font-size: 8pt;
+        }
+      }
+
+      /* Embedded syntax colors work offline and in print. */
+      pre {
+        line-height: 125%;
+      }
+      td.linenos .normal {
+        color: inherit;
+        background-color: transparent;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      span.linenos {
+        color: inherit;
+        background-color: transparent;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      td.linenos .special {
+        color: #000000;
+        background-color: #ffffc0;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      span.linenos.special {
+        color: #000000;
+        background-color: #ffffc0;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      .syntax .hll {
+        background-color: #ffffcc;
+      }
+      .syntax {
+        background: #f8f8f8;
+      }
+      .syntax .c {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment */
+      .syntax .err {
+        border: 1px solid #f00;
+      } /* Error */
+      .syntax .k {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword */
+      .syntax .o {
+        color: #666;
+      } /* Operator */
+      .syntax .ch {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Hashbang */
+      .syntax .cm {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Multiline */
+      .syntax .cp {
+        color: #9c6500;
+      } /* Comment.Preproc */
+      .syntax .cpf {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.PreprocFile */
+      .syntax .c1 {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Single */
+      .syntax .cs {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Special */
+      .syntax .gd {
+        color: #a00000;
+      } /* Generic.Deleted */
+      .syntax .ge {
+        font-style: italic;
+      } /* Generic.Emph */
+      .syntax .ges {
+        font-weight: bold;
+        font-style: italic;
+      } /* Generic.EmphStrong */
+      .syntax .gr {
+        color: #e40000;
+      } /* Generic.Error */
+      .syntax .gh {
+        color: #000080;
+        font-weight: bold;
+      } /* Generic.Heading */
+      .syntax .gi {
+        color: #008400;
+      } /* Generic.Inserted */
+      .syntax .go {
+        color: #717171;
+      } /* Generic.Output */
+      .syntax .gp {
+        color: #000080;
+        font-weight: bold;
+      } /* Generic.Prompt */
+      .syntax .gs {
+        font-weight: bold;
+      } /* Generic.Strong */
+      .syntax .gu {
+        color: #800080;
+        font-weight: bold;
+      } /* Generic.Subheading */
+      .syntax .gt {
+        color: #04d;
+      } /* Generic.Traceback */
+      .syntax .kc {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Constant */
+      .syntax .kd {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Declaration */
+      .syntax .kn {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Namespace */
+      .syntax .kp {
+        color: #008000;
+      } /* Keyword.Pseudo */
+      .syntax .kr {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Reserved */
+      .syntax .kt {
+        color: #b00040;
+      } /* Keyword.Type */
+      .syntax .m {
+        color: #666;
+      } /* Literal.Number */
+      .syntax .s {
+        color: #ba2121;
+      } /* Literal.String */
+      .syntax .na {
+        color: #687822;
+      } /* Name.Attribute */
+      .syntax .nb {
+        color: #008000;
+      } /* Name.Builtin */
+      .syntax .nc {
+        color: #00f;
+        font-weight: bold;
+      } /* Name.Class */
+      .syntax .no {
+        color: #800;
+      } /* Name.Constant */
+      .syntax .nd {
+        color: #a2f;
+      } /* Name.Decorator */
+      .syntax .ni {
+        color: #717171;
+        font-weight: bold;
+      } /* Name.Entity */
+      .syntax .ne {
+        color: #cb3f38;
+        font-weight: bold;
+      } /* Name.Exception */
+      .syntax .nf {
+        color: #00f;
+      } /* Name.Function */
+      .syntax .nl {
+        color: #767600;
+      } /* Name.Label */
+      .syntax .nn {
+        color: #00f;
+        font-weight: bold;
+      } /* Name.Namespace */
+      .syntax .nt {
+        color: #008000;
+        font-weight: bold;
+      } /* Name.Tag */
+      .syntax .nv {
+        color: #19177c;
+      } /* Name.Variable */
+      .syntax .ow {
+        color: #a2f;
+        font-weight: bold;
+      } /* Operator.Word */
+      .syntax .w {
+        color: #bbb;
+      } /* Text.Whitespace */
+      .syntax .mb {
+        color: #666;
+      } /* Literal.Number.Bin */
+      .syntax .mf {
+        color: #666;
+      } /* Literal.Number.Float */
+      .syntax .mh {
+        color: #666;
+      } /* Literal.Number.Hex */
+      .syntax .mi {
+        color: #666;
+      } /* Literal.Number.Integer */
+      .syntax .mo {
+        color: #666;
+      } /* Literal.Number.Oct */
+      .syntax .sa {
+        color: #ba2121;
+      } /* Literal.String.Affix */
+      .syntax .sb {
+        color: #ba2121;
+      } /* Literal.String.Backtick */
+      .syntax .sc {
+        color: #ba2121;
+      } /* Literal.String.Char */
+      .syntax .dl {
+        color: #ba2121;
+      } /* Literal.String.Delimiter */
+      .syntax .sd {
+        color: #ba2121;
+        font-style: italic;
+      } /* Literal.String.Doc */
+      .syntax .s2 {
+        color: #ba2121;
+      } /* Literal.String.Double */
+      .syntax .se {
+        color: #aa5d1f;
+        font-weight: bold;
+      } /* Literal.String.Escape */
+      .syntax .sh {
+        color: #ba2121;
+      } /* Literal.String.Heredoc */
+      .syntax .si {
+        color: #a45a77;
+        font-weight: bold;
+      } /* Literal.String.Interpol */
+      .syntax .sx {
+        color: #008000;
+      } /* Literal.String.Other */
+      .syntax .sr {
+        color: #a45a77;
+      } /* Literal.String.Regex */
+      .syntax .s1 {
+        color: #ba2121;
+      } /* Literal.String.Single */
+      .syntax .ss {
+        color: #19177c;
+      } /* Literal.String.Symbol */
+      .syntax .bp {
+        color: #008000;
+      } /* Name.Builtin.Pseudo */
+      .syntax .fm {
+        color: #00f;
+      } /* Name.Function.Magic */
+      .syntax .vc {
+        color: #19177c;
+      } /* Name.Variable.Class */
+      .syntax .vg {
+        color: #19177c;
+      } /* Name.Variable.Global */
+      .syntax .vi {
+        color: #19177c;
+      } /* Name.Variable.Instance */
+      .syntax .vm {
+        color: #19177c;
+      } /* Name.Variable.Magic */
+      .syntax .il {
+        color: #666;
+      } /* Literal.Number.Integer.Long */
+      .syntax {
+        color: #202020;
+      }
+      .syntax .c,
+      .syntax .c1,
+      .syntax .cm,
+      .syntax .cs {
+        color: #48614c;
+      }
+      .syntax .s,
+      .syntax .s1,
+      .syntax .s2,
+      .syntax .sb {
+        color: #9a3412;
+      }
+      .syntax .err {
+        border: 0;
+      }
+      @media print {
+        .syntax {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar">
+      <a href="index.html">All lessons</a
+      ><button onclick="window.print()">Print / save as PDF</button>
+    </div>
+    <header>
+      <p class="meta">
+        ft_transcendence · Reading topic 7 · 14 September 2026 · docs-onboarding at efb3807
+      </p>
+      <h1>Friends: router, service, repository and schemas</h1>
+      <p>
+        A complete request-to-database walkthrough of friendship creation, acceptance, listing and
+        removal.
+      </p>
+    </header>
+    <h2>1. Follow the feature through its layers</h2>
+    <p>
+      The friends feature connects a user action to a stored relationship. The router exposes
+      operations and checks login. The service coordinates rules such as rejecting self-requests.
+      The Drizzle repository performs database queries. The database schema defines stored columns,
+      and friends.ts defines runtime request/response schemas and TypeScript DTO types.
+    </p>
+    <pre><code>Profile sends friendId
+  → FriendsRouter takes myId from ctx.user.id
+  → FriendsService checks applicable rules
+  → DrizzleFriendsRepository reads or changes rows
+  → router returns users or a friendship record</code></pre>
+    <p>
+      Maya and Leo are teaching names below. A and B are shortened symbolic IDs, not values that
+      would pass the actual UUID validators.
+    </p>
+    <h2>2. Read the stored relationship first</h2>
+    <pre
+      class="syntax"
+    ><code><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">friendshipStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">pgEnum</span><span class="p">(</span><span class="s1">&#39;friendship_status&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;pending&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;accepted&#39;</span><span class="p">]);</span>
+
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">friends</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">pgTable</span><span class="p">(</span><span class="s1">&#39;friends&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">uuid</span><span class="p">(</span><span class="s1">&#39;my_id&#39;</span><span class="p">).</span><span class="nx">notNull</span><span class="p">().</span><span class="nx">references</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">users</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">onDelete</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;cascade&#39;</span><span class="w"> </span><span class="p">}),</span>
+<span class="w">  </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">uuid</span><span class="p">(</span><span class="s1">&#39;friend_id&#39;</span><span class="p">).</span><span class="nx">notNull</span><span class="p">().</span><span class="nx">references</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">users</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">onDelete</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;cascade&#39;</span><span class="w"> </span><span class="p">}),</span>
+<span class="w">  </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="kt">friendshipStatus</span><span class="p">(</span><span class="s1">&#39;f_status&#39;</span><span class="p">).</span><span class="nx">notNull</span><span class="p">().</span><span class="k">default</span><span class="p">(</span><span class="s1">&#39;pending&#39;</span><span class="p">),</span>
+<span class="w">  </span><span class="nx">createdAt</span><span class="o">:</span><span class="w"> </span><span class="kt">timestamp</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">).</span><span class="nx">notNull</span><span class="p">().</span><span class="nx">defaultNow</span><span class="p">(),</span>
+<span class="p">});</span></code></pre>
+    <p>
+      pgTable describes a PostgreSQL table through Drizzle. The JavaScript property names myId and
+      friendId map to SQL column names my_id and friend_id. uuid specifies the column type. notNull
+      requires a value. references creates a foreign-key relationship to a users row. onDelete:
+      cascade means deleting a referenced user also deletes related friendship rows.
+    </p>
+    <p>
+      The enum restricts status to pending or accepted. The default supplies pending when an insert
+      omits status. defaultNow supplies the creation timestamp. These database defaults do not mean
+      a request can ignore every API requirement; storage and request validation are separate
+      layers.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Column</th>
+          <th>Meaning for Maya requesting Leo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>myId</td>
+          <td>Maya, the original sender</td>
+        </tr>
+        <tr>
+          <td>friendId</td>
+          <td>Leo, the original recipient</td>
+        </tr>
+        <tr>
+          <td>status</td>
+          <td>pending before acceptance, accepted afterwards</td>
+        </tr>
+        <tr>
+          <td>createdAt</td>
+          <td>When this row was created</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Acceptance changes status; it does not swap the two IDs or create a reverse row. The
+      relationship is stored once with its original direction. Reading accepted friends must
+      therefore work from either side. The shown table has no separate friendship ID, primary key,
+      unique pair constraint, or database self-friend check. Those absences matter when reasoning
+      about concurrency and duplicate rows.
+    </p>
+    <h2>3. What packages/schemas/src/friends.ts exports</h2>
+    <pre
+      class="syntax"
+    ><code><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">friendSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createSelectSchema</span><span class="p">(</span><span class="nx">friends</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">createdAt</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">coerce</span><span class="p">.</span><span class="nx">date</span><span class="p">(),</span>
+<span class="p">});</span></code></pre>
+    <p>
+      createSelectSchema derives a runtime Zod schema from the Drizzle table. It describes a
+      selected friendship row, not a user profile. The createdAt override coerces supported date
+      input into a JavaScript Date before validation completes, which is useful when a date arrived
+      as serialized text.
+    </p>
+    <pre
+      class="syntax"
+    ><code><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">addFriendSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">object</span><span class="p">({</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">z.uuid</span><span class="p">()</span><span class="w"> </span><span class="p">});</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">removeFriendSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">object</span><span class="p">({</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">z.uuid</span><span class="p">()</span><span class="w"> </span><span class="p">});</span></code></pre>
+    <p>
+      These inputs accept the other person’s ID. They do not accept the acting user’s ID. That
+      identity comes from authenticated context in the router. The add and remove input shapes
+      happen to be the same, but their exported names express their intended operations.
+    </p>
+    <p>
+      respondFriendSchema also exists with myId, friendId and accept fields. However, the inspected
+      router does not use it. acceptFriend uses addFriendSchema. Do not infer a working
+      reject-by-boolean endpoint merely because a schema defines an accept field.
+    </p>
+    <pre
+      class="syntax"
+    ><code><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">AddFriendDto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">infer</span><span class="o">&lt;</span><span class="ow">typeof</span><span class="w"> </span><span class="nx">addFriendSchema</span><span class="o">&gt;</span><span class="p">;</span></code></pre>
+    <p>
+      typeof here refers to the schema’s TypeScript type. z.infer extracts the TypeScript value
+      shape accepted by that schema. The exported DTO is a compile-time type; the schema is the
+      runtime validation object. FriendDto, RespondFriendDto, and RemoveFriendDto follow the same
+      pattern.
+    </p>
+    <h2>4. FriendsRouter receives requests</h2>
+    <p>
+      <code>@Router({ alias: 'friends' })</code> makes the frontend names friends.getFriends,
+      friends.addFriend and so on. The constructor receives FriendsService through dependency
+      injection. @Query and @Mutation identify the operation kind and configure schemas. @Input
+      supplies parsed submitted values, and @Ctx supplies request context.
+    </p>
+    <p>
+      Every method explicitly checks <code>if (!ctx.user)</code> and throws UNAUTHORIZED if needed.
+      This router does not use ProtectedMiddleware for these checks. After the guard, ctx.user.id is
+      the acting user. Direct method calls in tests do not automatically reproduce all framework
+      schema parsing, but the explicit guard remains ordinary method code.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Router method</th>
+          <th>Input from caller</th>
+          <th>Service arguments</th>
+          <th>Successful output</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>getFriends</td>
+          <td>None</td>
+          <td>Current user ID</td>
+          <td>User objects for accepted friends</td>
+        </tr>
+        <tr>
+          <td>getPendingRequests</td>
+          <td>None</td>
+          <td>Current user ID</td>
+          <td>User objects for incoming senders</td>
+        </tr>
+        <tr>
+          <td>addFriend</td>
+          <td>friendId</td>
+          <td>Current user ID, other ID</td>
+          <td>Friendship row</td>
+        </tr>
+        <tr>
+          <td>acceptFriend</td>
+          <td>friendId, using addFriendSchema</td>
+          <td>Current recipient ID, sender ID</td>
+          <td>Friendship row</td>
+        </tr>
+        <tr>
+          <td>removeFriend</td>
+          <td>friendId</td>
+          <td>Current user ID, other ID</td>
+          <td>Removed friendship row</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      The two query output schemas are userSchema.array(), because the UI needs people to display.
+      Mutation output is friendSchema, because those methods return the relationship row. Confusing
+      user data and relationship data makes the result types harder to understand.
+    </p>
+    <h2>5. How the router represents failure</h2>
+    <p>
+      addFriend returns the service result directly. Self or duplicate errors thrown by the service
+      propagate through the request. acceptFriend and removeFriend also inspect the result. If the
+      repository changed no matching row, the returned first row is undefined, so the router throws
+      NOT_FOUND.
+    </p>
+    <pre
+      class="syntax"
+    ><code><span class="kd">const</span><span class="w"> </span><span class="nx">friendship</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">friendsService</span><span class="p">.</span><span class="nx">acceptFriend</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">input</span><span class="p">.</span><span class="nx">friendId</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">friendship</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="nx">notFoundError</span><span class="p">(</span><span class="s1">&#39;Friend request not found&#39;</span><span class="p">);</span>
+<span class="k">return</span><span class="w"> </span><span class="nx">friendship</span><span class="p">;</span></code></pre>
+    <p>
+      Throwing is an unsuccessful operation. Returning undefined or false normally would not express
+      the same error contract to a mutation caller. The context-based ID is also a permission
+      boundary: another user cannot choose to act as Maya merely by sending a myId field.
+    </p>
+    <h2>6. FriendsService coordinates the rules</h2>
+    <p>
+      Injectable lets Nest manage the service. The injected FriendsRepository is an abstract
+      contract, meaning the service depends on available operations rather than a particular SQL
+      implementation. The read, accept, and remove methods currently delegate straight to repository
+      methods.
+    </p>
+    <pre
+      class="syntax"
+    ><code><span class="k">async</span><span class="w"> </span><span class="nx">addFriend</span><span class="p">(</span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">myId</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">friendId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">throw</span><span class="w"> </span><span class="nx">conflictError</span><span class="p">(</span><span class="s1">&#39;You cannot add yourself as a friend&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">existing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">repository</span><span class="p">.</span><span class="nx">findFriendship</span><span class="p">(</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">existing</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">throw</span><span class="w"> </span><span class="nx">conflictError</span><span class="p">(</span><span class="s1">&#39;Friend request already exists&#39;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">repository</span><span class="p">.</span><span class="nx">addFriend</span><span class="p">(</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">);</span>
+<span class="p">}</span></code></pre>
+    <p>
+      Strict equality rejects self-requests. The awaited lookup checks whether any relationship
+      already exists in either direction. It does not only check accepted friends: an existing
+      pending request also causes a conflict. If neither condition blocks the operation, the
+      repository inserts a pending row.
+    </p>
+    <p>
+      This service does not explicitly check whether the target user exists. The foreign key
+      supplies a database constraint for that. It also does not place the duplicate lookup and
+      insert inside a transaction or enforce pair uniqueness. Two concurrent requests can both pass
+      the lookup. A source-based explanation should not claim that this check alone guarantees no
+      duplicates.
+    </p>
+    <h2>7. The repository class, inheritance and injected database</h2>
+    <pre
+      class="syntax"
+    ><code><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">DrizzleFriendsRepository</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">FriendsRepository</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kr">constructor</span><span class="p">(</span><span class="kd">@Inject</span><span class="p">(</span><span class="nx">DATABASE</span><span class="p">)</span><span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">db</span><span class="o">:</span><span class="w"> </span><span class="kt">Database</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">super</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span></code></pre>
+    <p>
+      extends says this class implements the inherited repository contract. super() calls the parent
+      constructor, as required before using this in a derived class constructor. @Inject(DATABASE)
+      tells Nest which registered provider to supply. Database is a TypeScript type describing the
+      database object; the DATABASE token is the runtime lookup identifier.
+    </p>
+    <p>
+      The imported eq, and and or functions build SQL conditions. They are not in-memory JavaScript
+      filters. Drizzle translates the chained query into database operations using the table
+      definitions.
+    </p>
+    <h2>8. findFriends joins either side to the other user</h2>
+    <p>
+      The query starts from friends rows and joins users. An inner join pairs rows only when its
+      condition matches. The condition covers two possibilities: the current user is the sender, or
+      the current user is the recipient.
+    </p>
+    <pre class="syntax"><code><span class="nx">or</span><span class="p">(</span>
+<span class="w">  </span><span class="nx">and</span><span class="p">(</span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">userId</span><span class="p">),</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">users</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">friends</span><span class="p">.</span><span class="nx">friendId</span><span class="p">)),</span>
+<span class="w">  </span><span class="nx">and</span><span class="p">(</span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">friendId</span><span class="p">,</span><span class="w"> </span><span class="nx">userId</span><span class="p">),</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">users</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">friends</span><span class="p">.</span><span class="nx">myId</span><span class="p">)),</span>
+<span class="p">)</span></code></pre>
+    <ol>
+      <li>If userId is the row’s myId, join the users row whose ID equals friendId.</li>
+      <li>If userId is the row’s friendId, join the users row whose ID equals myId.</li>
+      <li>Keep only friendship rows whose status is accepted.</li>
+    </ol>
+    <p>
+      For the stored row A → B, asking as A returns B’s user record, while asking as B returns A’s
+      user record. This is why the query does not simply join users.id to friendId in every case.
+    </p>
+    <pre
+      class="syntax"
+    ><code><span class="k">return</span><span class="w"> </span><span class="nx">rows</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">row</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">row</span><span class="p">.</span><span class="nx">user</span><span class="p">);</span></code></pre>
+    <p>
+      select({ user: users }) gives rows shaped like { user: ... }. map removes that wrapper and
+      returns an array of user records. It does not change the database. The query does not specify
+      an ordering or deduplicate repeated relationship rows.
+    </p>
+    <h2>9. findPendingRequests returns incoming requests</h2>
+    <pre
+      class="syntax"
+    ><code><span class="p">.</span><span class="nx">innerJoin</span><span class="p">(</span><span class="nx">users</span><span class="p">,</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">users</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">friends</span><span class="p">.</span><span class="nx">myId</span><span class="p">))</span>
+<span class="p">.</span><span class="nx">where</span><span class="p">(</span><span class="nx">and</span><span class="p">(</span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">friendId</span><span class="p">,</span><span class="w"> </span><span class="nx">userId</span><span class="p">),</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">status</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;pending&#39;</span><span class="p">)))</span></code></pre>
+    <p>
+      Here direction is intentional. The requested user must be the recipient. The joined user is
+      the sender. If Maya sent Leo a pending request, Leo sees Maya in this result. Maya does not
+      see her own outgoing request in this query. An outgoing-request screen would require another
+      query or different filtering.
+    </p>
+    <h2>10. addFriend inserts, then returns the row</h2>
+    <pre
+      class="syntax"
+    ><code><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">friendship</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">db</span>
+<span class="w">  </span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">friends</span><span class="p">)</span>
+<span class="w">  </span><span class="p">.</span><span class="nx">values</span><span class="p">({</span><span class="w"> </span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">,</span><span class="w"> </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;pending&#39;</span><span class="w"> </span><span class="p">})</span>
+<span class="w">  </span><span class="p">.</span><span class="nx">returning</span><span class="p">();</span>
+<span class="k">return</span><span class="w"> </span><span class="nx">friendship</span><span class="p">;</span></code></pre>
+    <p>
+      insert chooses the table. values supplies the row values; shorthand myId means myId: myId.
+      returning asks PostgreSQL for the inserted row data. The result is an array, so
+      <code>const [friendship]</code> uses array destructuring to take its first element. The
+      operation inserts one row in this method.
+    </p>
+    <h2>11. findFriendship checks the pair in both directions</h2>
+    <p>
+      findFirst searches for either myId=A and friendId=B, or myId=B and friendId=A. This detects an
+      existing request regardless of who originally sent it. There is no status filter, so accepted
+      and pending rows both count. findFirst returns one match or undefined; it does not establish
+      that the database cannot hold additional matches.
+    </p>
+    <h2>12. acceptFriend deliberately reverses the parameter comparisons</h2>
+    <pre
+      class="syntax"
+    ><code><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">friends</span><span class="p">)</span>
+<span class="p">.</span><span class="nx">set</span><span class="p">({</span><span class="w"> </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;accepted&#39;</span><span class="w"> </span><span class="p">})</span>
+<span class="p">.</span><span class="nx">where</span><span class="p">(</span><span class="nx">and</span><span class="p">(</span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">),</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">friendId</span><span class="p">,</span><span class="w"> </span><span class="nx">myId</span><span class="p">)))</span>
+<span class="p">.</span><span class="nx">returning</span><span class="p">()</span></code></pre>
+    <p>
+      In this method’s parameters, myId is the current actor. In the stored row, myId is the
+      original sender. Those are different roles during acceptance. For Maya=A sending to Leo=B, Leo
+      calls with myId=B and friendId=A. The filter looks for stored sender A and stored recipient B,
+      then changes status to accepted.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Expression</th>
+          <th>For Leo accepting Maya</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Method argument myId</td>
+          <td>B, current logged-in recipient</td>
+        </tr>
+        <tr>
+          <td>Method argument friendId</td>
+          <td>A, original sender</td>
+        </tr>
+        <tr>
+          <td>Stored friends.myId must equal</td>
+          <td>A, the friendId argument</td>
+        </tr>
+        <tr>
+          <td>Stored friends.friendId must equal</td>
+          <td>B, the myId argument</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      This direction check prevents the original sender from accepting their own outgoing request
+      through this method. A third user cannot match the recipient field with their authenticated
+      ID.
+    </p>
+    <aside>
+      <p>
+        The current acceptance WHERE clause does not require status=pending. Reaccepting an already
+        accepted matching row can succeed. Also, SQL update can affect every matching duplicate row,
+        while destructuring returns only the first one. These are properties of the existing
+        implementation, not extra guarantees implied by the method name.
+      </p>
+    </aside>
+    <h2>13. removeFriend removes either direction</h2>
+    <p>
+      Removal checks both directions, like findFriendship. This lets either party remove their
+      relationship. It has no status filter, so it can also remove a pending row if the API is
+      called for one. The existing page may expose fewer actions than the API can perform. The
+      database deletes matching rows and returning supplies their former values; the method returns
+      the first.
+    </p>
+    <p>
+      The service does not first look up the relationship here. An absent match leads to undefined,
+      which the router turns into NOT_FOUND. The authenticated user ID is part of both allowed pair
+      comparisons, so arbitrary unrelated rows do not match.
+    </p>
+    <h2>14. One complete friendship lifecycle</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Stored row afterwards</th>
+          <th>Visible result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Maya adds Leo</td>
+          <td>A → B, pending</td>
+          <td>Leo can query Maya as an incoming request</td>
+        </tr>
+        <tr>
+          <td>Leo accepts Maya</td>
+          <td>A → B, accepted</td>
+          <td>Both accepted-friends queries return the other person</td>
+        </tr>
+        <tr>
+          <td>Maya removes Leo</td>
+          <td>No matching row</td>
+          <td>Neither sees this accepted friendship afterwards</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      In the profile UI, successful mutations invalidate relevant query-cache entries. This
+      refreshes the current browser’s saved responses. The friends methods shown here do not
+      broadcast a friend-list-change event. Presence messages update online status and should not be
+      confused with notifications that a friendship row changed.
+    </p>
+    <h2>15. What to be ready to explain</h2>
+    <ul>
+      <li>
+        Why the backend obtains the acting user from context instead of trusting submitted myId.
+      </li>
+      <li>
+        Why pending request direction matters, but accepted-friend lookup must handle both
+        directions.
+      </li>
+      <li>Why read operations return users while mutations return friendship records.</li>
+      <li>
+        Why the service’s duplicate lookup is useful but weaker than a database uniqueness
+        guarantee.
+      </li>
+      <li>
+        Why a DTO type, a Zod schema, and a foreign key each enforce a different kind of rule.
+      </li>
+      <li>Why respondFriendSchema is not evidence that a corresponding endpoint is wired up.</li>
+    </ul>
+    <h2>Questions to answer before reading the solutions</h2>
+    <ol>
+      <li>For Maya sending Leo a request, which ID is stored in myId and which in friendId?</li>
+      <li>
+        Why does accepted-friend lookup need two branches but incoming-request lookup does not?
+      </li>
+      <li>
+        When Leo accepts Maya, why is friends.myId compared with the method’s friendId argument?
+      </li>
+      <li>
+        Which layer rejects self-requests? Which checks login? Which enforces referenced users
+        exist?
+      </li>
+      <li>Can two simultaneous add requests pass the current duplicate check?</li>
+      <li>Does acceptFriend require a pending status in its SQL condition?</li>
+      <li>What does const [friendship] extract, and what if there are no returned rows?</li>
+      <li>Does respondFriendSchema define the input actually used by acceptFriend?</li>
+    </ol>
+    <section class="answers">
+      <h2>Answers and reasoning</h2>
+      <ol>
+        <li>
+          The stored myId is Maya, the sender. The stored friendId is Leo, the recipient. Acceptance
+          preserves that orientation.
+        </li>
+        <li>
+          Accepted friendship should be visible to both sides of the same row. Incoming requests
+          intentionally select only rows addressed to the current user and return the sender.
+        </li>
+        <li>
+          The method’s myId is the actor Leo. The table’s myId is the original sender Maya. The
+          friendId argument names Maya, so that is the correct sender comparison.
+        </li>
+        <li>
+          The service rejects self-requests. The router explicitly checks ctx.user. PostgreSQL
+          foreign keys require referenced user records, though the service does not provide a
+          separate friendly target-exists check.
+        </li>
+        <li>
+          Yes, the read-then-insert sequence alone does not prevent both requests finding no row
+          before either inserts. The shown table lacks a unique pair constraint.
+        </li>
+        <li>
+          No. It filters by sender and recipient only and sets status to accepted. Repeating
+          acceptance on an already accepted row is not rejected solely by that WHERE clause.
+        </li>
+        <li>
+          It takes the first element of the array returned by returning(). With no rows, it is
+          undefined. The accept and remove router handlers turn that into a not-found error.
+        </li>
+        <li>
+          No. The router uses addFriendSchema for acceptance. respondFriendSchema is defined but not
+          used by the inspected app operations.
+        </li>
+      </ol>
+    </section>
+    <section class="appendix">
+      <h2>Source code for reading on paper</h2>
+      <p>
+        Line numbers are from the inspected checkout. The explanations distinguish intended behavior
+        from limitations visible in this code. Source comments are reproduced as written, including
+        comments discussed critically in the lesson.
+      </p>
+      <h3 class="source-name">apps/backend/src/friends/friends.router.ts · lines 1–50</h3>
+      <p class="caption">
+        Source snapshot at efb3807.
+        <a href="../../apps/backend/src/friends/friends.router.ts">Open the repository file</a>.
+      </p>
+      <pre
+        class="source-code syntax"
+      ><code><span class="source-line"><span class="line-number">  1  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Router</span><span class="p">,</span><span class="w"> </span><span class="nx">Query</span><span class="p">,</span><span class="w"> </span><span class="nx">Mutation</span><span class="p">,</span><span class="w"> </span><span class="nx">Input</span><span class="p">,</span><span class="w"> </span><span class="nx">Ctx</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;nestjs-trpc&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  2  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">userSchema</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@repo/schemas/users&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  3  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">  4  </span><span class="w">  </span><span class="nx">addFriendSchema</span><span class="p">,</span></span><span class="source-line"><span class="line-number">  5  </span><span class="w">  </span><span class="nx">removeFriendSchema</span><span class="p">,</span></span><span class="source-line"><span class="line-number">  6  </span><span class="w">  </span><span class="nx">friendSchema</span><span class="p">,</span></span><span class="source-line"><span class="line-number">  7  </span><span class="w">  </span><span class="kr">type</span><span class="w"> </span><span class="nx">AddFriendDto</span><span class="p">,</span></span><span class="source-line"><span class="line-number">  8  </span><span class="w">  </span><span class="kr">type</span><span class="w"> </span><span class="nx">RemoveFriendDto</span><span class="p">,</span></span><span class="source-line"><span class="line-number">  9  </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@repo/schemas/friends&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 10  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">unauthorizedError</span><span class="p">,</span><span class="w"> </span><span class="nx">notFoundError</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;../trpc/trpc.errors&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 11  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">FriendsService</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./friends.service&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 12  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 13  </span><span class="kd">@Router</span><span class="p">({</span><span class="w"> </span><span class="nx">alias</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;friends&#39;</span><span class="w"> </span><span class="p">})</span></span><span class="source-line"><span class="line-number"> 14  </span><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">FriendsRouter</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 15  </span><span class="w">  </span><span class="kr">constructor</span><span class="p">(</span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">friendsService</span><span class="o">:</span><span class="w"> </span><span class="kt">FriendsService</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></span><span class="source-line"><span class="line-number"> 16  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 17  </span><span class="w">  </span><span class="kd">@Query</span><span class="p">({</span><span class="w"> </span><span class="nx">output</span><span class="o">:</span><span class="w"> </span><span class="kt">userSchema.array</span><span class="p">()</span><span class="w"> </span><span class="p">})</span></span><span class="source-line"><span class="line-number"> 18  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">getFriends</span><span class="p">(</span><span class="kd">@Ctx</span><span class="p">()</span><span class="w"> </span><span class="nx">ctx</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 19  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="nx">unauthorizedError</span><span class="p">(</span><span class="s1">&#39;Not logged in&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 20  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">friendsService</span><span class="p">.</span><span class="nx">getFriends</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 21  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 22  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 23  </span><span class="w">  </span><span class="kd">@Query</span><span class="p">({</span><span class="w"> </span><span class="nx">output</span><span class="o">:</span><span class="w"> </span><span class="kt">userSchema.array</span><span class="p">()</span><span class="w"> </span><span class="p">})</span></span><span class="source-line"><span class="line-number"> 24  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">getPendingRequests</span><span class="p">(</span><span class="kd">@Ctx</span><span class="p">()</span><span class="w"> </span><span class="nx">ctx</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 25  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="nx">unauthorizedError</span><span class="p">(</span><span class="s1">&#39;Not logged in&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 26  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">friendsService</span><span class="p">.</span><span class="nx">getPendingRequests</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 27  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 28  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 29  </span><span class="w">  </span><span class="kd">@Mutation</span><span class="p">({</span><span class="w"> </span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">addFriendSchema</span><span class="p">,</span><span class="w"> </span><span class="nx">output</span><span class="o">:</span><span class="w"> </span><span class="kt">friendSchema</span><span class="w"> </span><span class="p">})</span></span><span class="source-line"><span class="line-number"> 30  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">addFriend</span><span class="p">(</span><span class="kd">@Input</span><span class="p">()</span><span class="w"> </span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">AddFriendDto</span><span class="p">,</span><span class="w"> </span><span class="kd">@Ctx</span><span class="p">()</span><span class="w"> </span><span class="nx">ctx</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 31  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="nx">unauthorizedError</span><span class="p">(</span><span class="s1">&#39;Not logged in&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 32  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">friendsService</span><span class="p">.</span><span class="nx">addFriend</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">input</span><span class="p">.</span><span class="nx">friendId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 33  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 34  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 35  </span><span class="w">  </span><span class="kd">@Mutation</span><span class="p">({</span><span class="w"> </span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">addFriendSchema</span><span class="p">,</span><span class="w"> </span><span class="nx">output</span><span class="o">:</span><span class="w"> </span><span class="kt">friendSchema</span><span class="w"> </span><span class="p">})</span></span><span class="source-line"><span class="line-number"> 36  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">acceptFriend</span><span class="p">(</span><span class="kd">@Input</span><span class="p">()</span><span class="w"> </span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">AddFriendDto</span><span class="p">,</span><span class="w"> </span><span class="kd">@Ctx</span><span class="p">()</span><span class="w"> </span><span class="nx">ctx</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 37  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="nx">unauthorizedError</span><span class="p">(</span><span class="s1">&#39;Not logged in&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 38  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">friendship</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">friendsService</span><span class="p">.</span><span class="nx">acceptFriend</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">input</span><span class="p">.</span><span class="nx">friendId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 39  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">friendship</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="nx">notFoundError</span><span class="p">(</span><span class="s1">&#39;Friend request not found&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 40  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">friendship</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 41  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 42  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 43  </span><span class="w">  </span><span class="kd">@Mutation</span><span class="p">({</span><span class="w"> </span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">removeFriendSchema</span><span class="p">,</span><span class="w"> </span><span class="nx">output</span><span class="o">:</span><span class="w"> </span><span class="kt">friendSchema</span><span class="w"> </span><span class="p">})</span></span><span class="source-line"><span class="line-number"> 44  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">removeFriend</span><span class="p">(</span><span class="kd">@Input</span><span class="p">()</span><span class="w"> </span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">RemoveFriendDto</span><span class="p">,</span><span class="w"> </span><span class="kd">@Ctx</span><span class="p">()</span><span class="w"> </span><span class="nx">ctx</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 45  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="nx">unauthorizedError</span><span class="p">(</span><span class="s1">&#39;Not logged in&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 46  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">friendship</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">friendsService</span><span class="p">.</span><span class="nx">removeFriend</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">input</span><span class="p">.</span><span class="nx">friendId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 47  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">friendship</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="nx">notFoundError</span><span class="p">(</span><span class="s1">&#39;Friendship not found&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 48  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">friendship</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 49  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 50  </span><span class="p">}</span></span></code></pre>
+      <h3 class="source-name">apps/backend/src/friends/friends.service.ts · lines 1–37</h3>
+      <p class="caption">
+        Source snapshot at efb3807.
+        <a href="../../apps/backend/src/friends/friends.service.ts">Open the repository file</a>.
+      </p>
+      <pre
+        class="source-code syntax"
+      ><code><span class="source-line"><span class="line-number">  1  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Injectable</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@nestjs/common&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  2  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">FriendsRepository</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./repositories/friends.repository&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  3  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">conflictError</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;../trpc/trpc.errors&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  4  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  5  </span><span class="kd">@Injectable</span><span class="p">()</span></span><span class="source-line"><span class="line-number">  6  </span><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">FriendsService</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">  7  </span><span class="w">  </span><span class="kr">constructor</span><span class="p">(</span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">repository</span><span class="o">:</span><span class="w"> </span><span class="kt">FriendsRepository</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></span><span class="source-line"><span class="line-number">  8  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  9  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">getFriends</span><span class="p">(</span><span class="nx">userId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 10  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">repository</span><span class="p">.</span><span class="nx">findFriends</span><span class="p">(</span><span class="nx">userId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 11  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 12  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 13  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">addFriend</span><span class="p">(</span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 14  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">myId</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="nx">friendId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 15  </span><span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="nx">conflictError</span><span class="p">(</span><span class="s1">&#39;You cannot add yourself as a friend&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 16  </span><span class="w">    </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 17  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 18  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">existing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">repository</span><span class="p">.</span><span class="nx">findFriendship</span><span class="p">(</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 19  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">existing</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 20  </span><span class="w">      </span><span class="k">throw</span><span class="w"> </span><span class="nx">conflictError</span><span class="p">(</span><span class="s1">&#39;Friend request already exists&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 21  </span><span class="w">    </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 22  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 23  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">repository</span><span class="p">.</span><span class="nx">addFriend</span><span class="p">(</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 24  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 25  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 26  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">getPendingRequests</span><span class="p">(</span><span class="nx">userId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 27  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">repository</span><span class="p">.</span><span class="nx">findPendingRequests</span><span class="p">(</span><span class="nx">userId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 28  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 29  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 30  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">acceptFriend</span><span class="p">(</span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 31  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">repository</span><span class="p">.</span><span class="nx">acceptFriend</span><span class="p">(</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 32  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 33  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 34  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">removeFriend</span><span class="p">(</span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 35  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">repository</span><span class="p">.</span><span class="nx">removeFriend</span><span class="p">(</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 36  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 37  </span><span class="p">}</span></span></code></pre>
+      <h3 class="source-name">
+        apps/backend/src/friends/repositories/drizzle-friends.repository.ts · lines 1–83
+      </h3>
+      <p class="caption">
+        Source snapshot at efb3807.
+        <a href="../../apps/backend/src/friends/repositories/drizzle-friends.repository.ts"
+          >Open the repository file</a
+        >.
+      </p>
+      <pre
+        class="source-code syntax"
+      ><code><span class="source-line"><span class="line-number">  1  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Inject</span><span class="p">,</span><span class="w"> </span><span class="nx">Injectable</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@nestjs/common&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  2  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">and</span><span class="p">,</span><span class="w"> </span><span class="nx">eq</span><span class="p">,</span><span class="w"> </span><span class="nx">or</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;drizzle-orm&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  3  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">friends</span><span class="p">,</span><span class="w"> </span><span class="nx">users</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@repo/schemas/database&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  4  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">DATABASE</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;../../database/database.constants&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  5  </span><span class="k">import</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Database</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;../../database/database.types&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  6  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">FriendsRepository</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./friends.repository&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  7  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  8  </span><span class="kd">@Injectable</span><span class="p">()</span></span><span class="source-line"><span class="line-number">  9  </span><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">DrizzleFriendsRepository</span><span class="w"> </span><span class="k">extends</span><span class="w"> </span><span class="nx">FriendsRepository</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 10  </span><span class="w">  </span><span class="kr">constructor</span><span class="p">(</span></span><span class="source-line"><span class="line-number"> 11  </span><span class="w">    </span><span class="kd">@Inject</span><span class="p">(</span><span class="nx">DATABASE</span><span class="p">)</span></span><span class="source-line"><span class="line-number"> 12  </span><span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">db</span><span class="o">:</span><span class="w"> </span><span class="kt">Database</span><span class="p">,</span></span><span class="source-line"><span class="line-number"> 13  </span><span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 14  </span><span class="w">    </span><span class="k">super</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 15  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 16  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 17  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">findFriends</span><span class="p">(</span><span class="nx">userId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 18  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">db</span></span><span class="source-line"><span class="line-number"> 19  </span><span class="w">      </span><span class="p">.</span><span class="nx">select</span><span class="p">({</span><span class="w"> </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="kt">users</span><span class="w"> </span><span class="p">})</span></span><span class="source-line"><span class="line-number"> 20  </span><span class="w">      </span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">friends</span><span class="p">)</span></span><span class="source-line"><span class="line-number"> 21  </span><span class="w">      </span><span class="p">.</span><span class="nx">innerJoin</span><span class="p">(</span></span><span class="source-line"><span class="line-number"> 22  </span><span class="w">        </span><span class="nx">users</span><span class="p">,</span></span><span class="source-line"><span class="line-number"> 23  </span><span class="w">        </span><span class="nx">or</span><span class="p">(</span></span><span class="source-line"><span class="line-number"> 24  </span><span class="w">          </span><span class="nx">and</span><span class="p">(</span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">userId</span><span class="p">),</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">users</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">friends</span><span class="p">.</span><span class="nx">friendId</span><span class="p">)),</span></span><span class="source-line"><span class="line-number"> 25  </span><span class="w">          </span><span class="nx">and</span><span class="p">(</span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">friendId</span><span class="p">,</span><span class="w"> </span><span class="nx">userId</span><span class="p">),</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">users</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">friends</span><span class="p">.</span><span class="nx">myId</span><span class="p">)),</span></span><span class="source-line"><span class="line-number"> 26  </span><span class="w">        </span><span class="p">),</span></span><span class="source-line"><span class="line-number"> 27  </span><span class="w">      </span><span class="p">)</span></span><span class="source-line"><span class="line-number"> 28  </span><span class="w">      </span><span class="p">.</span><span class="nx">where</span><span class="p">(</span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">status</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;accepted&#39;</span><span class="p">));</span></span><span class="source-line"><span class="line-number"> 29  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 30  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">rows</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">row</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">row</span><span class="p">.</span><span class="nx">user</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 31  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 32  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 33  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">findPendingRequests</span><span class="p">(</span><span class="nx">userId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 34  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">rows</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">db</span></span><span class="source-line"><span class="line-number"> 35  </span><span class="w">      </span><span class="p">.</span><span class="nx">select</span><span class="p">({</span><span class="w"> </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="kt">users</span><span class="w"> </span><span class="p">})</span></span><span class="source-line"><span class="line-number"> 36  </span><span class="w">      </span><span class="p">.</span><span class="kr">from</span><span class="p">(</span><span class="nx">friends</span><span class="p">)</span></span><span class="source-line"><span class="line-number"> 37  </span><span class="w">      </span><span class="p">.</span><span class="nx">innerJoin</span><span class="p">(</span><span class="nx">users</span><span class="p">,</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">users</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">friends</span><span class="p">.</span><span class="nx">myId</span><span class="p">))</span></span><span class="source-line"><span class="line-number"> 38  </span><span class="w">      </span><span class="p">.</span><span class="nx">where</span><span class="p">(</span><span class="nx">and</span><span class="p">(</span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">friendId</span><span class="p">,</span><span class="w"> </span><span class="nx">userId</span><span class="p">),</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">status</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;pending&#39;</span><span class="p">)));</span></span><span class="source-line"><span class="line-number"> 39  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 40  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">rows</span><span class="p">.</span><span class="nx">map</span><span class="p">((</span><span class="nx">row</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">row</span><span class="p">.</span><span class="nx">user</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 41  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 42  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 43  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">addFriend</span><span class="p">(</span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 44  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">friendship</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">db</span></span><span class="source-line"><span class="line-number"> 45  </span><span class="w">      </span><span class="p">.</span><span class="nx">insert</span><span class="p">(</span><span class="nx">friends</span><span class="p">)</span></span><span class="source-line"><span class="line-number"> 46  </span><span class="w">      </span><span class="p">.</span><span class="nx">values</span><span class="p">({</span><span class="w"> </span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">,</span><span class="w"> </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;pending&#39;</span><span class="w"> </span><span class="p">})</span></span><span class="source-line"><span class="line-number"> 47  </span><span class="w">      </span><span class="p">.</span><span class="nx">returning</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 48  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 49  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">friendship</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 50  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 51  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 52  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">findFriendship</span><span class="p">(</span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 53  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nx">query</span><span class="p">.</span><span class="nx">friends</span><span class="p">.</span><span class="nx">findFirst</span><span class="p">({</span></span><span class="source-line"><span class="line-number"> 54  </span><span class="w">      </span><span class="nx">where</span><span class="o">:</span><span class="w"> </span><span class="kt">or</span><span class="p">(</span></span><span class="source-line"><span class="line-number"> 55  </span><span class="w">        </span><span class="nx">and</span><span class="p">(</span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">myId</span><span class="p">),</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">friendId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">)),</span></span><span class="source-line"><span class="line-number"> 56  </span><span class="w">        </span><span class="nx">and</span><span class="p">(</span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">),</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">friendId</span><span class="p">,</span><span class="w"> </span><span class="nx">myId</span><span class="p">)),</span></span><span class="source-line"><span class="line-number"> 57  </span><span class="w">      </span><span class="p">),</span></span><span class="source-line"><span class="line-number"> 58  </span><span class="w">    </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 59  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 60  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">acceptFriend</span><span class="p">(</span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 61  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">friendship</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">db</span></span><span class="source-line"><span class="line-number"> 62  </span><span class="w">      </span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">friends</span><span class="p">)</span></span><span class="source-line"><span class="line-number"> 63  </span><span class="w">      </span><span class="p">.</span><span class="nx">set</span><span class="p">({</span><span class="w"> </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;accepted&#39;</span><span class="w"> </span><span class="p">})</span></span><span class="source-line"><span class="line-number"> 64  </span><span class="w">      </span><span class="p">.</span><span class="nx">where</span><span class="p">(</span><span class="nx">and</span><span class="p">(</span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">),</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">friendId</span><span class="p">,</span><span class="w"> </span><span class="nx">myId</span><span class="p">)))</span></span><span class="source-line"><span class="line-number"> 65  </span><span class="w">      </span><span class="p">.</span><span class="nx">returning</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 66  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 67  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">friendship</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 68  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 69  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 70  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="nx">removeFriend</span><span class="p">(</span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 71  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">[</span><span class="nx">friendship</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">db</span></span><span class="source-line"><span class="line-number"> 72  </span><span class="w">      </span><span class="p">.</span><span class="ow">delete</span><span class="p">(</span><span class="nx">friends</span><span class="p">)</span></span><span class="source-line"><span class="line-number"> 73  </span><span class="w">      </span><span class="p">.</span><span class="nx">where</span><span class="p">(</span></span><span class="source-line"><span class="line-number"> 74  </span><span class="w">        </span><span class="nx">or</span><span class="p">(</span></span><span class="source-line"><span class="line-number"> 75  </span><span class="w">          </span><span class="nx">and</span><span class="p">(</span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">myId</span><span class="p">),</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">friendId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">)),</span></span><span class="source-line"><span class="line-number"> 76  </span><span class="w">          </span><span class="nx">and</span><span class="p">(</span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">myId</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="p">),</span><span class="w"> </span><span class="nx">eq</span><span class="p">(</span><span class="nx">friends</span><span class="p">.</span><span class="nx">friendId</span><span class="p">,</span><span class="w"> </span><span class="nx">myId</span><span class="p">)),</span></span><span class="source-line"><span class="line-number"> 77  </span><span class="w">        </span><span class="p">),</span></span><span class="source-line"><span class="line-number"> 78  </span><span class="w">      </span><span class="p">)</span></span><span class="source-line"><span class="line-number"> 79  </span><span class="w">      </span><span class="p">.</span><span class="nx">returning</span><span class="p">();</span></span><span class="source-line"><span class="line-number"> 80  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 81  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="nx">friendship</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 82  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 83  </span><span class="p">}</span></span></code></pre>
+      <h3 class="source-name">packages/schemas/src/database.ts · lines 104–116</h3>
+      <p class="caption">
+        Source snapshot at efb3807.
+        <a href="../../packages/schemas/src/database.ts">Open the repository file</a>.
+      </p>
+      <pre
+        class="source-code syntax"
+      ><code><span class="source-line"><span class="line-number">104  </span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">friendshipStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">pgEnum</span><span class="p">(</span><span class="s1">&#39;friendship_status&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;pending&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;accepted&#39;</span><span class="p">]);</span></span><span class="source-line"><span class="line-number">105  </span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">registrationStatus</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">pgEnum</span><span class="p">(</span><span class="s1">&#39;registration_status&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;active&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;canceled&#39;</span><span class="p">]);</span></span><span class="source-line"><span class="line-number">106  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">107  </span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">friends</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">pgTable</span><span class="p">(</span><span class="s1">&#39;friends&#39;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">108  </span><span class="w">  </span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">uuid</span><span class="p">(</span><span class="s1">&#39;my_id&#39;</span><span class="p">)</span></span><span class="source-line"><span class="line-number">109  </span><span class="w">    </span><span class="p">.</span><span class="nx">notNull</span><span class="p">()</span></span><span class="source-line"><span class="line-number">110  </span><span class="w">    </span><span class="p">.</span><span class="nx">references</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">users</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">onDelete</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;cascade&#39;</span><span class="w"> </span><span class="p">}),</span></span><span class="source-line"><span class="line-number">111  </span><span class="w">  </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">uuid</span><span class="p">(</span><span class="s1">&#39;friend_id&#39;</span><span class="p">)</span></span><span class="source-line"><span class="line-number">112  </span><span class="w">    </span><span class="p">.</span><span class="nx">notNull</span><span class="p">()</span></span><span class="source-line"><span class="line-number">113  </span><span class="w">    </span><span class="p">.</span><span class="nx">references</span><span class="p">(()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">users</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">onDelete</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;cascade&#39;</span><span class="w"> </span><span class="p">}),</span></span><span class="source-line"><span class="line-number">114  </span><span class="w">  </span><span class="nx">status</span><span class="o">:</span><span class="w"> </span><span class="kt">friendshipStatus</span><span class="p">(</span><span class="s1">&#39;f_status&#39;</span><span class="p">).</span><span class="nx">notNull</span><span class="p">().</span><span class="k">default</span><span class="p">(</span><span class="s1">&#39;pending&#39;</span><span class="p">),</span></span><span class="source-line"><span class="line-number">115  </span><span class="w">  </span><span class="nx">createdAt</span><span class="o">:</span><span class="w"> </span><span class="kt">timestamp</span><span class="p">(</span><span class="s1">&#39;created_at&#39;</span><span class="p">).</span><span class="nx">notNull</span><span class="p">().</span><span class="nx">defaultNow</span><span class="p">(),</span></span><span class="source-line"><span class="line-number">116  </span><span class="p">});</span></span></code></pre>
+      <h3 class="source-name">packages/schemas/src/friends.ts · lines 1–26</h3>
+      <p class="caption">
+        Source snapshot at efb3807.
+        <a href="../../packages/schemas/src/friends.ts">Open the repository file</a>.
+      </p>
+      <pre
+        class="source-code syntax"
+      ><code><span class="source-line"><span class="line-number">  1  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">createSelectSchema</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;drizzle-zod&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  2  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">z</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;zod&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  3  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">friends</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@repo/schemas/database&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  4  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  5  </span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">friendSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">createSelectSchema</span><span class="p">(</span><span class="nx">friends</span><span class="p">,</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">  6  </span><span class="w">  </span><span class="nx">createdAt</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">coerce</span><span class="p">.</span><span class="nx">date</span><span class="p">(),</span></span><span class="source-line"><span class="line-number">  7  </span><span class="p">});</span></span><span class="source-line"><span class="line-number">  8  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  9  </span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">addFriendSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">object</span><span class="p">({</span></span><span class="source-line"><span class="line-number"> 10  </span><span class="w">  </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">z.uuid</span><span class="p">(),</span></span><span class="source-line"><span class="line-number"> 11  </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 12  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 13  </span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">respondFriendSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">object</span><span class="p">({</span></span><span class="source-line"><span class="line-number"> 14  </span><span class="w">  </span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">z.uuid</span><span class="p">(),</span></span><span class="source-line"><span class="line-number"> 15  </span><span class="w">  </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">z.uuid</span><span class="p">(),</span></span><span class="source-line"><span class="line-number"> 16  </span><span class="w">  </span><span class="nx">accept</span><span class="o">:</span><span class="w"> </span><span class="kt">z.boolean</span><span class="p">(),</span></span><span class="source-line"><span class="line-number"> 17  </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 18  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 19  </span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">removeFriendSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">object</span><span class="p">({</span></span><span class="source-line"><span class="line-number"> 20  </span><span class="w">  </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">z.uuid</span><span class="p">(),</span></span><span class="source-line"><span class="line-number"> 21  </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 22  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 23  </span><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">FriendDto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">infer</span><span class="o">&lt;</span><span class="ow">typeof</span><span class="w"> </span><span class="nx">friendSchema</span><span class="o">&gt;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 24  </span><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">AddFriendDto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">infer</span><span class="o">&lt;</span><span class="ow">typeof</span><span class="w"> </span><span class="nx">addFriendSchema</span><span class="o">&gt;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 25  </span><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">RespondFriendDto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">infer</span><span class="o">&lt;</span><span class="ow">typeof</span><span class="w"> </span><span class="nx">respondFriendSchema</span><span class="o">&gt;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 26  </span><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">RemoveFriendDto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">infer</span><span class="o">&lt;</span><span class="ow">typeof</span><span class="w"> </span><span class="nx">removeFriendSchema</span><span class="o">&gt;</span><span class="p">;</span></span></code></pre>
+      <h3 class="source-name">
+        apps/backend/src/friends/repositories/friends.repository.ts · lines 1–11
+      </h3>
+      <p class="caption">
+        Source snapshot at efb3807.
+        <a href="../../apps/backend/src/friends/repositories/friends.repository.ts"
+          >Open the repository file</a
+        >.
+      </p>
+      <pre
+        class="source-code syntax"
+      ><code><span class="source-line"><span class="line-number">  1  </span><span class="k">import</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">FriendDto</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@repo/schemas/friends&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  2  </span><span class="k">import</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">UserDto</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@repo/schemas/users&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  3  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  4  </span><span class="k">export</span><span class="w"> </span><span class="k">abstract</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">FriendsRepository</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">  5  </span><span class="w">  </span><span class="k">abstract</span><span class="w"> </span><span class="nx">findFriends</span><span class="p">(</span><span class="nx">userId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">UserDto</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  6  </span><span class="w">  </span><span class="k">abstract</span><span class="w"> </span><span class="nx">findPendingRequests</span><span class="p">(</span><span class="nx">userId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">UserDto</span><span class="p">[]</span><span class="o">&gt;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  7  </span><span class="w">  </span><span class="k">abstract</span><span class="w"> </span><span class="nx">addFriend</span><span class="p">(</span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">FriendDto</span><span class="o">&gt;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  8  </span><span class="w">  </span><span class="k">abstract</span><span class="w"> </span><span class="nx">acceptFriend</span><span class="p">(</span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">FriendDto</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="o">&gt;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  9  </span><span class="w">  </span><span class="k">abstract</span><span class="w"> </span><span class="nx">removeFriend</span><span class="p">(</span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">FriendDto</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="o">&gt;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 10  </span><span class="w">  </span><span class="k">abstract</span><span class="w"> </span><span class="nx">findFriendship</span><span class="p">(</span><span class="nx">myId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">,</span><span class="w"> </span><span class="nx">friendId</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">FriendDto</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">undefined</span><span class="o">&gt;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 11  </span><span class="p">}</span></span></code></pre>
+    </section>
+    <footer>
+      Prepared from the local source files. This is an explanation, not a claim that all edge cases
+      have been tested. Code and prose print without an internet connection. Answers and source code
+      start on new pages.
+    </footer>
+  </body>
+</html>

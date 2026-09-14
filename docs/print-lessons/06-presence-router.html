@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The presence generator and resource cleanup | Printable lesson</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        color: #202020;
+        background: #eee;
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.55;
+      }
+      body {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 2.8rem;
+        background: #fff;
+      }
+      h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+      }
+      h2 {
+        margin-top: 2rem;
+        font-size: 1.35rem;
+      }
+      h3 {
+        margin-top: 1.4rem;
+        font-size: 1.08rem;
+      }
+      p,
+      li {
+        max-width: 78ch;
+      }
+      a {
+        color: #90330a;
+      }
+      pre {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        tab-size: 2;
+        background: #f5f5f5;
+        border: 1px solid #ddd;
+        padding: 1rem;
+        font: 12px/1.55 monospace;
+      }
+      code {
+        font-family: monospace;
+        font-size: 0.94em;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.2rem 0;
+        font-size: 0.92rem;
+      }
+      th,
+      td {
+        border: 1px solid #bbb;
+        padding: 0.6rem;
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: #f4eee9;
+      }
+      aside {
+        border-left: 4px solid #d15a20;
+        background: #faf5ef;
+        padding: 0.5rem 1rem;
+        margin: 1.3rem 0;
+      }
+      .meta,
+      .caption {
+        color: #555;
+        font-size: 0.88rem;
+      }
+      .source-name {
+        overflow-wrap: anywhere;
+      }
+      .source-code {
+        background: #fff;
+        font-size: 10px;
+        line-height: 1.6;
+      }
+      .source-line {
+        display: block;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      .line-number {
+        color: #777;
+        user-select: none;
+      }
+      .toolbar {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+      }
+      button {
+        padding: 0.6rem 1rem;
+        border: 1px solid #888;
+        background: white;
+        cursor: pointer;
+      }
+      .answers,
+      .appendix {
+        border-top: 2px solid #777;
+        margin-top: 3rem;
+        padding-top: 1rem;
+      }
+      li {
+        margin: 0.45rem 0;
+      }
+      footer {
+        border-top: 1px solid #ccc;
+        margin-top: 3rem;
+        padding-top: 1rem;
+        font-size: 0.8rem;
+      }
+      @page {
+        size: A4;
+        margin: 17mm 16mm 18mm;
+      }
+      @media print {
+        html {
+          background: white;
+          font-size: 10.5pt;
+        }
+        body {
+          max-width: none;
+          margin: 0;
+          padding: 0;
+        }
+        .toolbar {
+          display: none;
+        }
+        h1 {
+          font-size: 23pt;
+        }
+        h2 {
+          font-size: 15pt;
+        }
+        h3 {
+          font-size: 12pt;
+        }
+        h1,
+        h2,
+        h3,
+        .source-name {
+          break-after: avoid;
+        }
+        p,
+        li {
+          orphans: 3;
+          widows: 3;
+        }
+        pre {
+          font-size: 9pt;
+          white-space: pre-wrap;
+          overflow-wrap: anywhere;
+          overflow: visible;
+        }
+        table {
+          font-size: 9pt;
+        }
+        thead {
+          display: table-header-group;
+        }
+        tr {
+          break-inside: avoid;
+        }
+        a {
+          color: inherit;
+          text-decoration: none;
+        }
+        .answers,
+        .appendix {
+          break-before: page;
+        }
+        aside {
+          background: white;
+          border-color: #777;
+        }
+        .source-code {
+          font-size: 8pt;
+          padding: 8pt;
+        }
+        .source-line {
+          break-inside: avoid;
+        }
+        footer {
+          font-size: 8pt;
+        }
+      }
+
+      /* Embedded syntax colors work offline and in print. */
+      pre {
+        line-height: 125%;
+      }
+      td.linenos .normal {
+        color: inherit;
+        background-color: transparent;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      span.linenos {
+        color: inherit;
+        background-color: transparent;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      td.linenos .special {
+        color: #000000;
+        background-color: #ffffc0;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      span.linenos.special {
+        color: #000000;
+        background-color: #ffffc0;
+        padding-left: 5px;
+        padding-right: 5px;
+      }
+      .syntax .hll {
+        background-color: #ffffcc;
+      }
+      .syntax {
+        background: #f8f8f8;
+      }
+      .syntax .c {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment */
+      .syntax .err {
+        border: 1px solid #f00;
+      } /* Error */
+      .syntax .k {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword */
+      .syntax .o {
+        color: #666;
+      } /* Operator */
+      .syntax .ch {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Hashbang */
+      .syntax .cm {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Multiline */
+      .syntax .cp {
+        color: #9c6500;
+      } /* Comment.Preproc */
+      .syntax .cpf {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.PreprocFile */
+      .syntax .c1 {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Single */
+      .syntax .cs {
+        color: #3d7b7b;
+        font-style: italic;
+      } /* Comment.Special */
+      .syntax .gd {
+        color: #a00000;
+      } /* Generic.Deleted */
+      .syntax .ge {
+        font-style: italic;
+      } /* Generic.Emph */
+      .syntax .ges {
+        font-weight: bold;
+        font-style: italic;
+      } /* Generic.EmphStrong */
+      .syntax .gr {
+        color: #e40000;
+      } /* Generic.Error */
+      .syntax .gh {
+        color: #000080;
+        font-weight: bold;
+      } /* Generic.Heading */
+      .syntax .gi {
+        color: #008400;
+      } /* Generic.Inserted */
+      .syntax .go {
+        color: #717171;
+      } /* Generic.Output */
+      .syntax .gp {
+        color: #000080;
+        font-weight: bold;
+      } /* Generic.Prompt */
+      .syntax .gs {
+        font-weight: bold;
+      } /* Generic.Strong */
+      .syntax .gu {
+        color: #800080;
+        font-weight: bold;
+      } /* Generic.Subheading */
+      .syntax .gt {
+        color: #04d;
+      } /* Generic.Traceback */
+      .syntax .kc {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Constant */
+      .syntax .kd {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Declaration */
+      .syntax .kn {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Namespace */
+      .syntax .kp {
+        color: #008000;
+      } /* Keyword.Pseudo */
+      .syntax .kr {
+        color: #008000;
+        font-weight: bold;
+      } /* Keyword.Reserved */
+      .syntax .kt {
+        color: #b00040;
+      } /* Keyword.Type */
+      .syntax .m {
+        color: #666;
+      } /* Literal.Number */
+      .syntax .s {
+        color: #ba2121;
+      } /* Literal.String */
+      .syntax .na {
+        color: #687822;
+      } /* Name.Attribute */
+      .syntax .nb {
+        color: #008000;
+      } /* Name.Builtin */
+      .syntax .nc {
+        color: #00f;
+        font-weight: bold;
+      } /* Name.Class */
+      .syntax .no {
+        color: #800;
+      } /* Name.Constant */
+      .syntax .nd {
+        color: #a2f;
+      } /* Name.Decorator */
+      .syntax .ni {
+        color: #717171;
+        font-weight: bold;
+      } /* Name.Entity */
+      .syntax .ne {
+        color: #cb3f38;
+        font-weight: bold;
+      } /* Name.Exception */
+      .syntax .nf {
+        color: #00f;
+      } /* Name.Function */
+      .syntax .nl {
+        color: #767600;
+      } /* Name.Label */
+      .syntax .nn {
+        color: #00f;
+        font-weight: bold;
+      } /* Name.Namespace */
+      .syntax .nt {
+        color: #008000;
+        font-weight: bold;
+      } /* Name.Tag */
+      .syntax .nv {
+        color: #19177c;
+      } /* Name.Variable */
+      .syntax .ow {
+        color: #a2f;
+        font-weight: bold;
+      } /* Operator.Word */
+      .syntax .w {
+        color: #bbb;
+      } /* Text.Whitespace */
+      .syntax .mb {
+        color: #666;
+      } /* Literal.Number.Bin */
+      .syntax .mf {
+        color: #666;
+      } /* Literal.Number.Float */
+      .syntax .mh {
+        color: #666;
+      } /* Literal.Number.Hex */
+      .syntax .mi {
+        color: #666;
+      } /* Literal.Number.Integer */
+      .syntax .mo {
+        color: #666;
+      } /* Literal.Number.Oct */
+      .syntax .sa {
+        color: #ba2121;
+      } /* Literal.String.Affix */
+      .syntax .sb {
+        color: #ba2121;
+      } /* Literal.String.Backtick */
+      .syntax .sc {
+        color: #ba2121;
+      } /* Literal.String.Char */
+      .syntax .dl {
+        color: #ba2121;
+      } /* Literal.String.Delimiter */
+      .syntax .sd {
+        color: #ba2121;
+        font-style: italic;
+      } /* Literal.String.Doc */
+      .syntax .s2 {
+        color: #ba2121;
+      } /* Literal.String.Double */
+      .syntax .se {
+        color: #aa5d1f;
+        font-weight: bold;
+      } /* Literal.String.Escape */
+      .syntax .sh {
+        color: #ba2121;
+      } /* Literal.String.Heredoc */
+      .syntax .si {
+        color: #a45a77;
+        font-weight: bold;
+      } /* Literal.String.Interpol */
+      .syntax .sx {
+        color: #008000;
+      } /* Literal.String.Other */
+      .syntax .sr {
+        color: #a45a77;
+      } /* Literal.String.Regex */
+      .syntax .s1 {
+        color: #ba2121;
+      } /* Literal.String.Single */
+      .syntax .ss {
+        color: #19177c;
+      } /* Literal.String.Symbol */
+      .syntax .bp {
+        color: #008000;
+      } /* Name.Builtin.Pseudo */
+      .syntax .fm {
+        color: #00f;
+      } /* Name.Function.Magic */
+      .syntax .vc {
+        color: #19177c;
+      } /* Name.Variable.Class */
+      .syntax .vg {
+        color: #19177c;
+      } /* Name.Variable.Global */
+      .syntax .vi {
+        color: #19177c;
+      } /* Name.Variable.Instance */
+      .syntax .vm {
+        color: #19177c;
+      } /* Name.Variable.Magic */
+      .syntax .il {
+        color: #666;
+      } /* Literal.Number.Integer.Long */
+      .syntax {
+        color: #202020;
+      }
+      .syntax .c,
+      .syntax .c1,
+      .syntax .cm,
+      .syntax .cs {
+        color: #48614c;
+      }
+      .syntax .s,
+      .syntax .s1,
+      .syntax .s2,
+      .syntax .sb {
+        color: #9a3412;
+      }
+      .syntax .err {
+        border: 0;
+      }
+      @media print {
+        .syntax {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar">
+      <a href="index.html">All lessons</a
+      ><button onclick="window.print()">Print / save as PDF</button>
+    </div>
+    <header>
+      <p class="meta">
+        ft_transcendence · Reading topic 6 · 14 September 2026 · docs-onboarding at efb3807
+      </p>
+      <h1>The presence generator and resource cleanup</h1>
+      <p>
+        A full explanation of the initial yield, later messages, cancellation signal, and finally
+        block.
+      </p>
+    </header>
+    <h2>1. The router exposes a snapshot and a stream</h2>
+    <p>
+      PresenceRouter offers two operations under the tRPC alias presence. getOnlineUserIds answers a
+      current-state question once. onPresenceChanged starts a tracked connection and yields later
+      status messages. Both explicitly check for ctx.user. The class receives PresenceService for
+      connection bookkeeping and PresenceEvents for publishing and listening.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Operation</th>
+          <th>Input</th>
+          <th>Output</th>
+          <th>Side effect</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>getOnlineUserIds</td>
+          <td>An array of user IDs</td>
+          <td>The requested IDs that are online</td>
+          <td>None in PresenceService</td>
+        </tr>
+        <tr>
+          <td>onPresenceChanged</td>
+          <td>No application input; context and options supplied by framework</td>
+          <td>userId and online status messages</td>
+          <td>Registers a tracked connection for the subscriber</td>
+        </tr>
+      </tbody>
+    </table>
+    <h2>2. Decorators, types and request context</h2>
+    <p>
+      <code>@Router({ alias: 'presence' })</code> groups these operations.
+      <code>@Query</code> registers the snapshot query and its schemas.
+      <code>@Subscription</code> registers the stream. <code>@Input()</code> supplies parsed request
+      input, <code>@Ctx()</code> supplies backend context, and <code>@Options()</code> supplies
+      operation options such as the AbortSignal. Type annotations describe expectations to
+      TypeScript; decorators and runtime checks connect them to actual requests.
+    </p>
+    <p>
+      The context type allows user to be null.
+      <code>if (!ctx.user) throw unauthorizedError(...)</code> rejects an anonymous call. After that
+      guard, code can use ctx.user.id. The snapshot schema checks an array of UUIDs, and the service
+      filters those IDs against its map.
+    </p>
+    <p>
+      The subscription output helper expresses an asynchronous stream type. It is defined with
+      z.custom and no predicate, so it should not be described as deep runtime validation of every
+      emitted field.
+    </p>
+    <h2>3. Read the generator signature</h2>
+    <pre
+      class="syntax"
+    ><code><span class="k">async</span><span class="w"> </span><span class="o">*</span><span class="nx">onPresenceChanged</span><span class="p">(</span>
+<span class="w">  </span><span class="kd">@Ctx</span><span class="p">()</span><span class="w"> </span><span class="nx">ctx</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="kd">@Options</span><span class="p">()</span><span class="w"> </span><span class="nx">opts</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">signal?</span><span class="o">:</span><span class="w"> </span><span class="kt">AbortSignal</span><span class="w"> </span><span class="p">},</span>
+<span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">AsyncGenerator</span><span class="o">&lt;</span><span class="nx">PresenceChangedDto</span><span class="p">,</span><span class="w"> </span><span class="ow">void</span><span class="p">,</span><span class="w"> </span><span class="ow">void</span><span class="o">&gt;</span></code></pre>
+    <p>
+      async allows waiting for asynchronous results. The asterisk makes it a generator, which can
+      produce multiple values with yield. AsyncGenerator’s first type parameter is the yielded value
+      type. The other two void parameters mean no useful final return value and no useful input
+      values sent back into the generator.
+    </p>
+    <p>
+      Creating a generator does not execute its full body immediately. A consumer requests its next
+      value through next() or a for-await loop. Execution can stop temporarily at a yield and
+      continue when the consumer asks for more.
+    </p>
+    <p>
+      The signal is optional. An AbortSignal lets the framework communicate cancellation to the
+      underlying listener. It is not a timeout value, a promise, or a user ID.
+    </p>
+    <h2>4. Register the connection before streaming</h2>
+    <pre
+      class="syntax"
+    ><code><span class="kd">const</span><span class="w"> </span><span class="nx">userId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+<span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">connectionId</span><span class="p">,</span><span class="w"> </span><span class="nx">wasOffline</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">presenceService</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">userId</span><span class="p">);</span></code></pre>
+    <p>
+      The server gets identity from authenticated context. The client does not choose which user to
+      mark online through an input payload. Object destructuring extracts connectionId and
+      wasOffline from the returned object, equivalent to storing the result and reading those two
+      properties.
+    </p>
+    <p>
+      The connection ID identifies this subscription’s bookkeeping entry. It must be remembered so
+      cleanup removes this entry rather than all connections for the user. wasOffline identifies
+      whether this is the user’s first active tracked connection.
+    </p>
+    <h2>5. Broadcast the first online transition</h2>
+    <pre
+      class="syntax"
+    ><code><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">wasOffline</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">this</span><span class="p">.</span><span class="nx">presenceEvents</span><span class="p">.</span><span class="nx">emitPresenceChanged</span><span class="p">({</span><span class="w"> </span><span class="nx">userId</span><span class="p">,</span><span class="w"> </span><span class="nx">online</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="w"> </span><span class="p">});</span>
+<span class="p">}</span></code></pre>
+    <p>
+      Only the first connection publishes the online transition to existing listeners. A second
+      connection leaves the user online, so no state transition needs broadcasting. PresenceEvents
+      is a small wrapper around EventsService’s generic emitter and listener with the channel name
+      presence.changed. The presence map and emitter are both local to this backend process.
+    </p>
+    <h2>6. Why the direct yield is necessary</h2>
+    <pre
+      class="syntax"
+    ><code><span class="k">yield</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">userId</span><span class="p">,</span><span class="w"> </span><span class="nx">online</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="w"> </span><span class="p">};</span></code></pre>
+    <p>
+      The broadcast above occurs before this new generator reaches its listening loop. The
+      underlying listener registers only when it starts being consumed. The new subscriber therefore
+      cannot rely on receiving its own earlier broadcast. The direct yield sends an initial online
+      message to this subscriber itself.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Sequence</th>
+          <th>What happens</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>The generator registers this connection in PresenceService.</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>If this is the first connection, it broadcasts online to existing listeners.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>It yields an online message directly to the connecting consumer.</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>
+            When the consumer asks for the next value, it enters the loop that listens for future
+            changes.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      A snapshot query can also have run before the subscription registered the connection. That
+      explains the original symptom of appearing offline immediately after login. The direct yield
+      supplies an initial message, while the frontend’s own-status display also follows the
+      subscription connection state.
+    </p>
+    <aside>
+      <p>
+        The direct yield is for this consumer; it is not another broadcast. It runs even for a
+        second connection when wasOffline is false. It fixes this particular self-online ordering
+        problem. It does not make all snapshot and subscription startup sequences globally atomic or
+        replay messages sent before listening began.
+      </p>
+    </aside>
+    <h2>7. Forward later presence messages</h2>
+    <pre
+      class="syntax"
+    ><code><span class="k">for</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">change</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">presenceEvents</span><span class="p">.</span><span class="nx">listenPresenceChanged</span><span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">signal</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">yield</span><span class="w"> </span><span class="nx">change</span><span class="p">;</span>
+<span class="p">}</span></code></pre>
+    <p>
+      The for-await loop requests messages from an asynchronous iterable. Whenever the internal
+      listener produces a change, the router yields it outward to tRPC. This is delegation: the
+      router does not implement the queue or wake-up function itself. The generic EventsService
+      listener does that work.
+    </p>
+    <p>
+      PresenceChangedDto contains a userId and an online boolean. The stream can carry changes for
+      users other than the subscriber. The snapshot query filters requested IDs, but this stream
+      does not apply a friends-only filter. Authentication is required to subscribe; the current
+      implementation is not a separate per-friend stream.
+    </p>
+    <p>
+      This presence stream calls listenPresenceChanged, which uses the generic listener. It does not
+      call the calendar-event heartbeat wrapper. Do not assume that every tRPC subscription inherits
+      the heartbeat behavior of useEventStream.
+    </p>
+    <h2>8. What finally owns and closes</h2>
+    <pre
+      class="syntax"
+    ><code><span class="k">finally</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">becameOffline</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">presenceService</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">(</span><span class="nx">userId</span><span class="p">,</span><span class="w"> </span><span class="nx">connectionId</span><span class="p">);</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">becameOffline</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="p">.</span><span class="nx">presenceEvents</span><span class="p">.</span><span class="nx">emitPresenceChanged</span><span class="p">({</span><span class="w"> </span><span class="nx">userId</span><span class="p">,</span><span class="w"> </span><span class="nx">online</span><span class="o">:</span><span class="w"> </span><span class="kt">false</span><span class="w"> </span><span class="p">});</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span></code></pre>
+    <p>
+      When control leaves the entered try block, finally removes the connection this generator
+      registered. If other connections remain for the user, becameOffline is false and no offline
+      transition is broadcast. If this was the last connection, it announces offline.
+    </p>
+    <p>
+      For a normal framework cancellation after the loop has started, the signal wakes the
+      underlying waiting listener. That listener exits and removes its event-emitter and abort
+      callbacks. The outer generator then removes its presence connection. Each layer has its own
+      cleanup job.
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Owner in this path</th>
+          <th>Resource it opens</th>
+          <th>Cleanup</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PresenceRouter generator</td>
+          <td>PresenceService connection ID</td>
+          <td>disconnect(userId, connectionId)</td>
+        </tr>
+        <tr>
+          <td>EventsService.listen</td>
+          <td>Emitter callback and abort callback</td>
+          <td>off() and removeEventListener() in its finally</td>
+        </tr>
+        <tr>
+          <td>Calendar-event heartbeat wrapper, in a different path</td>
+          <td>Heartbeat timer</td>
+          <td>clearTimeout() in that wrapper</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      docs/API.md states: "whoever opens a resource closes it." In this path the router opens the
+      presence registration, so its finally owns that registration. The lower-level listener cannot
+      infer which presence connection to remove just because it knows a channel name. A
+      service-level abstraction could own the whole lifecycle in a refactor, but that is not how
+      this file is currently arranged.
+    </p>
+    <h2>9. Read the placement of try carefully</h2>
+    <aside>
+      <p>
+        There is a real boundary in the current code: connect() and the first direct yield happen
+        before the try block. If a consumer asks the generator to return while it is suspended at
+        that first yield, the later try/finally has not been entered and will not clean up that
+        registration. Likewise, an exception before entering try is outside its protection.
+        Therefore "finally always cleans up this connection" is too broad. A lifecycle-safe
+        arrangement would place the work after a successful connect, including the first yield,
+        inside the protected try/finally. This lesson documents the source; it does not change it.
+      </p>
+    </aside>
+    <p>
+      This is a useful distinction between understanding intended cleanup and verifying every exit
+      path. Existing PresenceService tests exercise the map, not this generator’s early-return path.
+      Closing a network connection, setting an abort signal, and calling a generator’s return method
+      are related lifecycle operations, but they are not interchangeable automatic guarantees.
+    </p>
+    <h2>10. Follow a multi-connection disconnect</h2>
+    <p>
+      Maya has connection c1 in one subscription and c2 in another. When c1’s entered loop exits,
+      its finally removes only c1. The map still holds c2, so no offline event is emitted. When c2
+      later exits and is removed, the map has no Maya entry, and the router broadcasts offline. This
+      is why the return flags from PresenceService describe transitions rather than simply current
+      state.
+    </p>
+    <h2>Questions to answer before reading the solutions</h2>
+    <ol>
+      <li>Why does the connecting client need a direct yield after an online broadcast?</li>
+      <li>
+        Does the second connection receive an initial online message? Does it broadcast another
+        online transition?
+      </li>
+      <li>Who removes the emitter listener, and who removes the presence connection?</li>
+      <li>Does the presence stream automatically have the calendar-event heartbeat?</li>
+      <li>Why is a first yield before try a cleanup concern?</li>
+      <li>If one of two active connections closes normally, should the router announce offline?</li>
+    </ol>
+    <section class="answers">
+      <h2>Answers and reasoning</h2>
+      <ol>
+        <li>
+          Its listener has not started consuming when the earlier broadcast occurs. Existing
+          listeners can receive that broadcast, but the connecting client gets its initial status
+          from the direct yield.
+        </li>
+        <li>
+          Yes, the direct yield is unconditional after login and connect. No, the transition
+          broadcast only runs when wasOffline is true.
+        </li>
+        <li>
+          EventsService.listen removes its emitter and abort callbacks. This router removes the
+          connection ID it opened through PresenceService. The generic listener has no ownership of
+          that presence registration.
+        </li>
+        <li>
+          No. PresenceEvents uses the generic listener. The heartbeat wrapper belongs to the
+          calendar-event stream and is not called here.
+        </li>
+        <li>
+          The generator can be suspended before entering try. Returning at that point does not
+          execute the later finally. Resource protection should cover the first yield after
+          acquiring a connection.
+        </li>
+        <li>
+          No. Removing one connection leaves another in the Set. Only removal of the last connection
+          produces becameOffline: true.
+        </li>
+      </ol>
+    </section>
+    <section class="appendix">
+      <h2>Source code for reading on paper</h2>
+      <p>
+        Line numbers are from the inspected checkout. The explanations distinguish intended behavior
+        from limitations visible in this code. Source comments are reproduced as written, including
+        comments discussed critically in the lesson.
+      </p>
+      <h3 class="source-name">apps/backend/src/presence/presence.router.ts · lines 1–62</h3>
+      <p class="caption">
+        Source snapshot at efb3807.
+        <a href="../../apps/backend/src/presence/presence.router.ts">Open the repository file</a>.
+      </p>
+      <pre
+        class="source-code syntax"
+      ><code><span class="source-line"><span class="line-number">  1  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Router</span><span class="p">,</span><span class="w"> </span><span class="nx">Query</span><span class="p">,</span><span class="w"> </span><span class="nx">Subscription</span><span class="p">,</span><span class="w"> </span><span class="nx">Input</span><span class="p">,</span><span class="w"> </span><span class="nx">Options</span><span class="p">,</span><span class="w"> </span><span class="nx">Ctx</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;nestjs-trpc&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  2  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">z</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;zod&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  3  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  4  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">  5  </span><span class="w">  </span><span class="nx">getOnlineUserIdsSchema</span><span class="p">,</span></span><span class="source-line"><span class="line-number">  6  </span><span class="w">  </span><span class="nx">presenceChangedSubscriptionSchema</span><span class="p">,</span></span><span class="source-line"><span class="line-number">  7  </span><span class="w">  </span><span class="kr">type</span><span class="w"> </span><span class="nx">GetOnlineUserIdsDto</span><span class="p">,</span></span><span class="source-line"><span class="line-number">  8  </span><span class="w">  </span><span class="kr">type</span><span class="w"> </span><span class="nx">PresenceChangedDto</span><span class="p">,</span></span><span class="source-line"><span class="line-number">  9  </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@repo/schemas/presence&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 10  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">unauthorizedError</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;../trpc/trpc.errors&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 11  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">PresenceEvents</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./presence.events&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 12  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">PresenceService</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;./presence.service&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 13  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 14  </span><span class="kd">@Router</span><span class="p">({</span><span class="w"> </span><span class="nx">alias</span><span class="o">:</span><span class="w"> </span><span class="s1">&#39;presence&#39;</span><span class="w"> </span><span class="p">})</span></span><span class="source-line"><span class="line-number"> 15  </span><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">PresenceRouter</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 16  </span><span class="w">  </span><span class="kr">constructor</span><span class="p">(</span></span><span class="source-line"><span class="line-number"> 17  </span><span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">presenceService</span><span class="o">:</span><span class="w"> </span><span class="kt">PresenceService</span><span class="p">,</span></span><span class="source-line"><span class="line-number"> 18  </span><span class="w">    </span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">presenceEvents</span><span class="o">:</span><span class="w"> </span><span class="kt">PresenceEvents</span><span class="p">,</span></span><span class="source-line"><span class="line-number"> 19  </span><span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></span><span class="source-line"><span class="line-number"> 20  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 21  </span><span class="w">  </span><span class="kd">@Query</span><span class="p">({</span><span class="w"> </span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">getOnlineUserIdsSchema</span><span class="p">,</span><span class="w"> </span><span class="nx">output</span><span class="o">:</span><span class="w"> </span><span class="kt">z.uuid</span><span class="p">().</span><span class="nx">array</span><span class="p">()</span><span class="w"> </span><span class="p">})</span></span><span class="source-line"><span class="line-number"> 22  </span><span class="w">  </span><span class="nx">getOnlineUserIds</span><span class="p">(</span></span><span class="source-line"><span class="line-number"> 23  </span><span class="w">    </span><span class="kd">@Input</span><span class="p">()</span><span class="w"> </span><span class="nx">input</span><span class="o">:</span><span class="w"> </span><span class="kt">GetOnlineUserIdsDto</span><span class="p">,</span></span><span class="source-line"><span class="line-number"> 24  </span><span class="w">    </span><span class="kd">@Ctx</span><span class="p">()</span><span class="w"> </span><span class="nx">ctx</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">},</span></span><span class="source-line"><span class="line-number"> 25  </span><span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 26  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="nx">unauthorizedError</span><span class="p">(</span><span class="s1">&#39;Not logged in&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 27  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">presenceService</span><span class="p">.</span><span class="nx">getOnlineUserIds</span><span class="p">(</span><span class="nx">input</span><span class="p">.</span><span class="nx">userIds</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 28  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 29  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 30  </span><span class="w">  </span><span class="kd">@Subscription</span><span class="p">({</span><span class="w"> </span><span class="nx">output</span><span class="o">:</span><span class="w"> </span><span class="kt">presenceChangedSubscriptionSchema</span><span class="w"> </span><span class="p">})</span></span><span class="source-line"><span class="line-number"> 31  </span><span class="w">  </span><span class="k">async</span><span class="w"> </span><span class="o">*</span><span class="nx">onPresenceChanged</span><span class="p">(</span></span><span class="source-line"><span class="line-number"> 32  </span><span class="w">    </span><span class="kd">@Ctx</span><span class="p">()</span><span class="w"> </span><span class="nx">ctx</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">user</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kc">null</span><span class="w"> </span><span class="p">},</span></span><span class="source-line"><span class="line-number"> 33  </span><span class="w">    </span><span class="kd">@Options</span><span class="p">()</span><span class="w"> </span><span class="nx">opts</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">signal?</span><span class="o">:</span><span class="w"> </span><span class="kt">AbortSignal</span><span class="w"> </span><span class="p">},</span></span><span class="source-line"><span class="line-number"> 34  </span><span class="w">  </span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="nx">AsyncGenerator</span><span class="o">&lt;</span><span class="nx">PresenceChangedDto</span><span class="p">,</span><span class="w"> </span><span class="ow">void</span><span class="p">,</span><span class="w"> </span><span class="ow">void</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 35  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">)</span><span class="w"> </span><span class="k">throw</span><span class="w"> </span><span class="nx">unauthorizedError</span><span class="p">(</span><span class="s1">&#39;Not logged in&#39;</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 36  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 37  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="nx">userId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ctx</span><span class="p">.</span><span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 38  </span><span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">connectionId</span><span class="p">,</span><span class="w"> </span><span class="nx">wasOffline</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">presenceService</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">userId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 39  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 40  </span><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">wasOffline</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 41  </span><span class="w">      </span><span class="k">this</span><span class="p">.</span><span class="nx">presenceEvents</span><span class="p">.</span><span class="nx">emitPresenceChanged</span><span class="p">({</span><span class="w"> </span><span class="nx">userId</span><span class="p">,</span><span class="w"> </span><span class="nx">online</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="w"> </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 42  </span><span class="w">    </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 43  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 44  </span><span class="w">    </span><span class="c1">// Broadcast listeners only register once `listenPresenceChanged` below</span></span><span class="source-line"><span class="line-number"> 45  </span><span class="w">    </span><span class="c1">// starts being consumed, which is after the emit above — so the client</span></span><span class="source-line"><span class="line-number"> 46  </span><span class="w">    </span><span class="c1">// that just connected would otherwise miss its own &quot;online&quot; event. Yield</span></span><span class="source-line"><span class="line-number"> 47  </span><span class="w">    </span><span class="c1">// it directly instead of relying on that round trip.</span></span><span class="source-line"><span class="line-number"> 48  </span><span class="w">    </span><span class="k">yield</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">userId</span><span class="p">,</span><span class="w"> </span><span class="nx">online</span><span class="o">:</span><span class="w"> </span><span class="kt">true</span><span class="w"> </span><span class="p">};</span></span><span class="source-line"><span class="line-number"> 49  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 50  </span><span class="w">    </span><span class="k">try</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 51  </span><span class="w">      </span><span class="k">for</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">change</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">presenceEvents</span><span class="p">.</span><span class="nx">listenPresenceChanged</span><span class="p">(</span><span class="nx">opts</span><span class="p">.</span><span class="nx">signal</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 52  </span><span class="w">        </span><span class="k">yield</span><span class="w"> </span><span class="nx">change</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 53  </span><span class="w">      </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 54  </span><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 55  </span><span class="w">      </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">becameOffline</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">presenceService</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">(</span><span class="nx">userId</span><span class="p">,</span><span class="w"> </span><span class="nx">connectionId</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 56  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 57  </span><span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">becameOffline</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 58  </span><span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="nx">presenceEvents</span><span class="p">.</span><span class="nx">emitPresenceChanged</span><span class="p">({</span><span class="w"> </span><span class="nx">userId</span><span class="p">,</span><span class="w"> </span><span class="nx">online</span><span class="o">:</span><span class="w"> </span><span class="kt">false</span><span class="w"> </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 59  </span><span class="w">      </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 60  </span><span class="w">    </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 61  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 62  </span><span class="p">}</span></span></code></pre>
+      <h3 class="source-name">apps/backend/src/presence/presence.events.ts · lines 1–19</h3>
+      <p class="caption">
+        Source snapshot at efb3807.
+        <a href="../../apps/backend/src/presence/presence.events.ts">Open the repository file</a>.
+      </p>
+      <pre
+        class="source-code syntax"
+      ><code><span class="source-line"><span class="line-number">  1  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">Injectable</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@nestjs/common&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  2  </span><span class="k">import</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">PresenceChangedDto</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;@repo/schemas/presence&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  3  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  4  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">EventsService</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;../events/events.service&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  5  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  6  </span><span class="kd">const</span><span class="w"> </span><span class="nx">PRESENCE_CHANGED_EVENT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;presence.changed&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  7  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  8  </span><span class="kd">@Injectable</span><span class="p">()</span></span><span class="source-line"><span class="line-number">  9  </span><span class="k">export</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nx">PresenceEvents</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 10  </span><span class="w">  </span><span class="kr">constructor</span><span class="p">(</span><span class="k">private</span><span class="w"> </span><span class="k">readonly</span><span class="w"> </span><span class="nx">eventsService</span><span class="o">:</span><span class="w"> </span><span class="kt">EventsService</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span></span><span class="source-line"><span class="line-number"> 11  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 12  </span><span class="w">  </span><span class="nx">emitPresenceChanged</span><span class="p">(</span><span class="nx">payload</span><span class="o">:</span><span class="w"> </span><span class="kt">PresenceChangedDto</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 13  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">eventsService</span><span class="p">.</span><span class="nx">emit</span><span class="p">(</span><span class="nx">PRESENCE_CHANGED_EVENT</span><span class="p">,</span><span class="w"> </span><span class="nx">payload</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 14  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 15  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 16  </span><span class="w">  </span><span class="nx">listenPresenceChanged</span><span class="p">(</span><span class="nx">signal?</span><span class="o">:</span><span class="w"> </span><span class="kt">AbortSignal</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number"> 17  </span><span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">eventsService</span><span class="p">.</span><span class="nx">listen</span><span class="o">&lt;</span><span class="nx">PresenceChangedDto</span><span class="o">&gt;</span><span class="p">(</span><span class="nx">PRESENCE_CHANGED_EVENT</span><span class="p">,</span><span class="w"> </span><span class="nx">signal</span><span class="p">);</span></span><span class="source-line"><span class="line-number"> 18  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number"> 19  </span><span class="p">}</span></span></code></pre>
+      <h3 class="source-name">packages/schemas/src/presence.ts · lines 1–14</h3>
+      <p class="caption">
+        Source snapshot at efb3807.
+        <a href="../../packages/schemas/src/presence.ts">Open the repository file</a>.
+      </p>
+      <pre
+        class="source-code syntax"
+      ><code><span class="source-line"><span class="line-number">  1  </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">z</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">&#39;zod&#39;</span><span class="p">;</span></span><span class="source-line"><span class="line-number">  2  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  3  </span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">presenceChangedSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">object</span><span class="p">({</span></span><span class="source-line"><span class="line-number">  4  </span><span class="w">  </span><span class="nx">userId</span><span class="o">:</span><span class="w"> </span><span class="kt">z.uuid</span><span class="p">(),</span></span><span class="source-line"><span class="line-number">  5  </span><span class="w">  </span><span class="nx">online</span><span class="o">:</span><span class="w"> </span><span class="kt">z.boolean</span><span class="p">(),</span></span><span class="source-line"><span class="line-number">  6  </span><span class="p">});</span></span><span class="source-line"><span class="line-number">  7  </span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">presenceChangedSubscriptionSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">custom</span><span class="o">&lt;</span><span class="nx">AsyncIterable</span><span class="o">&lt;</span><span class="nx">PresenceChangedDto</span><span class="o">&gt;&gt;</span><span class="p">();</span></span><span class="source-line"><span class="line-number">  8  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">  9  </span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">getOnlineUserIdsSchema</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">object</span><span class="p">({</span></span><span class="source-line"><span class="line-number"> 10  </span><span class="w">  </span><span class="nx">userIds</span><span class="o">:</span><span class="w"> </span><span class="kt">z.uuid</span><span class="p">().</span><span class="nx">array</span><span class="p">(),</span></span><span class="source-line"><span class="line-number"> 11  </span><span class="p">});</span></span><span class="source-line"><span class="line-number"> 12  </span><span class="w"> </span></span><span class="source-line"><span class="line-number"> 13  </span><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">PresenceChangedDto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">infer</span><span class="o">&lt;</span><span class="ow">typeof</span><span class="w"> </span><span class="nx">presenceChangedSchema</span><span class="o">&gt;</span><span class="p">;</span></span><span class="source-line"><span class="line-number"> 14  </span><span class="k">export</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">GetOnlineUserIdsDto</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">z</span><span class="p">.</span><span class="nx">infer</span><span class="o">&lt;</span><span class="ow">typeof</span><span class="w"> </span><span class="nx">getOnlineUserIdsSchema</span><span class="o">&gt;</span><span class="p">;</span></span></code></pre>
+      <h3 class="source-name">docs/API.md · lines 168–193</h3>
+      <p class="caption">
+        Source snapshot at efb3807. <a href="../../docs/API.md">Open the repository file</a>.
+      </p>
+      <pre
+        class="source-code syntax"
+      ><code><span class="source-line"><span class="line-number">168  </span><span class="gu">### Cleanup Rules</span></span><span class="source-line"><span class="line-number">169  </span> </span><span class="source-line"><span class="line-number">170  </span>The <span class="sb">`AbortSignal`</span> passed by <span class="sb">`nestjs-trpc`</span> is how a subscription learns that the client disconnected. <span class="sb">`EventsService.listen()`</span> uses that signal to:</span><span class="source-line"><span class="line-number">171  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">172  </span><span class="k">-</span><span class="w"> </span>wake any pending listener promise;</span><span class="source-line"><span class="line-number">173  </span><span class="k">-</span><span class="w"> </span>remove the Nest event listener;</span><span class="source-line"><span class="line-number">174  </span><span class="k">-</span><span class="w"> </span>remove its own abort listener;</span><span class="source-line"><span class="line-number">175  </span><span class="k">-</span><span class="w"> </span>end the async generator cleanly.</span><span class="source-line"><span class="line-number">176  </span> </span><span class="source-line"><span class="line-number">177  </span>This cleanup only covers resources opened by <span class="sb">`EventsService.listen()`</span> itself. If a feature-level subscription opens another resource, the same service that opens it must close it with <span class="sb">`try`</span>/<span class="sb">`finally`</span>:</span><span class="source-line"><span class="line-number">178  </span><span class="sb"> </span></span><span class="source-line"><span class="line-number">179  </span><span class="sb">```ts</span></span><span class="source-line"><span class="line-number">180  </span><span class="k">async</span><span class="w"> </span><span class="o">*</span><span class="nx">listenUserCreated</span><span class="p">(</span><span class="nx">signal?</span><span class="o">:</span><span class="w"> </span><span class="kt">AbortSignal</span><span class="p">)</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">181  </span><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">resource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="nx">openSomething</span><span class="p">();</span></span><span class="source-line"><span class="line-number">182  </span><span class="w"> </span></span><span class="source-line"><span class="line-number">183  </span><span class="w">  </span><span class="k">try</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">184  </span><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="k">await</span><span class="w"> </span><span class="p">(</span><span class="kd">const</span><span class="w"> </span><span class="nx">user</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nx">eventsService</span><span class="p">.</span><span class="nx">listen</span><span class="o">&lt;</span><span class="nx">UserDto</span><span class="o">&gt;</span><span class="p">(</span><span class="s1">&#39;user.created&#39;</span><span class="p">,</span><span class="w"> </span><span class="nx">signal</span><span class="p">))</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">185  </span><span class="w">      </span><span class="k">yield</span><span class="w"> </span><span class="nx">user</span><span class="p">;</span></span><span class="source-line"><span class="line-number">186  </span><span class="w">    </span><span class="p">}</span></span><span class="source-line"><span class="line-number">187  </span><span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">finally</span><span class="w"> </span><span class="p">{</span></span><span class="source-line"><span class="line-number">188  </span><span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">resource</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span></span><span class="source-line"><span class="line-number">189  </span><span class="w">  </span><span class="p">}</span></span><span class="source-line"><span class="line-number">190  </span><span class="p">}</span></span><span class="source-line"><span class="line-number">191  </span><span class="sb">```</span></span><span class="source-line"><span class="line-number">192  </span> </span><span class="source-line"><span class="line-number">193  </span>The ownership rule is: whoever opens a resource closes it. The shared <span class="sb">`EventsService`</span> deduplicates event listener and abort handling, while feature services remain responsible for database cursors, timers, sockets, file handles, or other resources they create.</span></code></pre>
+    </section>
+    <footer>
+      Prepared from the local source files. This is an explanation, not a claim that all edge cases
+      have been tested. Code and prose print without an internet connection. Answers and source code
+      start on new pages.
+    </footer>
+  </body>
+</html>

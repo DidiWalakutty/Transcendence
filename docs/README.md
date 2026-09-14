@@ -8,6 +8,10 @@ New to web development? Open the [Beginner's Project Guide](./PROJECT_GUIDE.html
 It explains the application, tools, terminology, and request flow with diagrams and examples.
 The page works offline and includes links into the source code and the guides below.
 
+[Printable code walkthroughs](./print-lessons/index.html) explain event-stream updates, tRPC
+transport, presence tracking and cleanup, and the friends request flow. Each lesson includes
+code, examples, questions, and answers, with a layout for printing or saving as PDF.
+
 | Document                                    | Purpose                                                                     |
 | ------------------------------------------- | --------------------------------------------------------------------------- |
 | [Development](./DEVELOPMENT.md)             | Local setup, install steps, development commands, and troubleshooting.      |
