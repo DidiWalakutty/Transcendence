@@ -66,6 +66,7 @@ export class NotificationService {
     eventDate: string,
     eventTime: string,
     eventLocation: string,
+    eventAddress: string,
     lang: 'en' | 'nl' | 'es' | 'ru' = 'en',
   ): Promise<void> {
     try {
@@ -78,6 +79,7 @@ export class NotificationService {
         eventDate,
         eventTime,
         eventLocation,
+        eventAddress,
         lang,
         dictionary: selectedDictionary,
       });
@@ -107,6 +109,7 @@ export class NotificationService {
     eventDate: string,
     eventTime: string,
     eventLocation: string,
+    eventAddress: string,
     lang: 'en' | 'nl' | 'es' | 'ru' = 'en',
   ): Promise<void> {
     try {
@@ -119,6 +122,7 @@ export class NotificationService {
         eventDate,
         eventTime,
         eventLocation,
+        eventAddress,
         lang,
         dictionary: selectedDictionary,
       });

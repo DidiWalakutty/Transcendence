@@ -88,6 +88,7 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
         dateString,
         timeString,
         eventRecord.location,
+        eventRecord.address,
         userLang,
       );
     } catch (error) {
@@ -154,6 +155,7 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
               dateString,
               timeString,
               event.location,
+              event.address,
               userLang,
             );
           } else if (mode === 'modify') {

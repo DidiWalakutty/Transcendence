@@ -7,6 +7,7 @@ interface TicketConfirmationEmailProps {
   eventDate: string;
   eventTime: string;
   eventLocation: string;
+  eventAddress: string;
   lang: 'en' | 'nl' | 'es' | 'ru';
   dictionary: TicketConfirmationEmailDictionary;
 }
@@ -17,6 +18,7 @@ export const TicketConfirmationEmail = ({
   eventDate,
   eventTime,
   eventLocation,
+  eventAddress,
   lang,
   dictionary,
 }: TicketConfirmationEmailProps): string => {
@@ -66,6 +68,7 @@ export const TicketConfirmationEmail = ({
             <div>
               <span style="color: ${EVENTRA_THEME.colors.textMuted}; font-size: 12px; font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 2px;">${dictionary.labelLocation}</span>
               <span style="color: ${EVENTRA_THEME.colors.textSecondary}; font-size: 15px; font-weight: 600;">${eventLocation}</span>
+              <span style="color: ${EVENTRA_THEME.colors.textSecondary}; font-size: 13px; font-weight: 500; display: block; margin-top: 2px;">${eventAddress}</span>
             </div>
           </div>
 
