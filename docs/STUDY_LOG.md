@@ -66,8 +66,14 @@ Open item: confirm with the team that chat lands Thursday night for Friday revie
 
 _Rewritten at the end of every sitting: file, line, concept, next step._
 
-2026-09-16, sitting 1: log created. Next: cheat sheet, then construct 1 (`const`, arrow functions,
-closures) on `events.service.ts:142-153`.
+2026-09-16, sitting 1 (~45 min): plan revised, log created and pushed (`8f63a2f`), `glow`
+installed for reading docs (`glow -p docs/STUDY_LOG.md`). No constructs done yet. Cheat sheet may or
+may not have been read; ask.
+
+Next: construct 1 (`const`, arrow functions, closures). Block already prepared: `events.service.ts`
+lines 137-139 and 142-148. Terms pre-defined: arrow function, closure. Corin narrates first: what
+the three declarations are, and which variables inside `onEvent` are captured vs its own parameter.
+Remaining Wednesday budget after this sitting: ~2 h, ideally constructs 1-8.
 
 ## TypeScript for C++ programmers
 
