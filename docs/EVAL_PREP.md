@@ -23,8 +23,14 @@ then you check yourself against the source. Reading is preparation; narrating ou
 
 ## Schedule
 
-Six sittings of 2–3 hours plus spare. Each has a reading list, a drill, and the questions an
-evaluator would ask. Mocks are short (20 min) and happen in three places so drift is caught early.
+**Superseded for eval 1.** The live schedule is in [`STUDY_LOG.md`](./STUDY_LOG.md): a TS primer
+first, then pair-tracing of my parts, one mock on Friday. The sessions below remain the source for
+reading lists, drills and evaluator questions; the study log references them by number rather than
+copying them.
+
+Original plan: six sittings of 2–3 hours plus spare. Each has a reading list, a drill, and the
+questions an evaluator would ask. Mocks are short (20 min) and happen in three places so drift is
+caught early.
 
 ### Session 1 (2.5 h): your parts I — realtime, presence, friends
 
