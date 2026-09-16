@@ -4,4 +4,6 @@ export * from './ticket-confirmation';
 export * from './ticket-confirmation.i18n';
 export * from './event-cancellation';
 export * from './event-cancellation.i18n';
+export * from './event-modification';
+export * from './event-modification.i18n';
 export * from './theme.tokens';

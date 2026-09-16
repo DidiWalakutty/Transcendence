@@ -13,6 +13,7 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
   private readonly welcomeRef = (user: any) => this.handleUserCreated(user);
   private readonly ticketRef = (payload: any) => this.handleTicketRegistration(payload);
   private readonly cancelRef = (payload: any) => this.handleEventBroadcast(payload, 'cancel');
+  private readonly modifyRef = (payload: any) => this.handleEventBroadcast(payload, 'modify');
 
   constructor(
     private readonly notificationService: NotificationService,
@@ -23,12 +24,14 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
     process.on('user.created' as any, this.welcomeRef);
     process.on('registration.created' as any, this.ticketRef);
     process.on('event.cancelled' as any, this.cancelRef);
+    process.on('event.modified' as any, this.modifyRef);
   }
 
   onModuleDestroy() {
     process.off('user.created' as any, this.welcomeRef);
     process.off('registration.created' as any, this.ticketRef);
     process.off('event.cancelled' as any, this.cancelRef);
+    process.off('event.modified' as any, this.modifyRef);
   }
 
   private async handleUserCreated(user: UserDto) {
@@ -93,15 +96,39 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
   }
 
   private async handleEventBroadcast(
-    payload: { event: any; attendees: any[] },
+    payload: { event: any; attendees: any[]; oldEvent?: any },
     mode: 'cancel' | 'modify',
   ) {
-    const { event, attendees } = payload;
-    this.logger.log(
-      `Executing background ${mode} broadcasts for event: ${event.title} (${attendees?.length || 0} attendees)`,
-    );
+    const { event, attendees, oldEvent } = payload;
 
     if (!attendees || attendees.length === 0) return;
+
+    let highlights = { title: false, dateTime: false, location: false, address: false };
+
+    if (mode === 'modify' && oldEvent) {
+      const hasTitleChanged = oldEvent.title !== event.title;
+      const hasDateTimeChanged = oldEvent.date !== event.date || oldEvent.time !== event.time;
+      const hasLocationChanged = oldEvent.location !== event.location;
+      const hasAddressChanged = oldEvent.address !== event.address;
+
+      if (!hasTitleChanged && !hasDateTimeChanged && !hasLocationChanged && !hasAddressChanged) {
+        this.logger.log(
+          `Skipping notification broadcast. Changes are isolated to non-impactful fields.`,
+        );
+        return;
+      }
+
+      highlights = {
+        title: hasTitleChanged,
+        dateTime: hasDateTimeChanged,
+        location: hasLocationChanged,
+        address: hasAddressChanged,
+      };
+    }
+
+    this.logger.log(
+      `Executing background ${mode} broadcasts for event: ${event.title} (${attendees.length} attendees)`,
+    );
 
     const dateString = event.date || 'N/A';
     const timeString = event.time || 'N/A';
@@ -130,8 +157,16 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
               userLang,
             );
           } else if (mode === 'modify') {
-            this.logger.debug(
-              `Modification mode triggered for user: ${userRecord.email}. Action skipped for Task 3 boundary.`,
+            await this.notificationService.sendEventModificationEmail(
+              userRecord.email,
+              userName,
+              event.title,
+              dateString,
+              timeString,
+              event.location,
+              event.address,
+              userLang,
+              highlights,
             );
           }
         } catch (mailError) {

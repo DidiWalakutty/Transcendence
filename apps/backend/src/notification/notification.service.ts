@@ -8,6 +8,8 @@ import {
   ticketConfirmationTranslations,
   EventCancellationEmail,
   eventCancellationTranslations,
+  EventModificationEmail,
+  eventModificationTranslations,
 } from '../templates/index';
 
 @Injectable()
@@ -133,6 +135,57 @@ export class NotificationService {
     } catch (error) {
       this.logger.error(
         `Failed to execute event cancellation notification routine for ${toEmail}`,
+        error,
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Compiles and dispatches an event modification notice with conditional red highlights
+   */
+  async sendEventModificationEmail(
+    toEmail: string,
+    userName: string,
+    eventTitle: string,
+    eventDate: string,
+    eventTime: string,
+    eventLocation: string,
+    eventAddress: string,
+    lang: 'en' | 'nl' | 'es' | 'ru' = 'en',
+    highlights: { title: boolean; dateTime: boolean; location: boolean; address: boolean } = {
+      title: false,
+      dateTime: false,
+      location: false,
+      address: false,
+    },
+  ): Promise<void> {
+    try {
+      const selectedDictionary =
+        eventModificationTranslations[lang] || eventModificationTranslations.en;
+
+      const htmlContent = EventModificationEmail({
+        userName,
+        eventTitle,
+        eventDate,
+        eventTime,
+        eventLocation,
+        eventAddress,
+        lang,
+        dictionary: selectedDictionary,
+        highlights,
+      });
+
+      await this.mailerService.sendMail({
+        to: toEmail,
+        subject: `${selectedDictionary.subjectText} ${eventTitle}`,
+        html: htmlContent,
+      });
+
+      this.logger.log(`Event modification email (${lang.toUpperCase()}) sent to ${toEmail}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to execute modification notification routine for ${toEmail}`,
         error,
       );
       throw error;

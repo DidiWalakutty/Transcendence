@@ -53,10 +53,14 @@ export class EventsService {
   }
 
   async update(data: UpdateEventDto): Promise<EventDto | null> {
+    const oldEventDetails = await this.repository.findById(data.id);
     const event = await this.repository.update(data);
 
-    if (event) {
+    if (event && oldEventDetails) {
       this.emitChanged('updated', event);
+      const attendees = await this.registrationsRepository.getEventAttendees(event.id);
+
+      process.emit('event.modified' as any, { event, attendees, oldEvent: oldEventDetails });
     }
 
     return event;
