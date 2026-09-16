@@ -8,7 +8,7 @@ interface TicketConfirmationEmailProps {
   eventTime: string;
   eventLocation: string;
   eventAddress: string;
-  lang: 'en' | 'nl' | 'es' | 'ru';
+  lang: 'en' | 'nl' | 'es' | 'ru' | 'ro';
   dictionary: TicketConfirmationEmailDictionary;
 }
 

@@ -27,7 +27,7 @@ export class NotificationService {
   async sendWelcomeEmail(
     toEmail: string,
     userName: string,
-    lang: 'en' | 'nl' | 'es' | 'ru' = 'en',
+    lang: 'en' | 'nl' | 'es' | 'ru' | 'ro' = 'en',
   ): Promise<void> {
     try {
       const selectedDictionary = welcomeTranslations[lang] || welcomeTranslations.en;
@@ -67,7 +67,7 @@ export class NotificationService {
     eventTime: string,
     eventLocation: string,
     eventAddress: string,
-    lang: 'en' | 'nl' | 'es' | 'ru' = 'en',
+    lang: 'en' | 'nl' | 'es' | 'ru' | 'ro' = 'en',
   ): Promise<void> {
     try {
       const selectedDictionary =
@@ -110,7 +110,7 @@ export class NotificationService {
     eventTime: string,
     eventLocation: string,
     eventAddress: string,
-    lang: 'en' | 'nl' | 'es' | 'ru' = 'en',
+    lang: 'en' | 'nl' | 'es' | 'ru' | 'ro' = 'en',
   ): Promise<void> {
     try {
       const selectedDictionary =
@@ -156,7 +156,7 @@ export class NotificationService {
     eventTime: string,
     eventLocation: string,
     eventAddress: string,
-    lang: 'en' | 'nl' | 'es' | 'ru' = 'en',
+    lang: 'en' | 'nl' | 'es' | 'ru' | 'ro' = 'en',
     highlights: { title: boolean; dateTime: boolean; location: boolean; address: boolean } = {
       title: false,
       dateTime: false,

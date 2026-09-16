@@ -39,8 +39,8 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
 
     try {
       const dbLang = (user as any).preferedLanguage;
-      const userLang = ['nl', 'es', 'ru'].includes(dbLang)
-        ? (dbLang as 'en' | 'nl' | 'es' | 'ru')
+      const userLang = ['nl', 'es', 'ru', 'ro'].includes(dbLang)
+        ? (dbLang as 'en' | 'nl' | 'es' | 'ru' | 'ro')
         : 'en';
 
       const userName = user.name || user.username || 'User';
@@ -72,8 +72,8 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
       }
 
       const dbLang = (userRecord as any).preferedLanguage;
-      const userLang = ['nl', 'es', 'ru'].includes(dbLang)
-        ? (dbLang as 'en' | 'nl' | 'es' | 'ru')
+      const userLang = ['nl', 'es', 'ru', 'ro'].includes(dbLang)
+        ? (dbLang as 'en' | 'nl' | 'es' | 'ru' | 'ro')
         : 'en';
 
       const userName = userRecord.name || (userRecord as any).username || 'User';
@@ -144,7 +144,9 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
           if (!userRecord) return;
 
           const dbLang = (userRecord as any).preferedLanguage;
-          const userLang = ['nl', 'es', 'ru'].includes(dbLang) ? (dbLang as any) : 'en';
+          const userLang = ['nl', 'es', 'ru', 'ro'].includes(dbLang)
+            ? (dbLang as 'en' | 'nl' | 'es' | 'ru' | 'ro')
+            : 'en';
           const userName = userRecord.name || (userRecord as any).username || 'User';
 
           if (mode === 'cancel') {
