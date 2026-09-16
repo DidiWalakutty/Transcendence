@@ -12,6 +12,7 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
 
   private readonly welcomeRef = (user: any) => this.handleUserCreated(user);
   private readonly ticketRef = (payload: any) => this.handleTicketRegistration(payload);
+  private readonly cancelRef = (payload: any) => this.handleEventBroadcast(payload, 'cancel');
 
   constructor(
     private readonly notificationService: NotificationService,
@@ -21,11 +22,13 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
   onModuleInit() {
     process.on('user.created' as any, this.welcomeRef);
     process.on('registration.created' as any, this.ticketRef);
+    process.on('event.cancelled' as any, this.cancelRef);
   }
 
   onModuleDestroy() {
     process.off('user.created' as any, this.welcomeRef);
     process.off('registration.created' as any, this.ticketRef);
+    process.off('event.cancelled' as any, this.cancelRef);
   }
 
   private async handleUserCreated(user: UserDto) {
@@ -87,5 +90,57 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
     } catch (error) {
       this.logger.error(`Failed to dispatch ticket confirmation mail route`, error);
     }
+  }
+
+  private async handleEventBroadcast(
+    payload: { event: any; attendees: any[] },
+    mode: 'cancel' | 'modify',
+  ) {
+    const { event, attendees } = payload;
+    this.logger.log(
+      `Executing background ${mode} broadcasts for event: ${event.title} (${attendees?.length || 0} attendees)`,
+    );
+
+    if (!attendees || attendees.length === 0) return;
+
+    const dateString = event.date || 'N/A';
+    const timeString = event.time || 'N/A';
+
+    await Promise.all(
+      attendees.map(async (attendee) => {
+        try {
+          const userRecord = await this.db.query.users.findFirst({
+            where: eq(users.id, attendee.id),
+          });
+
+          if (!userRecord) return;
+
+          const dbLang = (userRecord as any).preferedLanguage;
+          const userLang = ['nl', 'es', 'ru'].includes(dbLang) ? (dbLang as any) : 'en';
+          const userName = userRecord.name || (userRecord as any).username || 'User';
+
+          if (mode === 'cancel') {
+            await this.notificationService.sendEventCancellationEmail(
+              userRecord.email,
+              userName,
+              event.title,
+              dateString,
+              timeString,
+              event.location,
+              userLang,
+            );
+          } else if (mode === 'modify') {
+            this.logger.debug(
+              `Modification mode triggered for user: ${userRecord.email}. Action skipped for Task 3 boundary.`,
+            );
+          }
+        } catch (mailError) {
+          this.logger.error(
+            `Failed to dispatch ${mode} email notice to attendee ID ${attendee.id}`,
+            mailError,
+          );
+        }
+      }),
+    );
   }
 }

@@ -20,6 +20,6 @@ import { DrizzleRegistrationsRepository } from './repositories/drizzle-registrat
       useClass: DrizzleRegistrationsRepository,
     },
   ],
-  exports: [RegistrationsService],
+  exports: [RegistrationsService, RegistrationsRepository],
 })
 export class RegistrationsModule {}

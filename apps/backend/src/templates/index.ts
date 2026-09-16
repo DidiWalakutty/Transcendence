@@ -2,4 +2,6 @@ export * from './welcome';
 export * from './welcome.i18n';
 export * from './ticket-confirmation';
 export * from './ticket-confirmation.i18n';
+export * from './event-cancellation';
+export * from './event-cancellation.i18n';
 export * from './theme.tokens';

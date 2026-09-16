@@ -1,8 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 
-import { WelcomeEmail, welcomeTranslations } from '../templates/index';
-import { TicketConfirmationEmail, ticketConfirmationTranslations } from '../templates/index';
+import {
+  WelcomeEmail,
+  welcomeTranslations,
+  TicketConfirmationEmail,
+  ticketConfirmationTranslations,
+  EventCancellationEmail,
+  eventCancellationTranslations,
+} from '../templates/index';
 
 @Injectable()
 export class NotificationService {
@@ -85,6 +91,50 @@ export class NotificationService {
       );
     } catch (error) {
       this.logger.error(`Failed to execute ticket confirmation routine for ${toEmail}`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Compiles and dispatches an event cancellation notice to a registered user
+   */
+  async sendEventCancellationEmail(
+    toEmail: string,
+    userName: string,
+    eventTitle: string,
+    eventDate: string,
+    eventTime: string,
+    eventLocation: string,
+    lang: 'en' | 'nl' | 'es' | 'ru' = 'en',
+  ): Promise<void> {
+    try {
+      const selectedDictionary =
+        eventCancellationTranslations[lang] || eventCancellationTranslations.en;
+
+      const htmlContent = EventCancellationEmail({
+        userName,
+        eventTitle,
+        eventDate,
+        eventTime,
+        eventLocation,
+        lang,
+        dictionary: selectedDictionary,
+      });
+
+      await this.mailerService.sendMail({
+        to: toEmail,
+        subject: `${selectedDictionary.subjectText} ${eventTitle}`,
+        html: htmlContent,
+      });
+
+      this.logger.log(
+        `Event cancellation email (${lang.toUpperCase()}) successfully dispatched to ${toEmail}`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to execute event cancellation notification routine for ${toEmail}`,
+        error,
+      );
       throw error;
     }
   }
