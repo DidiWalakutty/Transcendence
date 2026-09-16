@@ -91,6 +91,10 @@ export default defineConfig({
         command: `${connectDevcontainerToComposeNetwork} && ${devDatabaseUrl} vp exec --filter @repo/backend drizzle-kit migrate --config drizzle.config.ts`,
         cache: false,
       },
+      'repo:db:seed': {
+        command: `${connectDevcontainerToComposeNetwork} && ${devDatabaseUrl} vp exec --filter @repo/backend bun seed.ts`,
+        cache: false,
+      },
       'repo:db:push': {
         command: `${connectDevcontainerToComposeNetwork} && ${devDatabaseUrl} vp exec --filter @repo/backend drizzle-kit push --config drizzle.config.ts`,
         cache: false,

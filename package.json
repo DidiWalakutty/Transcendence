@@ -16,6 +16,7 @@
     "db:setup": "vp run -w repo:db:setup",
     "db:generate": "vp run -w repo:db:generate",
     "db:migrate": "vp run -w repo:db:migrate",
+    "db:seed": "vp run -w repo:db:seed",
     "db:push": "vp run -w repo:db:push",
     "db:studio": "vp run -w repo:db:studio",
     "redis:setup": "vp run -w repo:redis:setup",

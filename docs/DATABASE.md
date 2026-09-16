@@ -85,11 +85,42 @@ Common commands:
 vp run db:setup
 vp run db:generate
 vp run db:migrate
+vp run db:seed
 vp run db:push
 vp run db:studio
 ```
 
 `vp run dev` and `vp run dev:backend` both depend on the database setup task, so local development normally starts PostgreSQL and runs migrations automatically.
+
+## Seeding
+
+`vp run db:setup` only starts PostgreSQL and runs migrations. It does not
+insert demo data. Use `vp run db:seed` (or `bun db:seed` inside the Nix shell),
+not `npm run db:setup` — the project uses Bun and Vite+, not npm.
+
+Seeding runs:
+
+```text
+apps/backend/seed.ts
+```
+
+It creates the admin user plus two demo users through Better Auth email
+signup, then inserts demo events from `apps/backend/seed-data/events.ts`.
+Run migrations first:
+
+```bash
+vp run db:setup
+vp run db:seed
+```
+
+The script is idempotent: reruns skip users and events that already exist
+(matched by email and title). Seed passwords come from the `SEED_*` variables
+described in [Environment](./ENVIRONMENT.md), with development defaults in
+`apps/backend/.env.development`.
+
+Do not confuse persistent seeding with fixture mode (`vp run dev:fixtures`),
+which uses an in-memory user store without PostgreSQL and resets whenever the
+backend restarts.
 
 ```mermaid
 erDiagram

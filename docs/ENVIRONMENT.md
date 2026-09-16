@@ -28,6 +28,9 @@ Earlier files take precedence when the same variable is defined.
 | `THROTTLE_LIMIT`       | No                         | `100`                                                                 | Maximum requests allowed during the throttle window.                                           |
 | `DEV_FIXTURES`         | No                         | `false`                                                               | Use in-memory users, cache, and throttling without PostgreSQL or Redis.                        |
 | `CORS_ORIGINS`         | No                         | `http://localhost:3000`                                               | Comma-separated browser origins allowed to call the backend.                                   |
+| `SEED_ADMIN_PASSWORD`  | Yes                        | (see `apps/backend/.env.development`)                                 | Password for the seeded admin user created by `vp run db:seed`.                                |
+| `SEED_DIDI_PASSWORD`   | Yes                        | (see `apps/backend/.env.development`)                                 | Password for a seeded demo user created by `vp run db:seed`.                                   |
+| `SEED_HOMER_PASSWORD`  | Yes                        | (see `apps/backend/.env.development`)                                 | Password for a seeded demo user created by `vp run db:seed`.                                   |
 
 The committed development fallback lives in:
 

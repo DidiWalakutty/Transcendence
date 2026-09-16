@@ -75,6 +75,7 @@ packaged binary requires.
 | `vp run redis:setup`     | Start Redis through Docker Compose.                            |
 | `vp run db:generate`     | Generate Drizzle migration files.                              |
 | `vp run db:migrate`      | Run Drizzle migrations.                                        |
+| `vp run db:seed`         | Seed demo users and events (requires migrated DB).             |
 | `vp run db:push`         | Push schema changes directly to the database.                  |
 | `vp run db:studio`       | Open Drizzle Studio.                                           |
 
