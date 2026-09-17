@@ -10,6 +10,7 @@ import { useTRPC } from '@/integrations/trpc/react';
 /**
  * Global chat room, fixed bottom-right. Renders nothing for visitors: the
  * stream is only opened by ChatPanel, which mounts once there is a session.
+ * Hiding the panel keeps it mounted so history and the stream survive.
  */
 export function ChatWidget() {
   const { session } = useRouteContext({ from: '__root__' });
@@ -18,9 +19,11 @@ export function ChatWidget() {
   if (!session) return null;
 
   return (
-    <div className="fixed right-4 bottom-4 z-50 flex flex-col items-end gap-2">
-      {open && <ChatPanel />}
-      <Button size="sm" onClick={() => setOpen((current) => !current)}>
+    <div className="fixed right-4 bottom-4 z-50 flex flex-col items-end gap-3">
+      <div className={open ? 'contents' : 'hidden'}>
+        <ChatPanel />
+      </div>
+      <Button size="lg" onClick={() => setOpen((current) => !current)}>
         {open ? 'Hide chat' : 'Chat'}
       </Button>
     </div>
@@ -46,14 +49,14 @@ function ChatPanel() {
   };
 
   return (
-    <div className="bg-background flex h-96 w-80 flex-col rounded-lg border shadow-lg">
-      <div className="flex items-center justify-between border-b px-3 py-2 text-sm font-medium">
+    <div className="bg-background flex h-[32rem] w-96 flex-col rounded-lg border shadow-lg">
+      <div className="flex items-center justify-between border-b px-4 py-3 text-base font-medium">
         <span>Chat</span>
-        <span className="text-muted-foreground text-xs">
+        <span className="text-muted-foreground text-sm">
           {connected ? 'online' : 'connecting…'}
         </span>
       </div>
-      <ul className="flex-1 space-y-1 overflow-y-auto px-3 py-2 text-sm">
+      <ul className="flex-1 space-y-2 overflow-y-auto px-4 py-3 text-base">
         {messages.map((message) => (
           <li key={`${message.from}-${message.at}`}>
             <span className="font-medium">{message.fromName}</span>{' '}
@@ -61,14 +64,15 @@ function ChatPanel() {
           </li>
         ))}
       </ul>
-      <form onSubmit={submit} className="flex gap-2 border-t p-2">
+      <form onSubmit={submit} className="flex gap-3 border-t p-3">
         <Input
+          className="h-12 text-base"
           value={text}
           onChange={(event) => setText(event.target.value)}
           placeholder="Say something"
           maxLength={500}
         />
-        <Button type="submit" size="sm" disabled={send.isPending}>
+        <Button type="submit" size="lg" disabled={send.isPending}>
           Send
         </Button>
       </form>
