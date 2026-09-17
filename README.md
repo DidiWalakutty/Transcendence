@@ -197,8 +197,17 @@ Caddy terminates TLS with the certificate in `caddy/certs` and is the only servi
 published on the host: it forwards `/api/*` to the backend and everything else to the
 frontend, so the browser never talks plain HTTP. The frontend and backend containers are
 reachable only inside the Compose network (`http://frontend:3000`, `http://backend:3001`).
-Plain `http://localhost` redirects to HTTPS. The certificate is a local mkcert one, so a
-browser that hasn't trusted that mkcert root shows a one-time warning to click through.
+Plain `http://localhost` redirects to HTTPS.
+
+The committed certificate is a local [mkcert](https://github.com/FiloSottile/mkcert) one,
+so a browser that hasn't trusted its mkcert root shows a one-time warning you can click
+through. To get a trusted certificate on your own machine instead, run this from the Nix
+dev shell (it works without sudo — browser trust stores only — which is what Codam
+machines need), then restart your browser and `docker compose restart caddy`:
+
+```bash
+bash scripts/generate-certs.sh
+```
 
 ---
 
