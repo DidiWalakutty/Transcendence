@@ -191,9 +191,14 @@ vp run deploy
 This runs the Vite+ `repo:deploy` task, which executes `docker compose up --build`.
 For detached local deployment, use `vp run deploy:detached`.
 
-Once the stack has started, access the application at `http://localhost:3000`.
-The backend is exposed at `http://localhost:3001` for local development and container
-health checks.
+Once the stack has started, open the application at `https://localhost`.
+
+Caddy terminates TLS with the certificate in `caddy/certs` and is the only service
+published on the host: it forwards `/api/*` to the backend and everything else to the
+frontend, so the browser never talks plain HTTP. The frontend and backend containers are
+reachable only inside the Compose network (`http://frontend:3000`, `http://backend:3001`).
+Plain `http://localhost` redirects to HTTPS. The certificate is a local mkcert one, so a
+browser that hasn't trusted that mkcert root shows a one-time warning to click through.
 
 ---
 

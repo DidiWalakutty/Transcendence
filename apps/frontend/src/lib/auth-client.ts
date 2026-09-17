@@ -1,14 +1,10 @@
 import { createAuthClient } from 'better-auth/react';
 import { adminClient, usernameClient, twoFactorClient } from 'better-auth/client/plugins';
-import { env } from '@/env';
-
-const baseURL =
-  typeof window === 'undefined'
-    ? (env.SERVER_URL ?? env.VITE_API_URL ?? 'http://localhost:3001')
-    : (env.VITE_API_URL ?? 'http://localhost:3001');
+import { getApiBaseUrl } from '@/lib/api-base-url';
 
 export const authClient = createAuthClient({
-  baseURL,
+  // `undefined` makes Better Auth use the page's own origin (`/api/auth`).
+  baseURL: getApiBaseUrl(),
   plugins: [adminClient(), usernameClient(), twoFactorClient()],
   fetchOptions: {
     credentials: 'include',
