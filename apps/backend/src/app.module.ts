@@ -15,6 +15,7 @@ import { EventListingsModule } from './event-listings/event-listings.module';
 import { EventsModule } from './events/events.module';
 import { FriendsModule } from './friends/friends.module';
 import { PresenceModule } from './presence/presence.module';
+import { ChatModule } from './chat/chat.module';
 import { RegistrationsModule } from './registrations/registrations.module';
 import { AuthModule } from './auth/auth.module';
 import { AuthContext } from './auth/auth.context';
@@ -90,6 +91,7 @@ import { NotificationModule } from './notification/notification.module';
       persistence: environment.DEV_FIXTURES ? 'fixtures' : 'database',
     }),
     PresenceModule,
+    ChatModule,
     AuthModule,
     TRPCModule.forRoot({
       basePath: '/api/trpc',

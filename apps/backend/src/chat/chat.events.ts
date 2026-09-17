@@ -7,13 +7,13 @@ const CHAT_MESSAGE_EVENT = 'chat.message';
 
 @Injectable()
 export class ChatEvents {
-  constructor(private readonly EventsService: EventsService) {}
+  constructor(private readonly eventsService: EventsService) {}
 
   emitMessage(message: ChatMessage) {
-    return this.EventsService.emit(CHAT_MESSAGE_EVENT, message);
+    return this.eventsService.emit(CHAT_MESSAGE_EVENT, message);
   }
 
-  listenMessage(signal?: AbortSignal) {
-    return this.EventsService.listen<ChatMessage>(CHAT_MESSAGE_EVENT, signal);
+  listenMessages(signal?: AbortSignal) {
+    return this.eventsService.listen<ChatMessage>(CHAT_MESSAGE_EVENT, signal);
   }
 }
