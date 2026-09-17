@@ -21,6 +21,10 @@
       "types": "./src/events.ts",
       "default": "./src/events.ts"
     },
+    "./chat": {
+      "types": "./src/chat.ts",
+      "default": "./src/chat.ts"
+    },
     "./stats": {
       "types": "./src/stats.ts",
       "default": "./src/stats.ts"
