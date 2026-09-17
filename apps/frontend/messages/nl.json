@@ -184,6 +184,7 @@
   "event_sorting_upcoming": "Binnenkort",
   "event_sorting_popular": "Meest populair",
   "event_sorting_newest": "Recent toegevoegd",
+  "event_sorting_title": "Sorteer evenementen",
 
   "events_registration_success": "Je bent geregistreerd!",
   "events_registration_error": "Kon niet registreren voor het evenement.",
