@@ -74,7 +74,7 @@ export function HowItWorksSection() {
 										bg-brand-primary/10
 										"
                 >
-                  <Icon className="h-8 w-8 text-brand-primary" />
+                  <Icon className="h-8 w-8 text-brand-primary-text" />
                 </div>
 
                 <h3 className="text-xl font-semibold text-text-primary">{step.title()}</h3>

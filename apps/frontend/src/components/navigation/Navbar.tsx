@@ -53,7 +53,7 @@ export function Navbar() {
             <Link
               key={link.href}
               to={link.href}
-              className="transition-colors hover:text-brand-primary"
+              className="transition-colors hover:text-brand-primary-text"
             >
               {link.label()}
             </Link>

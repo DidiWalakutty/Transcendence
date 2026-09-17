@@ -86,7 +86,7 @@ export function Hero() {
 						gap-4
 						"
         >
-          <Button size="hero">
+          <Button size="hero" className="text-white [text-shadow:0_1px_2px_#190b02]">
             <Link to="/events">{m.button_explore()}</Link>
           </Button>
 

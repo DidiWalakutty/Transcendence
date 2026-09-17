@@ -42,7 +42,7 @@ export function StatsSection() {
               className="
 											text-5xl
 											font-bold
-											text-brand-primary
+											text-brand-primary-text
 											2xl:text-6xl
 										"
             >
@@ -67,7 +67,7 @@ export function StatsSection() {
               className="
 											text-5xl
 											font-bold
-											text-brand-primary
+											text-brand-primary-text
 											2xl:text-6xl
 										"
             >
@@ -92,7 +92,7 @@ export function StatsSection() {
               className="
 											text-5xl
 											font-bold
-											text-brand-primary
+											text-brand-primary-text
 											2xl:text-6xl
 										"
             >

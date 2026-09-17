@@ -17,7 +17,9 @@ const languageNames = {
 export function LanguageSwitcher() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
+      <DropdownMenuTrigger
+        render={<Button aria-label="Change Language" variant="ghost" size="icon" />}
+      >
         <Languages className="h-5 w-5 text-text-primary 2xl:h-7 2xl:w-7" />
       </DropdownMenuTrigger>
 
