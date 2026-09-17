@@ -99,6 +99,7 @@ export function EventFilters({
             </label>
           ))}
           <Button
+            aria-label={m.filter_clear()}
             onClick={onClearFilters}
             disabled={selectedCategories.length === 0}
             className="
