@@ -28,6 +28,7 @@ export class RegistrationsService {
       case 'sold-out':
         throw conflictError('No tickets available for this event.');
       case 'success':
+        process.emit('registration.created' as any, { userId, eventId });
         return result.registration;
     }
   }

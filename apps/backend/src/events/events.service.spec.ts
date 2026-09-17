@@ -8,6 +8,7 @@ import type { EventChangedDto, EventDto } from '@repo/schemas/events';
 
 import { EventsService } from './events.service';
 import { EventsRepository } from './repositories/events.repository';
+import { RegistrationsRepository } from '../registrations/repositories/registrations.repository';
 
 const storedEvent: EventDto = {
   id: '64de8cd7-e120-4ad1-b849-4b386f31d599',
@@ -23,6 +24,16 @@ const storedEvent: EventDto = {
   maxCapacity: 50,
 };
 
+const mockRegistrationsRepository = {
+  getAvailableTickets: async () => 0,
+  findActiveRegistration: async () => null,
+  isEventOrganizer: async () => false,
+  getEventAttendees: async () => [], // Returns a clean empty array so no cancellations try to loop over missing rows
+  register: async () => ({ type: 'success' as const, registration: {} as any }),
+  create: async () => ({}) as any,
+  cancel: async () => null,
+} as unknown as RegistrationsRepository;
+
 describe('EventsService', () => {
   it('delivers events and removes listeners when a subscription aborts', async () => {
     const emitter = new EventEmitter2();
@@ -35,7 +46,7 @@ describe('EventsService', () => {
       delete: async () => null,
     } as EventsRepository;
 
-    const service = new EventsService(emitter, repository);
+    const service = new EventsService(emitter, repository, mockRegistrationsRepository);
 
     const abortController = new AbortController();
     const subscription = service.listen<string>('user.created', abortController.signal);
@@ -67,7 +78,7 @@ describe('EventsService', () => {
       delete: async () => storedEvent,
     } as EventsRepository;
 
-    const service = new EventsService(new EventEmitter2(), repository);
+    const service = new EventsService(new EventEmitter2(), repository, mockRegistrationsRepository);
     const abortController = new AbortController();
     const stream = service.listenEventChangedWithHeartbeat(abortController.signal, 10);
 
@@ -89,7 +100,7 @@ describe('EventsService', () => {
       delete: async () => storedEvent,
     } as EventsRepository;
 
-    const service = new EventsService(new EventEmitter2(), repository);
+    const service = new EventsService(new EventEmitter2(), repository, mockRegistrationsRepository);
     const abortController = new AbortController();
     const changes = service.listenEventChanged(abortController.signal);
     const received: EventChangedDto[] = [];
