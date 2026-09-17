@@ -191,7 +191,7 @@ vp run deploy
 This runs the Vite+ `repo:deploy` task, which executes `docker compose up --build`.
 For detached local deployment, use `vp run deploy:detached`.
 
-Once the stack has started, open the application at `https://localhost`.
+Once the stack has started, open the application at `https://localhost:3000`.
 
 Caddy terminates TLS with the certificate in `caddy/certs` and is the only service
 published on the host: it forwards `/api/*` to the backend and everything else to the
@@ -199,9 +199,10 @@ frontend, so the browser never talks plain HTTP. The frontend and backend contai
 reachable only inside the Compose network (`http://frontend:3000`, `http://backend:3001`).
 Plain `http://localhost` redirects to HTTPS.
 
-On machines where Docker runs rootless (Codam) ports 80 and 443 can't be used; set
-`HTTP_PORT`, `HTTPS_PORT` and `PUBLIC_ORIGIN` in the root `.env` as described in
-[Environment](./docs/ENVIRONMENT.md#compose-variables) and open `https://localhost:8443`.
+Caddy listens on `3000` (HTTPS) and `3080` (redirect to HTTPS) rather than `443`/`80`
+because rootless Docker (Codam machines) can't bind ports below 1024. `HTTPS_PORT`,
+`HTTP_PORT` and `PUBLIC_ORIGIN` in the root `.env` change this — see
+[Environment](./docs/ENVIRONMENT.md#compose-variables).
 
 The committed certificate is a local [mkcert](https://github.com/FiloSottile/mkcert) one,
 so a browser that hasn't trusted its mkcert root shows a one-time warning you can click

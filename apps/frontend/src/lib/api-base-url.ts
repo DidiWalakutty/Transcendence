@@ -5,7 +5,7 @@ import { env } from '@/env';
  * backend is reached on the page's own origin.
  *
  * In the browser the backend is same-origin: the Caddy proxy serves the whole
- * app on `https://localhost` and forwards `/api/*` to the backend, so requests
+ * app on `https://localhost:3000` and forwards `/api/*` to the backend, so requests
  * use relative URLs and stay on HTTPS. The Vite dev server has no such proxy,
  * so development falls back to the backend's own port. `VITE_API_URL`
  * overrides both.

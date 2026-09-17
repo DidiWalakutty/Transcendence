@@ -67,7 +67,7 @@ In local development the frontend (`localhost:3000`) and backend (`localhost:300
 different origins, so CORS is configured with `credentials: true`, and both the auth client and
 the tRPC `httpBatchLink` send `credentials: 'include'` so the session cookie flows both ways.
 
-In the Docker stack both sit behind Caddy on `https://localhost`: the browser calls `/api/auth`
+In the Docker stack both sit behind Caddy on `https://localhost:3000`: the browser calls `/api/auth`
 and `/api/trpc` on its own origin, `BETTER_AUTH_URL` is the HTTPS origin (which makes Better Auth
 issue a `Secure`, `__Secure-`-prefixed session cookie), and `CORS_ORIGINS` is that same origin so
 Better Auth's trusted-origin check passes. The frontend server reaches the backend directly via
