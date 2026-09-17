@@ -73,14 +73,12 @@ export function UserMenu({ role, name, username, avatar }: UserMenuProps) {
           {m.button_profile()}
         </DropdownMenuItem>
 
-        {role === 'user' && (
-          <DropdownMenuItem
-            className="cursor-pointer"
-            render={<Link to="/my-events" className="w-full" />}
-          >
-            {m.button_my_events()}
-          </DropdownMenuItem>
-        )}
+        <DropdownMenuItem
+          className="cursor-pointer"
+          render={<Link to="/my-events" className="w-full" />}
+        >
+          {m.button_my_events()}
+        </DropdownMenuItem>
 
         {role === 'user' && (
           <DropdownMenuItem

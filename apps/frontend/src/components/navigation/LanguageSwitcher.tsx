@@ -9,10 +9,17 @@ import { Button } from '@/components/ui/button';
 import { Languages } from 'lucide-react';
 import { locales, setLocale } from '@/@generated/paraglide/runtime';
 
-const languageNames = {
-  en: 'English',
-  nl: 'Nederlands',
-} satisfies Record<(typeof locales)[number], string>;
+function getLanguageName(locale: string) {
+  try {
+    const nativeName = new Intl.DisplayNames([locale], { type: 'language' }).of(locale);
+    if (nativeName) {
+      return nativeName.charAt(0).toUpperCase() + nativeName.slice(1);
+    }
+  } catch {
+    // Ignore and fall through to the code fallback below.
+  }
+  return locale.toUpperCase();
+}
 
 export function LanguageSwitcher() {
   return (
@@ -26,7 +33,7 @@ export function LanguageSwitcher() {
       <DropdownMenuContent>
         {locales.map((locale) => (
           <DropdownMenuItem key={locale} onClick={() => void setLocale(locale)}>
-            {languageNames[locale]}
+            {getLanguageName(locale)}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

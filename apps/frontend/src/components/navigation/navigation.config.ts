@@ -10,7 +10,7 @@ export type UserRole = 'visitor' | 'user' | 'admin';
 
 export interface NavigationItem {
   label: () => string;
-  href: '/events' | '/create-event' | '/admin';
+  href: '/events' | '/create-event';
 }
 
 /**
@@ -28,7 +28,6 @@ export const navigationItems: Record<UserRole, NavigationItem[]> = {
   admin: [
     { label: m.button_all_events, href: '/events' },
     { label: m.button_create, href: '/create-event' },
-    { label: m.admin_title, href: '/admin' },
   ],
 };
 import * as m from '@/@generated/paraglide/messages';
