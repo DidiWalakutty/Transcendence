@@ -102,9 +102,9 @@ function EventsPage() {
               {m.events_page_title()}
             </h1>
 
-            <p className="mt-3 text-surface-footer/80">{m.events_page_subtitle()}</p>
+            <p className="mt-3 text-brand-primary-foreground">{m.events_page_subtitle()}</p>
 
-            <p className="mt-4 flex items-center gap-2 text-sm text-surface-footer/70">
+            <p className="mt-4 flex items-center gap-2 text-sm text-brand-primary-foreground">
               <span
                 aria-hidden="true"
                 className={`inline-block size-2 rounded-full ${
@@ -192,7 +192,7 @@ function EventsPage() {
 				  rounded-lg
 				  px-4
 				  py-2
-				  ${currentPage === page ? 'bg-primary text-white' : 'border'}
+				  ${currentPage === page ? 'bg-primary text-brand-primary-foreground' : 'border'}
 				`}
               >
                 {page}

@@ -29,7 +29,7 @@ export function Footer() {
             className="
 							text-4xl
 							font-bold
-							text-brand-primary
+							text-brand-primary-text
 							"
           >
             {m.button_eventra()}
@@ -65,7 +65,7 @@ export function Footer() {
 							"
           >
             <li>
-              <Link to="/events" className="hover:text-brand-primary">
+              <Link to="/events" className="hover:text-brand-primary-text">
                 {m.button_all_events()}
               </Link>
             </li>
@@ -91,19 +91,19 @@ export function Footer() {
 							"
           >
             <li>
-              <Link to="/login" className="hover:text-brand-primary">
+              <Link to="/login" className="hover:text-brand-primary-text">
                 {m.button_login()}
               </Link>
             </li>
 
             <li>
-              <Link to="/create-account" className="hover:text-brand-primary">
+              <Link to="/create-account" className="hover:text-brand-primary-text">
                 {m.button_create_account()}
               </Link>
             </li>
 
             <li>
-              <Link to="/create-event" className="hover:text-brand-primary">
+              <Link to="/create-event" className="hover:text-brand-primary-text">
                 {m.button_create()}
               </Link>
             </li>
@@ -129,13 +129,13 @@ export function Footer() {
 							"
           >
             <li>
-              <Link to="/privacy-policy" className="hover:text-brand-primary">
+              <Link to="/privacy-policy" className="hover:text-brand-primary-text">
                 {m.button_privacy()}
               </Link>
             </li>
 
             <li>
-              <Link to="/terms-of-service" className="hover:text-brand-primary">
+              <Link to="/terms-of-service" className="hover:text-brand-primary-text">
                 {m.button_terms()}
               </Link>
             </li>
@@ -161,7 +161,7 @@ export function Footer() {
 							"
           >
             <li>
-              <Link to="/contact" className="hover:text-brand-primary">
+              <Link to="/contact" className="hover:text-brand-primary-text">
                 {m.button_contact()}
               </Link>
             </li>

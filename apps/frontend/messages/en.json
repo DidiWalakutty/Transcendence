@@ -184,6 +184,7 @@
   "event_sorting_upcoming": "Upcoming",
   "event_sorting_popular": "Most popular",
   "event_sorting_newest": "Recently added",
+  "event_sorting_title": "Sort events",
 
   "events_registration_success": "You are registered!",
   "events_registration_error": "Could not register for the event.",

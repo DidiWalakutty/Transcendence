@@ -132,7 +132,7 @@ export function EventListItem({
 				text-center
 				text-xl
 				font-bold
-				text-brand-primary
+				text-brand-primary-text
 				shadow-xl
 				"
             >

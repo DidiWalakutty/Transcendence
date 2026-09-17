@@ -35,6 +35,8 @@
 
   /* Brand */
   --color-brand-primary: var(--brand-primary);
+  --color-brand-primary-text: var(--brand-primary-text);
+  --color-brand-primary-foreground: var(--brand-primary-foreground);
   --color-brand-secondary: var(--brand-secondary);
 
   /* Borders */
@@ -124,7 +126,7 @@
 
   --text-primary: #190b02;
   --text-secondary: #5b4032;
-  --text-muted: #b55f44;
+  --text-muted: #9a4f3a;
 
   --text-on-brand: #ffffff;
   --text-on-image: #ffffff;
@@ -134,6 +136,8 @@
        ===================================================== */
 
   --brand-primary: #f14d07;
+  --brand-primary-text: #b83b05;
+  --brand-primary-foreground: #190b02;
   --brand-secondary: #ec8251;
 
   /* =====================================================
@@ -194,7 +198,7 @@
   --popover-foreground: var(--text-primary);
 
   --primary: var(--brand-primary);
-  --primary-foreground: var(--text-on-brand);
+  --primary-foreground: var(--brand-primary-foreground);
 
   --secondary: var(--brand-secondary);
   --secondary-foreground: var(--text-primary);

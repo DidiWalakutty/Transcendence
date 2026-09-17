@@ -29,22 +29,6 @@ export function CategorySection() {
 						px-8
 					"
       >
-        {/*
-			TODO (Backend Categories)
-
-			Categories are currently hardcoded.
-
-			Once the backend is ready:
-			- Fetch the available categories from the database.
-			- Pass the categoryKey to CategoryCard.
-			- CategoryCard will map the categoryKey to the
-				correct frontend icon using category.config.ts.
-
-			The translated title should continue to come from
-			Paraglide, while the backend provides the stable
-			category key (e.g. "music", "food", "workshops").
-			*/}
-
         {/* Category Cards */}
         <div
           className="
@@ -60,43 +44,43 @@ export function CategorySection() {
         >
           <CategoryCard
             category="music"
-            icon={<Activity className="size-8 text-brand-primary 2xl:size-10" />}
+            icon={<Activity className="size-8 text-brand-primary-text 2xl:size-10" />}
             title={m.category_music()}
           />
 
           <CategoryCard
             category="culture"
-            icon={<Palette className="size-8 text-brand-primary 2xl:size-10" />}
+            icon={<Palette className="size-8 text-brand-primary-text 2xl:size-10" />}
             title={m.category_culture()}
           />
 
           <CategoryCard
             category="food"
-            icon={<Utensils className="size-8 text-brand-primary 2xl:size-10" />}
+            icon={<Utensils className="size-8 text-brand-primary-text 2xl:size-10" />}
             title={m.category_food()}
           />
 
           <CategoryCard
             category="games"
-            icon={<Dices className="size-8 text-brand-primary 2xl:size-10" />}
+            icon={<Dices className="size-8 text-brand-primary-text 2xl:size-10" />}
             title={m.category_games()}
           />
 
           <CategoryCard
             category="talks"
-            icon={<MicVocal className="size-8 text-brand-primary 2xl:size-10" />}
+            icon={<MicVocal className="size-8 text-brand-primary-text 2xl:size-10" />}
             title={m.category_talks()}
           />
 
           <CategoryCard
             category="workshops"
-            icon={<Scissors className="size-8 text-brand-primary 2xl:size-10" />}
+            icon={<Scissors className="size-8 text-brand-primary-text 2xl:size-10" />}
             title={m.category_workshops()}
           />
 
           <CategoryCard
             category="all"
-            icon={<InfinityIcon className="size-8 text-brand-primary 2xl:size-10" />}
+            icon={<InfinityIcon className="size-8 text-brand-primary-text 2xl:size-10" />}
             title={m.button_all_events()}
           />
         </div>

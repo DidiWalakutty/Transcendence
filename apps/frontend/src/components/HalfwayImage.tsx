@@ -75,7 +75,7 @@ export function HalfwayImage() {
             {m.halfway_image_subtitle()}
           </p>
 
-          <Button size="lg" className="mt-10">
+          <Button size="lg" className="mt-10 text-white [text-shadow:0_1px_2px_#190b02]">
             <Link to="/events">{m.button_explore()}</Link>
           </Button>
         </div>

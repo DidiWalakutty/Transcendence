@@ -1,6 +1,6 @@
 import { Link, useNavigate, useRouter } from '@tanstack/react-router';
 
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,19 +43,25 @@ export function UserMenu({ role, name, username, avatar }: UserMenuProps) {
   // Visitor is not logged in
   if (role === 'visitor') {
     return (
-      <Button variant="ghost" size="icon">
-        <Link to="/login">
-          <User className="h-5 w-5 text-text-primary 2xl:h-7 2xl:w-7" />
-        </Link>
-      </Button>
+      <Link
+        to="/login"
+        aria-label="Log in"
+        className={buttonVariants({
+          variant: 'ghost',
+          size: 'icon',
+        })}
+      >
+        <User className="h-5 w-5 text-text-primary 2xl:h-7 2xl:w-7" aria-hidden="true" />
+      </Link>
     );
   }
 
-  // Logged-in users/admins will become dropdown menus
-  // Logout must be handled later.
+  // Shows the user menu for logged in users (user and admin)
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
+      <DropdownMenuTrigger
+        render={<Button aria-label="Open Profile Menu" variant="ghost" size="icon" />}
+      >
         <UserAvatar name={name} username={username} avatar={avatar} className="size-7 2xl:size-9" />
       </DropdownMenuTrigger>
 
