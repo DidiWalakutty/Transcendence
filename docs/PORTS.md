@@ -4,13 +4,13 @@ The following ports are reserved for local development.
 
 Application services run through Vite+ tasks. Infrastructure services are provided by the root Docker Compose stack.
 
-| Port   | Service    | Description                                                  |
-| ------ | ---------- | ------------------------------------------------------------ |
-| `443`  | Caddy      | HTTPS entry point of the Docker stack (`80` redirects here). |
-| `3000` | Frontend   | Main web application powered by TanStack Start.              |
-| `3001` | Backend    | NestJS API and tRPC services.                                |
-| `5432` | PostgreSQL | Primary relational database.                                 |
-| `6380` | Redis      | Host port for backend cache and throttling.                  |
+| Port   | Service    | Description                                                                                                                |
+| ------ | ---------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `443`  | Caddy      | HTTPS entry point of the Docker stack (`80` redirects here). `HTTPS_PORT` / `HTTP_PORT` override both for rootless Docker. |
+| `3000` | Frontend   | Main web application powered by TanStack Start.                                                                            |
+| `3001` | Backend    | NestJS API and tRPC services.                                                                                              |
+| `5432` | PostgreSQL | Primary relational database.                                                                                               |
+| `6380` | Redis      | Host port for backend cache and throttling.                                                                                |
 
 Ports `3000` and `3001` are only bound on the host when running `vp run dev`; the Docker
 stack keeps them inside the Compose network and exposes the app through Caddy only.

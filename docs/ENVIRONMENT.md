@@ -75,15 +75,27 @@ How the frontend picks the backend URL lives in one place:
 
 The root `docker-compose.yml` supports these optional overrides:
 
-| Variable            | Default             | Purpose                                                                                     |
-| ------------------- | ------------------- | ------------------------------------------------------------------------------------------- |
-| `POSTGRES_DB`       | `transcendence`     | PostgreSQL database name.                                                                   |
-| `POSTGRES_USER`     | `transcendence`     | PostgreSQL user.                                                                            |
-| `POSTGRES_PASSWORD` | `transcendence`     | PostgreSQL password.                                                                        |
-| `PUBLIC_ORIGIN`     | `https://localhost` | Origin Caddy serves the app on. Fed to the backend as `BETTER_AUTH_URL` and `CORS_ORIGINS`. |
-| `SEED_*_PASSWORD`   | (dev values)        | Seed-user passwords the backend requires at startup; see the backend table above.           |
-| `POSTGRES_PORT`     | `5432`              | Host port mapped to PostgreSQL.                                                             |
-| `REDIS_PORT`        | `6380`              | Host port mapped to Redis.                                                                  |
+| Variable            | Default             | Purpose                                                                                                                                 |
+| ------------------- | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `POSTGRES_DB`       | `transcendence`     | PostgreSQL database name.                                                                                                               |
+| `POSTGRES_USER`     | `transcendence`     | PostgreSQL user.                                                                                                                        |
+| `POSTGRES_PASSWORD` | `transcendence`     | PostgreSQL password.                                                                                                                    |
+| `HTTPS_PORT`        | `443`               | Host port Caddy serves HTTPS on.                                                                                                        |
+| `HTTP_PORT`         | `80`                | Host port Caddy serves the HTTP → HTTPS redirect on.                                                                                    |
+| `PUBLIC_ORIGIN`     | `https://localhost` | Origin the app is opened on. Fed to the backend as `BETTER_AUTH_URL` and `CORS_ORIGINS`; must include `HTTPS_PORT` when it isn't `443`. |
+| `SEED_*_PASSWORD`   | (dev values)        | Seed-user passwords the backend requires at startup; see the backend table above.                                                       |
+| `POSTGRES_PORT`     | `5432`              | Host port mapped to PostgreSQL.                                                                                                         |
+| `REDIS_PORT`        | `6380`              | Host port mapped to Redis.                                                                                                              |
 
-The frontend and backend containers publish no host ports; Caddy (`443`, with `80`
-redirecting to HTTPS) is the only entry point to the application.
+The frontend and backend containers publish no host ports; Caddy is the only entry
+point to the application.
+
+Rootless Docker (Codam machines) cannot bind ports below 1024. There, put this in the
+root `.env` and open `https://localhost:8443`:
+
+```text
+HTTP_PORT=8080
+HTTPS_PORT=8443
+PUBLIC_ORIGIN=https://localhost:8443
+REDIS_PORT=6380
+```

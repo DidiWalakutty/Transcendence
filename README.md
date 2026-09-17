@@ -199,6 +199,10 @@ frontend, so the browser never talks plain HTTP. The frontend and backend contai
 reachable only inside the Compose network (`http://frontend:3000`, `http://backend:3001`).
 Plain `http://localhost` redirects to HTTPS.
 
+On machines where Docker runs rootless (Codam) ports 80 and 443 can't be used; set
+`HTTP_PORT`, `HTTPS_PORT` and `PUBLIC_ORIGIN` in the root `.env` as described in
+[Environment](./docs/ENVIRONMENT.md#compose-variables) and open `https://localhost:8443`.
+
 The committed certificate is a local [mkcert](https://github.com/FiloSottile/mkcert) one,
 so a browser that hasn't trusted its mkcert root shows a one-time warning you can click
 through. To get a trusted certificate on your own machine instead, run this from the Nix
