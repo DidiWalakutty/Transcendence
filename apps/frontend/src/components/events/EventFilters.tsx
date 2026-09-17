@@ -68,29 +68,44 @@ export function EventFilters({
             >
               <input
                 type="checkbox"
-                className="peer hidden"
                 checked={selectedCategories.includes(category.id)}
                 onChange={() => onCategoryChange(category.id)}
+                className="
+    peer
+    absolute
+    h-5
+    w-5
+    opacity-0
+    cursor-pointer
+    focus-visible:outline-none
+    focus-visible:ring-2
+    focus-visible:ring-primary
+    focus-visible:ring-offset-2
+  "
               />
 
               <span
+                aria-hidden="true"
                 className="
-                  flex
-                  h-5
-                  w-5
-                  items-center
-                  justify-center
-                  rounded-sm
-                  border
-                  border-surface-footer/40
-                  bg-transparent
-                  text-sm
-                  font-bold
-                  text-transparent
-                  transition
-                  peer-checked:bg-black
-                  peer-checked:text-white
-                "
+    flex
+    h-5
+    w-5
+    items-center
+    justify-center
+    rounded-sm
+    border
+    border-surface-footer/40
+    bg-transparent
+    text-sm
+    font-bold
+    text-transparent
+    transition
+    peer-checked:bg-black
+    peer-checked:text-white
+    peer-focus-visible:ring-2
+    peer-focus-visible:ring-primary
+    peer-focus-visible:ring-offset-2
+  "
               >
                 ✓
               </span>
