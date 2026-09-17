@@ -110,7 +110,7 @@ export function EventCard({ id, image, title, category, location, date }: EventC
                 font-semibold
                 uppercase
                 tracking-wide
-                text-brand-primary
+                text-brand-primary-text
               "
             >
               {month}
@@ -142,7 +142,7 @@ export function EventCard({ id, image, title, category, location, date }: EventC
               text-center
               text-sm
               font-medium
-              text-brand-primary
+              text-brand-primary-text
             "
           >
             {category.map((item) => categoryLabels[item]?.() ?? item).join(' • ')}
@@ -191,7 +191,9 @@ export function EventCard({ id, image, title, category, location, date }: EventC
           </div>
 
           {/* View Event */}
-          <Button className="mt-auto w-full">{m.button_view_event()}</Button>
+          <Button className="mt-auto w-full text-white [text-shadow:0_1px_2px_#190b02]">
+            {m.button_view_event()}
+          </Button>
         </div>
       </div>
     </Link>

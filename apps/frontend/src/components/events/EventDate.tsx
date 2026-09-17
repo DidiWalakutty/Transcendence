@@ -20,7 +20,7 @@ export function EventDate({ date }: EventDateProps) {
   });
 
   return (
-    <div className="flex flex-col items-center justify-center text-white">
+    <div className="flex flex-col items-center justify-center text-white [text-shadow:0_1px_2px_#190b02]">
       {/* Day of the week */}
       <span className="text-sm font-semibold uppercase">{weekday}</span>
 
