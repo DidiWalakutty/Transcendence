@@ -15,6 +15,7 @@ import type { AppRouter } from '@repo/schemas/trpc';
 import type { TRPCOptionsProxy } from '@trpc/tanstack-react-query';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Footer } from '@/components/Footer';
+import { ChatWidget } from '@/components/chat/ChatWidget';
 import { Navbar } from '@/components/navigation/Navbar';
 import { buttonVariants } from '@/components/ui/button';
 
@@ -124,6 +125,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />
+            <ChatWidget />
           </div>
         </TooltipProvider>
         <Toaster closeButton richColors position="top-right" />
