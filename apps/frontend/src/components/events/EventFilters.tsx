@@ -43,8 +43,8 @@ export function EventFilters({
     <aside
       className="
         rounded-2xl
-        md:sticky
-        md:top-36
+        lg:sticky
+        lg:top-36
         bg-primary/10
         p-6
       "

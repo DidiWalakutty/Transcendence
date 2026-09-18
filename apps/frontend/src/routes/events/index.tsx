@@ -87,18 +87,18 @@ function EventsPage() {
 
   return (
     <div className="relative min-h-[calc(100vh-180px)] bg-white">
-      {/* Background: the orange column only exists beside the list; below `md`
+      {/* Background: the orange column only exists beside the list; below `lg`
           the header carries its own orange block instead. */}
-      <div className="absolute inset-0 hidden md:flex">
+      <div className="absolute inset-0 hidden lg:flex">
         <div className="w-[30%] bg-primary" />
         <div className="flex-1 bg-white" />
       </div>
 
       {/* Content */}
-      <div className="relative px-4 py-6 md:px-6 md:py-12">
+      <div className="relative px-4 py-6 lg:px-6 lg:py-12">
         {/* Header */}
-        <div className="grid max-w-[1400px] gap-6 md:grid-cols-[30%_1fr]">
-          <div className="relative rounded-2xl bg-primary p-6 md:left-4 md:rounded-none md:bg-transparent md:p-0 2xl:left-[220px]">
+        <div className="grid max-w-[1400px] gap-6 lg:grid-cols-[30%_1fr]">
+          <div className="relative rounded-2xl bg-primary p-6 lg:left-4 lg:rounded-none lg:bg-transparent lg:p-0 2xl:left-[220px]">
             <h1 className="text-4xl font-bold text-surface-footer md:text-5xl">
               {m.events_page_title()}
             </h1>
@@ -120,9 +120,9 @@ function EventsPage() {
         </div>
 
         {/* Events + Filters */}
-        <div className="mx-auto mt-8 flex max-w-[1600px] flex-col gap-8 md:mt-12 md:flex-row">
+        <div className="mx-auto mt-8 flex max-w-[1600px] flex-col gap-8 lg:mt-12 lg:flex-row">
           {/* Event List */}
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             {filteredEvents.length === 0 ? (
               <Empty className="min-h-[320px] border-border bg-white/80 shadow-sm">
                 <EmptyHeader>
@@ -143,10 +143,10 @@ function EventsPage() {
             )}
           </div>
 
-          {/* Sidebar: above the list below `md`, beside it from there on */}
-          <div className="relative order-first flex flex-col gap-4 md:order-none md:w-1/4 md:gap-0">
+          {/* Sidebar: above the list below `lg`, beside it from there on */}
+          <div className="relative order-first flex flex-col gap-4 lg:order-none lg:w-1/4 lg:gap-0">
             {/* Sorting */}
-            <div className="md:absolute md:-top-16 md:left-0">
+            <div className="lg:absolute lg:-top-16 lg:left-0">
               <EventSort
                 selectedSort={selectedSort}
                 onSortChange={(sort: 'upcoming' | 'popular' | 'newest') =>

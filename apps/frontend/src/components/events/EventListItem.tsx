@@ -36,8 +36,8 @@ export function EventListItem({
   return (
     <div className="grid max-w-5xl grid-cols-[70px_1fr] gap-4 md:gap-6">
       {/* Event Date: white text, so it gets its own orange tile where the
-          page's orange column is not there (below `md`) */}
-      <div className="flex self-start justify-center rounded-xl bg-primary py-3 md:self-auto md:rounded-none md:bg-transparent md:py-0">
+          page's orange column is not there (below `lg`) */}
+      <div className="flex self-start justify-center rounded-xl bg-primary py-3 lg:self-auto lg:rounded-none lg:bg-transparent lg:py-0">
         <EventDate date={date} />
       </div>
 
