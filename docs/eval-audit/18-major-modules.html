@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q18 Major Modules</title>
+<style>
+:root {
+  --bg:#f7f8f6; --surface:#fff; --text:#1c2422; --muted:#5d6b67; --border:#dfe4e1; --accent:#173a40;
+  --ok-bg:#e3f4ea; --ok-fg:#1d6b3a; --warn-bg:#fff3d6; --warn-fg:#8a5a00; --bad-bg:#fde4e1; --bad-fg:#9b2c1f;
+  --info-bg:#e5eef0; --info-fg:#173a40; --crit-bg:#7a1c12; --crit-fg:#fff;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#141918; --surface:#1d2422; --text:#e7ece9; --muted:#9aa8a3; --border:#2e3936; --accent:#8fd1c9;
+  --ok-bg:#163a26; --ok-fg:#8fe0ad; --warn-bg:#3d2f0d; --warn-fg:#f2c46b; --bad-bg:#421b16; --bad-fg:#f5a59a;
+  --info-bg:#1e2f33; --info-fg:#9fd3d8; --crit-bg:#f5a59a; --crit-fg:#421b16;
+}}
+:root[data-theme="dark"] {
+  --bg:#141918; --surface:#1d2422; --text:#e7ece9; --muted:#9aa8a3; --border:#2e3936; --accent:#8fd1c9;
+  --ok-bg:#163a26; --ok-fg:#8fe0ad; --warn-bg:#3d2f0d; --warn-fg:#f2c46b; --bad-bg:#421b16; --bad-fg:#f5a59a;
+  --info-bg:#1e2f33; --info-fg:#9fd3d8; --crit-bg:#f5a59a; --crit-fg:#421b16;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { max-width:960px; margin:0 auto; padding:24px 16px 64px; }
+a { color:var(--accent); }
+h1 { font-size:1.8rem; margin:8px 0 4px; line-height:1.2; }
+h2 { font-size:1.25rem; margin:36px 0 12px; border-bottom:2px solid var(--border); padding-bottom:6px; }
+h3 { font-size:1.02rem; margin:20px 0 6px; }
+.sub { color:var(--muted); margin:0 0 20px; font-size:.95rem; }
+.crumbs { font-size:.9rem; color:var(--muted); display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.crumbs a { text-decoration:none; }
+.section-tag { display:inline-block; font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-top:16px; }
+.verdict { display:inline-flex; align-items:center; gap:8px; font-weight:700; padding:6px 14px; border-radius:999px; margin:8px 0 4px; font-size:1rem; }
+.verdict.pass { background:var(--ok-bg); color:var(--ok-fg); }
+.verdict.risk { background:var(--warn-bg); color:var(--warn-fg); }
+.verdict.fail { background:var(--bad-bg); color:var(--bad-fg); }
+.verdict.human { background:var(--info-bg); color:var(--info-fg); }
+.summary-line { font-size:1.05rem; margin:8px 0 0; }
+.sheet { background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:8px; padding:12px 16px; margin:12px 0; }
+.sheet p { margin:6px 0; }
+.sheet ul { margin:6px 0 6px 18px; }
+.flag { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 16px; margin:12px 0; }
+.flag h3 { margin:0 0 6px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.sev { display:inline-block; font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:999px; text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; }
+.sev.critical { background:var(--crit-bg); color:var(--crit-fg); }
+.sev.high { background:var(--bad-bg); color:var(--bad-fg); }
+.sev.medium { background:var(--warn-bg); color:var(--warn-fg); }
+.sev.low { background:var(--info-bg); color:var(--info-fg); }
+.badge { display:inline-block; font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:999px; white-space:nowrap; }
+.badge.pass { background:var(--ok-bg); color:var(--ok-fg); }
+.badge.risk { background:var(--warn-bg); color:var(--warn-fg); }
+.badge.fail { background:var(--bad-bg); color:var(--bad-fg); }
+.badge.human { background:var(--info-bg); color:var(--info-fg); }
+table { width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; margin:12px 0; }
+th, td { text-align:left; padding:9px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+th { background:var(--info-bg); color:var(--info-fg); font-weight:600; font-size:.82rem; text-transform:uppercase; letter-spacing:.03em; }
+tr:last-child td { border-bottom:0; }
+td.c { text-align:center; white-space:nowrap; }
+code { font:.88em ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--info-bg); padding:1px 5px; border-radius:4px; word-break:break-word; }
+pre { background:var(--info-bg); padding:10px 12px; border-radius:8px; overflow-x:auto; font-size:.85rem; line-height:1.45; }
+pre code { background:none; padding:0; }
+ol li, ul li { margin:5px 0; }
+.wrap { overflow-x:auto; }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:16px 0; }
+.tile { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+.tile .n { font-size:2rem; font-weight:700; line-height:1.1; }
+.tile .l { color:var(--muted); font-size:.88rem; }
+.tile.ok .n { color:var(--ok-fg); } .tile.warn .n { color:var(--warn-fg); } .tile.bad .n { color:var(--bad-fg); } .tile.info .n { color:var(--info-fg); }
+.callout { background:var(--surface); border-left:4px solid var(--accent); border-radius:6px; padding:12px 16px; margin:16px 0; }
+.callout.bad { border-left-color:var(--bad-fg); }
+.callout.warn { border-left-color:var(--warn-fg); }
+.nav { display:flex; justify-content:space-between; gap:12px; margin-top:40px; padding-top:16px; border-top:1px solid var(--border); font-size:.92rem; flex-wrap:wrap; }
+.nav a { text-decoration:none; }
+.say { background:var(--surface); border:1px dashed var(--border); border-radius:8px; padding:10px 14px; margin:8px 0; }
+.say strong { color:var(--accent); }
+.term { border-bottom:1px dotted var(--muted); cursor:help; }
+@media (max-width:640px) { th, td { padding:7px 8px; font-size:.9rem; } h1 { font-size:1.5rem; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="crumbs"><a href="index.html">← Audit index</a><span>Question 18 of 27</span></div>
+  <span class="section-tag">Modules Verification</span>
+  <h1>18. Major Modules</h1>
+  <div class="verdict risk">⚠️ AT RISK</div>
+  <p class="sub">A "Yes" is possible but depends on a fix or on how the evaluator reads it. · audited 2026-09-18 · branch main @ 2143958</p>
+  <p class="summary-line">Three Majors are solid (framework, real-time, user profiles). Two are arguable (permissions, interaction system). One claimed in the README is not built (WCAG).</p>
+
+  <h2>What the evaluator is asked</h2>
+  <div class="sheet"><p><strong>Are all claimed Major modules properly implemented and functional?</strong></p><ul><li>For EACH Major module: ask the team to demonstrate it; verify it is fully implemented and functional; check it meets Major complexity; confirm it adds real value; verify dependencies.</li><li>Only count working modules. Non-functional or incomplete modules = 0 points.</li></ul></div>
+
+  <h2>Red flags</h2>
+  <div class="flag" id="flag-WCAG-claimed-in-README,-not-im"><h3><span class="sev critical">critical</span>WCAG claimed in README, not implemented</h3><p>An unclaimed module costs nothing; a claimed and failed one costs the points and the evaluator's trust for the next four.</p></div><div class="flag" id="flag-Permissions-module-can-be-zero"><h3><span class="sev high">high</span>Permissions module can be zeroed on the word "Moderator"</h3><p>Decide: build the moderator role Friday, or rehearse the three-role argument and accept the risk. Do not go in without a decision.</p></div><div class="flag" id="flag-Real-time-depends-on-the-two-b"><h3><span class="sev medium">medium</span>Real-time depends on the two-browser demo working on the eval machine</h3><p>Rehearse with two different browsers (Chrome + Firefox) on one laptop — the e2e <code>realtime.spec.ts</code> already does exactly this, so it works; just practise the click order.</p></div>
+
+  <h2>What the code shows</h2>
+  <h3>Framework (2) — demo</h3><p>Open <code>apps/backend/src/app.module.ts</code> (Nest modules) and <code>apps/frontend/src/routes</code> (file-based routes). Show one tRPC procedure in <code>events.router.ts</code> and its typed call in <code>routes/events/index.tsx</code> — the IDE autocompletes the procedure name: that is the framework pair doing real work.</p><h3>Real-time (2) — demo and the SSE question</h3><p>Two browsers side by side: create an event in one, it appears in the other without reload; log in as a friend, the status dot turns green; send a chat message. Then <code>use-event-stream.ts</code>: heartbeat every 10 s, stale after 25 s, reconnect.</p><div class="say"><strong>"Why not WebSockets?"</strong> — "The subject says WebSockets <em>or similar</em>. Our real-time traffic is server → client only (events changed, who is online, chat messages); the client sends through normal tRPC mutations. Server-Sent Events give us that push over the existing HTTPS connection, through Caddy, with automatic reconnect built into the browser, no extra port or protocol. We added a heartbeat so a dead connection is detected in 25 s, and handled graceful disconnects with AbortSignal (<code>listen()</code> in <code>events.service.ts</code>). If we needed client → server streaming, WebSockets would be the choice."</div><h3>Standard user profiles (2) — demo</h3><p>Profile page → change avatar (picker compresses to ≤48 kB, shows preview) → edit about/location/language → friends list → second browser logs in → dot goes green; log out → grey.</p><h3>Advanced permissions and roles (2) — arguable</h3><p>What exists: <code>navigation.config.ts</code> three roles; <code>AdminMiddleware</code>/<code>ProtectedMiddleware</code>; ownership checks; admin dashboard with user table, role select (user/admin), event table for all events; <code>adminUpdateUserSchema.role: enum(['user','admin'])</code>. Missing: moderator, ban UI (columns exist), guest as an explicit concept (it is "visitor"). The subject lists <em>(Admin, Moderator, User, Guest)</em>. A strict evaluator gives 0; a reasonable one accepts three roles with distinct permissions. Adding a moderator who can edit/delete any event but not touch users is 2–3 h and removes the argument.</p><h3>User interaction system (2) — do not claim as-is</h3><p>Chat ✓ (global room, ephemeral — say "ephemeral by design, no history table"), friends ✓, "profile views" ✗ — there is no way to open another user's profile. Add <code>routes/users/$username.tsx</code> (name, avatar, about, location, online dot, add-friend button; ~2 h using <code>users.searchUsers</code> data) and the module becomes claimable.</p><h3>WCAG 2.1 AA (2) — not built</h3><p>Remove from the README. If asked, "we did contrast and focus-ring work (<code>faf710e</code>, <code>980f776</code>) but did not run a full audit, so we do not claim it."</p>
+
+  <h2>Fix before Saturday</h2>
+  <ol><li>Remove WCAG from README. Decide on moderator and public-profile page. Rehearse the SSE answer.</li></ol>
+
+  <h2>In the room: what to show and say</h2>
+  <div class="say">Demo order: framework (30 s of code) → real-time (two browsers, 2 min) → profiles + friends (1 min) → permissions (log in as admin, change a role, try the admin URL as a user → refused).</div>
+
+  <div class="nav"><a href="17-module-points.html">← Previous</a><a href="index.html">Index</a><a href="19-minor-modules.html">Next →</a></div>
+</main>
+</body>
+</html>

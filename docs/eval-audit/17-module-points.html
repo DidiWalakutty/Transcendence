@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q17 Module Points</title>
+<style>
+:root {
+  --bg:#f7f8f6; --surface:#fff; --text:#1c2422; --muted:#5d6b67; --border:#dfe4e1; --accent:#173a40;
+  --ok-bg:#e3f4ea; --ok-fg:#1d6b3a; --warn-bg:#fff3d6; --warn-fg:#8a5a00; --bad-bg:#fde4e1; --bad-fg:#9b2c1f;
+  --info-bg:#e5eef0; --info-fg:#173a40; --crit-bg:#7a1c12; --crit-fg:#fff;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#141918; --surface:#1d2422; --text:#e7ece9; --muted:#9aa8a3; --border:#2e3936; --accent:#8fd1c9;
+  --ok-bg:#163a26; --ok-fg:#8fe0ad; --warn-bg:#3d2f0d; --warn-fg:#f2c46b; --bad-bg:#421b16; --bad-fg:#f5a59a;
+  --info-bg:#1e2f33; --info-fg:#9fd3d8; --crit-bg:#f5a59a; --crit-fg:#421b16;
+}}
+:root[data-theme="dark"] {
+  --bg:#141918; --surface:#1d2422; --text:#e7ece9; --muted:#9aa8a3; --border:#2e3936; --accent:#8fd1c9;
+  --ok-bg:#163a26; --ok-fg:#8fe0ad; --warn-bg:#3d2f0d; --warn-fg:#f2c46b; --bad-bg:#421b16; --bad-fg:#f5a59a;
+  --info-bg:#1e2f33; --info-fg:#9fd3d8; --crit-bg:#f5a59a; --crit-fg:#421b16;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { max-width:960px; margin:0 auto; padding:24px 16px 64px; }
+a { color:var(--accent); }
+h1 { font-size:1.8rem; margin:8px 0 4px; line-height:1.2; }
+h2 { font-size:1.25rem; margin:36px 0 12px; border-bottom:2px solid var(--border); padding-bottom:6px; }
+h3 { font-size:1.02rem; margin:20px 0 6px; }
+.sub { color:var(--muted); margin:0 0 20px; font-size:.95rem; }
+.crumbs { font-size:.9rem; color:var(--muted); display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.crumbs a { text-decoration:none; }
+.section-tag { display:inline-block; font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-top:16px; }
+.verdict { display:inline-flex; align-items:center; gap:8px; font-weight:700; padding:6px 14px; border-radius:999px; margin:8px 0 4px; font-size:1rem; }
+.verdict.pass { background:var(--ok-bg); color:var(--ok-fg); }
+.verdict.risk { background:var(--warn-bg); color:var(--warn-fg); }
+.verdict.fail { background:var(--bad-bg); color:var(--bad-fg); }
+.verdict.human { background:var(--info-bg); color:var(--info-fg); }
+.summary-line { font-size:1.05rem; margin:8px 0 0; }
+.sheet { background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:8px; padding:12px 16px; margin:12px 0; }
+.sheet p { margin:6px 0; }
+.sheet ul { margin:6px 0 6px 18px; }
+.flag { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 16px; margin:12px 0; }
+.flag h3 { margin:0 0 6px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.sev { display:inline-block; font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:999px; text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; }
+.sev.critical { background:var(--crit-bg); color:var(--crit-fg); }
+.sev.high { background:var(--bad-bg); color:var(--bad-fg); }
+.sev.medium { background:var(--warn-bg); color:var(--warn-fg); }
+.sev.low { background:var(--info-bg); color:var(--info-fg); }
+.badge { display:inline-block; font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:999px; white-space:nowrap; }
+.badge.pass { background:var(--ok-bg); color:var(--ok-fg); }
+.badge.risk { background:var(--warn-bg); color:var(--warn-fg); }
+.badge.fail { background:var(--bad-bg); color:var(--bad-fg); }
+.badge.human { background:var(--info-bg); color:var(--info-fg); }
+table { width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; margin:12px 0; }
+th, td { text-align:left; padding:9px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+th { background:var(--info-bg); color:var(--info-fg); font-weight:600; font-size:.82rem; text-transform:uppercase; letter-spacing:.03em; }
+tr:last-child td { border-bottom:0; }
+td.c { text-align:center; white-space:nowrap; }
+code { font:.88em ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--info-bg); padding:1px 5px; border-radius:4px; word-break:break-word; }
+pre { background:var(--info-bg); padding:10px 12px; border-radius:8px; overflow-x:auto; font-size:.85rem; line-height:1.45; }
+pre code { background:none; padding:0; }
+ol li, ul li { margin:5px 0; }
+.wrap { overflow-x:auto; }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:16px 0; }
+.tile { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+.tile .n { font-size:2rem; font-weight:700; line-height:1.1; }
+.tile .l { color:var(--muted); font-size:.88rem; }
+.tile.ok .n { color:var(--ok-fg); } .tile.warn .n { color:var(--warn-fg); } .tile.bad .n { color:var(--bad-fg); } .tile.info .n { color:var(--info-fg); }
+.callout { background:var(--surface); border-left:4px solid var(--accent); border-radius:6px; padding:12px 16px; margin:16px 0; }
+.callout.bad { border-left-color:var(--bad-fg); }
+.callout.warn { border-left-color:var(--warn-fg); }
+.nav { display:flex; justify-content:space-between; gap:12px; margin-top:40px; padding-top:16px; border-top:1px solid var(--border); font-size:.92rem; flex-wrap:wrap; }
+.nav a { text-decoration:none; }
+.say { background:var(--surface); border:1px dashed var(--border); border-radius:8px; padding:10px 14px; margin:8px 0; }
+.say strong { color:var(--accent); }
+.term { border-bottom:1px dotted var(--muted); cursor:help; }
+@media (max-width:640px) { th, td { padding:7px 8px; font-size:.9rem; } h1 { font-size:1.5rem; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="crumbs"><a href="index.html">← Audit index</a><span>Question 17 of 27</span></div>
+  <span class="section-tag">Modules Verification</span>
+  <h1>17. Module Points</h1>
+  <div class="verdict fail">❌ FAIL as-is</div>
+  <p class="sub">On main right now this gets a "No". Fix before Saturday. · audited 2026-09-18 · branch main @ 2143958</p>
+  <p class="summary-line">The README claims 15 points — and says every one of them is "Not yet implemented". Two of the claimed modules (OAuth, WCAG) really are not built, while three modules that <em>are</em> built (real-time, SSR, chat/friends) are not claimed. Honest count today: 12 solid, 17 if the at-risk ones hold.</p>
+
+  <h2>What the evaluator is asked</h2>
+  <div class="sheet"><p><strong>Does the project claim at least 14 points from modules?</strong></p><ul><li>Review the README.md modules section: list all claimed modules (Major = 2 pts, Minor = 1 pt), calculate the total points.</li><li>The team must have selected modules totaling at least 14 points. This is verified in the README before testing the actual implementation.</li></ul></div>
+
+  <h2>Red flags</h2>
+  <div class="flag" id="flag-README-module-table-is-wrong-i"><h3><span class="sev critical">critical</span>README module table is wrong in both directions</h3><p>Claims OAuth (not built) and WCAG (not built) — 3 points the evaluator will zero after asking for a demo, which also costs credibility. Omits real-time (2) and SSR (1), which the evaluator will not count unless claimed. Rewrite it with the table above, minus the ones you decide not to build.</p></div><div class="flag" id="flag-Twelve-solid-points-is-below-t"><h3><span class="sev high">high</span>Twelve solid points is below the line</h3><p>The gap to 14 is two points. The cheapest two: the events search box (1 h, the backend already does it) and OAuth (2–3 h). The permissions module is the swing vote — if the evaluator accepts visitor/user/admin as "role management", you are at 16 without OAuth.</p></div>
+
+  <h2>What the code shows</h2>
+  <h3>Every module the code could support, against the subject list</h3><div class="wrap"><table><thead><tr><th>Module (subject wording)</th><th>Type</th><th>Pts</th><th>In README?</th><th>State in code</th><th>Evidence / gap</th></tr></thead><tbody>
+<tr><td>Full framework: NestJS backend + React (TanStack Start) frontend</td><td>Major</td><td class="c">2</td><td>yes</td><td><span class="badge pass">solid</span></td><td><code>apps/backend</code>, <code>apps/frontend</code></td></tr>
+<tr><td>Real-time features (WebSockets or similar): live event list, presence, chat, admin user stream, heartbeat + reconnect</td><td>Major</td><td class="c">2</td><td><b>no</b></td><td><span class="badge pass">solid</span></td><td>tRPC subscriptions over SSE: <code>events.service.ts</code> <code>listenEventChangedWithHeartbeat</code>, <code>use-event-stream.ts</code> watchdog, <code>presence.service.ts</code>, <code>chat.router.ts</code>. Prepare the "why SSE, not WebSockets" answer (below).</td></tr>
+<tr><td>Standard user profiles: avatar upload, profile page, online/offline friends</td><td>Major</td><td class="c">2</td><td>yes ("Standard user management")</td><td><span class="badge pass">solid</span></td><td><code>routes/profile.tsx</code> (edit, avatar via <code>AvatarPicker</code>, friends list with <code>usePresence</code> dots), <code>friends.router.ts</code> (request/accept/remove/search)</td></tr>
+<tr><td>Database integration via ORM (Drizzle)</td><td>Minor</td><td class="c">1</td><td>yes</td><td><span class="badge pass">solid</span></td><td><code>packages/schemas/src/database.ts</code>, 10 migrations, repositories</td></tr>
+<tr><td>Secure two-factor authentication</td><td>Minor</td><td class="c">1</td><td>yes</td><td><span class="badge pass">solid</span></td><td>better-auth <code>twoFactor()</code>, <code>TwoFactorSettings.tsx</code> (QR + backup codes), <code>/verify-2fa</code>, lockout counter</td></tr>
+<tr><td>Multi-language support (≥3 complete, in-app toggle)</td><td>Minor</td><td class="c">1</td><td>yes</td><td><span class="badge pass">solid</span></td><td>en/nl/es, 374 keys each, 0 missing (checked); <code>LanguageSwitcher.tsx</code>; per-user <code>preferedLanguage</code>; e-mails in 5 languages</td></tr>
+<tr><td>Server-side rendering</td><td>Minor</td><td class="c">1</td><td><b>no</b></td><td><span class="badge pass">solid</span></td><td>TanStack Start + nitro; 8 routes with server <code>loader</code>s; view-source shows rendered HTML</td></tr>
+<tr><td>Extended multi-browser support (2 extra browsers)</td><td>Minor</td><td class="c">1</td><td>yes</td><td><span class="badge pass">solid</span> (doc gap)</td><td>Chrome + Firefox + Edge; Playwright on Chromium and Firefox, 15 findings fixed/documented in <code>docs/BROWSER_SUPPORT.md</code>. <b>§2 versions table and Edge column are empty</b> — fill them.</td></tr>
+<tr><td>Complete notification system across all CRUD operations</td><td>Minor</td><td class="c">1</td><td>yes</td><td><span class="badge pass">solid</span> (be deliberate)</td><td>Global <code>MutationCache</code> toasts for every create/update/delete (<code>root-provider.tsx</code>) + e-mails on signup, ticket, event modified, event cancelled (<code>notification.listener.ts</code>, Mailpit) + live SSE updates. Say "toast + e-mail + live" as one system.</td></tr>
+<tr><td>Advanced search with filtering, sorting, pagination</td><td>Minor</td><td class="c">1</td><td>yes</td><td><span class="badge risk">at risk</span></td><td>Server-side category filter, 3 sorts, pagination (<code>getFilteredEvents</code>). Backend accepts <code>search</code> but the public <code>/events</code> page has <b>no search box</b> — text search exists only in admin and My Tickets. ~1 h to add.</td></tr>
+<tr><td>Advanced CRUD permissions and role management (Admin, Moderator, User, Guest)</td><td>Major</td><td class="c">2</td><td>yes</td><td><span class="badge risk">at risk</span></td><td>Three effective roles: visitor (browse only), user (own events/tickets/profile), admin (all users + all events, role toggle). <b>No moderator</b>; ban columns exist but no UI. Subject names four roles.</td></tr>
+<tr><td>User interaction system (basic chat, profile views, friends list)</td><td>Major</td><td class="c">2</td><td><b>no</b></td><td><span class="badge risk">at risk</span></td><td>Chat (global room, ephemeral, <code>ChatWidget.tsx</code>), friends ✓, but <b>no page to view another user's profile</b> — only <code>/profile</code> (own). Claim only if a <code>/users/$username</code> page is added.</td></tr>
+<tr><td>Remote authentication via OAuth 2.0</td><td>Minor</td><td class="c">1</td><td>yes</td><td><span class="badge fail">not built</span></td><td>No <code>socialProviders</code> in <code>auth.instance.ts</code>; <code>TODO (OAuth)</code> comments in <code>LoginForm.tsx</code>/<code>CreateAccountForm.tsx</code>. better-auth makes it ~2–3 h + a GitHub/Google client id in <code>.env</code>.</td></tr>
+<tr><td>Full WCAG 2.1 AA compliance</td><td>Major</td><td class="c">2</td><td>yes</td><td><span class="badge fail">not built</span></td><td>Some focus styles and contrast fixes, <code>lang</code> attribute, 29 aria attributes — but no skip link, no audit, no screen-reader pass. Do not claim.</td></tr>
+<tr><td>PWA</td><td>Minor</td><td class="c">1</td><td>no</td><td><span class="badge fail">removed</span></td><td>Service worker deleted on 2026-09-18 (commit bd40684, BS-1). Do not claim.</td></tr>
+</tbody></table></div><h3>Point scenarios</h3><div class="wrap"><table><thead><tr><th>Scenario</th><th>Points</th><th>Outcome</th></tr></thead><tbody>
+<tr><td>README as-is, evaluator counts only what it claims and is built (framework, ORM, notif, i18n, browser, user mgmt, 2FA; search + perms hold)</td><td class="c">12</td><td><span class="badge fail">fail</span></td></tr>
+<tr><td>README rewritten: 9 solid modules</td><td class="c">12</td><td><span class="badge fail">fail</span></td></tr>
+<tr><td>+ search box on /events (1 h)</td><td class="c">13</td><td><span class="badge fail">fail</span></td></tr>
+<tr><td>+ OAuth (2–3 h)</td><td class="c">14</td><td><span class="badge pass">pass, zero buffer</span></td></tr>
+<tr><td>+ permissions accepted as-is (3 roles) or moderator added</td><td class="c">16</td><td><span class="badge pass">pass, 2-pt buffer</span></td></tr>
+<tr><td>+ public profile page → interaction system</td><td class="c">18</td><td><span class="badge pass">pass, 4-pt buffer (bonus territory)</span></td></tr>
+</tbody></table></div>
+
+  <h2>Fix before Saturday</h2>
+  <ol><li>Decide tonight which of the four at-risk/unbuilt items get built Friday: search box (do it), OAuth (do it if someone has done OAuth before; GitHub is the simplest provider — callback <code>https://localhost:3000/api/auth/callback/github</code>, keys in <code>.env</code>), moderator role, public profile page.</li><li>Write README §7 from the table: module, type, points, who built it, one-line evidence; sum at the bottom; put real-time and SSR in.</li><li>Delete the "Candidate bonus modules" table (ML recommendations, sentiment analysis…) — none exist and it invites the question.</li></ol>
+
+  <h2>In the room: what to show and say</h2>
+  <div class="say">Read the README table aloud, module by module, then say "we will demonstrate each one now" and go straight into Q18/Q19 in that order so the evaluator ticks as you go.</div>
+
+  <div class="nav"><a href="16-secure-connections.html">← Previous</a><a href="index.html">Index</a><a href="18-major-modules.html">Next →</a></div>
+</main>
+</body>
+</html>
