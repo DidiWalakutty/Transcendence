@@ -151,6 +151,14 @@ export default defineConfig({
         command: 'vp test --project backend test/app.e2e-spec.ts',
         dependsOn: ['repo:trpc:generate'],
       },
+      'repo:test:e2e': {
+        command: './node_modules/.bin/playwright test',
+        cache: false,
+      },
+      'repo:test:e2e:install': {
+        command: './node_modules/.bin/playwright install chromium firefox webkit',
+        cache: false,
+      },
       'repo:check': {
         command: 'vp check',
         dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],

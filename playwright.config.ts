@@ -1,0 +1,35 @@
+import { defineConfig, devices } from '@playwright/test';
+
+// Runs against the Compose stack (`vp run deploy:detached`), not a dev server.
+const baseURL = process.env.E2E_BASE_URL ?? 'https://localhost:3000';
+
+// Playwright bundles its own Chromium, Firefox and WebKit. The branded browsers
+// are only available when installed on the host, so they are opt-in:
+//   E2E_CHANNELS=chrome,msedge vp run test:e2e
+const channels = (process.env.E2E_CHANNELS ?? '').split(',').filter(Boolean);
+
+export default defineConfig({
+  testDir: './e2e',
+  fullyParallel: true,
+  forbidOnly: !!process.env.CI,
+  retries: 0,
+  reporter: [['list'], ['html', { open: 'never' }]],
+  use: {
+    baseURL,
+    // The mkcert certificate is not trusted on every machine; the console
+    // checks must not depend on the host trust store.
+    ignoreHTTPSErrors: true,
+    trace: 'retain-on-failure',
+  },
+  projects: [
+    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+    { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'webkit', use: { ...devices['Desktop Safari'] } },
+    ...(channels.includes('chrome')
+      ? [{ name: 'chrome', use: { ...devices['Desktop Chrome'], channel: 'chrome' } }]
+      : []),
+    ...(channels.includes('msedge')
+      ? [{ name: 'msedge', use: { ...devices['Desktop Edge'], channel: 'msedge' } }]
+      : []),
+  ],
+});

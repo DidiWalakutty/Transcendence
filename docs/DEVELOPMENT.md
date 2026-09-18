@@ -140,6 +140,7 @@ For a background deployment, use `vp run deploy:detached`.
 | `vp run check`           | Run formatting, linting, and type checks. |
 | `vp run check:fix`       | Fix formatting and safe lint issues.      |
 | `vp run test`            | Run tests.                                |
+| `vp run test:e2e`        | Run browser tests against the stack.      |
 | `vp run build`           | Build all workspaces.                     |
 
 For more commands, see [Tooling](./TOOLING.md).

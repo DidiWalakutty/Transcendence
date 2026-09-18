@@ -15,7 +15,7 @@ document is the evidence shown during evaluation.
 7. [Console cleanliness per page](#7-console-cleanliness-per-page)
 8. [Known issues and browser-specific limitations](#8-known-issues-and-browser-specific-limitations)
 9. [Reporting a browser issue](#9-reporting-a-browser-issue)
-10. [Automation (planned)](#10-automation-planned)
+10. [Automation](#10-automation)
 11. [Evaluation checklist](#11-evaluation-checklist)
 
 ---
@@ -449,7 +449,50 @@ installed in Firefox and/or Chrome/Chromium!`, and the browser keeps showing
   headless Chromium on `/login`: only the BS-6 network line remains and the
   alert still reads "Invalid email or password".
 
-_Add new entries below as `BS-8`, `BS-9`, … using the template in section 9._
+### BS-8: The 404 page's own request is logged as a console error
+
+- **Status:** By design
+- **Browsers:** Chromium and WebKit (Playwright, 2026-09-18). Firefox does not
+  print failed document requests in the console.
+- **Route / feature:** 404 page
+- **Steps:** 1. Open a route that does not exist, e.g. `/nope`.
+- **Symptom:**
+
+  ```text
+  Failed to load resource: the server responded with a status of 404 ()
+  ```
+
+- **Root cause:** the not-found page is served with HTTP status `404`, which is
+  the correct status for it. As in BS-6, the browser logs any 4xx/5xx response
+  itself; the application prints nothing.
+- **Decision:** network log, not an application error. Hidden by the
+  _Hide network_ console filter. The e2e suite allows exactly this line on the
+  404 route and nothing else.
+
+### BS-9: `/reset-password` without a token answered with a 500
+
+- **Status:** Fixed on branch `test/browser-compatibility`. To be re-verified in
+  Chrome on the school PC.
+- **Browsers:** all — found by the e2e console suite in Chromium, Firefox and
+  WebKit (2026-09-18).
+- **Route / feature:** `/reset-password`
+- **Steps:** 1. Type `https://localhost:3000/reset-password` in the address bar
+  (no `?token=`).
+- **Symptom:** blank error page; console showed
+
+  ```text
+  Failed to load resource: the server responded with a status of 500 ()
+  Error: [ { "expected": "string", "code": "invalid_type", "path": [ "token" ], … } ]
+  ```
+
+- **Root cause:** the route declared `token` as a required search parameter.
+  With the parameter absent, search validation threw during server rendering
+  and the request failed with `500`.
+- **Fix:** `token` is now optional in the search schema and the route's
+  `beforeLoad` redirects to `/forgot-password` when it is missing, so the user
+  can request a new link. Links from the reset e-mail are unchanged.
+
+_Add new entries below as `BS-10`, `BS-11`, … using the template in section 9._
 
 ---
 
@@ -476,32 +519,67 @@ and is what makes the issue searchable.
 
 ---
 
-## 10. Automation (planned)
+## 10. Automation
 
-Status: **not started**. A manual matrix goes stale as soon as a PR merges, so
-the mechanical checks are to be automated with
+Status: **console checks automated** with
 [Playwright](https://playwright.dev/), a test runner that launches real
-Chromium, Firefox and WebKit browsers, drives them through the site, and can
-read the console.
+Chromium, Firefox and WebKit (Safari's engine) builds, drives them through the
+site and reads their console. It repeats the mechanical part of sections 6 and
+7 in about a minute so the manual matrix cannot silently go stale.
 
-Planned layout:
+### What is covered
 
-- `@playwright/test` as a root devDependency; `playwright.config.ts` with one
-  _project_ (Playwright's word for "same tests, different browser") per browser:
-  `chromium`, `firefox`, `webkit`, and `msedge` (`channel: 'msedge'`).
-  `baseURL: https://localhost:3000`, `ignoreHTTPSErrors: true` so the robot does
-  not depend on the certificate trust store.
-- **Console smoke test**: visit every route in section 7, wait for the network
-  to go idle, and fail on any `console.warn`, `console.error` or uncaught page
-  error. Also assert that no service worker is registered (see BS-1) so the
-  plugin is not reintroduced by accident.
-- **Key flows**: signup → login → logout; create event → register → shows in
+| File                   | What it checks                                                                                                                                                                                                                                           |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `e2e/console.spec.ts`  | Every route of section 7, including `/events/$eventId` (first event listed) and the 404 page. Each route is opened, then reloaded; the test fails on any `console.warn`, `console.error` or uncaught exception. Protected routes are visited logged out. |
+| `e2e/login.spec.ts`    | Wrong password on `/login`: the error alert appears and nothing except the BS-6 network line reaches the console (guards against BS-7).                                                                                                                  |
+| `e2e/console.ts`       | The shared fixture: records console output per test, and `expectCleanConsole(recorder, allow)`. Every pattern passed to `allow` must point at a `BS-n` entry in section 8.                                                                               |
+| `playwright.config.ts` | One _project_ (Playwright's word for "same tests, different browser") per engine: `chromium`, `firefox`, `webkit`. `ignoreHTTPSErrors` is on so the run does not depend on the host trust store.                                                         |
+
+### Running it
+
+The suite runs against the Compose stack, not the dev server:
+
+```bash
+vp run test:e2e:install     # once per machine: downloads the three browsers (~500 MB)
+vp run deploy:detached      # build and start https://localhost:3000
+vp run test:e2e             # all three engines
+./node_modules/.bin/playwright test --project chromium          # one engine
+./node_modules/.bin/playwright test --project chromium --headed # watch it
+./node_modules/.bin/playwright show-report                      # HTML report of the last run
+```
+
+On Linux the browsers may need system libraries:
+`./node_modules/.bin/playwright install-deps` (requires `sudo`). If that is not
+possible, run `--project chromium` only.
+
+The installed Google Chrome and Microsoft Edge can be used as extra projects
+when they exist on the machine:
+
+```bash
+E2E_CHANNELS=chrome,msedge vp run test:e2e
+```
+
+Point the suite at another deployment with `E2E_BASE_URL=https://host:port`.
+
+### What it does not replace
+
+- The manual pass in sections 6 and 7. The evaluator opens real Chrome; the
+  Playwright Chromium build is not "latest stable Chrome". Fill the matrices
+  from the real browsers.
+- Safari and Edge as products. WebKit is Safari's engine, not Safari; Edge only
+  runs when installed (`E2E_CHANNELS=msedge`).
+- Anything outside the page: certificate trust, the Firefox restart (BS-5),
+  rendering differences.
+
+### Still to do
+
+- Key flows: signup → login → logout; create event → register → shows in
   my-tickets; forgot-password using Mailpit's API
   (`GET http://localhost:8025/api/v1/messages`) to fetch the reset link.
-- **Two-browser real-time test**: launch Chromium and Firefox in the same test,
-  log in as user A and user B, assert presence and a chat message cross over.
-- `vp run test:e2e` script, run against `vp run deploy:detached`; optional CI
-  job in `.github/workflows/ci.yml` (Playwright installs Firefox/Chromium/WebKit
+- Two-browser real-time test: Chromium and Firefox in the same test, user A and
+  user B, assert presence and a chat message cross over.
+- A CI job in `.github/workflows/ci.yml` (Playwright installs the three engines
   on `ubuntu-latest`; Edge via `playwright install msedge`).
 
 ---
