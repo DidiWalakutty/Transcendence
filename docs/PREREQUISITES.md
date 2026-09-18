@@ -25,7 +25,7 @@ The Compose stack serves `https://localhost:3000` with the [mkcert](https://gith
 | mkcert                | Generates the certificate and registers its root CA. A single binary; on Linux it can be dropped into `~/.local/bin`. |
 | certutil (Linux only) | From the `libnss3-tools` package. mkcert needs it to write the Chrome and Firefox trust stores.                       |
 
-Without them the site still works, but the browser shows a certificate warning once per session. See [Browser Support](./BROWSER_SUPPORT.md#4-certificate-trust-per-browser) for the per-browser details.
+Without them the site still works, but the browser shows a certificate warning once per session. See [Browser Support](./BROWSER_SUPPORT.md#3-how-to-test) for the per-browser details.
 
 ## Docker Compose
 
