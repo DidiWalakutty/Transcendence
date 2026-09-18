@@ -32,6 +32,12 @@ This directory contains the project documentation for local development, archite
 | [CI](./CI.md)                       | Continuous integration responsibilities.              |
 | [Prerequisites](./PREREQUISITES.md) | Required host tools before running the project.       |
 
+## Testing
+
+| Document                                | Purpose                                                                   |
+| --------------------------------------- | ------------------------------------------------------------------------- |
+| [Browser Support](./BROWSER_SUPPORT.md) | Browser test plan, feature matrix, console checks, and known limitations. |
+
 ## Editor
 
 | Document                      | Purpose                                                       |
