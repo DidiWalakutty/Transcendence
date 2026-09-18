@@ -158,8 +158,10 @@ What counts as a finding:
 
 ## 6. Feature matrix
 
-Legend: ✅ works · ⚠️ works with a note (link the BS-number) · ❌ broken (link
-the BS-number) · — not tested yet.
+Legend: ✅ works (checked by hand in the real browser) · 🤖 passes in the e2e
+suite (section 10) on that engine; the real browser is still to be confirmed ·
+⚠️ works with a note (link the BS-number) · ❌ broken (link the BS-number) ·
+— not tested yet.
 
 Rows are grouped by area; routes refer to `apps/frontend/src/routes/`.
 
@@ -169,34 +171,34 @@ Rows are grouped by area; routes refer to `apps/frontend/src/routes/`.
 | --------------------------------------------------------------- | ------------------- | ------ | ------- | ---- | ------ |
 | Home: hero, featured events, stats, how-it-works, FAQ accordion | `/`                 | —      | —       | —    | —      |
 | Footer links (Privacy, Terms, Contact)                          | all pages           | —      | —       | —    | —      |
-| Events list renders                                             | `/events`           | —      | —       | —    | —      |
+| Events list renders                                             | `/events`           | 🤖     | 🤖      | —    | 🤖     |
 | Events: text search                                             | `/events`           | —      | —       | —    | —      |
 | Events: category filter                                         | `/events`           | —      | —       | —    | —      |
 | Events: sort                                                    | `/events`           | —      | —       | —    | —      |
 | Events: pagination                                              | `/events`           | —      | —       | —    | —      |
-| Event detail page                                               | `/events/$eventId`  | —      | —       | —    | —      |
+| Event detail page                                               | `/events/$eventId`  | 🤖     | 🤖      | —    | 🤖     |
 | Contact page + form validation                                  | `/contact`          | —      | —       | —    | —      |
 | Privacy Policy (full content, not placeholder)                  | `/privacy-policy`   | —      | —       | —    | —      |
 | Terms of Service (full content, not placeholder)                | `/terms-of-service` | —      | —       | —    | —      |
-| 404 page                                                        | `/does-not-exist`   | —      | —       | —    | —      |
+| 404 page                                                        | `/does-not-exist`   | 🤖     | 🤖      | —    | 🤖     |
 
 ### Authentication
 
-| Feature                                                            | Route                          | Chrome | Firefox | Edge | Safari |
-| ------------------------------------------------------------------ | ------------------------------ | ------ | ------- | ---- | ------ |
-| Signup form: validation messages (empty, bad email, weak password) | `/signup`, `/create-account`   | —      | —       | —    | —      |
-| Signup: successful account creation                                | `/signup`, `/create-account`   | —      | —       | —    | —      |
-| Login: wrong password shows error                                  | `/login`                       | —      | —       | —    | —      |
-| Login: success, redirected, navbar shows user menu                 | `/login`                       | —      | —       | —    | —      |
-| Session survives page reload (Ctrl+R)                              | any                            | —      | —       | —    | —      |
-| Session survives browser restart                                   | any                            | —      | —       | —    | —      |
-| Logout                                                             | user menu                      | —      | —       | —    | —      |
-| Forgot password: email arrives in Mailpit                          | `/forgot-password`             | —      | —       | —    | —      |
-| Reset password via emailed link                                    | `/reset-password`              | —      | —       | —    | —      |
-| 2FA setup: QR code renders, secret can be copied                   | `/profile` (TwoFactorSettings) | —      | —       | —    | —      |
-| 2FA verify: typing the 6-digit code                                | `/verify-2fa`                  | —      | —       | —    | —      |
-| 2FA verify: pasting the 6-digit code                               | `/verify-2fa`                  | —      | —       | —    | —      |
-| 2FA disable                                                        | `/profile`                     | —      | —       | —    | —      |
+| Feature                                                            | Route                          | Chrome    | Firefox | Edge | Safari    |
+| ------------------------------------------------------------------ | ------------------------------ | --------- | ------- | ---- | --------- |
+| Signup form: validation messages (empty, bad email, weak password) | `/signup`, `/create-account`   | —         | —       | —    | —         |
+| Signup: successful account creation                                | `/signup`, `/create-account`   | 🤖        | 🤖      | —    | 🤖        |
+| Login: wrong password shows error                                  | `/login`                       | 🤖 (BS-6) | 🤖      | —    | 🤖 (BS-6) |
+| Login: success, redirected, navbar shows user menu                 | `/login`                       | 🤖        | 🤖      | —    | 🤖        |
+| Session survives page reload (Ctrl+R)                              | any                            | 🤖        | 🤖      | —    | 🤖        |
+| Session survives browser restart                                   | any                            | —         | —       | —    | —         |
+| Logout                                                             | user menu                      | 🤖        | 🤖      | —    | 🤖        |
+| Forgot password: email arrives in Mailpit                          | `/forgot-password`             | —         | —       | —    | —         |
+| Reset password via emailed link                                    | `/reset-password`              | —         | —       | —    | —         |
+| 2FA setup: QR code renders, secret can be copied                   | `/profile` (TwoFactorSettings) | —         | —       | —    | —         |
+| 2FA verify: typing the 6-digit code                                | `/verify-2fa`                  | —         | —       | —    | —         |
+| 2FA verify: pasting the 6-digit code                               | `/verify-2fa`                  | —         | —       | —    | —         |
+| 2FA disable                                                        | `/profile`                     | —         | —       | —    | —         |
 
 ### Logged-in user
 
@@ -206,11 +208,11 @@ Rows are grouped by area; routes refer to `apps/frontend/src/routes/`.
 | Edit profile fields                                       | `/profile`         | —      | —       | —    | —      |
 | Avatar upload: file picker opens, preview shows           | `/profile`         | —      | —       | —    | —      |
 | Avatar upload: rejected file type / too large shows error | `/profile`         | —      | —       | —    | —      |
-| Create event: date picker                                 | `/create-event`    | —      | —       | —    | —      |
-| Create event: category combobox                           | `/create-event`    | —      | —       | —    | —      |
-| Create event: image upload + preview                      | `/create-event`    | —      | —       | —    | —      |
+| Create event: date picker                                 | `/create-event`    | 🤖     | 🤖      | —    | 🤖     |
+| Create event: category combobox                           | `/create-event`    | 🤖     | 🤖      | —    | 🤖     |
+| Create event: image upload + preview                      | `/create-event`    | 🤖     | 🤖      | —    | 🤖     |
 | Create event: validation errors                           | `/create-event`    | —      | —       | —    | —      |
-| Create event: success, appears in list                    | `/create-event`    | —      | —       | —    | —      |
+| Create event: success, appears in list                    | `/create-event`    | 🤖     | 🤖      | —    | 🤖     |
 | My events: list, edit dialog, delete confirm dialog       | `/my-events`       | —      | —       | —    | —      |
 | Register for an event / cancel registration               | `/events/$eventId` | —      | —       | —    | —      |
 | My tickets                                                | `/my-tickets`      | —      | —       | —    | —      |
@@ -220,7 +222,7 @@ Rows are grouped by area; routes refer to `apps/frontend/src/routes/`.
 
 | Feature                                   | Route    | Chrome | Firefox | Edge | Safari |
 | ----------------------------------------- | -------- | ------ | ------- | ---- | ------ |
-| Non-admin is refused                      | `/admin` | —      | —       | —    | —      |
+| Non-admin is refused                      | `/admin` | 🤖     | 🤖      | —    | 🤖     |
 | Users table: search, edit dialog, delete  | `/admin` | —      | —       | —    | —      |
 | Events table: search, edit dialog, delete | `/admin` | —      | —       | —    | —      |
 
@@ -228,8 +230,8 @@ Rows are grouped by area; routes refer to `apps/frontend/src/routes/`.
 
 | Feature                                                             | Chrome | Firefox | Edge | Safari |
 | ------------------------------------------------------------------- | ------ | ------- | ---- | ------ |
-| A sees B come online / go offline                                   | —      | —       | —    | —      |
-| Chat: A sends, B receives without reload                            | —      | —       | —    | —      |
+| A sees B come online / go offline                                   | 🤖     | 🤖      | —    | —      |
+| Chat: A sends, B receives without reload                            | 🤖     | 🤖      | —    | —      |
 | Chat: B replies, A receives                                         | —      | —       | —    | —      |
 | Notification toast arrives on the other side                        | —      | —       | —    | —      |
 | Event created by A appears for B without reload                     | —      | —       | —    | —      |
@@ -261,26 +263,34 @@ Rows are grouped by area; routes refer to `apps/frontend/src/routes/`.
 One row per route, per browser. ✅ = console empty after the page's flow from
 section 6, including one reload. Otherwise link the BS-number.
 
-| Route               | Chrome | Firefox | Edge | Safari |
-| ------------------- | ------ | ------- | ---- | ------ |
-| `/`                 | —      | —       | —    | —      |
-| `/events`           | —      | —       | —    | —      |
-| `/events/$eventId`  | —      | —       | —    | —      |
-| `/contact`          | —      | —       | —    | —      |
-| `/privacy-policy`   | —      | —       | —    | —      |
-| `/terms-of-service` | —      | —       | —    | —      |
-| `/signup`           | —      | —       | —    | —      |
-| `/create-account`   | —      | —       | —    | —      |
-| `/login`            | —      | —       | —    | —      |
-| `/forgot-password`  | —      | —       | —    | —      |
-| `/reset-password`   | —      | —       | —    | —      |
-| `/verify-2fa`       | —      | —       | —    | —      |
-| `/profile`          | —      | —       | —    | —      |
-| `/create-event`     | —      | —       | —    | —      |
-| `/my-events`        | —      | —       | —    | —      |
-| `/my-tickets`       | —      | —       | —    | —      |
-| `/admin`            | —      | —       | —    | —      |
-| 404 page            | —      | —       | —    | —      |
+🤖 = checked by the e2e suite (section 10) on 2026-09-18: the route was opened
+and reloaded in headless Chromium, Firefox and WebKit, and nothing except the
+linked network lines reached the console. ✅ = additionally confirmed by hand in
+the real browser. — = not yet checked in that browser.
+
+| Route               | Chrome    | Firefox    | Edge | Safari (WebKit) |
+| ------------------- | --------- | ---------- | ---- | --------------- |
+| `/`                 | 🤖        | 🤖         | —    | 🤖              |
+| `/events`           | 🤖        | 🤖         | —    | 🤖              |
+| `/events/$eventId`  | 🤖        | 🤖         | —    | 🤖              |
+| `/contact`          | 🤖        | 🤖         | —    | 🤖              |
+| `/privacy-policy`   | 🤖        | 🤖         | —    | 🤖              |
+| `/terms-of-service` | 🤖        | 🤖         | —    | 🤖              |
+| `/signup`           | 🤖        | 🤖         | —    | 🤖              |
+| `/create-account`   | 🤖        | 🤖         | —    | 🤖              |
+| `/login`            | 🤖 (BS-6) | 🤖         | —    | 🤖 (BS-6)       |
+| `/forgot-password`  | 🤖        | 🤖         | —    | 🤖              |
+| `/reset-password`   | 🤖        | 🤖         | —    | 🤖              |
+| `/verify-2fa`       | 🤖        | 🤖         | —    | 🤖              |
+| `/profile`          | 🤖        | 🤖         | —    | 🤖              |
+| `/create-event`     | 🤖        | 🤖 (BS-14) | —    | 🤖              |
+| `/my-events`        | 🤖        | 🤖         | —    | 🤖              |
+| `/my-tickets`       | 🤖        | 🤖         | —    | 🤖              |
+| `/admin`            | 🤖        | 🤖         | —    | 🤖              |
+| 404 page            | 🤖 (BS-8) | 🤖         | —    | 🤖 (BS-8)       |
+
+The protected routes (`/profile` … `/admin`) are checked both logged out (the
+redirect to `/login`) and, through the flows in section 10, logged in.
 
 ---
 
@@ -492,7 +502,140 @@ installed in Firefox and/or Chrome/Chromium!`, and the browser keeps showing
   `beforeLoad` redirects to `/forgot-password` when it is missing, so the user
   can request a new link. Links from the reset e-mail are unchanged.
 
-_Add new entries below as `BS-10`, `BS-11`, … using the template in section 9._
+### BS-10: Auth requests answered with `429 Too Many Requests`
+
+- **Status:** By design
+- **Browsers:** all — the limit is enforced by the backend. Found by the e2e
+  suite (2026-09-18) when three engines signed up in parallel.
+- **Route / feature:** `/login`, `/signup`, `/create-account`,
+  `/forgot-password`, `/reset-password`, password / e-mail change on `/profile`.
+- **Steps:** 1. Submit the login form four times within 10 seconds from the
+  same machine.
+- **Symptom:** the form shows "Too many requests"; the console shows the
+  browser's own network line
+
+  ```text
+  Failed to load resource: the server responded with a status of 429 ()
+  ```
+
+- **Root cause:** better-auth rate-limits sign-in, sign-up and password-change
+  routes to 3 requests per 10 seconds per client address, and the
+  password-reset routes to 3 per minute. This is protection against
+  credential guessing, and the correct response for it is `429`.
+- **Decision:** as in BS-6 the line is a network log. The form reports the
+  refusal in its alert instead of swallowing it. The e2e suite waits out the
+  window and submits again when it hits the limit, and allows exactly this
+  line.
+
+### BS-11: Firefox logged a caught loader error when leaving a page mid-load
+
+- **Status:** Fixed on branch `test/browser-compatibility`
+  (`apps/frontend/src/client.tsx`).
+- **Browsers:** Firefox only (confirmed 2026-09-18, Playwright Firefox).
+  Chrome and Safari leave the aborted requests pending instead of rejecting
+  them.
+- **Route / feature:** any route whose loader is still running when the user
+  navigates away — easiest on `/`, which loads featured events and stats after
+  the HTML arrives.
+- **Steps:** 1. Open `/`. 2. Before the event cards appear, type `/events` in
+  the address bar and press Enter.
+- **Symptom:**
+
+  ```text
+  TypeError: NetworkError when attempting to fetch resource.
+  ```
+
+  printed as `console.error` on the page being left.
+
+- **Root cause:** Firefox aborts a page's in-flight requests as soon as a full
+  navigation starts. The route loader's `fetch` rejects, the route's error
+  boundary catches it, and React 19 reports every _caught_ error to the console
+  through its default `onCaughtError` handler.
+- **Fix:** the frontend now ships its own client entry
+  (`apps/frontend/src/client.tsx`) that sets a flag on `beforeunload` and
+  passes an `onCaughtError` to `hydrateRoot` which stays silent once the page
+  is being left. Errors caught while the page is in use are still reported.
+  The e2e test "leaving a page while it is still loading logs nothing" covers
+  this in all three engines.
+
+### BS-12: Firefox reports images and fonts interrupted by a navigation
+
+- **Status:** By design
+- **Browsers:** Firefox only (confirmed 2026-09-18, Playwright Firefox).
+- **Route / feature:** any navigation away from a page that is still
+  downloading images or the Inter Variable font.
+- **Steps:** as BS-11.
+- **Symptom:**
+
+  ```text
+  [JavaScript Error: "Image corrupt or truncated." {file: "https://localhost:3000/assets/halfway_image-….png"}]
+  downloadable font: download failed (font-family: "Inter Variable" …): status=2152398850
+  ```
+
+- **Root cause:** the same abort as BS-11, but reported by Firefox's image and
+  font decoders rather than by JavaScript. `2152398850` is
+  `NS_BINDING_ABORTED` — "the download was cancelled", which is what a
+  navigation does. The files are valid; both load without complaint when the
+  page is left alone.
+- **Decision:** browser-generated, not emitted by the application, and only
+  visible when the user leaves a page before it finishes loading. The e2e
+  interrupted-navigation test allows these two lines and nothing else.
+
+### BS-13: Server-side calls to the backend lacked the visitor's address
+
+- **Status:** Fixed on branch `test/browser-compatibility`
+  (`apps/frontend/src/lib/forwarded-headers.ts`).
+- **Browsers:** all — a backend/frontend bug that browser testing exposed
+  (2026-09-18, four Firefox workers in parallel).
+- **Route / feature:** every page. Most visible on `/login`: after a correct
+  password the user stayed on `/login`, and `/profile` opened as a visitor.
+- **Steps:** 1. Have a handful of browsers open pages at the same time (the
+  e2e suite with four workers is enough). 2. Log in with a valid password.
+- **Symptom:** no console output at all — the login silently did not stick.
+  The frontend container logged
+  `Could not read the authentication session: Too many requests.`
+- **Root cause:** the frontend server renders pages and, to do so, asks the
+  backend for the visitor's session (`/api/auth/get-session`) on the visitor's
+  behalf. Those calls carried the visitor's cookie but not the visitor's
+  address (`X-Forwarded-For`, which Caddy sets on the browser's own requests).
+  The backend rate-limits per address; with no address, every visitor's
+  session lookups were counted in one shared bucket (100 per 10 seconds).
+  Once it filled, the lookup was answered `429`, the frontend treated that as
+  "no session", and the protected route redirected to `/login`.
+- **Fix:** `getForwardedRequestHeaders()` now forwards both the cookie and
+  `X-Forwarded-For` for the session lookup and for server-side tRPC calls, so
+  each visitor is limited on their own address, exactly as their browser
+  requests are. The e2e runner is capped at two workers because all of them
+  do share one address.
+
+### BS-14: Firefox "scroll-linked positioning effect" note on `/create-event`
+
+- **Status:** Reduced on branch `test/browser-compatibility`
+  (`EventDatePicker.tsx`); the remainder is by design.
+- **Browsers:** Firefox only (confirmed 2026-09-18, Playwright Firefox).
+- **Route / feature:** `/create-event` — category combobox and date picker.
+- **Steps:** 1. Open the category list or the calendar. 2. Scroll the page
+  while it is open.
+- **Symptom:** once per page load,
+
+  ```text
+  This site appears to use a scroll-linked positioning effect. This may not work well with asynchronous panning; see https://firefox-source-docs.mozilla.org/performance/scroll-linked_effects.html …
+  ```
+
+- **Root cause:** both popups are anchored to their field by Floating UI (via
+  Base UI), which repositions the popup during the `scroll` event so it stays
+  attached to the field. Firefox flags any element whose position is changed
+  from a scroll handler, because that pattern can lag behind touchpad
+  scrolling. It is a performance hint, not an error, and every anchored popup
+  library triggers it.
+- **Fix / decision:** the calendar used to stay open after a date was picked,
+  so filling in the next fields (which scrolls the page) always raised the
+  note. It now closes on selection, and the note only appears if the user
+  deliberately scrolls with a popup open. Playwright scrolls options and days
+  into view before clicking them, so the create-event test allows this one
+  line in Firefox.
+
+_Add new entries below as `BS-15`, `BS-16`, … using the template in section 9._
 
 ---
 
@@ -521,20 +664,25 @@ and is what makes the issue searchable.
 
 ## 10. Automation
 
-Status: **console checks automated** with
+Status: **console checks and core flows automated** with
 [Playwright](https://playwright.dev/), a test runner that launches real
 Chromium, Firefox and WebKit (Safari's engine) builds, drives them through the
 site and reads their console. It repeats the mechanical part of sections 6 and
-7 in about a minute so the manual matrix cannot silently go stale.
+7 in about two minutes per engine so the manual matrix cannot silently go
+stale. Last full run: 2026-09-18, 72 tests (24 per engine), all passing.
 
 ### What is covered
 
-| File                   | What it checks                                                                                                                                                                                                                                           |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `e2e/console.spec.ts`  | Every route of section 7, including `/events/$eventId` (first event listed) and the 404 page. Each route is opened, then reloaded; the test fails on any `console.warn`, `console.error` or uncaught exception. Protected routes are visited logged out. |
-| `e2e/login.spec.ts`    | Wrong password on `/login`: the error alert appears and nothing except the BS-6 network line reaches the console (guards against BS-7).                                                                                                                  |
-| `e2e/console.ts`       | The shared fixture: records console output per test, and `expectCleanConsole(recorder, allow)`. Every pattern passed to `allow` must point at a `BS-n` entry in section 8.                                                                               |
-| `playwright.config.ts` | One _project_ (Playwright's word for "same tests, different browser") per engine: `chromium`, `firefox`, `webkit`. `ignoreHTTPSErrors` is on so the run does not depend on the host trust store.                                                         |
+| File                       | What it checks                                                                                                                                                                                                                                                                                                       |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `e2e/console.spec.ts`      | Every route of section 7, including `/events/$eventId` (first event listed) and the 404 page. Each route is opened, then reloaded; the test fails on any `console.warn`, `console.error` or uncaught exception. Protected routes are visited logged out. Plus leaving `/` before it finished loading (BS-11, BS-12). |
+| `e2e/login.spec.ts`        | Wrong password on `/login`: the error alert appears and nothing except the BS-6 network line reaches the console (guards against BS-7).                                                                                                                                                                              |
+| `e2e/auth.spec.ts`         | Signup with a fresh account → session survives a reload → logout → login with the same credentials. Forgot-password form accepts a request (the reset link is only written to the backend log, so the e-mail side is manual).                                                                                        |
+| `e2e/create-event.spec.ts` | Logged in, creates an event with an uploaded image, a category from the combobox, a date from the calendar, time and capacity; the event page shows it, also after a reload (BS-14).                                                                                                                                 |
+| `e2e/realtime.spec.ts`     | Two users in **two different engines** (the engine under test plus Chromium or Firefox): both show as online, a chat message sent by one appears for the other without a reload and survives a client-side navigation. Both consoles must stay clean.                                                                |
+| `e2e/accounts.ts`          | Helpers: `uniqueAccount`, `signUp`, `logIn`, `logOut`. Every run creates its own accounts, so no seed data is needed and the suite can run repeatedly. Waits out the auth rate limit (BS-10) instead of failing on it.                                                                                               |
+| `e2e/console.ts`           | The shared fixture: records console output per page, and `expectCleanConsole(recorder, allow)`. Every pattern passed to `allow` must point at a `BS-n` entry in section 8.                                                                                                                                           |
+| `playwright.config.ts`     | One _project_ (Playwright's word for "same tests, different browser") per engine: `chromium`, `firefox`, `webkit`. `ignoreHTTPSErrors` is on so the run does not depend on the host trust store. Two workers, because they share one address (BS-13).                                                                |
 
 ### Running it
 
@@ -551,7 +699,14 @@ vp run test:e2e             # all three engines
 
 On Linux the browsers may need system libraries:
 `./node_modules/.bin/playwright install-deps` (requires `sudo`). If that is not
-possible, run `--project chromium` only.
+possible, run `--project chromium --project firefox`; WebKit needs the
+libraries. On the school PCs, keep the browser downloads out of the home
+directory:
+
+```bash
+PLAYWRIGHT_BROWSERS_PATH=/goinfre/$USER/ms-playwright vp run test:e2e:install
+PLAYWRIGHT_BROWSERS_PATH=/goinfre/$USER/ms-playwright ./node_modules/.bin/playwright test --project chromium --project firefox
+```
 
 The installed Google Chrome and Microsoft Edge can be used as extra projects
 when they exist on the machine:
@@ -570,15 +725,15 @@ Point the suite at another deployment with `E2E_BASE_URL=https://host:port`.
 - Safari and Edge as products. WebKit is Safari's engine, not Safari; Edge only
   runs when installed (`E2E_CHANNELS=msedge`).
 - Anything outside the page: certificate trust, the Firefox restart (BS-5),
-  rendering differences.
+  rendering differences, native pickers (file dialog, `<input type="time">`),
+  2FA with a real authenticator app.
 
 ### Still to do
 
-- Key flows: signup → login → logout; create event → register → shows in
-  my-tickets; forgot-password using Mailpit's API
-  (`GET http://localhost:8025/api/v1/messages`) to fetch the reset link.
-- Two-browser real-time test: Chromium and Firefox in the same test, user A and
-  user B, assert presence and a chat message cross over.
+- Register for an event → shows in `/my-tickets`; edit and delete in
+  `/my-events`; the admin tables.
+- Forgot-password end to end once the reset link is delivered somewhere a test
+  can read it (Mailpit's API, `GET http://localhost:8025/api/v1/messages`).
 - A CI job in `.github/workflows/ci.yml` (Playwright installs the three engines
   on `ubuntu-latest`; Edge via `playwright install msedge`).
 
