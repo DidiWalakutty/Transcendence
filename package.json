@@ -5,6 +5,7 @@
     "apps/*",
     "packages/*"
   ],
+  "type": "module",
   "scripts": {
     "dev": "vp run -w repo:dev",
     "dev:frontend": "vp run -w repo:dev:frontend",

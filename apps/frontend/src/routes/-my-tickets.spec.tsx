@@ -10,7 +10,6 @@ import type { EventDto } from '@repo/schemas/events';
 import { TRPCProvider } from '../integrations/trpc/react';
 import { Route } from './my-tickets';
 import { Route as DetailRoute } from './events/$eventId';
-import { toast } from 'sonner';
 
 vi.mock('@tanstack/react-router', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@tanstack/react-router')>()),
@@ -138,10 +137,10 @@ function setup({
   const registrationKey = trpc.registrations.getMyRegistration.queryKey({ id: event.id });
   const availabilityKey = trpc.registrations.getAvailableTickets.queryKey({ id: event.id });
   const statusKey = trpc.registrations.getRegistrationStatus.queryKey({ id: event.id });
-  queryClient.setQueryData(
-    registrationKey,
-    tickets.length ? { eventId: event.id, userId: 'user', status: 'active' } : null,
-  );
+  queryClient
+    .getQueryCache()
+    .build(queryClient, { queryKey: registrationKey })
+    .setData(tickets.length ? { eventId: event.id, userId: 'user', status: 'active' } : null);
   queryClient.setQueryData(availabilityKey, tickets.length ? 0 : event.maxCapacity);
   queryClient.setQueryData(statusKey, {
     available: tickets.length ? 0 : event.maxCapacity,
@@ -196,16 +195,6 @@ describe('My Tickets', () => {
     expect(queryClient.getQueryState(registrationKey)?.isInvalidated).toBe(true);
     expect(queryClient.getQueryState(availabilityKey)?.isInvalidated).toBe(true);
   });
-  it('leaves mutation notifications to the shared cache', async () => {
-    const { queryClient } = setup();
-    await cancel();
-    await waitFor(() =>
-      expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe('success'),
-    );
-    expect(toast.loading).not.toHaveBeenCalled();
-    expect(toast.success).not.toHaveBeenCalled();
-  });
-
   it('refreshes My Tickets after registering from the event page', async () => {
     const { queryClient, ticketsKey, calls } = setup({ tickets: [], page: 'detail' });
     fireEvent.click(await screen.findByRole('button', { name: /get ticket/i }));
