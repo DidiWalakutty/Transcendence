@@ -87,17 +87,18 @@ function EventsPage() {
 
   return (
     <div className="relative min-h-[calc(100vh-180px)] bg-white">
-      {/* Background */}
-      <div className="absolute inset-0 flex">
+      {/* Background: the orange column only exists beside the list; below `md`
+          the header carries its own orange block instead. */}
+      <div className="absolute inset-0 hidden md:flex">
         <div className="w-[30%] bg-primary" />
         <div className="flex-1 bg-white" />
       </div>
 
       {/* Content */}
-      <div className="relative px-4 py-12 md:px-6">
+      <div className="relative px-4 py-6 md:px-6 md:py-12">
         {/* Header */}
-        <div className="grid max-w-[1400px] grid-cols-[30%_1fr] gap-6">
-          <div className="relative left-4 2xl:left-[220px]">
+        <div className="grid max-w-[1400px] gap-6 md:grid-cols-[30%_1fr]">
+          <div className="relative rounded-2xl bg-primary p-6 md:left-4 md:rounded-none md:bg-transparent md:p-0 2xl:left-[220px]">
             <h1 className="text-4xl font-bold text-surface-footer md:text-5xl">
               {m.events_page_title()}
             </h1>
@@ -119,7 +120,7 @@ function EventsPage() {
         </div>
 
         {/* Events + Filters */}
-        <div className="mx-auto mt-12 flex max-w-[1600px] gap-8">
+        <div className="mx-auto mt-8 flex max-w-[1600px] flex-col gap-8 md:mt-12 md:flex-row">
           {/* Event List */}
           <div className="flex-1">
             {filteredEvents.length === 0 ? (
@@ -142,10 +143,10 @@ function EventsPage() {
             )}
           </div>
 
-          {/* Sidebar */}
-          <div className="relative w-1/4">
+          {/* Sidebar: above the list below `md`, beside it from there on */}
+          <div className="relative order-first flex flex-col gap-4 md:order-none md:w-1/4 md:gap-0">
             {/* Sorting */}
-            <div className="absolute -top-16 left-0">
+            <div className="md:absolute md:-top-16 md:left-0">
               <EventSort
                 selectedSort={selectedSort}
                 onSortChange={(sort: 'upcoming' | 'popular' | 'newest') =>
@@ -166,7 +167,7 @@ function EventsPage() {
 
         {/* Pagination */}
 
-        <div className="mt-12 flex justify-center gap-3">
+        <div className="mt-12 flex flex-wrap justify-center gap-3">
           <Button
             onClick={() => updateSearch({ page: Math.max(currentPage - 1, 1) })}
             disabled={currentPage === 1}

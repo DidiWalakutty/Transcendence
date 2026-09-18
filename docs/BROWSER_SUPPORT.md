@@ -245,10 +245,10 @@ Rows are grouped by area; routes refer to `apps/frontend/src/routes/`.
 | Language switcher: en / es / nl, whole page changes             | —      | —       | —    | —      |
 | Language persists after reload                                  | —      | —       | —    | —      |
 | Dark / light theme toggle, no flash on reload                   | —      | —       | —    | —      |
-| Layout at 375 px wide (phone)                                   | —      | —       | —    | —      |
+| Layout at 375 px wide (phone) (BS-15)                           | —      | —       | —    | —      |
 | Layout at 768 px wide (tablet)                                  | —      | —       | —    | —      |
 | Layout at 1280 px wide (desktop)                                | —      | —       | —    | —      |
-| Mobile navigation (sheet / drawer) opens and closes             | —      | —       | —    | —      |
+| Mobile navigation (sheet / drawer) opens and closes (BS-15)     | —      | —       | —    | —      |
 | Keyboard only: Tab order, Enter activates, Esc closes dialogs   | —      | —       | —    | —      |
 | Dialog open: background does not scroll, focus stays inside     | —      | —       | —    | —      |
 | Fonts (Inter Variable) load, no layout jump                     | —      | —       | —    | —      |
@@ -635,7 +635,38 @@ installed in Firefox and/or Chrome/Chromium!`, and the browser keeps showing
   into view before clicking them, so the create-event test allows this one
   line in Firefox.
 
-_Add new entries below as `BS-15`, `BS-16`, … using the template in section 9._
+### BS-15: Home and `/events` did not fit a 375 px wide screen
+
+- **Status:** Fixed on branch `test/browser-compatibility` (`Navbar.tsx`,
+  `Hero.tsx`, `routes/events/index.tsx`, `EventListItem.tsx`,
+  `EventFilters.tsx`).
+- **Browsers:** all (confirmed 2026-09-18 in Chromium, Firefox and WebKit at
+  375 × 667). The layout was the same in every browser, so this was a
+  responsive-layout problem (subject "Technical Requirements — Frontend"),
+  not a browser difference.
+- **Route / feature:** `/` — navbar and hero; `/events` — header, list and
+  filters.
+- **Steps:** 1. Open `/`. 2. Make the window 375 px wide (or use the device
+  toolbar in DevTools). 3. Open `/events`.
+- **Symptom:** the navbar links wrapped onto several lines and pushed the
+  icons out of the bar; the hero text started 80 px from the left and its two
+  buttons were cut off by the section's fixed height. `/events` was 817 px
+  wide: the title was squeezed into a 30 % column and each event card kept
+  its 160 px image beside the text, so the page scrolled sideways.
+- **Root cause:** the components only had desktop classes. Tailwind is
+  mobile-first, so a class without a prefix applies to every width; the
+  desktop values needed the `md:` prefix and a narrower default underneath.
+- **Fix:** below `md` (768 px) the navbar hides the inline links and shows a
+  menu button that opens a drawer (`Sheet`) with the same links; the drawer
+  closes when a link is followed. The hero uses smaller margins, padding and
+  title size, and its buttons wrap. On `/events` the orange column is gone,
+  the header sits in its own orange block, the sort and filters stack above
+  the list, and each card puts the image above the text with the date in a
+  small orange tile. Nothing changes from `md` upwards. No route wider than
+  its viewport remains at 375 px (all routes measured with
+  `document.documentElement.scrollWidth`).
+
+_Add new entries below as `BS-16`, `BS-17`, … using the template in section 9._
 
 ---
 
