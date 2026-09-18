@@ -396,7 +396,60 @@ installed in Firefox and/or Chrome/Chromium!`, and the browser keeps showing
 - **Root cause:** Firefox reads its trust store at startup.
 - **Workaround:** fully quit Firefox (all windows) and reopen it.
 
-_Add new entries below as `BS-6`, `BS-7`, … using the template in section 9._
+### BS-6: Chrome logs the `401` of a failed login as a console error
+
+- **Status:** By design
+- **Browsers:** Chrome (confirmed, 2026-09-18). Edge shares the same DevTools
+  and behaves identically; Firefox shows the failed request in the _Network_
+  tab and, depending on settings, as an XHR line in the console.
+- **Route / feature:** `/login`, "Wrong password shows an error message"
+- **Steps:** 1. Open `/login`. 2. Submit a valid e-mail with a wrong password.
+- **Symptom:**
+
+  ```text
+  POST https://localhost:3000/api/auth/sign-in/email 401 (Unauthorized)
+  ```
+
+  followed by `Failed to load resource: the server responded with a status of
+401 ()` when the request is expanded.
+
+- **Root cause:** the browser itself logs every HTTP response with a 4xx/5xx
+  status in the console. It is not emitted by application code and cannot be
+  suppressed from JavaScript. Returning `401` for bad credentials is the
+  correct API behaviour (better-auth `signIn.email`).
+- **Decision:** this line is a network log, not an application warning or
+  error. The console filter _Hide network_ (funnel icon → "Hide network
+  requests" in Chrome) removes it; with that filter on, the page must be clean.
+
+### BS-7: Rejected form mutations surfaced as `Uncaught (in promise)`
+
+- **Status:** Fixed on branch `test/browser-compatibility`. To be re-verified in
+  Chrome on the school PC.
+- **Browsers:** Chrome (confirmed, 2026-09-18, school PC). Same in every
+  browser — it is an application bug, not a browser difference.
+- **Route / feature:** `/login`, `/create-account`, `/forgot-password`,
+  `/reset-password`, `/verify-2fa`, `/profile` (save) and the "Create event"
+  form.
+- **Steps:** 1. Open `/login`. 2. Submit a wrong password.
+- **Symptom:** the error alert rendered correctly, but the console also showed
+
+  ```text
+  Uncaught (in promise) Error: Invalid email or password
+      at Object.mutationFn (login-DAVXvgRC.js:1:2288)
+  ```
+
+- **Root cause:** the form `onSubmit` handlers did `await x.mutateAsync(...)`
+  without catching the rejection. TanStack Query's `mutateAsync` rejects on
+  error (unlike `mutate`), and the form library discards the returned promise,
+  so the rejection became an unhandled one. The error itself was already shown
+  twice — through the mutation's `error` state (the red alert) and the global
+  toast in `integrations/tanstack-query/root-provider.tsx`.
+- **Fix:** every `mutateAsync` call inside a form submit handler now ends with
+  `.catch(() => undefined)`; the alert and the toast are unchanged. Verified in
+  headless Chromium on `/login`: only the BS-6 network line remains and the
+  alert still reads "Invalid email or password".
+
+_Add new entries below as `BS-8`, `BS-9`, … using the template in section 9._
 
 ---
 

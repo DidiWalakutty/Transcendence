@@ -52,7 +52,9 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       onChange: signInSchema,
     },
     onSubmit: async ({ value }) => {
-      await signIn.mutateAsync(value);
+      // A rejected mutation is shown through the mutation's error state and the
+      // global toast; it must not escape as an uncaught promise in the console.
+      await signIn.mutateAsync(value).catch(() => undefined);
     },
   });
 

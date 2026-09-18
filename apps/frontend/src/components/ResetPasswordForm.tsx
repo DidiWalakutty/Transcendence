@@ -46,7 +46,9 @@ export function ResetPasswordForm({
       onChange: resetPasswordSchema,
     },
     onSubmit: async ({ value }) => {
-      await resetPassword.mutateAsync({ newPassword: value.newPassword });
+      // A rejected mutation is shown through the mutation's error state and the
+      // global toast; it must not escape as an uncaught promise in the console.
+      await resetPassword.mutateAsync({ newPassword: value.newPassword }).catch(() => undefined);
     },
   });
 

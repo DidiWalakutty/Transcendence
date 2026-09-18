@@ -38,7 +38,9 @@ export function ForgotPassword({ className, ...props }: React.ComponentProps<'di
       onChange: forgotPasswordSchema,
     },
     onSubmit: async ({ value }) => {
-      await requestReset.mutateAsync(value);
+      // A rejected mutation is shown through the mutation's error state and the
+      // global toast; it must not escape as an uncaught promise in the console.
+      await requestReset.mutateAsync(value).catch(() => undefined);
     },
   });
 
