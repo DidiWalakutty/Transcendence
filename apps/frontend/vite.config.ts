@@ -7,9 +7,6 @@ import { tanstackStart } from '@tanstack/react-start/plugin/vite';
 import viteReact from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { nitro } from 'nitro/vite';
-import { VitePWA } from 'vite-plugin-pwa';
-import type { ManifestOptions } from 'vite-plugin-pwa';
-import manifest from './public/manifest.json' with { type: 'json' };
 
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
@@ -21,21 +18,6 @@ const config = defineConfig({
       strategy: ['url', 'baseLocale'],
     }),
     nitro(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      outDir: '.output/public',
-      includeAssets: ['favicon.ico', 'robots.txt'],
-      manifestFilename: 'manifest.json',
-      manifest: manifest as Partial<ManifestOptions>,
-      workbox: {
-        navigateFallbackDenylist: [/^\/api\//],
-      },
-      devOptions: {
-        enabled: true,
-        suppressWarnings: true,
-        type: 'module',
-      },
-    }),
     tailwindcss(),
     tanstackStart(),
     viteReact(),

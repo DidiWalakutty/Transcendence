@@ -62,8 +62,8 @@ Where to read the version: `chrome://version`, `about:support` (Firefox),
 ## 3. Test environment
 
 - **Always test the production build**, never `vp run dev`. The dev build ships
-  devtools panels and verbose logging that never reach the evaluator, and it
-  registers a different service worker. Start the stack with:
+  devtools panels and verbose logging that never reach the evaluator. Start the
+  stack with:
 
   ```bash
   vp run deploy
@@ -71,9 +71,9 @@ Where to read the version: `chrome://version`, `about:support` (Firefox),
 
   and open `https://localhost:3000`.
 
-- **Trust the certificate first** (section 4). Clicking through the browser's
-  certificate warning is _not_ equivalent — it causes
-  [BS-1](#bs-1-service-worker-registration-fails-when-the-certificate-is-not-trusted).
+- **Trust the certificate first** (section 4) so the browser does not show its
+  warning page. Clicking through the warning is acceptable for a quick check
+  since BS-1 was fixed, but it is not how the evaluator should see the site.
 
 - **Seed accounts** — run `vp run db:seed` and use (fill in once the seed data
   is fixed):
@@ -238,22 +238,21 @@ Rows are grouped by area; routes refer to `apps/frontend/src/routes/`.
 
 ### Cross-cutting (check on every page group above)
 
-| Feature                                                           | Chrome | Firefox | Edge | Safari |
-| ----------------------------------------------------------------- | ------ | ------- | ---- | ------ |
-| Language switcher: en / es / nl, whole page changes               | —      | —       | —    | —      |
-| Language persists after reload                                    | —      | —       | —    | —      |
-| Dark / light theme toggle, no flash on reload                     | —      | —       | —    | —      |
-| Layout at 375 px wide (phone)                                     | —      | —       | —    | —      |
-| Layout at 768 px wide (tablet)                                    | —      | —       | —    | —      |
-| Layout at 1280 px wide (desktop)                                  | —      | —       | —    | —      |
-| Mobile navigation (sheet / drawer) opens and closes               | —      | —       | —    | —      |
-| Keyboard only: Tab order, Enter activates, Esc closes dialogs     | —      | —       | —    | —      |
-| Dialog open: background does not scroll, focus stays inside       | —      | —       | —    | —      |
-| Fonts (Inter Variable) load, no layout jump                       | —      | —       | —    | —      |
-| Custom scrollbars / scroll areas usable                           | —      | —       | —    | —      |
-| PWA: service worker registered (DevTools → Application / Storage) | —      | —       | —    | —      |
-| PWA: install prompt offered                                       | —      | —       | —    | n/a    |
-| Certificate accepted with no warning page                         | —      | —       | —    | —      |
+| Feature                                                         | Chrome | Firefox | Edge | Safari |
+| --------------------------------------------------------------- | ------ | ------- | ---- | ------ |
+| Language switcher: en / es / nl, whole page changes             | —      | —       | —    | —      |
+| Language persists after reload                                  | —      | —       | —    | —      |
+| Dark / light theme toggle, no flash on reload                   | —      | —       | —    | —      |
+| Layout at 375 px wide (phone)                                   | —      | —       | —    | —      |
+| Layout at 768 px wide (tablet)                                  | —      | —       | —    | —      |
+| Layout at 1280 px wide (desktop)                                | —      | —       | —    | —      |
+| Mobile navigation (sheet / drawer) opens and closes             | —      | —       | —    | —      |
+| Keyboard only: Tab order, Enter activates, Esc closes dialogs   | —      | —       | —    | —      |
+| Dialog open: background does not scroll, focus stays inside     | —      | —       | —    | —      |
+| Fonts (Inter Variable) load, no layout jump                     | —      | —       | —    | —      |
+| Custom scrollbars / scroll areas usable                         | —      | —       | —    | —      |
+| No service worker registered (DevTools → Application / Storage) | —      | —       | —    | —      |
+| Certificate accepted with no warning page                       | —      | —       | —    | —      |
 
 ---
 
@@ -292,15 +291,13 @@ Numbered `BS-n`. Status is one of **Open**, **Fixed** (link the commit/PR), or
 
 ### BS-1: Service worker registration fails when the certificate is not trusted
 
-- **Status:** Fixed in `apps/frontend/src/routes/__root.tsx` on branch
-  `test/browser-compatibility` — to be re-verified in Chrome on the school PC
-  (the console must stay empty even when the certificate warning was clicked
-  through).
+- **Status:** Fixed — the PWA service worker was removed on branch
+  `test/browser-compatibility`. To be re-verified in Chrome on the school PC.
 - **Browsers:** Chrome (confirmed, 2026-09-18, school PC). Expected in Edge and
   Firefox as well — all browsers refuse to install a service worker from an
   origin whose certificate has errors, even after the user clicks through the
   warning page.
-- **Symptom:** on every page load, the console shows
+- **Symptom:** on every page load, the console showed
 
   ```
   Uncaught (in promise) SecurityError: Failed to register a ServiceWorker for
@@ -308,32 +305,37 @@ Numbered `BS-n`. Status is one of **Open**, **Fixed** (link the commit/PR), or
   An SSL certificate error occurred when fetching the script.
   ```
 
-- **Root cause (two parts):**
+  After handling the rejected promise with `.catch(() => {})` the _Uncaught_
+  line went away, but Chrome still logged
+  `An SSL certificate error occurred when fetching the script.` on its own.
+  That line comes from the browser's service-worker machinery, not from our
+  JavaScript, so it cannot be silenced from code.
+
+- **Root cause:**
   1. The mkcert root CA is not in the browser's trust store on that machine, so
      the browser treats `https://localhost:3000` as having a certificate error.
      Normal page loads still work once the warning page is clicked through, but
      service workers are held to a stricter rule: the browser never installs
      one from an origin with certificate errors.
-  2. `PwaRegistration` in `apps/frontend/src/routes/__root.tsx` called
-     `void navigator.serviceWorker.register(...)`. The `void` discarded the
-     returned promise, so the rejection had no handler and the browser reported
-     it as _Uncaught (in promise)_. The same unhandled error would appear in any
-     other situation where registration fails (e.g. a Firefox private window,
-     which blocks service workers).
+  2. The frontend registered a service worker on every page
+     (`PwaRegistration` in `apps/frontend/src/routes/__root.tsx`, generated by
+     the `vite-plugin-pwa` plugin in `apps/frontend/vite.config.ts`). The PWA
+     module is not one we claim, nothing else in the app depended on the
+     worker, and it only cached static assets — so it was pure risk for the
+     mandatory "no errors in the console" rule.
 - **Why it matters:** an evaluator who clicks through the certificate warning
-  hits this error on every page, which fails the mandatory "no errors in the
-  console" rule before any feature is looked at.
-- **Workaround for testing:** trust the certificate (section 4) and restart the
-  browser. The error disappears because registration succeeds.
-- **Fix:** the PWA is a progressive enhancement, so a failed registration is
-  now swallowed with `.catch(() => {})` (and a comment saying why) instead of
-  surfacing as an error. The planned automated smoke test (section 10) should
-  separately assert that the worker _is_ registered in Chromium, so a truly
-  broken `sw.js` is still caught. Certificate trust is documented for
-  evaluators in the README _Instructions_ and in section 4 above; note that
-  with the fix the console is clean **whether or not** the certificate is
-  trusted — trust only changes whether the PWA installs and whether the
-  browser shows its warning page.
+  hits this error on every page, which fails the mandatory rule before any
+  feature is looked at.
+- **Fix:** the service worker registration, the `vite-plugin-pwa` plugin, the
+  dependency and `public/manifest.json` were removed. No script is fetched from
+  the origin outside the normal page bundle, so certificate trust now only
+  decides whether the browser shows its warning page.
+- **After the fix, on a browser that had the old worker installed:** the
+  browser keeps a previously registered worker until it is removed. On a
+  machine that ran the site before this fix with a trusted certificate, open
+  DevTools → Application → Service Workers → _Unregister_ (or _Clear site
+  data_) once. Fresh browsers and the school PC (where registration always
+  failed) need nothing.
 
 ### BS-2: Tailwind v4 minimum browser versions
 
@@ -355,7 +357,7 @@ Numbered `BS-n`. Status is one of **Open**, **Fixed** (link the commit/PR), or
   `Error: mkcert is required` or prints
   `Warning: "certutil" is not available, so the CA can't be automatically
 installed in Firefox and/or Chrome/Chromium!`, and the browser keeps showing
-  the certificate warning page. Before BS-1 was fixed this also produced the
+  the certificate warning page. Before BS-1 was fixed this also produced a
   console error on every page.
 - **Root cause:** the repository provides no toolchain for these two programs.
   `mkcert` generates the certificate; `certutil` (from `libnss3-tools`) is what
@@ -367,7 +369,7 @@ installed in Firefox and/or Chrome/Chromium!`, and the browser keeps showing
   `libnss3-tools` system package; if it is not already installed and there is
   no sudo, the trust stores cannot be written on that machine. In that case
   click through the warning page once per session — with BS-1 fixed the
-  console stays clean, and only the PWA install is unavailable.
+  console stays clean.
 - **With root / own machine:** `apt install libnss3-tools mkcert` (Debian and
   Ubuntu) or `brew install mkcert nss` (macOS), then run the script.
 
@@ -438,8 +440,8 @@ Planned layout:
   not depend on the certificate trust store.
 - **Console smoke test**: visit every route in section 7, wait for the network
   to go idle, and fail on any `console.warn`, `console.error` or uncaught page
-  error. Also assert that the service worker is registered in Chromium (see
-  BS-1).
+  error. Also assert that no service worker is registered (see BS-1) so the
+  plugin is not reintroduced by accident.
 - **Key flows**: signup → login → logout; create event → register → shows in
   my-tickets; forgot-password using Mailpit's API
   (`GET http://localhost:8025/api/v1/messages`) to fetch the reset link.
