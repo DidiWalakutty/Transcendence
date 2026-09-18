@@ -80,7 +80,21 @@ services:
       - '${HTTP_PORT:-3080}:${HTTP_PORT:-3080}'
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
-      - ./caddy/certs:/certs
+      - ./caddy/certs:/certs:ro
+      - caddy_data:/data
+    # Use the local certificate when one is present (mkcert, see
+    # scripts/generate-certs.sh), otherwise let Caddy issue its own so a fresh
+    # clone starts without any certificate in the repository.
+    command:
+      - sh
+      - -c
+      - |
+        if [ -f /certs/local.pem ] && [ -f /certs/local-key.pem ]; then
+          echo 'tls /certs/local.pem /certs/local-key.pem' > /etc/caddy/tls.caddy
+        else
+          echo 'tls internal' > /etc/caddy/tls.caddy
+        fi
+        exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
     depends_on:
       - frontend
       - backend
@@ -95,3 +109,4 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  caddy_data:

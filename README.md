@@ -178,8 +178,6 @@ Full setup steps: [Development](./docs/DEVELOPMENT.md).
 
 Local development already works out of the box using the committed defaults in `apps/backend/.env.development` (see [Environment](./docs/ENVIRONMENT.md) for the full variable list — `DATABASE_URL`, `PORT`, `REDIS_URL`, cache/throttle tuning). For local overrides or production secrets, create an ignored `.env` file at the repo root or in `apps/backend`.
 
-> **Known gap:** the 42 subject requires a committed `.env.example` file; this repository does not have one yet. Adding it is tracked as a task on the [project board](https://github.com/users/milandekruijf/projects/3).
-
 ### Single-Command Application Launch
 
 Build and start the frontend, backend, PostgreSQL, and Redis services with one command:
@@ -193,8 +191,7 @@ For detached local deployment, use `vp run deploy:detached`.
 
 Once the stack has started, open the application at `https://localhost:3000`.
 
-Caddy terminates TLS with the certificate in `caddy/certs` and is the only service
-published on the host: it forwards `/api/*` to the backend and everything else to the
+Caddy terminates TLS and is the only service published on the host: it forwards `/api/*` to the backend and everything else to the
 frontend, so the browser never talks plain HTTP. The frontend and backend containers are
 reachable only inside the Compose network (`http://frontend:3000`, `http://backend:3001`).
 Plain `http://localhost` redirects to HTTPS.
@@ -204,13 +201,14 @@ because rootless Docker (Codam machines) can't bind ports below 1024. `HTTPS_POR
 `HTTP_PORT` and `PUBLIC_ORIGIN` in the root `.env` change this — see
 [Environment](./docs/ENVIRONMENT.md#compose-variables).
 
-The committed certificate is a local [mkcert](https://github.com/FiloSottile/mkcert) one,
-so a browser that hasn't trusted its mkcert root shows a one-time warning you can click
+No certificate is committed. On a fresh clone Caddy issues its own self-signed
+certificate (`tls internal`), so the browser shows a one-time warning you can click
 through. To get a trusted certificate on your own machine instead, install
 [mkcert](https://github.com/FiloSottile/mkcert) (plus `certutil` from `libnss3-tools` on
 Linux, which mkcert needs to write the Chrome and Firefox trust stores), run the script
 below (it works without sudo — browser trust stores only — which is what Codam machines
-need), then restart your browser and `docker compose restart caddy`:
+need), then restart your browser and `docker compose restart caddy`. The script writes
+the certificate into the git-ignored `caddy/certs/`; Caddy uses it whenever it is there:
 
 ```bash
 bash scripts/generate-certs.sh

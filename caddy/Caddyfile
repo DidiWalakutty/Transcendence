@@ -12,7 +12,11 @@ http://localhost {
 }
 
 https://localhost {
-    tls /certs/local.pem /certs/local-key.pem
+    # Written at container start by the `command` in docker-compose.yml:
+    # `tls /certs/local.pem /certs/local-key.pem` when a certificate is present
+    # in caddy/certs (ignored by git), otherwise `tls internal` so Caddy signs
+    # its own. No private key is committed either way.
+    import /etc/caddy/tls.caddy
 
     reverse_proxy /api/* backend:3001
     reverse_proxy /* frontend:3000

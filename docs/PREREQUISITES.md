@@ -18,7 +18,7 @@ You do not need to install Bun manually. Vite+ manages the project runtime and p
 
 ## Optional: trusted local HTTPS
 
-The Compose stack serves `https://localhost:3000` with the [mkcert](https://github.com/FiloSottile/mkcert) certificate committed in `caddy/certs`. Browsers only trust it once the mkcert root CA is in their trust store, which `scripts/generate-certs.sh` sets up. That script needs:
+The Compose stack serves `https://localhost:3000`. No certificate is committed: on a fresh clone Caddy issues its own self-signed one (`tls internal`), which the browser warns about once. For a trusted certificate, `scripts/generate-certs.sh` creates one with [mkcert](https://github.com/FiloSottile/mkcert) in the git-ignored `caddy/certs/` folder and registers the mkcert root CA in the browser trust stores; Caddy uses that certificate whenever the folder holds one. The script needs:
 
 | Tool                  | Why                                                                                                                   |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------- |
