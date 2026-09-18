@@ -10,6 +10,7 @@ import {
   type UpdateEventDto,
 } from '@repo/schemas/events';
 import { EventsRepository, type CreateEventRecord } from './repositories/events.repository';
+import { RegistrationsRepository } from '../registrations/repositories/registrations.repository';
 
 const MAX_BUFFERED_EVENTS = 100;
 
@@ -24,6 +25,7 @@ export class EventsService {
     // repository handles communication with the database.
     private readonly eventEmitter: EventEmitter2,
     private readonly repository: EventsRepository,
+    private readonly registrationsRepository: RegistrationsRepository,
   ) {}
 
   // Create a new event + store using the repository.
@@ -51,20 +53,28 @@ export class EventsService {
   }
 
   async update(data: UpdateEventDto): Promise<EventDto | null> {
+    const oldEventDetails = await this.repository.findById(data.id);
     const event = await this.repository.update(data);
 
-    if (event) {
+    if (event && oldEventDetails) {
       this.emitChanged('updated', event);
+      const attendees = await this.registrationsRepository.getEventAttendees(event.id);
+
+      process.emit('event.modified' as any, { event, attendees, oldEvent: oldEventDetails });
     }
 
     return event;
   }
 
   async delete(id: string): Promise<EventDto | null> {
+    const eventDetails = await this.repository.findById(id);
+    if (!eventDetails) return null;
+    const attendees = await this.registrationsRepository.getEventAttendees(id);
     const event = await this.repository.delete(id);
 
     if (event) {
       this.emitChanged('deleted', event);
+      process.emit('event.cancelled' as any, { event: eventDetails, attendees });
     }
 
     return event;

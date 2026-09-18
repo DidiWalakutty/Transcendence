@@ -2,10 +2,12 @@ import { Module, Global } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { NotificationService } from './notification.service';
 import { NotificationListener } from './notification.listener';
+import { DatabaseModule } from '../database/database.module';
 
 @Global()
 @Module({
   imports: [
+    DatabaseModule,
     MailerModule.forRoot({
       transport: {
         host: process.env.MAIL_HOST || 'mailpit',

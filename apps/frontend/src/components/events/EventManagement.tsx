@@ -47,6 +47,15 @@ import { EventCategoryCombobox } from '@/components/events/EventCategoryCombobox
 import { EventDatePicker } from '@/components/events/EventDatePicker';
 import { EventImagePicker } from '@/components/events/EventImagePicker';
 
+const categoryLabels: Record<string, () => string> = {
+  music: m.category_music,
+  culture: m.category_culture,
+  food: m.category_food,
+  games: m.category_games,
+  talks: m.category_talks,
+  workshops: m.category_workshops,
+};
+
 export function ActionButton({
   label,
   icon,
@@ -122,7 +131,7 @@ export function EventManagementTable({
               <div className="flex gap-1 pt-1">
                 {event.category.slice(0, 2).map((category) => (
                   <Badge key={category} variant="outline">
-                    {category}
+                    {categoryLabels[category]?.() ?? category}
                   </Badge>
                 ))}
               </div>
@@ -412,7 +421,7 @@ export function TicketManagementTable({
               <div className="flex gap-1 pt-1">
                 {ticket.category.slice(0, 2).map((category) => (
                   <Badge key={category} variant="outline">
-                    {category}
+                    {categoryLabels[category]?.() ?? category}
                   </Badge>
                 ))}
               </div>

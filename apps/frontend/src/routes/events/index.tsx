@@ -94,32 +94,28 @@ function EventsPage() {
       </div>
 
       {/* Content */}
-      <div className="relative px-4 py-12 md:px-6">
+      <div className="relative mx-auto w-full max-w-7xl px-4 py-12 md:px-6">
         {/* Header */}
-        <div className="grid max-w-[1400px] grid-cols-[30%_1fr] gap-6">
-          <div className="relative left-4 2xl:left-[220px]">
-            <h1 className="text-4xl font-bold text-surface-footer md:text-5xl">
-              {m.events_page_title()}
-            </h1>
+        <div className="max-w-xl">
+          <h1 className="text-4xl font-bold text-surface-footer md:text-5xl">
+            {m.events_page_title()}
+          </h1>
 
-            <p className="mt-3 text-brand-primary-foreground">{m.events_page_subtitle()}</p>
+          <p className="mt-3 text-brand-primary-foreground">{m.events_page_subtitle()}</p>
 
-            <p className="mt-4 flex items-center gap-2 text-sm text-brand-primary-foreground">
-              <span
-                aria-hidden="true"
-                className={`inline-block size-2 rounded-full ${
-                  connected ? 'bg-green-500' : failed ? 'bg-destructive' : 'bg-surface-footer/40'
-                }`}
-              />
-              {connected ? m.events_live_connected() : m.events_live_reconnecting()}
-            </p>
-          </div>
-
-          <div />
+          <p className="mt-4 flex items-center gap-2 text-sm text-brand-primary-foreground">
+            <span
+              aria-hidden="true"
+              className={`inline-block size-2 rounded-full ${
+                connected ? 'bg-green-500' : failed ? 'bg-destructive' : 'bg-surface-footer/40'
+              }`}
+            />
+            {connected ? m.events_live_connected() : m.events_live_reconnecting()}
+          </p>
         </div>
 
         {/* Events + Filters */}
-        <div className="mx-auto mt-12 flex max-w-[1600px] gap-8">
+        <div className="mt-12 flex gap-8">
           {/* Event List */}
           <div className="flex-1">
             {filteredEvents.length === 0 ? (

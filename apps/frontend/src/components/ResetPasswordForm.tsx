@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { resetPasswordSchema } from '@repo/schemas/auth';
 import { cn } from '@/lib/utils';
 import { authClient } from '@/lib/auth-client';
+import * as m from '@/@generated/paraglide/messages';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -27,7 +28,7 @@ export function ResetPasswordForm({
       });
 
       if (error) {
-        throw new Error(error.message ?? 'Unable to reset the password');
+        throw new Error(error.message ?? m.reset_password_error_default());
       }
 
       return data;
@@ -54,9 +55,9 @@ export function ResetPasswordForm({
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl">Set a new password</CardTitle>
+          <CardTitle className="text-3xl">{m.reset_password_title()}</CardTitle>
 
-          <CardDescription>Choose a new password for your account</CardDescription>
+          <CardDescription>{m.reset_password_subtitle()}</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -75,13 +76,15 @@ export function ResetPasswordForm({
 
                   return (
                     <Field>
-                      <FieldLabel htmlFor={field.name}>New password</FieldLabel>
+                      <FieldLabel htmlFor={field.name}>
+                        {m.reset_password_new_password()}
+                      </FieldLabel>
 
                       <Input
                         id={field.name}
                         name={field.name}
                         type="password"
-                        placeholder="********"
+                        placeholder={m.placeholder_password()}
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
@@ -100,13 +103,15 @@ export function ResetPasswordForm({
 
                   return (
                     <Field>
-                      <FieldLabel htmlFor={field.name}>Confirm password</FieldLabel>
+                      <FieldLabel htmlFor={field.name}>
+                        {m.reset_password_confirm_password()}
+                      </FieldLabel>
 
                       <Input
                         id={field.name}
                         name={field.name}
                         type="password"
-                        placeholder="********"
+                        placeholder={m.placeholder_password()}
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
@@ -138,16 +143,16 @@ export function ResetPasswordForm({
                           {(isSubmitting as boolean) ? (
                             <>
                               <Spinner />
-                              Saving
+                              {m.reset_password_saving()}
                             </>
                           ) : (
-                            'Reset Password'
+                            m.reset_password_button()
                           )}
                         </Button>
 
                         <FieldDescription className="text-center">
                           <Link to="/login" className="underline underline-offset-4">
-                            Back to log in
+                            {m.reset_password_back_to_login()}
                           </Link>
                         </FieldDescription>
                       </>

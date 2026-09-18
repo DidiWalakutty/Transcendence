@@ -9,9 +9,6 @@ services:
       PORT: 3000
       HOST: 0.0.0.0
       SERVER_URL: http://backend:3001
-      VITE_API_URL: http://localhost:${BACKEND_PORT:-3001}
-    ports:
-      - '${FRONTEND_PORT:-3000}:3000'
     depends_on:
       backend:
         condition: service_started
@@ -27,9 +24,11 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER:-transcendence}:${POSTGRES_PASSWORD:-transcendence}@postgres:5432/${POSTGRES_DB:-transcendence}
       REDIS_URL: redis://redis:6379
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-dev-only-insecure-secret-change-in-production}
-      BETTER_AUTH_URL: http://localhost:${BACKEND_PORT:-3001}
-    ports:
-      - '${BACKEND_PORT:-3001}:3001'
+      BETTER_AUTH_URL: ${PUBLIC_ORIGIN:-https://localhost:3000}
+      CORS_ORIGINS: ${PUBLIC_ORIGIN:-https://localhost:3000}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-Transcendence123!}
+      SEED_DIDI_PASSWORD: ${SEED_DIDI_PASSWORD:-Qwerty123!}
+      SEED_HOMER_PASSWORD: ${SEED_HOMER_PASSWORD:-Simpsons123!}
     depends_on:
       postgres:
         condition: service_healthy
@@ -59,7 +58,7 @@ services:
     container_name: ft_transcendence_redis
     restart: unless-stopped
     ports:
-      - '${REDIS_PORT:-6379}:6379'
+      - '${REDIS_PORT:-6380}:6379'
     volumes:
       - redis_data:/data
     healthcheck:
@@ -72,9 +71,12 @@ services:
     image: caddy:2-alpine
     container_name: ft_transcendence_caddy
     restart: unless-stopped
+    environment:
+      HTTP_PORT: ${HTTP_PORT:-3080}
+      HTTPS_PORT: ${HTTPS_PORT:-3000}
     ports:
-      - '443:443'
-      - '80:80'
+      - '${HTTPS_PORT:-3000}:${HTTPS_PORT:-3000}'
+      - '${HTTP_PORT:-3080}:${HTTP_PORT:-3080}'
     volumes:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
       - ./caddy/certs:/certs

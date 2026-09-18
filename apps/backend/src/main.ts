@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import express from 'express';
 import { toNodeHandler } from 'better-auth/node';
 import { AppModule } from './app.module';
@@ -8,7 +9,12 @@ import { AUTH } from './auth/auth.constants';
 import type { Auth } from './auth/auth.instance';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { bodyParser: false });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bodyParser: false });
+
+  // The backend sits behind the Caddy TLS proxy, so the real client address
+  // arrives in X-Forwarded-For. Without this, rate limiting keys every request
+  // on the proxy's IP.
+  app.set('trust proxy', 1);
 
   // CORS must be registered before the Better Auth handler so its preflight
   // OPTIONS responses aren't shadowed by Better Auth's own router.

@@ -14,12 +14,10 @@ export const Route = createFileRoute('/create-event')({
 
 function CreateEventPage() {
   return (
-    <div className="flex min-h-screen flex-col">
-      <main className="flex-1 px-4 pb-20 pt-20 md:pd-24">
-        <div className="flex justify-center">
-          <EventForm />
-        </div>
-      </main>
+    <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6">
+      <div className="flex justify-center">
+        <EventForm />
+      </div>
     </div>
   );
 }

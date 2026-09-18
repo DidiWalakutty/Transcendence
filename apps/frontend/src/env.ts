@@ -21,7 +21,13 @@ export const env = createEnv({
    * What object holds the environment variables at runtime. This is usually
    * `process.env` or `import.meta.env`.
    */
-  runtimeEnv: import.meta.env,
+  runtimeEnv: {
+    ...import.meta.env,
+    // Vite freezes `import.meta.env` at build time, so a variable that is only
+    // set when the container starts (like `SERVER_URL` in docker-compose.yml)
+    // has to be read from the real process environment during SSR.
+    SERVER_URL: import.meta.env.SSR ? process.env.SERVER_URL : undefined,
+  },
 
   /**
    * By default, this library will feed the environment variables directly to

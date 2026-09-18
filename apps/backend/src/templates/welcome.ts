@@ -3,7 +3,7 @@ import { WelcomeEmailDictionary } from './welcome.i18n';
 
 interface WelcomeEmailProps {
   userName: string;
-  lang: 'en' | 'nl' | 'es' | 'ru';
+  lang: 'en' | 'nl' | 'es' | 'ru' | 'ro';
   dictionary: WelcomeEmailDictionary;
 }
 

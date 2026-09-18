@@ -6,15 +6,31 @@ import { usePresence, usePresenceConnection } from '@/hooks/use-presence';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Spinner } from '@/components/ui/spinner';
 import { Link } from '@tanstack/react-router';
 import { TwoFactorSettings } from '@/components/TwoFactorSettings';
 import * as m from '@/@generated/paraglide/messages';
+import { locales } from '@/@generated/paraglide/runtime';
 import { AvatarPicker } from '@/components/AvatarPicker';
 import { NO_AVATAR, UserAvatar } from '@/components/UserAvatar';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox';
 
 export const Route = createFileRoute('/profile')({
   beforeLoad: ({ context: { session } }) => {
@@ -54,6 +70,26 @@ function StatusDot({ online }: { online: boolean }) {
   );
 }
 
+function getLanguageName(locale: string) {
+  try {
+    const nativeName = new Intl.DisplayNames([locale], { type: 'language' }).of(locale);
+    if (nativeName) {
+      return nativeName.charAt(0).toUpperCase() + nativeName.slice(1);
+    }
+  } catch {
+    // Ignore and fall through to the code fallback below.
+  }
+  return locale.toUpperCase();
+}
+
+function normalizeLanguage(value: unknown): string {
+  if (typeof value !== 'string') return '';
+  if ((locales as readonly string[]).includes(value)) return value;
+  // Legacy rows stored the English name instead of the locale code.
+  if (value === 'english') return 'en';
+  return '';
+}
+
 function ProfilePage() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -79,7 +115,7 @@ function ProfilePage() {
       setUsername(user.username ?? '');
       setAboutMe(user.aboutMe ?? '');
       setLocation(user.location ?? '');
-      setLanguage(user.preferedLanguage ?? '');
+      setLanguage(normalizeLanguage(user.preferedLanguage));
       setAvatar(user.avatar ?? NO_AVATAR);
     }
   }, [user]);
@@ -131,19 +167,19 @@ function ProfilePage() {
       username,
       aboutMe,
       location,
-      preferedLanguage: language,
+      ...(language ? { preferedLanguage: language as 'en' | 'nl' | 'es' } : {}),
       avatar,
     });
   };
 
-  const [friendSearch, setFriendSearch] = useState('');
+  const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
 
   const usersQuery = useQuery(trpc.users.getUsers.queryOptions());
 
   const addFriend = useMutation(
     trpc.friends.addFriend.mutationOptions({
       onSuccess: () => {
-        setFriendSearch('');
+        setSelectedFriendId(null);
         void queryClient.invalidateQueries({
           queryKey: trpc.friends.getPendingRequests.queryKey(),
         });
@@ -152,22 +188,23 @@ function ProfilePage() {
   );
 
   const friendIds = new Set(friends.map((f) => f.id));
+  const pendingIds = new Set(pending.map((p) => p.id));
 
-  const searchResults =
-    friendSearch.trim().length < 2
-      ? []
-      : (usersQuery.data ?? [])
-          .filter(
-            (candidate) =>
-              candidate.id !== user?.id &&
-              !friendIds.has(candidate.id) &&
-              candidate.username.toLowerCase().includes(friendSearch.trim().toLowerCase()),
-          )
-          .slice(0, 5);
+  const eligibleUsers = (usersQuery.data ?? []).filter(
+    (candidate) =>
+      candidate.id !== user?.id && !friendIds.has(candidate.id) && !pendingIds.has(candidate.id),
+  );
+  const eligibleIds = eligibleUsers.map((candidate) => candidate.id);
+  const eligibleById = new Map(eligibleUsers.map((candidate) => [candidate.id, candidate]));
+
+  function getFriendLabel(id: string) {
+    const candidate = eligibleById.get(id);
+    return candidate ? (candidate.displayUsername ?? candidate.username) : id;
+  }
   if (!session) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Please log in to view your profile.</p>
+        <p className="text-muted-foreground">{m.profile_login_required()}</p>
       </div>
     );
   }
@@ -191,201 +228,253 @@ function ProfilePage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="mb-8 text-3xl font-bold">My Profile</h1>
+    <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6">
+      <h1 className="mb-8 text-3xl font-bold">{m.profile_title()}</h1>
 
-      <Card>
-        {/* Avatar */}
-        <CardHeader className="flex flex-col items-center gap-4">
-          <AvatarPicker
-            value={avatar}
-            name={user?.name}
-            username={user?.username}
-            onValueChange={setAvatar}
-          />
-          <CardTitle>{user?.displayUsername ?? user?.username}</CardTitle>
-          <p className="flex items-center gap-2 text-sm text-muted-foreground">
-            <StatusDot online={isSelfOnline} />
-            {isSelfOnline ? 'Online' : 'Offline'}
-          </p>
-          <p className="text-sm text-muted-foreground">{user?.email}</p>
-        </CardHeader>
-
-        <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-            {/* Name */}
-            <div className="grid gap-2">
-              <Label htmlFor="name">Name</Label>
-              <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
-            </div>
-
-            {/* Username */}
-            <div className="grid gap-2">
-              <Label htmlFor="username">Username</Label>
-              <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
-            </div>
-
-            {/* About Me */}
-            <div className="grid gap-2">
-              <Label htmlFor="aboutMe">About Me</Label>
-              <Textarea
-                id="aboutMe"
-                value={aboutMe}
-                onChange={(e) => setAboutMe(e.target.value)}
-                placeholder="Tell us about yourself..."
-              />
-            </div>
-
-            {/* Location */}
-            <div className="grid gap-2">
-              <Label htmlFor="location">Location (optional)</Label>
-              <Input
-                id="location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Amsterdam, Netherlands"
-              />
-            </div>
-
-            {/* Language */}
-            <div className="grid gap-2">
-              <Label htmlFor="language">Language</Label>
-              <Input
-                id="language"
-                value={language}
-                onChange={(e) => setLanguage(e.target.value)}
-                placeholder="english"
-              />
-            </div>
-
-            {updateUser.error && (
-              <Alert variant="destructive">
-                <AlertDescription>{updateUser.error.message}</AlertDescription>
-              </Alert>
-            )}
-
-            {saved && (
-              <Alert>
-                <AlertDescription>Profile saved successfully!</AlertDescription>
-              </Alert>
-            )}
-
-            <Button type="submit" disabled={updateUser.isPending}>
-              {updateUser.isPending ? (
-                <>
-                  <Spinner /> Saving...
-                </>
-              ) : (
-                'Save Profile'
-              )}
-            </Button>
-          </form>
-
-          {/* Links */}
-          <div className="mt-8 flex gap-4 border-t pt-6">
-            <Link to="/my-events">
-              <Button variant="outline">{m.button_my_events()}</Button>
-            </Link>
-
-            <Link to="/my-tickets">
-              <Button variant="outline">{m.button_my_tickets()}</Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
-      <TwoFactorSettings />
-      <Card className="mt-8">
-        <CardHeader>
-          <CardTitle>Friends</CardTitle>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="friend-search">Add a friend</Label>
-            <Input
-              id="friend-search"
-              value={friendSearch}
-              onChange={(e) => setFriendSearch(e.target.value)}
-              placeholder="Search by username..."
+      <div className="grid items-start gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
+        {/* Identity */}
+        <Card className="lg:sticky lg:top-24">
+          <CardHeader className="flex flex-col items-center gap-4 text-center">
+            <AvatarPicker
+              value={avatar}
+              name={user?.name}
+              username={user?.username}
+              onValueChange={setAvatar}
             />
+            <CardTitle>{user?.displayUsername ?? user?.username}</CardTitle>
+            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+              <StatusDot online={isSelfOnline} />
+              {isSelfOnline ? m.profile_online() : m.profile_offline()}
+            </p>
+            <p className="text-sm text-muted-foreground">{user?.email}</p>
+          </CardHeader>
 
-            {searchResults.map((candidate) => (
-              <div key={candidate.id} className="flex items-center justify-between gap-4">
-                <span className="text-sm">{candidate.displayUsername ?? candidate.username}</span>
-                <Button
-                  size="sm"
-                  disabled={addFriend.isPending}
-                  onClick={() => addFriend.mutate({ friendId: candidate.id })}
-                >
-                  Add
+          <CardContent className="flex flex-col gap-3">
+            <Link
+              to="/my-events"
+              className={buttonVariants({ variant: 'outline', className: 'w-full' })}
+            >
+              {m.button_my_events()}
+            </Link>
+
+            <Link
+              to="/my-tickets"
+              className={buttonVariants({ variant: 'outline', className: 'w-full' })}
+            >
+              {m.button_my_tickets()}
+            </Link>
+          </CardContent>
+        </Card>
+
+        {/* Details */}
+        <div className="flex min-w-0 flex-col gap-8">
+          <Card>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                <div className="grid gap-6 sm:grid-cols-2">
+                  {/* Name */}
+                  <div className="grid gap-2">
+                    <Label htmlFor="name">{m.profile_name()}</Label>
+                    <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+                  </div>
+
+                  {/* Username */}
+                  <div className="grid gap-2">
+                    <Label htmlFor="username">{m.profile_username()}</Label>
+                    <Input
+                      id="username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                {/* About Me */}
+                <div className="grid gap-2">
+                  <Label htmlFor="aboutMe">{m.profile_about_me()}</Label>
+                  <Textarea
+                    id="aboutMe"
+                    value={aboutMe}
+                    onChange={(e) => setAboutMe(e.target.value)}
+                    placeholder={m.profile_about_placeholder()}
+                  />
+                </div>
+
+                <div className="grid gap-6 sm:grid-cols-2">
+                  {/* Location */}
+                  <div className="grid gap-2">
+                    <Label htmlFor="location">{m.profile_location()}</Label>
+                    <Input
+                      id="location"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      placeholder={m.profile_location_placeholder()}
+                    />
+                  </div>
+
+                  {/* Language */}
+                  <div className="grid gap-2">
+                    <Label htmlFor="language">{m.language_label()}</Label>
+                    <Select
+                      value={language}
+                      onValueChange={(value) => {
+                        if (value) {
+                          setLanguage(value);
+                        }
+                      }}
+                    >
+                      <SelectTrigger id="language" className="w-full">
+                        <SelectValue placeholder={m.profile_language_placeholder()} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {locales.map((locale) => (
+                          <SelectItem key={locale} value={locale}>
+                            {getLanguageName(locale)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {updateUser.error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{updateUser.error.message}</AlertDescription>
+                  </Alert>
+                )}
+
+                {saved && (
+                  <Alert>
+                    <AlertDescription>{m.profile_saved()}</AlertDescription>
+                  </Alert>
+                )}
+
+                <Button type="submit" disabled={updateUser.isPending} className="sm:self-start">
+                  {updateUser.isPending ? (
+                    <>
+                      <Spinner /> {m.profile_saving()}
+                    </>
+                  ) : (
+                    m.profile_save_button()
+                  )}
                 </Button>
+              </form>
+            </CardContent>
+          </Card>
+          <TwoFactorSettings />
+          <Card>
+            <CardHeader>
+              <CardTitle>{m.profile_friends_title()}</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-6">
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="friend-search">{m.profile_friends_add_label()}</Label>
+                <div className="flex items-start gap-2">
+                  <div className="min-w-0 flex-1">
+                    <Combobox
+                      items={eligibleIds}
+                      itemToStringLabel={getFriendLabel}
+                      value={selectedFriendId}
+                      onValueChange={(value) => setSelectedFriendId(value)}
+                    >
+                      <ComboboxInput
+                        id="friend-search"
+                        placeholder={m.profile_friends_search_placeholder()}
+                      />
+                      <ComboboxContent>
+                        <ComboboxEmpty>{m.admin_no_results()}</ComboboxEmpty>
+                        <ComboboxList>
+                          {(id: string) => (
+                            <ComboboxItem key={id} value={id}>
+                              {getFriendLabel(id)}
+                            </ComboboxItem>
+                          )}
+                        </ComboboxList>
+                      </ComboboxContent>
+                    </Combobox>
+                  </div>
+                  <Button
+                    size="sm"
+                    disabled={!selectedFriendId || addFriend.isPending}
+                    onClick={() => {
+                      if (selectedFriendId) {
+                        addFriend.mutate({ friendId: selectedFriendId });
+                      }
+                    }}
+                  >
+                    {m.profile_friends_add_button()}
+                  </Button>
+                </div>
+
+                {addFriend.error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{addFriend.error.message}</AlertDescription>
+                  </Alert>
+                )}
               </div>
-            ))}
-
-            {addFriend.error && (
-              <Alert variant="destructive">
-                <AlertDescription>{addFriend.error.message}</AlertDescription>
-              </Alert>
-            )}
-          </div>
-          {pending.length > 0 && (
-            <div className="flex flex-col gap-3">
-              <h3 className="text-sm font-medium text-muted-foreground">Pending requests</h3>
-              {pending.map((person) => (
-                <div key={person.id} className="flex items-center justify-between gap-4">
-                  <span className="flex items-center gap-2">
-                    <UserAvatar
-                      name={person.name}
-                      username={person.username}
-                      avatar={person.avatar}
-                      className="size-8"
-                    />
-                    {person.displayUsername ?? person.username}
-                  </span>
-                  <Button
-                    size="sm"
-                    disabled={acceptFriend.isPending}
-                    onClick={() => acceptFriend.mutate({ friendId: person.id })}
-                  >
-                    Accept
-                  </Button>
+              {pending.length > 0 && (
+                <div className="flex flex-col gap-3">
+                  <h3 className="text-sm font-medium text-muted-foreground">
+                    {m.profile_friends_pending()}
+                  </h3>
+                  {pending.map((person) => (
+                    <div key={person.id} className="flex items-center justify-between gap-4">
+                      <span className="flex items-center gap-2">
+                        <UserAvatar
+                          name={person.name}
+                          username={person.username}
+                          avatar={person.avatar}
+                          className="size-8"
+                        />
+                        {person.displayUsername ?? person.username}
+                      </span>
+                      <Button
+                        size="sm"
+                        disabled={acceptFriend.isPending}
+                        onClick={() => acceptFriend.mutate({ friendId: person.id })}
+                      >
+                        {m.profile_friends_accept()}
+                      </Button>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
+              )}
 
-          <div className="flex flex-col gap-3">
-            {friends.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No friends yet.</p>
-            ) : (
-              friends.map((person) => (
-                <div key={person.id} className="flex items-center justify-between gap-4">
-                  <span className="flex items-center gap-2">
-                    <UserAvatar
-                      name={person.name}
-                      username={person.username}
-                      avatar={person.avatar}
-                      className="size-8"
-                    />
-                    <StatusDot online={onlineIds.has(person.id)} />
-                    {person.displayUsername ?? person.username}
-                    <span className="text-xs text-muted-foreground">
-                      {onlineIds.has(person.id) ? 'Online' : 'Offline'}
-                    </span>
-                  </span>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    disabled={removeFriend.isPending}
-                    onClick={() => removeFriend.mutate({ friendId: person.id })}
-                  >
-                    Remove
-                  </Button>
-                </div>
-              ))
-            )}
-          </div>
-        </CardContent>
-      </Card>
+              <div className="flex flex-col gap-3">
+                {friends.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">{m.profile_friends_empty()}</p>
+                ) : (
+                  friends.map((person) => (
+                    <div key={person.id} className="flex items-center justify-between gap-4">
+                      <span className="flex items-center gap-2">
+                        <UserAvatar
+                          name={person.name}
+                          username={person.username}
+                          avatar={person.avatar}
+                          className="size-8"
+                        />
+                        <StatusDot online={onlineIds.has(person.id)} />
+                        {person.displayUsername ?? person.username}
+                        <span className="text-xs text-muted-foreground">
+                          {onlineIds.has(person.id) ? m.profile_online() : m.profile_offline()}
+                        </span>
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={removeFriend.isPending}
+                        onClick={() => removeFriend.mutate({ friendId: person.id })}
+                      >
+                        {m.profile_friends_remove()}
+                      </Button>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }

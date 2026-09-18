@@ -45,7 +45,7 @@ export function UserMenu({ role, name, username, avatar }: UserMenuProps) {
     return (
       <Link
         to="/login"
-        aria-label="Log in"
+        aria-label={m.login_button()}
         className={buttonVariants({
           variant: 'ghost',
           size: 'icon',
@@ -60,7 +60,7 @@ export function UserMenu({ role, name, username, avatar }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button aria-label="Open Profile Menu" variant="ghost" size="icon" />}
+        render={<Button aria-label={m.button_profile()} variant="ghost" size="icon" />}
       >
         <UserAvatar name={name} username={username} avatar={avatar} className="size-7 2xl:size-9" />
       </DropdownMenuTrigger>
@@ -73,23 +73,19 @@ export function UserMenu({ role, name, username, avatar }: UserMenuProps) {
           {m.button_profile()}
         </DropdownMenuItem>
 
-        {role === 'user' && (
-          <DropdownMenuItem
-            className="cursor-pointer"
-            render={<Link to="/my-events" className="w-full" />}
-          >
-            {m.button_my_events()}
-          </DropdownMenuItem>
-        )}
+        <DropdownMenuItem
+          className="cursor-pointer"
+          render={<Link to="/my-events" className="w-full" />}
+        >
+          {m.button_my_events()}
+        </DropdownMenuItem>
 
-        {role === 'user' && (
-          <DropdownMenuItem
-            className="cursor-pointer"
-            render={<Link to="/my-tickets" className="w-full" />}
-          >
-            {m.button_my_tickets()}
-          </DropdownMenuItem>
-        )}
+        <DropdownMenuItem
+          className="cursor-pointer"
+          render={<Link to="/my-tickets" className="w-full" />}
+        >
+          {m.button_my_tickets()}
+        </DropdownMenuItem>
 
         {role === 'admin' && (
           <DropdownMenuItem

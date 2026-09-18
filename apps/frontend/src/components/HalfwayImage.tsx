@@ -16,7 +16,7 @@ export function HalfwayImage() {
       {/* Halfway Image */}
       <img
         src={halfwayImage}
-        alt="People enjoying an outdoor event"
+        alt={m.halfway_image_alt()}
         className="
 					absolute
 					inset-0

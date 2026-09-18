@@ -11,6 +11,9 @@ export const userCreatedSubscriptionSchema = z.custom<AsyncIterable<UserDto>>();
 export const userUpdatedSubscriptionSchema = z.custom<AsyncIterable<UserDto>>();
 export const userDeletedSubscriptionSchema = z.custom<AsyncIterable<UserDto>>();
 
+export const supportedLanguages = ['en', 'nl', 'es'] as const;
+export type SupportedLanguage = (typeof supportedLanguages)[number];
+
 export const createUserSchema = createInsertSchema(users, {
   email: () => z.email('Must be a valid email address'),
   name: (schema) => schema.min(3, 'Name must be at least 3 characters').max(50),
@@ -24,7 +27,7 @@ export const updateUserSchema = createUserSchema.partial().extend({
   id: z.uuid(),
   aboutMe: z.string().max(500).optional(),
   location: z.string().max(100).optional(),
-  preferedLanguage: z.string().optional(),
+  preferedLanguage: z.enum(supportedLanguages).optional(),
   avatar: z.string().optional(),
   displayUsername: z.string().optional(),
 });

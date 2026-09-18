@@ -75,7 +75,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       .leftJoin(registrations, eq(registrations.eventId, events.id))
       .groupBy(events.id)
       .orderBy(asc(events.dateTime))
-      .limit(4);
+      .limit(8);
 
     return rows.map((row) => this.toRecord(row));
   }

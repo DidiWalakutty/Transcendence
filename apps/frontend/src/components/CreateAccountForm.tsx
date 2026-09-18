@@ -33,7 +33,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
       } as any);
 
       if (error) {
-        throw new Error(error.message ?? 'Unable to create an account');
+        throw new Error(error.message ?? m.create_account_error_default());
       }
 
       return data;
@@ -142,7 +142,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
 
                   return (
                     <Field>
-                      <FieldLabel htmlFor={field.name}>Username</FieldLabel>
+                      <FieldLabel htmlFor={field.name}>{m.create_account_username()}</FieldLabel>
 
                       <Input
                         id={field.name}

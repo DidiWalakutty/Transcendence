@@ -106,7 +106,7 @@ export function TwoFactorSettings() {
   const secret = enrollment ? new URL(enrollment.totpURI).searchParams.get('secret') : null;
 
   return (
-    <Card className="mt-8">
+    <Card>
       <CardHeader>
         <CardTitle>{m.two_factor_settings_title()}</CardTitle>
       </CardHeader>
@@ -118,7 +118,7 @@ export function TwoFactorSettings() {
             </p>
 
             {qrDataUrl ? (
-              <img src={qrDataUrl} alt="Two-factor setup QR code" className="h-48 w-48" />
+              <img src={qrDataUrl} alt={m.two_factor_qr_alt()} className="h-48 w-48" />
             ) : null}
 
             {secret ? (

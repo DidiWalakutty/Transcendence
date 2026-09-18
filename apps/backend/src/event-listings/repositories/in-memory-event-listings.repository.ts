@@ -32,7 +32,7 @@ export class InMemoryEventListingsRepository extends EventListingsRepository {
   }
 
   async findFeatured(): Promise<EventListingRecord[]> {
-    return [...this.events].sort((a, b) => a.date.localeCompare(b.date)).slice(0, 4);
+    return [...this.events].sort((a, b) => a.date.localeCompare(b.date)).slice(0, 8);
   }
 
   async getStats(): Promise<EventStats> {
