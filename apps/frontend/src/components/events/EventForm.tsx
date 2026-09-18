@@ -5,7 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { invalidateEventsLists } from '@/lib/invalidation';
 import { useTRPC } from '@/integrations/trpc/react';
 import * as m from '@/@generated/paraglide/messages';
 import { EventCategoryCombobox } from '@/components/events/EventCategoryCombobox';
@@ -31,7 +32,14 @@ const DEFAULT_EVENT_IMAGE = EVENT_PLACEHOLDER;
 export function EventForm() {
   const trpc = useTRPC();
   const navigate = useNavigate();
-  const createEvent = useMutation(trpc.eventCreation.createEvent.mutationOptions());
+  const queryClient = useQueryClient();
+  const createEvent = useMutation(
+    trpc.eventCreation.createEvent.mutationOptions({
+      onSuccess: async () => {
+        await invalidateEventsLists(queryClient, trpc);
+      },
+    }),
+  );
 
   const [selectedCategories, setSelectedCategories] = useState<EventCategory[]>([]);
   const [selectedDate, setSelectedDate] = useState('');
