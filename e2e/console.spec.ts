@@ -50,12 +50,14 @@ test('/events/$eventId loads and reloads without console warnings or errors', as
   await page.goto('/events');
   await settle(page);
 
+  // `count()` reads the DOM once; `getAttribute()` would wait for the link
+  // until the test times out when the database has no events.
   const link = page.locator('a[href^="/events/"]').first();
-  const href = await link.getAttribute('href');
+  test.skip((await link.count()) === 0, 'no event listed; run `vp run db:seed` first');
 
-  test.skip(href === null, 'no event listed; seed the database first');
+  const href = (await link.getAttribute('href')) as string;
 
-  await page.goto(href as string);
+  await page.goto(href);
   await settle(page);
 
   await page.reload();
