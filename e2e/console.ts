@@ -7,28 +7,32 @@ export interface ConsoleRecorder {
   other: string[];
 }
 
-// Extends the Playwright `page` with a recorder of what the page wrote to the
-// console. The subject requires no warnings or errors, so those are collected
-// separately from informational output.
+// Records what a page writes to the console. The subject requires no warnings
+// or errors, so those are collected separately from informational output.
+export function recordConsole(page: Page): ConsoleRecorder {
+  const recorder: ConsoleRecorder = { problems: [], other: [] };
+
+  page.on('console', (message) => {
+    const line = `console.${message.type()}: ${message.text()}`;
+
+    if (message.type() === 'warning' || message.type() === 'error') {
+      recorder.problems.push(line);
+    } else {
+      recorder.other.push(line);
+    }
+  });
+
+  page.on('pageerror', (error) => {
+    recorder.problems.push(`uncaught: ${error.message}`);
+  });
+
+  return recorder;
+}
+
+// Extends the Playwright `page` with a recorder attached before navigation.
 export const test = base.extend<{ console: ConsoleRecorder }>({
   console: async ({ page }, use) => {
-    const recorder: ConsoleRecorder = { problems: [], other: [] };
-
-    page.on('console', (message) => {
-      const line = `console.${message.type()}: ${message.text()}`;
-
-      if (message.type() === 'warning' || message.type() === 'error') {
-        recorder.problems.push(line);
-      } else {
-        recorder.other.push(line);
-      }
-    });
-
-    page.on('pageerror', (error) => {
-      recorder.problems.push(`uncaught: ${error.message}`);
-    });
-
-    await use(recorder);
+    await use(recordConsole(page));
   },
 });
 

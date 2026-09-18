@@ -66,3 +66,35 @@ test('/events/$eventId loads and reloads without console warnings or errors', as
   await expect(page).toHaveURL(new RegExp(`${href}$`));
   expectCleanConsole(recorder);
 });
+
+// Firefox reports an image or font whose download was cut short by a
+// navigation as a JavaScript error (BS-12). It comes from the browser, not from
+// the page.
+const interruptedImageLog = /Image corrupt or truncated/;
+const interruptedFontLog = /downloadable font: download failed/;
+
+// Firefox warnings caused by the test harness itself, not by the page: the
+// first is raised by Playwright's injected script ("debugger eval code")
+// reading layout before the page finished loading; the second because the
+// test navigates from one origin to the next without a user gesture.
+const harnessLayoutLog = /Layout was forced before the page was fully loaded/;
+const harnessBounceTrackerLog = /has been classified as a bounce tracker/;
+
+test('leaving a page while it is still loading logs nothing', async ({
+  page,
+  console: recorder,
+}) => {
+  // The home route runs loaders after the HTML arrives; navigate away before
+  // they finish (BS-11).
+  await page.goto('/', { waitUntil: 'commit' });
+  await page.goto('/events');
+  await settle(page);
+
+  await expect(page).toHaveURL(/\/events$/);
+  expectCleanConsole(recorder, [
+    interruptedImageLog,
+    interruptedFontLog,
+    harnessLayoutLog,
+    harnessBounceTrackerLog,
+  ]);
+});

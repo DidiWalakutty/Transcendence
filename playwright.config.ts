@@ -13,6 +13,11 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0,
+  // Flows wait out the auth rate limit (BS-10), which takes longer than the default.
+  timeout: 120_000,
+  // Every worker calls the backend from the same address. Its session lookups
+  // share one 100-per-10 s bucket (BS-13), which four workers can fill.
+  workers: 2,
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL,
