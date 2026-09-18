@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TRPCModule } from 'nestjs-trpc';
@@ -91,6 +91,17 @@ import { NotificationModule } from './notification/notification.module';
       basePath: '/api/trpc',
       transformer: superjson,
       context: AuthContext,
+      // An unexpected failure (a database error, for instance) carries its
+      // internals in the message. Log those here and hand the browser a
+      // generic message in production; expected errors (NOT_FOUND, FORBIDDEN,
+      // BAD_REQUEST…) pass through unchanged.
+      errorFormatter: ({ shape, error }) => {
+        if (error.code !== 'INTERNAL_SERVER_ERROR') return shape;
+        Logger.error(error.cause ?? error, 'tRPC');
+        return environment.NODE_ENV === 'production'
+          ? { ...shape, message: 'Internal server error' }
+          : shape;
+      },
     }),
     NotificationModule,
   ],
