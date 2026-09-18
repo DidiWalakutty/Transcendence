@@ -68,9 +68,7 @@ export function EventForm() {
 
     // A rejected mutation is shown through the global toast; it must not
     // escape as an uncaught promise in the console.
-    const result = await createEvent
-      .mutateAsync(parsed.data)
-      .catch(() => undefined);
+    const result = await createEvent.mutateAsync(parsed.data).catch(() => undefined);
 
     if (!result) {
       return;
