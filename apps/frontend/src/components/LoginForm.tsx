@@ -74,23 +74,6 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
             }}
           >
             <FieldGroup>
-              {/*
-                TODO (OAuth)
-
-                Add social login providers.
-
-                Examples:
-                - Google
-                - GitHub
-                - Microsoft
-
-                Requires:
-                - OAuth provider setup
-                - Backend callback routes
-                - Token verification
-                - Account linking
-              */}
-
               <form.Field
                 name="email"
                 children={(field) => {
