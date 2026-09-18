@@ -4,12 +4,11 @@ This directory contains the project documentation for local development, archite
 
 ## Start Here
 
-| Document                               | Purpose                                                                     |
-| -------------------------------------- | --------------------------------------------------------------------------- |
-| [Dev Environment](./DEVENVIRONMENT.md) | Recommended Nix-based setup: install Nix, enter the shell, useful commands. |
-| [Development](./DEVELOPMENT.md)        | Local setup, install steps, development commands, and troubleshooting.      |
-| [Stack](./STACK.md)                    | The approved technology stack and architecture principles.                  |
-| [Subject](./SUBJECT.md)                | The 42 subject summary and evaluation requirements.                         |
+| Document                        | Purpose                                                                |
+| ------------------------------- | ---------------------------------------------------------------------- |
+| [Development](./DEVELOPMENT.md) | Local setup, install steps, development commands, and troubleshooting. |
+| [Stack](./STACK.md)             | The approved technology stack and architecture principles.             |
+| [Subject](./SUBJECT.md)         | The 42 subject summary and evaluation requirements.                    |
 
 ## Architecture
 

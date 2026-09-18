@@ -12,25 +12,13 @@ In short, local development needs:
 
 1. Git.
 2. Docker / Docker Desktop.
-3. Nix (recommended), or Vite+ if you are not using Nix.
+3. Vite+.
 
-You do not need to install Bun manually either way. Nix or Vite+ manages Bun for the project.
+You do not need to install Bun manually. Vite+ manages Bun for the project.
 
-## Recommended: Nix
+## Install Vite+
 
-```bash
-git clone <repository-url>
-cd ft_transcendence
-nix develop
-```
-
-This installs Bun/Node/Git/mkcert into the shell and runs `bun install` automatically. See [Dev Environment](./DEVENVIRONMENT.md) for full setup steps and troubleshooting.
-
-Inside the Nix shell, use the `bun <script>` form shown below (e.g. `bun dev`) instead of `vp run <task>` — they are equivalent, since Bun resolves `bun dev` to the root `package.json` `dev` script, which runs the matching Vite+ task locally.
-
-## Alternative: Vite+ installer
-
-If you are not using Nix, install Vite+ globally first:
+Install Vite+ globally first:
 
 ### macOS / Linux
 
@@ -59,8 +47,6 @@ Start the full development stack:
 ```bash
 vp run dev
 ```
-
-Inside a Nix shell, use the equivalent Bun script shorthand instead: `bun dev`.
 
 This task:
 
@@ -115,8 +101,6 @@ For frontend and API development without Docker, PostgreSQL, or Redis, run:
 ```bash
 vp run dev:fixtures
 ```
-
-Inside a Nix shell, use `bun dev:fixtures`.
 
 This mode:
 
@@ -243,3 +227,24 @@ vp run check:fix
 ```
 
 Then review and stage the resulting changes.
+
+### `nestjs-trpc` Reports An Executable-Permission Error
+
+```
+Failed to execute nestjs-trpc CLI: spawnSync <repo-root>/node_modules/.bun/nestjs-trpc@2.10.0+4027ee5bbcdb762b/node_modules/nestjs-trpc/native/aarch64-apple-darwin/nestjs-trpc EACCES
+```
+
+Project installation fixes these permissions automatically. Run `vp install`
+again. As a manual fallback, run:
+
+```bash
+chmod +x node_modules/.bun/nestjs-trpc@*/node_modules/nestjs-trpc/native/*/nestjs-trpc
+```
+
+### `nestjs-trpc` Reports `GLIBC_2.39 not found` On Linux
+
+The packaged generator requires a newer GLIBC than some Linux distributions
+provide. The repository vendors a compiled `nestjs-trpc` CLI at `bin/nestjs-trpc`
+for this reason, and the tRPC generation tasks (`vp run trpc:generate`,
+`vp run trpc:watch`) already use it instead of the packaged binary. See
+[Tooling](./TOOLING.md#install).

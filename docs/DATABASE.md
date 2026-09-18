@@ -95,8 +95,7 @@ vp run db:studio
 ## Seeding
 
 `vp run db:setup` only starts PostgreSQL and runs migrations. It does not
-insert demo data. Use `vp run db:seed` (or `bun db:seed` inside the Nix shell),
-not `npm run db:setup` — the project uses Bun and Vite+, not npm.
+insert demo data. Use `vp run db:seed`, not `npm run db:setup` — the project uses Bun and Vite+, not npm.
 
 Seeding runs:
 
