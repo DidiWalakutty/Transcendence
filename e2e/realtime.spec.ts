@@ -3,8 +3,7 @@ import { expect, expectCleanConsole, recordConsole, settle, test } from './conso
 import { rateLimitNetworkLog, signUp, uniqueAccount } from './accounts';
 
 // Chat between two users in two different browser engines: the engine the
-// test runs in, plus an independent second one. WebKit is not paired with
-// itself so the pairing also works on hosts where it cannot run.
+// test runs in, plus the other one.
 test('chat message reaches a user in another browser', async ({
   page,
   browserName,

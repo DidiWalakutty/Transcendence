@@ -13,15 +13,15 @@ _Extended multi-browser support_ minor module.
 
 ## 2. Supported browsers
 
-Chrome and Edge share one rendering engine (Blink), Firefox has its own (Gecko),
-Safari has WebKit. Firefox is the second engine, Edge the second product.
+Chrome and Edge share one rendering engine (Blink), Firefox has its own (Gecko).
+Firefox is the second engine, Edge the second product. Safari is not supported:
+no Mac is available to test it.
 
-| Browser         | Engine | Role                       | Minimum\* | Version tested | OS  | Date | Result |
-| --------------- | ------ | -------------------------- | --------- | -------------- | --- | ---- | ------ |
-| Google Chrome   | Blink  | Mandatory                  | 111       |                |     |      |        |
-| Mozilla Firefox | Gecko  | Module — browser 1         | 128       |                |     |      |        |
-| Microsoft Edge  | Blink  | Module — browser 2         | 111       |                |     |      |        |
-| Safari (WebKit) | WebKit | Engine covered by e2e only | 16.4      | Playwright     | —   |      |        |
+| Browser         | Engine | Role               | Minimum\* | Version tested | OS  | Date | Result |
+| --------------- | ------ | ------------------ | --------- | -------------- | --- | ---- | ------ |
+| Google Chrome   | Blink  | Mandatory          | 111       |                |     |      |        |
+| Mozilla Firefox | Gecko  | Module — browser 1 | 128       |                |     |      |        |
+| Microsoft Edge  | Blink  | Module — browser 2 | 111       |                |     |      |        |
 
 \* Tailwind CSS v4 needs `@property`, `color-mix()` and cascade layers; older
 browsers render unstyled (BS-2). Versions: `chrome://version`, `about:support`,
@@ -55,15 +55,15 @@ Seed accounts come from `vp run db:seed`; reset e-mails land in Mailpit at
 Legend: ✅ works · 🤖 passes in the e2e suite on that engine (section 6) ·
 ⚠️ works with a note (BS-n) · — not checked.
 
-| Area                                                                                                                                  | Chrome | Firefox | Edge | WebKit |
-| ------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------- | ---- | ------ |
-| Public pages: home, events list (search, filter, sort, pagination), event detail, contact, privacy, terms, 404                        | 🤖     | 🤖      | —    | 🤖     |
-| Auth: signup, login (wrong and right password), session after reload, logout, forgot / reset password, 2FA                            | 🤖     | 🤖      | —    | 🤖     |
-| Logged in: profile edit, avatar upload, create event (date picker, category combobox, image), my events, register, my tickets, toasts | 🤖     | 🤖      | —    | 🤖     |
-| Admin: users and events tables, non-admin refused                                                                                     | 🤖     | 🤖      | —    | 🤖     |
-| Real-time: online status, chat between two browsers, live event list                                                                  | 🤖     | 🤖      | —    | 🤖     |
-| Cross-cutting: language en/es/nl persists, theme, keyboard and dialogs, fonts, no service worker, certificate accepted                | —      | —       | —    | —      |
-| Layout at 375 / 768 / 1280 px, mobile drawer (BS-15)                                                                                  | —      | —       | —    | —      |
+| Area                                                                                                                                  | Chrome | Firefox | Edge |
+| ------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------- | ---- |
+| Public pages: home, events list (search, filter, sort, pagination), event detail, contact, privacy, terms, 404                        | 🤖     | 🤖      | —    |
+| Auth: signup, login (wrong and right password), session after reload, logout, forgot / reset password, 2FA                            | 🤖     | 🤖      | —    |
+| Logged in: profile edit, avatar upload, create event (date picker, category combobox, image), my events, register, my tickets, toasts | 🤖     | 🤖      | —    |
+| Admin: users and events tables, non-admin refused                                                                                     | 🤖     | 🤖      | —    |
+| Real-time: online status, chat between two browsers, live event list                                                                  | 🤖     | 🤖      | —    |
+| Cross-cutting: language en/es/nl persists, theme, keyboard and dialogs, fonts, no service worker, certificate accepted                | —      | —       | —    |
+| Layout at 375 / 768 / 1280 px, mobile drawer (BS-15)                                                                                  | —      | —       | —    |
 
 ### Console cleanliness per page
 
@@ -73,9 +73,9 @@ any warning, error or uncaught exception. Routes: `/`, `/events`,
 `/signup`, `/create-account`, `/login`, `/forgot-password`, `/reset-password`,
 `/verify-2fa`, `/profile`, `/create-event`, `/my-events`, `/my-tickets`,
 `/admin`, 404 page. Protected routes are checked logged out (the redirect) and,
-through the flows, logged in. Last run 2026-09-18: clean in Chromium, Firefox
-and WebKit, except the documented network lines (BS-6 on `/login`, BS-8 on the
-404 page) and the Firefox note on `/create-event` (BS-14).
+through the flows, logged in. Last run 2026-09-18: clean in Chromium and
+Firefox, except the documented network lines (BS-6 on `/login`, BS-8 on the 404
+page) and the Firefox note on `/create-event` (BS-14).
 
 ## 5. Browser-specific limitations and fixed issues
 
@@ -86,11 +86,11 @@ commit messages. **By design** = documented, not fixed.
 
 | ID    | Browsers                   | What                                                                                                                                                                                                                            |
 | ----- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| BS-2  | all, old versions          | Tailwind v4 floor: Chrome 111, Firefox 128, Safari 16.4. Older browsers render unstyled.                                                                                                                                        |
+| BS-2  | all, old versions          | Tailwind v4 floor: Chrome 111, Firefox 128, Edge 111. Older browsers render unstyled.                                                                                                                                           |
 | BS-3  | Chrome/Edge Linux, Firefox | `mkcert` and `certutil` (`libnss3-tools`) must be on the host to write the NSS trust stores; without them the browser shows its warning page once per session.                                                                  |
 | BS-5  | Firefox                    | Reads its trust store at startup; restart it after `generate-certs.sh`.                                                                                                                                                         |
 | BS-6  | Chrome, Edge               | A wrong password is answered `401`; the browser logs `POST …/sign-in/email 401` itself. Network log, not application output.                                                                                                    |
-| BS-8  | Chrome, Edge, WebKit       | The 404 page is served with status 404, which the browser logs as `Failed to load resource … 404`. Firefox does not print document requests.                                                                                    |
+| BS-8  | Chrome, Edge               | The 404 page is served with status 404, which the browser logs as `Failed to load resource … 404`. Firefox does not print document requests.                                                                                    |
 | BS-10 | all                        | better-auth rate limit: 3 sign-in/sign-up/password requests per 10 s per address, 3 resets per minute → `429`, shown in the form's alert and logged by the browser like BS-6.                                                   |
 | BS-12 | Firefox                    | Leaving a page mid-download logs `Image corrupt or truncated` / `downloadable font: download failed … status=2152398850` (`NS_BINDING_ABORTED`). Browser decoders, files are valid.                                             |
 | BS-14 | Firefox                    | With the category list or calendar open, scrolling logs "scroll-linked positioning effect" once — Floating UI repositions anchored popups on scroll. Performance hint, not an error. Reduced: the calendar closes after a pick. |
@@ -114,8 +114,9 @@ console message in a code block, root cause when known.
 
 ## 6. Automation
 
-[Playwright](https://playwright.dev/) drives real Chromium, Firefox and WebKit
-builds through the site and reads their console. 72 tests (24 per engine),
+[Playwright](https://playwright.dev/) drives real Chromium and Firefox builds
+through the site and reads their console — one build per engine the supported
+browsers use (Chrome and Edge share Chromium's). 48 tests (24 per engine),
 about two minutes per engine. Last full run 2026-09-18, all passing.
 
 | File                                                        | Checks                                                                                                                                                                                                         |
@@ -128,24 +129,24 @@ about two minutes per engine. Last full run 2026-09-18, all passing.
 | `e2e/console.ts`, `e2e/accounts.ts`, `playwright.config.ts` | Console recorder and `expectCleanConsole(recorder, allow)` — every `allow` pattern maps to a BS-n; fresh accounts per run (waits out BS-10); one project per engine, `ignoreHTTPSErrors`, two workers (BS-13). |
 
 ```bash
-vp run test:e2e:install                      # once per machine (~500 MB)
+vp run test:e2e:install                      # once per machine (~300 MB)
 vp run deploy:detached                       # https://localhost:3000
-vp run test:e2e                              # all three engines
+vp run test:e2e                              # both engines
 ./node_modules/.bin/playwright test --project chromium --headed
 ./node_modules/.bin/playwright show-report
 E2E_CHANNELS=chrome,msedge vp run test:e2e   # installed Chrome / Edge as extra projects
 ```
 
-School PCs (no sudo, no WebKit libraries):
+School PCs (keep the browser downloads out of the home directory):
 
 ```bash
 PLAYWRIGHT_BROWSERS_PATH=/goinfre/$USER/ms-playwright vp run test:e2e:install
-PLAYWRIGHT_BROWSERS_PATH=/goinfre/$USER/ms-playwright ./node_modules/.bin/playwright test --project chromium --project firefox
+PLAYWRIGHT_BROWSERS_PATH=/goinfre/$USER/ms-playwright vp run test:e2e
 ```
 
 Not covered by the suite: certificate trust, native pickers, 2FA with a real
-authenticator, Safari and Edge as products, my-events / my-tickets / admin
-flows, forgot-password end to end.
+authenticator, Edge as a product (Chromium stands in for it), my-events /
+my-tickets / admin flows, forgot-password end to end.
 
 ## 7. Before the defense
 

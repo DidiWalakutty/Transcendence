@@ -156,7 +156,7 @@ export default defineConfig({
         cache: false,
       },
       'repo:test:e2e:install': {
-        command: './node_modules/.bin/playwright install chromium firefox webkit',
+        command: './node_modules/.bin/playwright install chromium firefox',
         cache: false,
       },
       'repo:check': {
