@@ -31,19 +31,6 @@ async function bootstrap() {
   app.use(express.json({ limit: '2mb' }));
   app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 
-  // TEMP-DEBUG: trace tRPC mutation round-trips while diagnosing a stuck admin save.
-  app.use('/api/trpc', (req, res, next) => {
-    if (req.method === 'POST') {
-      const label = req.url.slice(0, 80);
-      const start = Date.now();
-      Logger.log(`RPC-IN ${label}`, 'RpcTrace');
-      res.on('finish', () => {
-        Logger.log(`RPC-OUT ${label} ${res.statusCode} ${Date.now() - start}ms`, 'RpcTrace');
-      });
-    }
-    next();
-  });
-
   app.enableShutdownHooks();
 
   await app.listen(environment.PORT, '0.0.0.0');

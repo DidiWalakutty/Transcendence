@@ -2,17 +2,15 @@
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "home_page": "Página principal",
   "about_page": "Acerca de",
-  "example_message": "Bienvenido a tu app i18n.",
   "language_label": "Idioma",
   "current_locale": "Idioma actual: {locale}",
-  "learn_router": "Aprende Paraglide JS",
-
   "button_eventra": "Eventra",
   "button_explore": "Explorar eventos",
   "button_create": "Crear evento",
   "button_create_account": "Crear cuenta",
   "button_view_event": "Ver evento",
   "button_all_events": "Todos los eventos",
+  "button_menu": "Menú",
   "button_login": "Iniciar sesión",
   "button_logout": "Cerrar sesión",
   "button_privacy": "Política de privacidad",
@@ -26,21 +24,17 @@
   "button_spinner_sending": "Enviando...",
   "button_ok": "Aceptar",
   "button_get_ticket": "Conseguir entradas",
-
   "hero_title_1": "Descubre eventos emocionantes",
   "hero_title_2": "cerca de ti",
   "hero_subtitle": "Encuentra conciertos, talleres, conferencias, festivales y mucho más, todo en un solo lugar.",
-
   "category_music": "Música",
   "category_culture": "Cultura",
   "category_food": "Comida",
   "category_games": "Juegos",
   "category_talks": "Charlas",
   "category_workshops": "Talleres",
-
   "featured_events_title": "Eventos destacados",
   "featured_events_subtitle": "Descubre eventos emocionantes cerca de ti",
-
   "how_it_works_title": "Descubre. Regístrate. Disfruta.",
   "how_it_works_subtitle": "Encontrar tu próximo evento nunca ha sido tan fácil.",
   "how_it_works_discover_title": "Descubre",
@@ -49,17 +43,13 @@
   "how_it_works_register_description": "Regístrate en eventos y asegura tu plaza.",
   "how_it_works_enjoy_title": "Disfruta",
   "how_it_works_enjoy_description": "Asiste al evento y disfruta de la experiencia.",
-
   "stats_event_count": "Próximos eventos",
   "stats_cities": "Ciudades",
   "stats_categories": "Categorías",
-
   "halfway_image_title": "Encuentra tu próxima experiencia inolvidable",
   "halfway_image_subtitle": "Descubre una amplia variedad de eventos, desde festivales de música hasta conferencias de tecnología, y todo lo demás. ¡Tu próxima aventura te espera!",
-
   "faq_title": "Preguntas frecuentes",
   "faq_subtitle": "Encuentra respuestas a preguntas comunes sobre Eventra.",
-
   "faq_question_1": "¿Qué es Eventra?",
   "faq_answer_1": "Eventra es una plataforma donde puedes descubrir eventos, unirte a ellos y crear los tuyos. Explora eventos según tus intereses, descubre algo nuevo, regístrate en unos pocos clics, o crea tu propio evento y compártelo con los demás.",
   "faq_question_2": "¿Cómo puedo encontrar un evento?",
@@ -72,7 +62,6 @@
   "faq_answer_5": "¡Sí! Crear un evento es fácil. Inicia sesión, haz clic en el botón «Crear evento», completa los datos del evento y publícalo para que otros lo descubran.",
   "faq_question_6": "¿Eventra cuesta algo?",
   "faq_answer_6": "No, usar Eventra es completamente gratis, y crear eventos o unirse a ellos no cuesta nada a través de la plataforma.",
-
   "footer_description": "Descubre, crea y disfruta de eventos con facilidad.",
   "footer_text_explore": "Explorar",
   "footer_text_account": "Cuenta",
@@ -80,7 +69,6 @@
   "footer_text_contact": "Contacto",
   "footer_bottom_text_1": "Hecho con 🧡 para exploradores.",
   "footer_bottom_text_2": "© 2026 Eventra. Todos los derechos reservados.",
-
   "create_account_title": "Crea una cuenta de Eventra",
   "create_account_subtitle": "Regístrate para descubrir y gestionar tus eventos",
   "create_account_full_name": "Nombre completo",
@@ -94,7 +82,6 @@
   "create_account_terms": "Términos del servicio",
   "create_account_and": "y",
   "create_account_privacy": "Política de privacidad",
-
   "contact_title": "Contáctanos",
   "contact_subtitle": "¿Tienes preguntas, comentarios o necesitas ayuda? Ponte en contacto con el equipo de Eventra.",
   "contact_project_support_title": "Soporte del proyecto",
@@ -102,12 +89,10 @@
   "contact_project_support_email": "Correo electrónico: eventra.team@example.com",
   "contact_privacy_requests_title": "Solicitudes de privacidad",
   "contact_privacy_requests_description": "Si tienes preguntas sobre tu información personal, los datos de tu cuenta o solicitudes relacionadas con la privacidad, contacta con el equipo de Eventra.",
-
   "placeholder_name": "tu nombre",
   "placeholder_email": "tu.correo@example.com",
   "placeholder_password": "********",
   "placeholder_username": "tu nombre de usuario",
-
   "login_title": "Bienvenido",
   "login_subtitle": "Inicia sesión para gestionar tus eventos",
   "login_email": "Correo electrónico",
@@ -117,7 +102,6 @@
   "login_no_account": "¿No tienes una cuenta?",
   "login_sign_up": "Regístrate",
   "login_continue": "Al continuar, aceptas nuestros",
-
   "forgot_password_title": "¿Olvidaste tu contraseña?",
   "forgot_password_subtitle_1": "¡No te preocupes!",
   "forgot_password_subtitle_2": "Introduce tu correo electrónico para recibir un enlace de restablecimiento.",
@@ -125,7 +109,6 @@
   "forgot_password_button": "Enviar enlace",
   "forgot_password_remember": "¿Recuerdas tu contraseña?",
   "forgot_password_error": "No se pudo enviar el enlace de restablecimiento.",
-
   "verify_2fa_title": "Verificación en dos pasos",
   "verify_2fa_subtitle_totp": "Introduce el código de 6 dígitos de tu app de autenticación",
   "verify_2fa_subtitle_backup": "Introduce uno de tus códigos de respaldo",
@@ -138,7 +121,6 @@
   "verify_2fa_error_default": "Código inválido",
   "verify_2fa_session_expired": "Tu sesión de verificación ha caducado. Inicia sesión de nuevo.",
   "verify_2fa_back_to_login": "Volver a iniciar sesión",
-
   "two_factor_settings_title": "Seguridad",
   "two_factor_settings_password_label": "Contraseña",
   "two_factor_settings_disabled_description": "Añade una capa extra de seguridad a tu cuenta exigiendo un código de una app de autenticación al iniciar sesión.",
@@ -154,17 +136,14 @@
   "two_factor_settings_enabled_description": "La verificación en dos pasos está activada en tu cuenta.",
   "two_factor_settings_disable_button": "Desactivar verificación en dos pasos",
   "two_factor_settings_disable_error": "No se pudo desactivar la verificación en dos pasos",
-
   "events_page_title": "Todos los eventos",
   "events_page_subtitle": "Descubre eventos cerca de ti y únete a ellos.",
   "events_page_empty_title": "No se encontraron eventos",
   "events_page_empty_description": "Prueba a quitar los filtros o vuelve más tarde para ver nuevos eventos.",
   "events_page_pagination_prev": "Anterior",
   "events_page_pagination_next": "Siguiente",
-
   "events_live_connected": "En vivo — se actualiza cuando cambian los eventos",
   "events_live_reconnecting": "Reconectando a las actualizaciones en vivo…",
-
   "my_events_page_title": "Mis Eventos",
   "my_events_page_subtitle": "Los eventos que has creado.",
   "my_events_page_empty_title": "Todavía no has creado ningún evento",
@@ -172,20 +151,16 @@
   "my_events_manage_title": "Gestiona tus eventos",
   "my_events_manage_description": "Edita o elimina los eventos que organizas.",
   "my_events_search": "Busca en tus eventos",
-
   "profile_avatar_upload": "Subir avatar",
   "profile_avatar_remove": "Eliminar avatar",
-
   "events_about_title": "Acerca de este evento",
   "events_tickets_title": "Entradas",
   "events_tickets_available": "entradas disponibles",
   "events_tickets_sold_out": "Agotado",
-
   "event_sorting_upcoming": "Próximos",
   "event_sorting_popular": "Más populares",
   "event_sorting_newest": "Añadidos recientemente",
   "event_sorting_title": "Ordenar eventos",
-
   "events_registration_success": "¡Ya estás registrado!",
   "events_registration_error": "No se pudo completar el registro.",
   "events_registration_already_registered": "Registrado",
@@ -196,11 +171,9 @@
   "events_registration_cancel_loading": "Cancelando...",
   "events_registration_cancel_success": "Tu registro se ha cancelado.",
   "events_registration_cancel_error": "No se pudo cancelar tu registro.",
-
   "filter_title": "Filtros",
   "filter_category_text": "Categoría",
   "filter_clear": "Borrar filtros",
-
   "create_event_title": "Crea un evento",
   "create_event_description": "Completa los datos siguientes para crear tu evento.",
   "create_event_event_title": "Título del evento",
@@ -227,6 +200,7 @@
   "create_event_location_required": "* Introduce una ubicación.",
   "create_event_address_required": "* Introduce una dirección.",
   "create_event_date_required": "* Selecciona una fecha.",
+  "create_event_date_past": "* La fecha debe ser hoy o posterior.",
   "create_event_time_required": "* Selecciona una hora.",
   "create_event_capacity_required": "* Introduce la capacidad máxima.",
   "event_image_invalid_type": "Elige un archivo de imagen.",
@@ -243,7 +217,6 @@
   "toast_request_too_large": "El archivo seleccionado es demasiado grande.",
   "toast_server_response_error": "El servidor devolvió una respuesta ilegible. Inténtalo de nuevo.",
   "create_event_create_button": "Crear evento",
-
   "my_tickets_page_title": "Mis entradas",
   "my_tickets_page_subtitle": "Gestiona y consulta las entradas de los eventos a los que asistes.",
   "my_tickets_card_title": "Gestiona tus entradas",
@@ -260,7 +233,6 @@
   "my_tickets_cancel_description": "¿Seguro que quieres cancelar tu registro en {name}? Tu plaza volverá a estar disponible.",
   "my_tickets_cancel_confirm": "Cancelar entrada",
   "my_tickets_cancel_abort": "No cancelar",
-
   "privacy_policy_title": "Política de privacidad",
   "privacy_policy_date": "Fecha de entrada en vigor: 22 de julio de 2026",
   "privacy_policy_1": "1. Introducción",
@@ -281,7 +253,6 @@
   "privacy_policy_8_text": "Podemos actualizar esta Política de privacidad cuando la plataforma cambie. Las versiones actualizadas estarán disponibles a través de la aplicación.",
   "privacy_policy_9": "9. Contacto",
   "privacy_policy_9_text": "Si tienes preguntas sobre esta Política de privacidad, contacta con el equipo del proyecto Eventra a través de los canales oficiales de comunicación del proyecto.",
-
   "terms_title": "Términos del servicio",
   "terms_date": "Fecha de entrada en vigor: 22 de julio de 2026",
   "terms_1": "1. Introducción",
@@ -308,7 +279,6 @@
   "terms_9_text": "Estos Términos del servicio pueden actualizarse cuando Eventra cambie o cuando se apliquen nuevos requisitos. Seguir usando la plataforma después de las actualizaciones significa que aceptas los términos revisados.",
   "terms_10": "10. Contacto",
   "terms_10_text": "Si tienes preguntas sobre estos Términos del servicio, contacta con el equipo del proyecto Eventra a través de los canales oficiales de comunicación del proyecto.",
-
   "event_month": [
     {
       "declarations": ["input date", "local formattedMonth = date: datetime month=short"],
@@ -341,7 +311,6 @@
       }
     }
   ],
-
   "event_weekday_long": [
     {
       "declarations": ["input date", "local formattedWeekday = date: datetime weekday=long"],
@@ -391,7 +360,6 @@
   "admin_image": "Imagen del evento",
   "admin_confirm_delete": "¿Eliminar definitivamente?",
   "admin_delete_description": "Esto eliminará {name} y sus datos relacionados de forma permanente.",
-
   "event_date": [
     {
       "declarations": [

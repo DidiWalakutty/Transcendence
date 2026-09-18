@@ -87,6 +87,8 @@ The root `docker-compose.yml` supports these optional overrides:
 | `SEED_*_PASSWORD`   | (dev values)             | Seed-user passwords the backend requires at startup; see the backend table above.                                          |
 | `POSTGRES_PORT`     | `5432`                   | Host port mapped to PostgreSQL.                                                                                            |
 | `REDIS_PORT`        | `6380`                   | Host port mapped to Redis.                                                                                                 |
+| `MAILPIT_SMTP_PORT` | `1025`                   | Host port mapped to Mailpit's SMTP listener.                                                                               |
+| `MAILPIT_UI_PORT`   | `8025`                   | Host port mapped to Mailpit's web UI.                                                                                      |
 
 The frontend and backend containers publish no host ports; Caddy is the only entry
 point to the application.

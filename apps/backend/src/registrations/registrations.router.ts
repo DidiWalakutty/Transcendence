@@ -91,7 +91,7 @@ export class RegistrationsRouter {
 
   @UseMiddlewares(ProtectedMiddleware)
   @Query({
-    input: z.object({ ids: z.string().array() }),
+    input: z.object({ ids: z.uuid().array().max(100) }),
     output: attendeeCountsSchema,
   })
   async getAttendeeCounts(@Input() input: { ids: string[] }) {

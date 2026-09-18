@@ -54,6 +54,9 @@ export function EventDatePicker({
               setOpen(false);
             }}
             locale={calendarLocale}
+            // createEventSchema rejects past dates; greying them out says so
+            // before the user submits.
+            disabled={{ before: new Date() }}
           />
         </PopoverContent>
       </Popover>

@@ -31,7 +31,8 @@ browsers render unstyled (BS-2). Versions: `chrome://version`, `about:support`,
 
 1. **Production build only**: `vp run deploy`, then `https://localhost:3000`.
    The dev server ships devtools and logging the evaluator never sees.
-2. **Trust the certificate** so no warning page appears: `mkcert` and
+2. **Trust the certificate** so no warning page appears (none is committed;
+   without one Caddy self-signs and the browser warns once): `mkcert` and
    `certutil` on `PATH`, then `bash scripts/generate-certs.sh` and
    `docker compose restart caddy`. Chrome/Edge on Linux and Firefox read NSS
    trust stores; macOS browsers use the Keychain. Restart the browser

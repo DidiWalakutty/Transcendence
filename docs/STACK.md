@@ -128,8 +128,8 @@ Preferred approaches:
 
 ### Local Development
 
-- The current local Compose deployment exposes HTTP on `localhost` ports for development.
-- [mkcert](https://github.com/FiloSottile/mkcert) should be used to generate trusted local certificates.
+- The local Compose deployment serves HTTPS on `localhost:3000` through Caddy; without a local certificate Caddy issues a self-signed one.
+- [mkcert](https://github.com/FiloSottile/mkcert) (`scripts/generate-certs.sh`) generates a trusted local certificate into the git-ignored `caddy/certs/`; no certificate is committed.
 - Local environments should mirror production HTTPS behavior whenever possible.
 
 ---

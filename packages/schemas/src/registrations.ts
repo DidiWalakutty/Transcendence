@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 // Registering for an event
 export const createRegistrationSchema = z.object({
-  eventId: z.string(),
+  eventId: z.uuid(),
 });
 
 export const registrationStatusSchema = z.enum(['active', 'canceled']);
