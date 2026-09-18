@@ -142,6 +142,10 @@
   "events_page_empty_description": "Prueba a quitar los filtros o vuelve más tarde para ver nuevos eventos.",
   "events_page_pagination_prev": "Anterior",
   "events_page_pagination_next": "Siguiente",
+  "events_page_pagination_go_to_page": "Ir a la página {page}",
+  "events_page_pagination_aria_previous": "Página anterior",
+  "events_page_pagination_aria_next": "Página siguiente",
+
   "events_live_connected": "En vivo — se actualiza cuando cambian los eventos",
   "events_live_reconnecting": "Reconectando a las actualizaciones en vivo…",
   "my_events_page_title": "Mis Eventos",
@@ -153,6 +157,7 @@
   "my_events_search": "Busca en tus eventos",
   "profile_avatar_upload": "Subir avatar",
   "profile_avatar_remove": "Eliminar avatar",
+  "profile_friends_open_search": "Abrir opciones de búsqueda de amigos",
   "events_about_title": "Acerca de este evento",
   "events_tickets_title": "Entradas",
   "events_tickets_available": "entradas disponibles",

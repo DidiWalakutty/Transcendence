@@ -190,6 +190,7 @@ function EventsPage() {
         <div className="mt-12 flex flex-wrap justify-center gap-3">
           <Button
             onClick={() => updateSearch({ page: Math.max(currentPage - 1, 1) })}
+            aria-label={m.events_page_pagination_aria_previous()}
             disabled={currentPage === 1}
             className="
 			  rounded-lg
@@ -209,6 +210,8 @@ function EventsPage() {
               <Button
                 key={page}
                 onClick={() => updateSearch({ page })}
+                aria-label={m.events_page_pagination_go_to_page({ page })}
+                aria-current={currentPage === page ? 'page' : undefined}
                 className={`
 				  rounded-lg
 				  px-4
@@ -224,6 +227,7 @@ function EventsPage() {
           <Button
             onClick={() => updateSearch({ page: Math.min(currentPage + 1, totalPages) })}
             disabled={currentPage === totalPages}
+            aria-label={m.events_page_pagination_aria_next()}
             className="
 			  rounded-lg
 			  border

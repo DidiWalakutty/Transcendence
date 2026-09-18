@@ -48,14 +48,14 @@ export function Footer() {
 
         {/* Explore */}
         <div>
-          <h3
+          <h2
             className="
 							font-semibold
 							text-lg
 							"
           >
             {m.footer_text_explore()}
-          </h3>
+          </h2>
 
           <ul
             className="
@@ -74,14 +74,14 @@ export function Footer() {
 
         {/* Account */}
         <div>
-          <h3
+          <h2
             className="
 							font-semibold
 							text-lg
 							"
           >
             {m.footer_text_account()}
-          </h3>
+          </h2>
 
           <ul
             className="
@@ -112,14 +112,14 @@ export function Footer() {
 
         {/* Legal */}
         <div>
-          <h3
+          <h2
             className="
 							text-lg
 							font-semibold
 							"
           >
             {m.footer_text_legal()}
-          </h3>
+          </h2>
 
           <ul
             className="
@@ -144,14 +144,14 @@ export function Footer() {
 
         {/* Contact */}
         <div>
-          <h3
+          <h2
             className="
 							text-lg
 							font-semibold
 							"
           >
             {m.footer_text_contact()}
-          </h3>
+          </h2>
 
           <ul
             className="

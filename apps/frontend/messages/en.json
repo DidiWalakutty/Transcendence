@@ -142,6 +142,10 @@
   "events_page_empty_description": "Try clearing your filters or check back later for new events.",
   "events_page_pagination_prev": "Previous",
   "events_page_pagination_next": "Next",
+  "events_page_pagination_go_to_page": "Go to page {page}",
+  "events_page_pagination_aria_previous": "Previous page",
+  "events_page_pagination_aria_next": "Next page",
+
   "events_live_connected": "Live — updates as events change",
   "events_live_reconnecting": "Reconnecting to live updates…",
   "my_events_page_title": "My Events",
@@ -153,6 +157,8 @@
   "my_events_search": "Search your events",
   "profile_avatar_upload": "Upload avatar",
   "profile_avatar_remove": "Remove avatar",
+  "profile_friends_open_search": "Open friend search options",
+
   "events_about_title": "About this event",
   "events_tickets_title": "Tickets",
   "events_tickets_available": "tickets available",

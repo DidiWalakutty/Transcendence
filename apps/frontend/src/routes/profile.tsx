@@ -407,6 +407,7 @@ function ProfilePage() {
                       <ComboboxInput
                         id="friend-search"
                         placeholder={m.profile_friends_search_placeholder()}
+                        triggerAriaLabel={m.profile_friends_open_search()}
                       />
                       <ComboboxContent>
                         <ComboboxEmpty>{m.admin_no_results()}</ComboboxEmpty>
