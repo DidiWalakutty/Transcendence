@@ -103,10 +103,15 @@ function PwaRegistration() {
 
     const serviceWorkerUrl = import.meta.env.DEV ? '/dev-sw.js?dev-sw' : '/sw.js';
 
-    void navigator.serviceWorker.register(serviceWorkerUrl, {
-      scope: '/',
-      type: import.meta.env.DEV ? 'module' : 'classic',
-    });
+    // The PWA is an enhancement: browsers refuse to install a service worker
+    // from an origin with certificate errors or in private windows, and that
+    // must not surface as an uncaught error in the console.
+    navigator.serviceWorker
+      .register(serviceWorkerUrl, {
+        scope: '/',
+        type: import.meta.env.DEV ? 'module' : 'classic',
+      })
+      .catch(() => {});
   }, []);
 
   return null;
