@@ -50,7 +50,8 @@ export function Hero() {
 						w-full
 						max-w-7xl
 						items-center
-						px-8
+						px-6
+						md:px-8
 						"
       >
         <div
@@ -62,8 +63,9 @@ export function Hero() {
         >
           <h1
             className="
-							text-5xl
+							text-4xl
 							font-bold
+							md:text-5xl
 							2xl:text-6xl
 							"
           >
@@ -86,9 +88,11 @@ export function Hero() {
 
           <div
             className="
-						mt-12
+						mt-8
 						flex
+						flex-wrap
 						gap-4
+						md:mt-12
 						"
           >
             <Button size="hero" className="text-white [text-shadow:0_1px_2px_#190b02]">
