@@ -169,7 +169,7 @@ Follow these steps to configure, build, and deploy the application environment l
 
 ### Prerequisites
 
-- [Nix](https://nixos.org/download/) (recommended — see [Dev Environment](./docs/DEVENVIRONMENT.md)) or the [Vite+](https://viteplus.dev/) installer.
+- The [Vite+](https://viteplus.dev/) installer (provides Bun and the `vp` command).
 - [Docker Engine](https://docs.docker.com/) $\ge$ v20.10 or Podman equivalent, with Docker Compose v2.
 
 Full setup steps: [Development](./docs/DEVELOPMENT.md).
@@ -206,9 +206,11 @@ because rootless Docker (Codam machines) can't bind ports below 1024. `HTTPS_POR
 
 The committed certificate is a local [mkcert](https://github.com/FiloSottile/mkcert) one,
 so a browser that hasn't trusted its mkcert root shows a one-time warning you can click
-through. To get a trusted certificate on your own machine instead, run this from the Nix
-dev shell (it works without sudo — browser trust stores only — which is what Codam
-machines need), then restart your browser and `docker compose restart caddy`:
+through. To get a trusted certificate on your own machine instead, install
+[mkcert](https://github.com/FiloSottile/mkcert) (plus `certutil` from `libnss3-tools` on
+Linux, which mkcert needs to write the Chrome and Firefox trust stores), run the script
+below (it works without sudo — browser trust stores only — which is what Codam machines
+need), then restart your browser and `docker compose restart caddy`:
 
 ```bash
 bash scripts/generate-certs.sh

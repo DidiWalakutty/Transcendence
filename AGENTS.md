@@ -7,7 +7,6 @@ task before making changes.
 Key references:
 
 - [Development workflow](docs/DEVELOPMENT.md)
-- [Development environment](docs/DEVENVIRONMENT.md)
 - [Technology stack](docs/STACK.md)
 - [Repository structure](docs/MONOREPO.md)
 - [Tooling and commands](docs/TOOLING.md)

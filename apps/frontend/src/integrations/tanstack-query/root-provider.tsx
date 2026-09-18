@@ -4,11 +4,11 @@ import superjson from 'superjson';
 import { createTRPCClient, httpBatchLink, httpSubscriptionLink, splitLink } from '@trpc/client';
 import { createTRPCOptionsProxy } from '@trpc/tanstack-react-query';
 import { createServerOnlyFn } from '@tanstack/react-start';
-import { getRequestHeader } from '@tanstack/react-start/server';
 
 import type { AppRouter } from '@repo/schemas/trpc';
 import { TRPCProvider } from '@/integrations/trpc/react';
 import { getApiBaseUrl } from '@/lib/api-base-url';
+import { getForwardedRequestHeaders } from '@/lib/forwarded-headers';
 import * as m from '@/@generated/paraglide/messages';
 
 import { MutationCache } from '@tanstack/react-query';
@@ -62,10 +62,7 @@ function mutationErrorMessage(error: unknown): string {
   return error.message;
 }
 
-const getServerRequestHeaders = createServerOnlyFn(() => {
-  const cookie = getRequestHeader('cookie');
-  return cookie ? { cookie } : {};
-});
+const getServerRequestHeaders = createServerOnlyFn(getForwardedRequestHeaders);
 
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [

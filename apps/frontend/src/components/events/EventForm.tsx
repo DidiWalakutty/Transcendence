@@ -50,17 +50,25 @@ export function EventForm() {
       return;
     }
 
-    const result = await createEvent.mutateAsync({
-      title,
-      description,
-      category: selectedCategories,
-      location,
-      address,
-      date: selectedDate,
-      time,
-      image: selectedImage,
-      maxCapacity: Number(capacity),
-    });
+    // A rejected mutation is shown through the global toast; it must not
+    // escape as an uncaught promise in the console.
+    const result = await createEvent
+      .mutateAsync({
+        title,
+        description,
+        category: selectedCategories,
+        location,
+        address,
+        date: selectedDate,
+        time,
+        image: selectedImage,
+        maxCapacity: Number(capacity),
+      })
+      .catch(() => undefined);
+
+    if (!result) {
+      return;
+    }
 
     await navigate({
       to: '/events/$eventId',

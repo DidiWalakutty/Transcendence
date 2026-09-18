@@ -60,7 +60,9 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
     onSubmit: async ({ value }) => {
       const { confirmPassword: _confirmPassword, ...values } = value;
 
-      await signUp.mutateAsync(values);
+      // A rejected mutation is shown through the mutation's error state and the
+      // global toast; it must not escape as an uncaught promise in the console.
+      await signUp.mutateAsync(values).catch(() => undefined);
     },
   });
 

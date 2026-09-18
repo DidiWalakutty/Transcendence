@@ -4,9 +4,10 @@
 # registers the issuing mkcert root CA with this machine's browsers, so the
 # certificate is trusted without a warning.
 #
-# mkcert ships with the Nix dev shell (`nix develop`). On machines without
-# sudo (Codam) only the browser trust stores (Firefox/Chrome NSS) can be
-# written; that is enough for the browser to trust the certificate.
+# Requires mkcert (https://github.com/FiloSottile/mkcert) and, on Linux,
+# certutil from libnss3-tools so mkcert can write the Firefox/Chrome NSS trust
+# stores. On machines without sudo (Codam) only those browser trust stores can
+# be written; that is enough for the browser to trust the certificate.
 
 set -euo pipefail
 
@@ -14,7 +15,7 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cert_dir="$repo_root/caddy/certs"
 
 if ! command -v mkcert >/dev/null 2>&1; then
-  echo "Error: mkcert is required. Enter the Nix dev shell (nix develop) or install it from https://github.com/FiloSottile/mkcert" >&2
+  echo "Error: mkcert is required. Install it from https://github.com/FiloSottile/mkcert" >&2
   exit 1
 fi
 
