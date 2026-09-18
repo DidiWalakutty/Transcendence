@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TRPCModule } from 'nestjs-trpc';
@@ -6,7 +6,6 @@ import superjson from 'superjson';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule, seconds } from '@nestjs/throttler';
-import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import { createKeyv } from '@keyv/redis';
 import { environment, environmentFilePaths } from './config/environment';
 import { HealthModule } from './health/health.module';
@@ -56,15 +55,10 @@ import { NotificationModule } from './notification/notification.module';
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const useFixtures = config.getOrThrow<boolean>('DEV_FIXTURES');
-
         return {
-          skipIf: () => config.get<string>('NODE_ENV') === 'test',
-          ...(useFixtures
-            ? {}
-            : {
-                storage: new ThrottlerStorageRedisService(config.getOrThrow<string>('REDIS_URL')),
-              }),
+          skipIf: () =>
+            !config.getOrThrow<boolean>('THROTTLE_ENABLED') ||
+            config.get<string>('NODE_ENV') === 'test',
           throttlers: [
             {
               name: 'default',
@@ -97,6 +91,17 @@ import { NotificationModule } from './notification/notification.module';
       basePath: '/api/trpc',
       transformer: superjson,
       context: AuthContext,
+      // An unexpected failure (a database error, for instance) carries its
+      // internals in the message. Log those here and hand the browser a
+      // generic message in production; expected errors (NOT_FOUND, FORBIDDEN,
+      // BAD_REQUEST…) pass through unchanged.
+      errorFormatter: ({ shape, error }) => {
+        if (error.code !== 'INTERNAL_SERVER_ERROR') return shape;
+        Logger.error(error.cause ?? error, 'tRPC');
+        return environment.NODE_ENV === 'production'
+          ? { ...shape, message: 'Internal server error' }
+          : shape;
+      },
     }),
     NotificationModule,
   ],

@@ -90,13 +90,12 @@ vp run db:push
 vp run db:studio
 ```
 
-`vp run dev` and `vp run dev:backend` both depend on the database setup task, so local development normally starts PostgreSQL and runs migrations automatically.
+`vp run dev` and `vp run dev:backend` both depend on the database setup task, so local development normally starts PostgreSQL and runs migrations automatically. The backend also applies pending migrations itself at startup (`DatabaseService.onModuleInit`, using the same `drizzle.__drizzle_migrations` bookkeeping table), which is what the Docker stack relies on.
 
 ## Seeding
 
 `vp run db:setup` only starts PostgreSQL and runs migrations. It does not
-insert demo data. Use `vp run db:seed` (or `bun db:seed` inside the Nix shell),
-not `npm run db:setup` — the project uses Bun and Vite+, not npm.
+insert demo data. Use `vp run db:seed`, not `npm run db:setup` — the project uses Bun and Vite+, not npm.
 
 Seeding runs:
 

@@ -1,18 +1,14 @@
 import { format } from 'date-fns';
 import { enUS, nl } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
+import { useState } from 'react';
 
 import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-
-function parseDate(value: string): Date | undefined {
-  const [year, month, day] = value.split('-').map(Number);
-  if (!year || !month || !day) return undefined;
-  return new Date(year, month - 1, day);
-}
+import { parseEventDate, formatEventDate } from '@repo/schemas/events';
 
 export function EventDatePicker({
   id,
@@ -25,12 +21,13 @@ export function EventDatePicker({
   value: string;
   onValueChange: (value: string) => void;
 }) {
-  const selectedDate = parseDate(value);
+  const selectedDate = value ? parseEventDate(value) : undefined;
+  const [open, setOpen] = useState(false);
   const calendarLocale = getLocale() === 'nl' ? nl : enUS;
 
   return (
     <>
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
           id={id}
           type="button"
@@ -48,8 +45,18 @@ export function EventDatePicker({
           <Calendar
             mode="single"
             selected={selectedDate}
-            onSelect={(date) => onValueChange(date ? format(date, 'yyyy-MM-dd') : '')}
+            onSelect={(date) => {
+              onValueChange(date ? formatEventDate(date) : '');
+              // One date is all the field takes, so the pick is the end of
+              // the interaction. Left open, the calendar follows the page while
+              // the user scrolls on to the next fields, which Firefox flags as
+              // a scroll-linked positioning effect (BS-14).
+              setOpen(false);
+            }}
             locale={calendarLocale}
+            // createEventSchema rejects past dates; greying them out says so
+            // before the user submits.
+            disabled={{ before: new Date() }}
           />
         </PopoverContent>
       </Popover>

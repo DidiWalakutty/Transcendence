@@ -1,17 +1,23 @@
 import { Link, useRouteContext } from '@tanstack/react-router';
+import { Menu } from 'lucide-react';
+import { useState } from 'react';
 
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { UserMenu } from './UserMenu';
 import { navigationItems, type UserRole } from './navigation.config';
 
 import { usePresenceConnection } from '@/hooks/use-presence';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import * as m from '@/@generated/paraglide/messages';
+import { hasAdminRole } from '@repo/schemas/users';
 
 export function Navbar() {
   const { session } = useRouteContext({ from: '__root__' });
-  const hasAdminRole = session?.user.role?.split(',').includes('admin');
-  const role: UserRole = !session ? 'visitor' : hasAdminRole ? 'admin' : 'user';
+  const isAdmin = hasAdminRole(session?.user ?? null);
+  const role: UserRole = !session ? 'visitor' : isAdmin ? 'admin' : 'user';
   const links = navigationItems[role];
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Keeps the current user marked online for as long as the app is open in
   // this tab, not just while they're on the profile page.
@@ -40,7 +46,8 @@ export function Navbar() {
 						border
 						border-border-default
 						bg-surface-card
-						px-8
+						px-4
+						md:px-8
 						shadow-md
 						text-text-primary
 					"
@@ -52,10 +59,11 @@ export function Navbar() {
           </Link>
         </div>
 
-        <div className="flex items-center gap-8">
-          {/* Navigation */}
+        <div className="flex items-center gap-2 md:gap-8">
+          {/* Navigation, inline from `md`; below that the links live in the
+              drawer at the end of this group. */}
           {/* All needed links are generated through map based on the user's role */}
-          <div className="flex gap-6 text-lg 2xl:text-2xl">
+          <div className="hidden gap-6 text-lg md:flex 2xl:text-2xl">
             {links.map((link) => (
               <Link
                 key={link.href}
@@ -77,6 +85,41 @@ export function Navbar() {
             username={session?.user.username}
             avatar={session?.user.image}
           />
+
+          {/* Mobile navigation */}
+          <Sheet open={drawerOpen} onOpenChange={setDrawerOpen}>
+            <SheetTrigger
+              render={
+                <Button
+                  aria-label={m.button_menu()}
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden"
+                />
+              }
+            >
+              <Menu className="h-5 w-5 text-text-primary" />
+            </SheetTrigger>
+
+            <SheetContent side="right" className="w-3/4">
+              <SheetHeader>
+                <SheetTitle className="text-xl text-brand-primary">{m.button_eventra()}</SheetTitle>
+              </SheetHeader>
+
+              <div className="flex flex-col gap-4 px-4 text-lg text-text-primary">
+                {links.map((link) => (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    onClick={() => setDrawerOpen(false)}
+                    className="transition-colors hover:text-brand-primary"
+                  >
+                    {link.label()}
+                  </Link>
+                ))}
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </nav>
     </div>

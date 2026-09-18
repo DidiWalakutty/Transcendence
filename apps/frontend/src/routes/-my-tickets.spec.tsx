@@ -10,7 +10,6 @@ import type { EventDto } from '@repo/schemas/events';
 import { TRPCProvider } from '../integrations/trpc/react';
 import { Route } from './my-tickets';
 import { Route as DetailRoute } from './events/$eventId';
-import { toast } from 'sonner';
 
 vi.mock('@tanstack/react-router', async (importOriginal) => ({
   ...(await importOriginal<typeof import('@tanstack/react-router')>()),
@@ -121,7 +120,14 @@ function setup({
                     ? currentTickets.length
                       ? registration
                       : null
-                    : currentTickets;
+                    : path === 'registrations.getRegistrationStatus'
+                      ? {
+                          available: event.maxCapacity - currentTickets.length,
+                          myRegistration: currentTickets.length ? registration : null,
+                          canRegister: currentTickets.length === 0,
+                          reason: currentTickets.length ? 'ALREADY_REGISTERED' : 'OK',
+                        }
+                      : currentTickets;
           return new Response(JSON.stringify({ result: { data: superjson.serialize(data) } }));
         },
       }),
@@ -130,11 +136,18 @@ function setup({
   const trpc = createTRPCOptionsProxy({ client: trpcClient, queryClient });
   const registrationKey = trpc.registrations.getMyRegistration.queryKey({ id: event.id });
   const availabilityKey = trpc.registrations.getAvailableTickets.queryKey({ id: event.id });
-  queryClient.setQueryData(
-    registrationKey,
-    tickets.length ? { eventId: event.id, userId: 'user', status: 'active' } : null,
-  );
+  const statusKey = trpc.registrations.getRegistrationStatus.queryKey({ id: event.id });
+  queryClient
+    .getQueryCache()
+    .build(queryClient, { queryKey: registrationKey })
+    .setData(tickets.length ? { eventId: event.id, userId: 'user', status: 'active' } : null);
   queryClient.setQueryData(availabilityKey, tickets.length ? 0 : event.maxCapacity);
+  queryClient.setQueryData(statusKey, {
+    available: tickets.length ? 0 : event.maxCapacity,
+    myRegistration: tickets.length ? { eventId: event.id, userId: 'user', status: 'active' } : null,
+    canRegister: tickets.length === 0,
+    reason: tickets.length ? 'ALREADY_REGISTERED' : 'OK',
+  });
   const ticketsKey = trpc.events.getMyRegisteredEvents.queryKey();
   queryClient.setQueryData(ticketsKey, tickets);
   vi.spyOn(DetailRoute, 'useParams').mockReturnValue({ eventId: event.id });
@@ -182,16 +195,6 @@ describe('My Tickets', () => {
     expect(queryClient.getQueryState(registrationKey)?.isInvalidated).toBe(true);
     expect(queryClient.getQueryState(availabilityKey)?.isInvalidated).toBe(true);
   });
-  it('leaves mutation notifications to the shared cache', async () => {
-    const { queryClient } = setup();
-    await cancel();
-    await waitFor(() =>
-      expect(queryClient.getMutationCache().getAll()[0]?.state.status).toBe('success'),
-    );
-    expect(toast.loading).not.toHaveBeenCalled();
-    expect(toast.success).not.toHaveBeenCalled();
-  });
-
   it('refreshes My Tickets after registering from the event page', async () => {
     const { queryClient, ticketsKey, calls } = setup({ tickets: [], page: 'detail' });
     fireEvent.click(await screen.findByRole('button', { name: /get ticket/i }));

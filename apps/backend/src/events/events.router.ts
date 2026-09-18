@@ -19,6 +19,7 @@ import {
   eventIdSchema,
   eventChangedSubscriptionSchema,
   eventSchema,
+  eventWithAttendeeCountSchema,
   eventsSchema,
   updateEventSchema,
   type CreateEventDto,
@@ -28,25 +29,23 @@ import {
 } from '@repo/schemas/events';
 import { EventsService } from './events.service';
 import { ProtectedMiddleware } from '../auth/protected.middleware';
-import { forbiddenError, notFoundError } from '../trpc/trpc.errors';
-
-type EventAuthContext = {
-  user: { id: string; role?: string | null };
-};
+import type { ProtectedCtx } from '../auth/auth.types';
+import { hasAdminRole } from '../auth/roles';
+import { orNotFound, forbiddenError } from '../trpc/trpc.errors';
+import { forwardSubscription } from '../trpc/subscription.helpers';
 
 async function assertCanManage(
   eventsService: EventsService,
   eventId: string,
-  user: EventAuthContext['user'],
+  user: ProtectedCtx['user'],
 ): Promise<void> {
   const event = await eventsService.findById(eventId);
 
   if (!event) {
-    throw notFoundError('Event not found');
+    throw orNotFound(null, 'Event not found');
   }
 
-  const hasAdminRole = user.role?.split(',').includes('admin');
-  if (!hasAdminRole && event.organizerId !== user.id) {
+  if (!hasAdminRole(user) && event.organizerId !== user.id) {
     throw forbiddenError('You can only manage your own events');
   }
 }
@@ -57,7 +56,7 @@ export class EventsRouter {
 
   @UseMiddlewares(ProtectedMiddleware)
   @Mutation({ input: createEventSchema, output: createEventResultSchema })
-  async createEvent(@Input() input: CreateEventDto, @Ctx() ctx: EventAuthContext) {
+  async createEvent(@Input() input: CreateEventDto, @Ctx() ctx: ProtectedCtx) {
     const eventId = await this.eventsService.create({
       ...input,
       organizerId: ctx.user.id,
@@ -69,11 +68,7 @@ export class EventsRouter {
   @Query({ input: eventIdSchema, output: eventSchema })
   async getEventById(@Input() input: { id: string }) {
     const event = await this.eventsService.findById(input.id);
-
-    if (!event) {
-      throw notFoundError('Event not found');
-    }
-    return event;
+    return orNotFound(event, 'Event not found');
   }
 
   // Public: browsing events needs no session, so neither does watching them
@@ -82,40 +77,34 @@ export class EventsRouter {
   async *onEventChanged(
     @Options() opts: { signal?: AbortSignal },
   ): AsyncGenerator<EventChangedDto, void, void> {
-    for await (const change of this.eventsService.listenEventChangedWithHeartbeat(opts.signal)) {
-      yield change;
-    }
+    yield* forwardSubscription(this.eventsService.listenEventChangedWithHeartbeat(opts.signal));
   }
 
   @UseMiddlewares(ProtectedMiddleware)
   @Query({ output: eventsSchema })
-  async getMyEvents(@Ctx() ctx: EventAuthContext) {
+  async getMyEvents(@Ctx() ctx: ProtectedCtx) {
     return this.eventsService.findByOrganizer(ctx.user.id);
   }
 
   @UseMiddlewares(ProtectedMiddleware)
+  @Query({ output: eventWithAttendeeCountSchema.array() })
+  async getMyEventsWithCounts(@Ctx() ctx: ProtectedCtx) {
+    return this.eventsService.findByOrganizerWithCounts(ctx.user.id);
+  }
+
+  @UseMiddlewares(ProtectedMiddleware)
   @Mutation({ input: updateEventSchema, output: eventSchema })
-  async updateEvent(@Input() input: UpdateEventDto, @Ctx() ctx: EventAuthContext) {
+  async updateEvent(@Input() input: UpdateEventDto, @Ctx() ctx: ProtectedCtx) {
     await assertCanManage(this.eventsService, input.id, ctx.user);
     const event = await this.eventsService.update(input);
-
-    if (!event) {
-      throw notFoundError('Event not found');
-    }
-
-    return event;
+    return orNotFound(event, 'Event not found');
   }
 
   @UseMiddlewares(ProtectedMiddleware)
   @Mutation({ input: deleteEventSchema, output: eventSchema })
-  async deleteEvent(@Input() input: DeleteEventDto, @Ctx() ctx: EventAuthContext) {
+  async deleteEvent(@Input() input: DeleteEventDto, @Ctx() ctx: ProtectedCtx) {
     await assertCanManage(this.eventsService, input.id, ctx.user);
     const event = await this.eventsService.delete(input.id);
-
-    if (!event) {
-      throw notFoundError('Event not found');
-    }
-
-    return event;
+    return orNotFound(event, 'Event not found');
   }
 }

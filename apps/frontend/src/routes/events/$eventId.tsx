@@ -1,4 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, notFound } from '@tanstack/react-router';
+import { z } from 'zod';
 import placeholderEvent from '@/assets/placeholder_event.png';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@/integrations/trpc/react';
@@ -7,25 +8,34 @@ import { useEventStream } from '@/hooks/use-event-stream';
 import { useRegistrationMutations } from '@/hooks/use-registration-mutations';
 import { toast } from 'sonner';
 import * as m from '@/@generated/paraglide/messages';
+import { getCategoryLabel } from '@/lib/categories';
+import { eventImageSource } from '@/lib/image';
+
+// A mistyped or stale link is a 404, not an error page: a non-UUID never
+// reaches the backend, and an unknown id maps its NOT_FOUND onto the router's
+// notFoundComponent. Anything else (backend down…) still surfaces as an error.
+function isNotFoundError(error: unknown): boolean {
+  const code = (error as { data?: { code?: string } } | null)?.data?.code;
+  return code === 'NOT_FOUND' || code === 'BAD_REQUEST';
+}
 
 export const Route = createFileRoute('/events/$eventId')({
   loader: async ({ context, params }) => {
-    await context.queryClient.query({
-      ...context.trpc.eventCreation.getEventById.queryOptions({ id: params.eventId }),
-      staleTime: 'static',
-    });
+    if (!z.uuid().safeParse(params.eventId).success) {
+      throw notFound();
+    }
+    try {
+      await context.queryClient.query({
+        ...context.trpc.eventCreation.getEventById.queryOptions({ id: params.eventId }),
+        staleTime: 'static',
+      });
+    } catch (error) {
+      if (isNotFoundError(error)) throw notFound();
+      throw error;
+    }
   },
   component: EventDetailPage,
 });
-
-const categoryTranslations: Record<string, () => string> = {
-  music: m.category_music,
-  culture: m.category_culture,
-  food: m.category_food,
-  games: m.category_games,
-  talks: m.category_talks,
-  workshops: m.category_workshops,
-};
 
 function EventDetailPage() {
   const { eventId } = Route.useParams();
@@ -39,25 +49,15 @@ function EventDetailPage() {
     }),
   );
 
-  const meQuery = useQuery(trpc.users.getMe.queryOptions());
-
-  const ticketQuery = useQuery(
-    trpc.registrations.getAvailableTickets.queryOptions({
-      id: eventId,
-    }),
-  );
-
-  const registrationQuery = useQuery(
-    trpc.registrations.getMyRegistration.queryOptions({
-      id: eventId,
-    }),
+  const statusQuery = useQuery(
+    trpc.registrations.getRegistrationStatus.queryOptions({ id: eventId }),
   );
 
   const { register: registerMutation, cancel: cancelMutation } = useRegistrationMutations();
 
   const event = eventQuery.data;
 
-  const eventImage = event?.image && event.image !== 'PLACEHOLDER' ? event.image : placeholderEvent;
+  const eventImage = eventImageSource(event?.image, placeholderEvent);
 
   const eventDate = event?.date ? new Date(event.date) : null;
 
@@ -90,7 +90,7 @@ function EventDetailPage() {
                   key={category}
                   className="rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-brand-primary-text"
                 >
-                  {categoryTranslations[category]?.() ?? category}
+                  {getCategoryLabel(category)}
                 </span>
               ))}
             </div>
@@ -176,8 +176,8 @@ function EventDetailPage() {
               <h2 className="text-2xl font-bold text-text-primary">{m.events_tickets_title()}</h2>
 
               <p className="mt-4 text-text-muted">
-                <span className="text-3xl font-bold text-brand-primary-text">
-                  {ticketQuery.data ?? '...'}
+                <span className="text-3xl font-bold text-primary">
+                  {statusQuery.data?.available ?? '...'}
                 </span>{' '}
                 {m.events_tickets_available()}
               </p>
@@ -186,41 +186,30 @@ function EventDetailPage() {
                 size="hero"
                 type="button"
                 onClick={() => {
-                  // User must be logged in to register
-                  if (!meQuery.data) {
+                  if (statusQuery.data?.reason === 'NOT_LOGGED_IN') {
                     toast.info(m.events_registration_not_logged_in());
                     return;
                   }
-
-                  // User is already registered
-                  if (registrationQuery.data) {
+                  if (!statusQuery.data?.canRegister) {
                     return;
                   }
-
-                  // If sold out
-                  if (ticketQuery.data === 0) {
-                    return;
-                  }
-
                   registerMutation.mutate({ eventId });
                 }}
-                disabled={
-                  registerMutation.isPending || !!registrationQuery.data || ticketQuery.data === 0
-                }
-                className="mt-6 w-full rounded-xl bg-primary px-6 py-4 text-lg font-bold text-brand-primary-foreground transition hover:opacity-90"
+                disabled={registerMutation.isPending || !statusQuery.data?.canRegister}
+                className="mt-6 w-full rounded-xl bg-primary px-6 py-4 text-lg font-bold text-white transition hover:opacity-90"
               >
-                {!meQuery.data
+                {statusQuery.data?.reason === 'NOT_LOGGED_IN'
                   ? m.events_registration_not_logged_in()
-                  : registrationQuery.data
+                  : statusQuery.data?.reason === 'ALREADY_REGISTERED'
                     ? m.events_registration_already_registered()
-                    : ticketQuery.data === 0
+                    : statusQuery.data?.reason === 'SOLD_OUT'
                       ? m.events_tickets_sold_out()
                       : registerMutation.isPending
                         ? m.events_registration_loading()
                         : m.events_registration_get_ticket()}
               </Button>
 
-              {registrationQuery.data && (
+              {statusQuery.data?.myRegistration && (
                 <Button
                   size="lg"
                   type="button"

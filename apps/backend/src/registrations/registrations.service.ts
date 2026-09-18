@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { RegistrationsRepository } from './repositories/registrations.repository';
 import { conflictError, forbiddenError, notFoundError } from '../trpc/trpc.errors';
+import { APP_EVENTS, emitAppEvent } from '../events/app-events';
 
 @Injectable()
 export class RegistrationsService {
@@ -28,7 +29,7 @@ export class RegistrationsService {
       case 'sold-out':
         throw conflictError('No tickets available for this event.');
       case 'success':
-        process.emit('registration.created' as any, { userId, eventId });
+        emitAppEvent(APP_EVENTS.registrationCreated, { userId, eventId });
         return result.registration;
     }
   }
@@ -55,5 +56,36 @@ export class RegistrationsService {
     }
 
     return this.repository.getEventAttendees(eventId);
+  }
+
+  async getAttendeeCounts(eventIds: string[]) {
+    return this.repository.getAttendeeCounts(eventIds);
+  }
+
+  async getRegistrationStatus(eventId: string, userId: string | null) {
+    const [available, myRegistration] = await Promise.all([
+      this.repository.getAvailableTickets(eventId),
+      userId ? this.repository.findActiveRegistration(eventId, userId) : Promise.resolve(null),
+    ]);
+    if (!userId) {
+      return {
+        available,
+        myRegistration: null,
+        canRegister: false,
+        reason: 'NOT_LOGGED_IN' as const,
+      };
+    }
+    if (myRegistration) {
+      return {
+        available,
+        myRegistration,
+        canRegister: false,
+        reason: 'ALREADY_REGISTERED' as const,
+      };
+    }
+    if (available <= 0) {
+      return { available, myRegistration: null, canRegister: false, reason: 'SOLD_OUT' as const };
+    }
+    return { available, myRegistration: null, canRegister: true, reason: 'OK' as const };
   }
 }

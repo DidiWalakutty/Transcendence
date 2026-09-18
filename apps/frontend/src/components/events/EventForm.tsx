@@ -1,4 +1,3 @@
-import placeholderEvent from '@/assets/placeholder_event.png';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,15 +11,29 @@ import * as m from '@/@generated/paraglide/messages';
 import { EventCategoryCombobox } from '@/components/events/EventCategoryCombobox';
 import { EventDatePicker } from '@/components/events/EventDatePicker';
 import { EventImagePicker } from '@/components/events/EventImagePicker';
+import {
+  createEventSchema,
+  EVENT_ADDRESS_MAX,
+  EVENT_CAPACITY_MAX,
+  EVENT_DESCRIPTION_MAX,
+  EVENT_LOCATION_MAX,
+  EVENT_TITLE_MAX,
+  isEventDateInPast,
+  type EventCategory,
+} from '@repo/schemas/events';
+import { EVENT_PLACEHOLDER } from '@repo/schemas/users';
 
-const DEFAULT_EVENT_IMAGE = placeholderEvent;
+// The sentinel, not the bundled asset URL: the picker shows the asset for it
+// (eventImageSource), while the stored value stays independent of the build's
+// hashed file names.
+const DEFAULT_EVENT_IMAGE = EVENT_PLACEHOLDER;
 
 export function EventForm() {
   const trpc = useTRPC();
   const navigate = useNavigate();
   const createEvent = useMutation(trpc.eventCreation.createEvent.mutationOptions());
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<EventCategory[]>([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedImage, setSelectedImage] = useState(DEFAULT_EVENT_IMAGE);
   const [showErrors, setShowErrors] = useState(false);
@@ -50,7 +63,7 @@ export function EventForm() {
       return;
     }
 
-    const result = await createEvent.mutateAsync({
+    const parsed = createEventSchema.safeParse({
       title,
       description,
       category: selectedCategories,
@@ -61,6 +74,17 @@ export function EventForm() {
       image: selectedImage,
       maxCapacity: Number(capacity),
     });
+    if (!parsed.success) {
+      return;
+    }
+
+    // A rejected mutation is shown through the global toast; it must not
+    // escape as an uncaught promise in the console.
+    const result = await createEvent.mutateAsync(parsed.data).catch(() => undefined);
+
+    if (!result) {
+      return;
+    }
 
     await navigate({
       to: '/events/$eventId',
@@ -108,6 +132,7 @@ export function EventForm() {
                   name="title"
                   value={title}
                   onChange={(event) => setTitle(event.target.value)}
+                  maxLength={EVENT_TITLE_MAX}
                   placeholder={m.create_event_event_title_placeholder()}
                   className="border-0 bg-transparent focus-visible:ring-0"
                 />
@@ -128,6 +153,7 @@ export function EventForm() {
                   name="description"
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
+                  maxLength={EVENT_DESCRIPTION_MAX}
                   placeholder={m.create_event_event_description_placeholder()}
                   className="min-h-32 resize-y border-0 bg-transparent focus-visible:ring-0"
                 />
@@ -147,7 +173,7 @@ export function EventForm() {
               <EventCategoryCombobox
                 id="category"
                 value={selectedCategories}
-                onValueChange={setSelectedCategories}
+                onValueChange={(value) => setSelectedCategories(value as EventCategory[])}
               />
 
               {showErrors && selectedCategories.length === 0 && (
@@ -168,6 +194,7 @@ export function EventForm() {
                     name="location"
                     value={location}
                     onChange={(event) => setLocation(event.target.value)}
+                    maxLength={EVENT_LOCATION_MAX}
                     placeholder={m.create_event_location_placeholder()}
                     className="border-0 bg-transparent focus-visible:ring-0"
                   />
@@ -188,6 +215,7 @@ export function EventForm() {
                     name="address"
                     value={address}
                     onChange={(event) => setAddress(event.target.value)}
+                    maxLength={EVENT_ADDRESS_MAX}
                     placeholder={m.create_event_address_placeholder()}
                     className="border-0 bg-transparent focus-visible:ring-0"
                   />
@@ -214,6 +242,9 @@ export function EventForm() {
 
                 {showErrors && !selectedDate && (
                   <p className="text-sm text-red-500">{m.create_event_date_required()}</p>
+                )}
+                {showErrors && selectedDate && isEventDateInPast(selectedDate) && (
+                  <p className="text-sm text-red-500">{m.create_event_date_past()}</p>
                 )}
               </div>
 
@@ -248,6 +279,7 @@ export function EventForm() {
                   name="capacity"
                   type="number"
                   min="1"
+                  max={EVENT_CAPACITY_MAX}
                   value={capacity}
                   onChange={(event) => setCapacity(event.target.value)}
                   placeholder={m.create_event_capacity_placeholder()}

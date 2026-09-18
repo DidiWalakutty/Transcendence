@@ -16,7 +16,11 @@ export const Route = createFileRoute('/events/')({
     category: z.string().optional(),
     sort: z.enum(['upcoming', 'popular', 'newest']).optional(),
   }),
-  loaderDeps: ({ search }) => ({ sort: search.sort ?? 'upcoming' }),
+  loaderDeps: ({ search }) => ({
+    sort: search.sort ?? 'upcoming',
+    category: search.category ?? '',
+    page: search.page ?? 1,
+  }),
   loader: async ({ context, deps }) => {
     // A loader throw fails the whole route, so a backend that is down turns
     // this page into an error screen. Render the shell instead and let the
@@ -24,7 +28,22 @@ export const Route = createFileRoute('/events/')({
     // does after a reconnect.
     await context.queryClient
       .query({
-        ...context.trpc.events.getEvents.queryOptions(deps.sort),
+        ...context.trpc.events.getFilteredEvents.queryOptions({
+          sort: deps.sort,
+          categories:
+            deps.category.length > 0
+              ? (deps.category.split(',') as (
+                  | 'music'
+                  | 'culture'
+                  | 'food'
+                  | 'games'
+                  | 'talks'
+                  | 'workshops'
+                )[])
+              : undefined,
+          page: deps.page,
+          pageSize: 8,
+        }),
         staleTime: 'static',
       })
       .catch(() => undefined);
@@ -43,8 +62,27 @@ function EventsPage() {
   // Keeps this listing current while it is open: another user creating,
   // editing or deleting an event patches the cache here without a refetch.
   const { connected, failed } = useEventStream();
-  const eventsQuery = useQuery(trpc.events.getEvents.queryOptions(selectedSort));
-  const events = eventsQuery.data ?? [];
+  const eventsQuery = useQuery(
+    trpc.events.getFilteredEvents.queryOptions({
+      sort: selectedSort,
+      categories:
+        selectedCategories.length > 0
+          ? (selectedCategories as (
+              | 'music'
+              | 'culture'
+              | 'food'
+              | 'games'
+              | 'talks'
+              | 'workshops'
+            )[])
+          : undefined,
+      page: currentPage,
+      pageSize: eventsPerPage,
+    }),
+  );
+  const filteredEvents = eventsQuery.data?.items ?? [];
+  const totalPages = Math.max(1, Math.ceil((eventsQuery.data?.total ?? 0) / eventsPerPage));
+  const displayedEvents = filteredEvents;
 
   const updateSearch = (updates: {
     page?: number;
@@ -60,20 +98,6 @@ function EventsPage() {
     });
   };
 
-  const filteredEvents = events.filter((event) => {
-    if (selectedCategories.length === 0) {
-      return true;
-    }
-
-    return selectedCategories.some((category) => event.category.includes(category));
-  });
-
-  const totalPages = Math.max(1, Math.ceil(filteredEvents.length / eventsPerPage));
-
-  const startIndex = (currentPage - 1) * eventsPerPage;
-
-  const displayedEvents = filteredEvents.slice(startIndex, startIndex + eventsPerPage);
-
   const handleCategoryChange = (category: string) => {
     const newCategories = selectedCategories.includes(category)
       ? selectedCategories.filter((item) => item !== category)
@@ -88,15 +112,16 @@ function EventsPage() {
   return (
     <div className="relative min-h-[calc(100vh-180px)] bg-white">
       {/* Background */}
-      <div className="absolute inset-0 flex">
+      <div className="absolute inset-0 hidden lg:flex">
         <div className="w-[30%] bg-primary" />
         <div className="flex-1 bg-white" />
       </div>
 
       {/* Content */}
-      <div className="relative mx-auto w-full max-w-7xl px-4 py-12 md:px-6">
-        {/* Header */}
-        <div className="max-w-xl">
+      <div className="relative mx-auto w-full max-w-7xl px-4 py-6 md:px-6 lg:py-12">
+        {/* Header: on its own orange block below `lg`, where the background
+            column is hidden. */}
+        <div className="max-w-xl rounded-2xl bg-primary p-6 lg:rounded-none lg:bg-transparent lg:p-0">
           <h1 className="text-4xl font-bold text-surface-footer md:text-5xl">
             {m.events_page_title()}
           </h1>
@@ -115,9 +140,9 @@ function EventsPage() {
         </div>
 
         {/* Events + Filters */}
-        <div className="mt-12 flex gap-8">
+        <div className="mt-8 flex flex-col gap-8 lg:mt-12 lg:flex-row">
           {/* Event List */}
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             {filteredEvents.length === 0 ? (
               <Empty className="min-h-[320px] border-border bg-white/80 shadow-sm">
                 <EmptyHeader>
@@ -138,10 +163,10 @@ function EventsPage() {
             )}
           </div>
 
-          {/* Sidebar */}
-          <div className="relative w-1/4">
+          {/* Sidebar: sort and filters stack above the list below `lg`. */}
+          <div className="relative order-first flex flex-col gap-4 lg:order-none lg:w-1/4 lg:gap-0">
             {/* Sorting */}
-            <div className="absolute -top-16 left-0">
+            <div className="lg:absolute lg:-top-16 lg:left-0">
               <EventSort
                 selectedSort={selectedSort}
                 onSortChange={(sort: 'upcoming' | 'popular' | 'newest') =>
@@ -162,7 +187,7 @@ function EventsPage() {
 
         {/* Pagination */}
 
-        <div className="mt-12 flex justify-center gap-3">
+        <div className="mt-12 flex flex-wrap justify-center gap-3">
           <Button
             onClick={() => updateSearch({ page: Math.max(currentPage - 1, 1) })}
             aria-label={m.events_page_pagination_aria_previous()}

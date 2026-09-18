@@ -12,3 +12,5 @@ apps/frontend/src/routeTree.gen.ts
 caddy/certs/
 .claude/
 CLAUDE.md
+test-results
+playwright-report

@@ -26,6 +26,7 @@ Earlier files take precedence when the same variable is defined.
 | `CACHE_TTL_MS`         | No                         | `30000`                                                               | Default backend cache TTL in milliseconds.                                                                                                                                      |
 | `THROTTLE_TTL_SECONDS` | No                         | `60`                                                                  | Rate-limit window length in seconds.                                                                                                                                            |
 | `THROTTLE_LIMIT`       | No                         | `100`                                                                 | Maximum requests allowed during the throttle window.                                                                                                                            |
+| `THROTTLE_ENABLED`     | No                         | `false`                                                               | Enables the global rate limiter. Development disables it; Docker Compose deployment defaults to `true`, and the variable can override that default.                             |
 | `DEV_FIXTURES`         | No                         | `false`                                                               | Use in-memory users, cache, and throttling without PostgreSQL or Redis.                                                                                                         |
 | `CORS_ORIGINS`         | No                         | `http://localhost:3000`                                               | Comma-separated browser origins allowed to call the backend (also Better Auth's trusted origins).                                                                               |
 | `SEED_ADMIN_PASSWORD`  | Yes                        | (see `apps/backend/.env.development`)                                 | Password for the seeded admin user created by `vp run db:seed`.                                                                                                                 |
@@ -86,6 +87,8 @@ The root `docker-compose.yml` supports these optional overrides:
 | `SEED_*_PASSWORD`   | (dev values)             | Seed-user passwords the backend requires at startup; see the backend table above.                                          |
 | `POSTGRES_PORT`     | `5432`                   | Host port mapped to PostgreSQL.                                                                                            |
 | `REDIS_PORT`        | `6380`                   | Host port mapped to Redis.                                                                                                 |
+| `MAILPIT_SMTP_PORT` | `1025`                   | Host port mapped to Mailpit's SMTP listener.                                                                               |
+| `MAILPIT_UI_PORT`   | `8025`                   | Host port mapped to Mailpit's web UI.                                                                                      |
 
 The frontend and backend containers publish no host ports; Caddy is the only entry
 point to the application.

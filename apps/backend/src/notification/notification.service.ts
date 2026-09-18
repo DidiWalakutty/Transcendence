@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
+import type { NotificationLanguage } from '@repo/schemas/users';
 
 import {
   WelcomeEmail,
@@ -10,6 +11,7 @@ import {
   eventCancellationTranslations,
   EventModificationEmail,
   eventModificationTranslations,
+  pickDictionary,
 } from '../templates/index';
 
 @Injectable()
@@ -17,6 +19,32 @@ export class NotificationService {
   private readonly logger = new Logger(NotificationService.name);
 
   constructor(private readonly mailerService: MailerService) {}
+
+  private pick<T>(maps: Record<NotificationLanguage, T>, lang: NotificationLanguage): T {
+    return pickDictionary(maps, lang);
+  }
+
+  private async dispatch({
+    to,
+    subject,
+    html,
+    successLog,
+    failureLog,
+  }: {
+    to: string;
+    subject: string;
+    html: string;
+    successLog: string;
+    failureLog: string;
+  }): Promise<void> {
+    try {
+      await this.mailerService.sendMail({ to, subject, html });
+      this.logger.log(successLog);
+    } catch (error) {
+      this.logger.error(failureLog, error instanceof Error ? error.stack : error);
+      throw error;
+    }
+  }
 
   /**
    * Compiles and dispatches a themed welcome notification
@@ -27,33 +55,17 @@ export class NotificationService {
   async sendWelcomeEmail(
     toEmail: string,
     userName: string,
-    lang: 'en' | 'nl' | 'es' | 'ru' | 'ro' = 'en',
+    lang: NotificationLanguage = 'en',
   ): Promise<void> {
-    try {
-      const selectedDictionary = welcomeTranslations[lang] || welcomeTranslations.en;
-
-      const htmlContent = WelcomeEmail({
-        userName,
-        lang,
-        dictionary: selectedDictionary,
-      });
-
-      await this.mailerService.sendMail({
-        to: toEmail,
-        subject: selectedDictionary.previewText,
-        html: htmlContent,
-      });
-
-      this.logger.log(
-        `Welcome email (${lang.toUpperCase()}) successfully dispatched to ${toEmail}`,
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to execute welcome email routine for ${toEmail}`,
-        error instanceof Error ? error.stack : error,
-      );
-      throw error;
-    }
+    const selectedDictionary = this.pick(welcomeTranslations, lang);
+    const htmlContent = WelcomeEmail({ userName, lang, dictionary: selectedDictionary });
+    await this.dispatch({
+      to: toEmail,
+      subject: selectedDictionary.previewText,
+      html: htmlContent,
+      successLog: `Welcome email (${lang.toUpperCase()}) successfully dispatched to ${toEmail}`,
+      failureLog: `Failed to execute welcome email routine for ${toEmail}`,
+    });
   }
 
   /**
@@ -67,36 +79,26 @@ export class NotificationService {
     eventTime: string,
     eventLocation: string,
     eventAddress: string,
-    lang: 'en' | 'nl' | 'es' | 'ru' | 'ro' = 'en',
+    lang: NotificationLanguage = 'en',
   ): Promise<void> {
-    try {
-      const selectedDictionary =
-        ticketConfirmationTranslations[lang] || ticketConfirmationTranslations.en;
-
-      const htmlContent = TicketConfirmationEmail({
-        userName,
-        eventTitle,
-        eventDate,
-        eventTime,
-        eventLocation,
-        eventAddress,
-        lang,
-        dictionary: selectedDictionary,
-      });
-
-      await this.mailerService.sendMail({
-        to: toEmail,
-        subject: `${selectedDictionary.subjectText} ${eventTitle}`,
-        html: htmlContent,
-      });
-
-      this.logger.log(
-        `Ticket confirmation email (${lang.toUpperCase()}) successfully dispatched to ${toEmail}`,
-      );
-    } catch (error) {
-      this.logger.error(`Failed to execute ticket confirmation routine for ${toEmail}`, error);
-      throw error;
-    }
+    const selectedDictionary = this.pick(ticketConfirmationTranslations, lang);
+    const htmlContent = TicketConfirmationEmail({
+      userName,
+      eventTitle,
+      eventDate,
+      eventTime,
+      eventLocation,
+      eventAddress,
+      lang,
+      dictionary: selectedDictionary,
+    });
+    await this.dispatch({
+      to: toEmail,
+      subject: `${selectedDictionary.subjectText} ${eventTitle}`,
+      html: htmlContent,
+      successLog: `Ticket confirmation email (${lang.toUpperCase()}) successfully dispatched to ${toEmail}`,
+      failureLog: `Failed to execute ticket confirmation routine for ${toEmail}`,
+    });
   }
 
   /**
@@ -110,39 +112,26 @@ export class NotificationService {
     eventTime: string,
     eventLocation: string,
     eventAddress: string,
-    lang: 'en' | 'nl' | 'es' | 'ru' | 'ro' = 'en',
+    lang: NotificationLanguage = 'en',
   ): Promise<void> {
-    try {
-      const selectedDictionary =
-        eventCancellationTranslations[lang] || eventCancellationTranslations.en;
-
-      const htmlContent = EventCancellationEmail({
-        userName,
-        eventTitle,
-        eventDate,
-        eventTime,
-        eventLocation,
-        eventAddress,
-        lang,
-        dictionary: selectedDictionary,
-      });
-
-      await this.mailerService.sendMail({
-        to: toEmail,
-        subject: `${selectedDictionary.subjectText} ${eventTitle}`,
-        html: htmlContent,
-      });
-
-      this.logger.log(
-        `Event cancellation email (${lang.toUpperCase()}) successfully dispatched to ${toEmail}`,
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to execute event cancellation notification routine for ${toEmail}`,
-        error,
-      );
-      throw error;
-    }
+    const selectedDictionary = this.pick(eventCancellationTranslations, lang);
+    const htmlContent = EventCancellationEmail({
+      userName,
+      eventTitle,
+      eventDate,
+      eventTime,
+      eventLocation,
+      eventAddress,
+      lang,
+      dictionary: selectedDictionary,
+    });
+    await this.dispatch({
+      to: toEmail,
+      subject: `${selectedDictionary.subjectText} ${eventTitle}`,
+      html: htmlContent,
+      successLog: `Event cancellation email (${lang.toUpperCase()}) successfully dispatched to ${toEmail}`,
+      failureLog: `Failed to execute event cancellation notification routine for ${toEmail}`,
+    });
   }
 
   /**
@@ -156,7 +145,7 @@ export class NotificationService {
     eventTime: string,
     eventLocation: string,
     eventAddress: string,
-    lang: 'en' | 'nl' | 'es' | 'ru' | 'ro' = 'en',
+    lang: NotificationLanguage = 'en',
     highlights: { title: boolean; dateTime: boolean; location: boolean; address: boolean } = {
       title: false,
       dateTime: false,
@@ -164,35 +153,24 @@ export class NotificationService {
       address: false,
     },
   ): Promise<void> {
-    try {
-      const selectedDictionary =
-        eventModificationTranslations[lang] || eventModificationTranslations.en;
-
-      const htmlContent = EventModificationEmail({
-        userName,
-        eventTitle,
-        eventDate,
-        eventTime,
-        eventLocation,
-        eventAddress,
-        lang,
-        dictionary: selectedDictionary,
-        highlights,
-      });
-
-      await this.mailerService.sendMail({
-        to: toEmail,
-        subject: `${selectedDictionary.subjectText} ${eventTitle}`,
-        html: htmlContent,
-      });
-
-      this.logger.log(`Event modification email (${lang.toUpperCase()}) sent to ${toEmail}`);
-    } catch (error) {
-      this.logger.error(
-        `Failed to execute modification notification routine for ${toEmail}`,
-        error,
-      );
-      throw error;
-    }
+    const selectedDictionary = this.pick(eventModificationTranslations, lang);
+    const htmlContent = EventModificationEmail({
+      userName,
+      eventTitle,
+      eventDate,
+      eventTime,
+      eventLocation,
+      eventAddress,
+      lang,
+      dictionary: selectedDictionary,
+      highlights,
+    });
+    await this.dispatch({
+      to: toEmail,
+      subject: `${selectedDictionary.subjectText} ${eventTitle}`,
+      html: htmlContent,
+      successLog: `Event modification email (${lang.toUpperCase()}) sent to ${toEmail}`,
+      failureLog: `Failed to execute modification notification routine for ${toEmail}`,
+    });
   }
 }

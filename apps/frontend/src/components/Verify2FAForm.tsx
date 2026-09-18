@@ -41,7 +41,9 @@ export function Verify2FAForm({ className, ...props }: React.ComponentProps<'div
   const form = useForm({
     defaultValues: { code: '' },
     onSubmit: async ({ value }) => {
-      await verify.mutateAsync(value.code);
+      // A rejected mutation is shown through the mutation's error state and the
+      // global toast; it must not escape as an uncaught promise in the console.
+      await verify.mutateAsync(value.code).catch(() => undefined);
     },
   });
 

@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, eq, or } from 'drizzle-orm';
+import { and, eq, or, notInArray, ilike } from 'drizzle-orm';
 import { friends, users } from '@repo/schemas/database';
 import { DATABASE } from '../../database/database.constants';
 import type { Database } from '../../database/database.types';
 import { FriendsRepository } from './friends.repository';
+import { friendshipPairCondition } from '../friendship.utils';
 
 @Injectable()
 export class DrizzleFriendsRepository extends FriendsRepository {
@@ -51,10 +52,7 @@ export class DrizzleFriendsRepository extends FriendsRepository {
 
   async findFriendship(myId: string, friendId: string) {
     return this.db.query.friends.findFirst({
-      where: or(
-        and(eq(friends.myId, myId), eq(friends.friendId, friendId)),
-        and(eq(friends.myId, friendId), eq(friends.friendId, myId)),
-      ),
+      where: friendshipPairCondition(myId, friendId),
     });
   }
   async acceptFriend(myId: string, friendId: string) {
@@ -70,14 +68,37 @@ export class DrizzleFriendsRepository extends FriendsRepository {
   async removeFriend(myId: string, friendId: string) {
     const [friendship] = await this.db
       .delete(friends)
-      .where(
-        or(
-          and(eq(friends.myId, myId), eq(friends.friendId, friendId)),
-          and(eq(friends.myId, friendId), eq(friends.friendId, myId)),
-        ),
-      )
+      .where(friendshipPairCondition(myId, friendId))
       .returning();
 
     return friendship;
+  }
+
+  async findEligibleUsers(userId: string, search?: string) {
+    const friendRows = await this.db
+      .select({ myId: friends.myId, friendId: friends.friendId })
+      .from(friends)
+      .where(or(eq(friends.myId, userId), eq(friends.friendId, userId)));
+    const excluded = new Set<string>([userId]);
+    for (const row of friendRows) {
+      excluded.add(row.myId);
+      excluded.add(row.friendId);
+    }
+    const excludedIds = [...excluded];
+    const q = search?.trim();
+    const rows = await this.db
+      .select({
+        id: users.id,
+        username: users.username,
+        displayUsername: users.displayUsername,
+        name: users.name,
+        avatar: users.avatar,
+      })
+      .from(users)
+      .where(
+        and(notInArray(users.id, excludedIds), q ? ilike(users.username, `%${q}%`) : undefined),
+      )
+      .limit(50);
+    return rows;
   }
 }

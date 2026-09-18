@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Q12 Environment Variables</title>
+<style>
+:root {
+  --bg:#f7f8f6; --surface:#fff; --text:#1c2422; --muted:#5d6b67; --border:#dfe4e1; --accent:#173a40;
+  --ok-bg:#e3f4ea; --ok-fg:#1d6b3a; --warn-bg:#fff3d6; --warn-fg:#8a5a00; --bad-bg:#fde4e1; --bad-fg:#9b2c1f;
+  --info-bg:#e5eef0; --info-fg:#173a40; --crit-bg:#7a1c12; --crit-fg:#fff;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#141918; --surface:#1d2422; --text:#e7ece9; --muted:#9aa8a3; --border:#2e3936; --accent:#8fd1c9;
+  --ok-bg:#163a26; --ok-fg:#8fe0ad; --warn-bg:#3d2f0d; --warn-fg:#f2c46b; --bad-bg:#421b16; --bad-fg:#f5a59a;
+  --info-bg:#1e2f33; --info-fg:#9fd3d8; --crit-bg:#f5a59a; --crit-fg:#421b16;
+}}
+:root[data-theme="dark"] {
+  --bg:#141918; --surface:#1d2422; --text:#e7ece9; --muted:#9aa8a3; --border:#2e3936; --accent:#8fd1c9;
+  --ok-bg:#163a26; --ok-fg:#8fe0ad; --warn-bg:#3d2f0d; --warn-fg:#f2c46b; --bad-bg:#421b16; --bad-fg:#f5a59a;
+  --info-bg:#1e2f33; --info-fg:#9fd3d8; --crit-bg:#f5a59a; --crit-fg:#421b16;
+}
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif; }
+main { max-width:960px; margin:0 auto; padding:24px 16px 64px; }
+a { color:var(--accent); }
+h1 { font-size:1.8rem; margin:8px 0 4px; line-height:1.2; }
+h2 { font-size:1.25rem; margin:36px 0 12px; border-bottom:2px solid var(--border); padding-bottom:6px; }
+h3 { font-size:1.02rem; margin:20px 0 6px; }
+.sub { color:var(--muted); margin:0 0 20px; font-size:.95rem; }
+.crumbs { font-size:.9rem; color:var(--muted); display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.crumbs a { text-decoration:none; }
+.section-tag { display:inline-block; font-size:.78rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-top:16px; }
+.verdict { display:inline-flex; align-items:center; gap:8px; font-weight:700; padding:6px 14px; border-radius:999px; margin:8px 0 4px; font-size:1rem; }
+.verdict.pass { background:var(--ok-bg); color:var(--ok-fg); }
+.verdict.risk { background:var(--warn-bg); color:var(--warn-fg); }
+.verdict.fail { background:var(--bad-bg); color:var(--bad-fg); }
+.verdict.human { background:var(--info-bg); color:var(--info-fg); }
+.summary-line { font-size:1.05rem; margin:8px 0 0; }
+.sheet { background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:8px; padding:12px 16px; margin:12px 0; }
+.sheet p { margin:6px 0; }
+.sheet ul { margin:6px 0 6px 18px; }
+.flag { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 16px; margin:12px 0; }
+.flag h3 { margin:0 0 6px; display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.sev { display:inline-block; font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:999px; text-transform:uppercase; letter-spacing:.04em; white-space:nowrap; }
+.sev.critical { background:var(--crit-bg); color:var(--crit-fg); }
+.sev.high { background:var(--bad-bg); color:var(--bad-fg); }
+.sev.medium { background:var(--warn-bg); color:var(--warn-fg); }
+.sev.low { background:var(--info-bg); color:var(--info-fg); }
+.badge { display:inline-block; font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:999px; white-space:nowrap; }
+.badge.pass { background:var(--ok-bg); color:var(--ok-fg); }
+.badge.risk { background:var(--warn-bg); color:var(--warn-fg); }
+.badge.fail { background:var(--bad-bg); color:var(--bad-fg); }
+.badge.human { background:var(--info-bg); color:var(--info-fg); }
+table { width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--border); border-radius:10px; overflow:hidden; margin:12px 0; }
+th, td { text-align:left; padding:9px 12px; border-bottom:1px solid var(--border); vertical-align:top; }
+th { background:var(--info-bg); color:var(--info-fg); font-weight:600; font-size:.82rem; text-transform:uppercase; letter-spacing:.03em; }
+tr:last-child td { border-bottom:0; }
+td.c { text-align:center; white-space:nowrap; }
+code { font:.88em ui-monospace,SFMono-Regular,Menlo,monospace; background:var(--info-bg); padding:1px 5px; border-radius:4px; word-break:break-word; }
+pre { background:var(--info-bg); padding:10px 12px; border-radius:8px; overflow-x:auto; font-size:.85rem; line-height:1.45; }
+pre code { background:none; padding:0; }
+ol li, ul li { margin:5px 0; }
+.wrap { overflow-x:auto; }
+.tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:16px 0; }
+.tile { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px; }
+.tile .n { font-size:2rem; font-weight:700; line-height:1.1; }
+.tile .l { color:var(--muted); font-size:.88rem; }
+.tile.ok .n { color:var(--ok-fg); } .tile.warn .n { color:var(--warn-fg); } .tile.bad .n { color:var(--bad-fg); } .tile.info .n { color:var(--info-fg); }
+.callout { background:var(--surface); border-left:4px solid var(--accent); border-radius:6px; padding:12px 16px; margin:16px 0; }
+.callout.bad { border-left-color:var(--bad-fg); }
+.callout.warn { border-left-color:var(--warn-fg); }
+.nav { display:flex; justify-content:space-between; gap:12px; margin-top:40px; padding-top:16px; border-top:1px solid var(--border); font-size:.92rem; flex-wrap:wrap; }
+.nav a { text-decoration:none; }
+.say { background:var(--surface); border:1px dashed var(--border); border-radius:8px; padding:10px 14px; margin:8px 0; }
+.say strong { color:var(--accent); }
+.term { border-bottom:1px dotted var(--muted); cursor:help; }
+@media (max-width:640px) { th, td { padding:7px 8px; font-size:.9rem; } h1 { font-size:1.5rem; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="crumbs"><a href="index.html">← Audit index</a><span>Question 12 of 27</span></div>
+  <span class="section-tag">Technical Requirements</span>
+  <h1>12. Environment Variables</h1>
+  <div class="verdict fail">❌ FAIL as-is</div>
+  <p class="sub">On main right now this gets a "No". Fix before Saturday. · audited 2026-09-18 · branch main @ 2143958</p>
+  <p class="summary-line">The two checkboxes pass (<code>.env</code> ignored, <code>.env.example</code> present). The third does not: a TLS <strong>private key</strong> is committed, a tracked <code>.env.development</code> holds a real-looking auth secret and passwords, and the compose file inlines password defaults. The sheet calls this "immediate project failure".</p>
+
+  <h2>What the evaluator is asked</h2>
+  <div class="sheet"><p><strong>Are credentials properly secured?</strong></p><ul><li>.env file exists and is in .gitignore</li><li>.env.example file is provided</li><li>No sensitive credentials in the repository</li></ul><p>Any credentials, API keys, or sensitive information found in the repository (outside of .env) will result in immediate project failure.</p></div>
+
+  <h2>Red flags</h2>
+  <div class="flag" id="flag-TLS-private-key-committed-(cad"><h3><span class="sev critical">critical</span>TLS private key committed (caddy/certs/local-key.pem)</h3><p>Fix without any key in git: let Caddy mint its own certificate. In <code>caddy/Caddyfile</code> replace <code>tls /certs/local.pem /certs/local-key.pem</code> with <code>tls internal</code>, drop the <code>./caddy/certs:/certs</code> volume from compose, <code>git rm --cached caddy/certs/*</code>. Behaviour for the evaluator is identical (self-signed, one warning unless trusted). Keep <code>scripts/generate-certs.sh</code> for the mkcert-trusted variant on your own machine — it can write into the ignored folder and a second Caddyfile line can pick it up if present.</p></div><div class="flag" id="flag-Tracked-.env.development-with-"><h3><span class="sev high">high</span>Tracked .env.development with a generated auth secret and passwords</h3><p>Minimum: replace the UUID secret with the same obviously-fake string compose uses (<code>dev-only-insecure-secret-change-in-production</code>) and add a top comment "development defaults only, never used in production; real values go in .env (ignored)". Better: untrack it (<code>git rm --cached</code>, add <code>.env.development</code> to <code>.gitignore</code>) and have <code>vp run dev</code> copy <code>.env.example</code> when it is missing — but that changes the dev workflow the day before the eval; only do it if someone tests it.</p></div><div class="flag" id="flag-Same-demo-passwords-in-three-p"><h3><span class="sev medium">medium</span>Same demo passwords in three places</h3><p><code>.env.development</code>, <code>docker-compose.yml</code>, and (implicitly) <code>seed.ts</code>. Decide the story: "demo accounts with documented passwords, needed so the evaluator can log in" — then say so in README §9 and do not call them secrets.</p></div><div class="flag" id="flag-.env.example-says-it-should-be"><h3><span class="sev low">low</span>.env.example says it should be ignored</h3><p>Delete line 1. Add a comment per variable group. Delete the README "Known gap" paragraph.</p></div>
+
+  <h2>What the code shows</h2>
+  <h3>What is tracked (git ls-files)</h3><div class="wrap"><table><thead><tr><th>File</th><th>Content</th><th>Since</th><th>Risk as the sheet reads it</th></tr></thead><tbody>
+<tr><td><code>caddy/certs/local-key.pem</code></td><td><code>-----BEGIN PRIVATE KEY-----</code> — the TLS private key Caddy serves with</td><td>commit 90126c2 (Issue #27). Note <code>.gitignore</code> now lists <code>caddy/certs/</code>, but the files were added before the rule and git keeps tracking them.</td><td><span class="sev critical">critical</span> A private key in git is the textbook "sensitive information in the repository", whatever it signs.</td></tr>
+<tr><td><code>apps/backend/.env.development</code></td><td><code>BETTER_AUTH_SECRET=599bb7d4-973d-…-3cb3fd2ab92d</code> (two UUIDs — looks generated, not a placeholder), <code>SEED_ADMIN_PASSWORD=Transcendence123!</code>, <code>SEED_DIDI_PASSWORD</code>, <code>SEED_HOMER_PASSWORD</code>, <code>MAIL_*</code></td><td>commit 08e4695</td><td><span class="sev high">high</span> The file is literally named <code>.env.*</code>; <code>git ls-files | grep env</code> is the first thing a strict evaluator runs. The auth secret signs every session cookie.</td></tr>
+<tr><td><code>docker-compose.yml</code></td><td>Defaults: <code>POSTGRES_PASSWORD:-transcendence</code>, <code>BETTER_AUTH_SECRET:-dev-only-insecure-secret-change-in-production</code>, the three <code>SEED_*_PASSWORD</code> defaults</td><td>—</td><td><span class="sev medium">medium</span> Defensible as dev defaults (clearly labelled), but the seed passwords are the same strings as in .env.development.</td></tr>
+<tr><td><code>.env.example</code></td><td>Correct list of every variable. Line 1: "<em>Ensure this file remains ignored by Git tracking configurations.</em>" — wrong, this file must be tracked.</td><td>—</td><td><span class="sev low">low</span> Confusing comment; README §9 also says the file does not exist.</td></tr>
+</tbody></table></div><h3>What is right</h3><ul><li><code>.gitignore</code> has <code>.env</code>; no <code>.env</code> is tracked; none exists on this machine either (the stack runs on compose defaults).</li><li><code>apps/backend/src/config/environment.ts</code> validates every variable with Zod at startup and refuses to boot without <code>BETTER_AUTH_SECRET</code>.</li><li><code>docs/ENVIRONMENT.md</code> documents each variable.</li></ul>
+
+  <h2>Fix before Saturday</h2>
+  <ol><li>Caddy: <code>tls internal</code>; remove the certs volume; <code>git rm --cached -r caddy/certs</code>; commit. Rebuild: <code>docker compose up --build caddy</code>. The key stays in old history — acceptable for a localhost mkcert key; say so if asked.</li><li>Scrub <code>apps/backend/.env.development</code>: fake secret, header comment. Search the whole repo for the old UUID afterwards (<code>git grep 599bb7d4</code>).</li><li>Fix <code>.env.example</code> line 1; fix README §9.</li><li>Run <code>git ls-files | grep -iE "\.env|\.pem|secret|key"</code> and <code>git grep -iE "password|secret|api[_-]?key" -- ':!*.md' ':!bun.lock'</code> — this is what the evaluator will do; make sure every hit is explainable.</li></ol>
+
+  <h2>In the room: what to show and say</h2>
+  <div class="say">Show <code>.gitignore</code>, <code>.env.example</code>, then <code>environment.ts</code> ("Zod refuses to start without a secret"). If the compose defaults come up: "labelled dev-only; production sets them in an ignored .env; the seed passwords are documented demo logins."</div>
+
+  <div class="nav"><a href="11-styling-solution.html">← Previous</a><a href="index.html">Index</a><a href="13-database-design.html">Next →</a></div>
+</main>
+</body>
+</html>

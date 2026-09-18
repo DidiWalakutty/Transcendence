@@ -5,7 +5,7 @@
 // retrieving, and canceling registrations.
 
 import type { registration } from '@repo/schemas/database';
-import type { EventAttendeeDto } from '@repo/schemas/registrations';
+import type { AttendeeCountDto, EventAttendeeDto } from '@repo/schemas/registrations';
 
 export type RegisterResult =
   | { type: 'success'; registration: registration }
@@ -21,6 +21,8 @@ export abstract class RegistrationsRepository {
   abstract isEventOrganizer(eventId: string, userId: string): Promise<boolean>;
 
   abstract getEventAttendees(eventId: string): Promise<EventAttendeeDto[]>;
+
+  abstract getAttendeeCounts(eventIds: string[]): Promise<AttendeeCountDto[]>;
 
   abstract register(eventId: string, userId: string): Promise<RegisterResult>;
 

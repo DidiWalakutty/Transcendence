@@ -1,8 +1,6 @@
 import { HeadContent, Link, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import { TanStackDevtools } from '@tanstack/react-devtools';
-import { useEffect } from 'react';
-
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
 
 import { getLocale } from '@/@generated/paraglide/runtime';
@@ -69,10 +67,6 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         rel: 'stylesheet',
         href: appCss,
       },
-      {
-        rel: 'manifest',
-        href: '/manifest.json',
-      },
     ],
   }),
   notFoundComponent: NotFoundPage,
@@ -94,23 +88,6 @@ function NotFoundPage() {
   );
 }
 
-function PwaRegistration() {
-  useEffect(() => {
-    if (!('serviceWorker' in navigator)) {
-      return;
-    }
-
-    const serviceWorkerUrl = import.meta.env.DEV ? '/dev-sw.js?dev-sw' : '/sw.js';
-
-    void navigator.serviceWorker.register(serviceWorkerUrl, {
-      scope: '/',
-      type: import.meta.env.DEV ? 'module' : 'classic',
-    });
-  }, []);
-
-  return null;
-}
-
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang={getLocale()}>
@@ -118,7 +95,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <PwaRegistration />
         <TooltipProvider>
           <div className="flex min-h-screen flex-col">
             <Navbar />

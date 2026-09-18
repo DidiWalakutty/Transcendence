@@ -2,17 +2,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSubscription } from '@trpc/tanstack-react-query';
 import {
-  EVENT_HEARTBEAT_INTERVAL_MS,
+  EVENT_STALE_AFTER_MS,
+  EVENT_WATCHDOG_INTERVAL_MS,
   type EventChangedDto,
   type EventDto,
 } from '@repo/schemas/events';
 import { useTRPC } from '@/integrations/trpc/react';
-
-// Two and a half missed heartbeats before the stream is treated as dead: long
-// enough to ride out a slow network, short enough that a restarted backend is
-// noticed within half a minute.
-const STALE_AFTER_MS = EVENT_HEARTBEAT_INTERVAL_MS * 2.5;
-const WATCHDOG_INTERVAL_MS = 5_000;
+import { removeById, replaceById } from '@/lib/collection-by-id';
 
 // Module scope on purpose. A ref would be reset every time the component
 // remounts, and an unreachable backend can remount the tree repeatedly, which
@@ -29,10 +25,8 @@ let lastMessageAt = Date.now();
 // itself. Those refetch instead — still push-driven, not polling.
 function patchList(events: EventDto[] | undefined, event: EventDto, remove: boolean): EventDto[] {
   const current = events ?? [];
-
-  return remove
-    ? current.filter((item) => item.id !== event.id)
-    : current.map((item) => (item.id === event.id ? event : item));
+  if (remove) return removeById(current, event.id) ?? [];
+  return replaceById(current, event) ?? current;
 }
 
 /**
@@ -51,12 +45,14 @@ export function useEventStream(options?: { onlyOrganizerId?: string }) {
   const [stale, setStale] = useState(false);
 
   const listingsKey = trpc.events.getEvents.queryKey();
+  const filteredKey = trpc.events.getFilteredEvents.queryKey({});
   const myEventsKey = trpc.eventCreation.getMyEvents.queryKey();
 
   const refetchLists = useCallback(() => {
     void queryClient.invalidateQueries({ queryKey: listingsKey });
+    void queryClient.invalidateQueries({ queryKey: filteredKey });
     void queryClient.invalidateQueries({ queryKey: myEventsKey });
-  }, [queryClient, listingsKey, myEventsKey]);
+  }, [queryClient, listingsKey, filteredKey, myEventsKey]);
 
   const subscription = useSubscription(
     trpc.eventCreation.onEventChanged.subscriptionOptions(undefined, {
@@ -74,6 +70,7 @@ export function useEventStream(options?: { onlyOrganizerId?: string }) {
 
         if (change.action === 'created') {
           void queryClient.invalidateQueries({ queryKey: listingsKey });
+          void queryClient.invalidateQueries({ queryKey: filteredKey });
 
           if (mine) {
             void queryClient.invalidateQueries({ queryKey: myEventsKey });
@@ -107,7 +104,7 @@ export function useEventStream(options?: { onlyOrganizerId?: string }) {
 
   useEffect(() => {
     const watchdog = setInterval(() => {
-      if (Date.now() - lastMessageAt <= STALE_AFTER_MS) {
+      if (Date.now() - lastMessageAt <= EVENT_STALE_AFTER_MS) {
         return;
       }
 
@@ -117,7 +114,7 @@ export function useEventStream(options?: { onlyOrganizerId?: string }) {
       // that changed while the connection was gone never reached this client.
       reset();
       refetchLists();
-    }, WATCHDOG_INTERVAL_MS);
+    }, EVENT_WATCHDOG_INTERVAL_MS);
 
     return () => clearInterval(watchdog);
   }, [reset, refetchLists]);

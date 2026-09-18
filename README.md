@@ -1,231 +1,383 @@
-_This project has been created as part of the 42 curriculum by mde-krui, diwalaku, dkolodze, ccraciun and rtorrent._
+_This project has been created as part of the 42 curriculum by mde-krui, diwalaku, dkolodze, ccraciun, rtorrent._
 
-# ft_transcendence
+# ft_transcendence (Eventra)
 
 ## 1. Description
 
-Full-stack event management platform where users can create, manage and participate in events. Organizers can set up events with details and users can browse, register and track upcoming events.
+Eventra is a multi-user event platform. Visitors browse, filter, sort and page through
+upcoming events. Registered users get tickets for events with limited capacity, create and
+manage their own events, keep a profile with an avatar, add friends, see who is online and
+talk in a live chat. Administrators manage every user and event from a dashboard. A new
+event, a sold-out ticket, a friend coming online or a chat message reaches every open
+browser without a reload.
+
+What the application does:
+
+- Public event catalogue with category filters, three sort orders and server-side pagination.
+- Accounts with e-mail and password sign-up, password reset and optional two-factor authentication.
+- Ticket registration with a capacity guarantee. A user holds at most one active ticket per event and an event never sells more tickets than its capacity.
+- Event creation and editing for organisers, with a "My events" page and a "My tickets" page.
+- Profiles with avatar upload, about and location fields and a preferred language.
+- Friends with requests and acceptance, live online status and a global chat.
+- A notification on every create, update and delete. The person acting sees a toast, the people affected receive an e-mail (welcome, ticket confirmation, event modified, event cancelled) in their language.
+- Admin dashboard with a user table, role changes and a table of all events.
+- Interface in English, Dutch and Spanish, switchable in the app and remembered per user.
+- Server-side rendering, HTTPS for every request and a single-command Docker deployment.
 
 ---
 
-## 2. Team Information
+## 2. Team information
 
-The operational roles and specific core responsibilities assigned across our team are detailed below:
+| Role                       | Login      | Responsibilities                                                                                    |
+| -------------------------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| Product Owner              | `diwalaku` | Product vision, backlog priorities, acceptance criteria, validation of finished work.               |
+| Project Manager            | `dkolodze` | Coordination, blockers, milestones and timelines, keeping the team in sync.                         |
+| Technical Lead / Architect | `mde-krui` | Stack decisions, code-quality standards, pull-request reviews, architecture across the three tiers. |
 
-- **Product Owner (PO):** `diwalaku`
-  - _Responsibilities:_ Defines the overarching product vision, owns and prioritizes the feature backlogs, sets acceptance criteria, and validates completed iteration deliverables.
-- **Project Manager (PM) / Scrum Master:** `dkolodze`
-  - _Responsibilities:_ Coordinates agile ceremonies, eliminates project blockers, monitors phase milestones, updates sprint timelines, and safeguards overall team synchronization.
-- **Technical Lead / Architect:** `mde-krui`
-  - _Responsibilities:_ Evaluates technical stack options, enforces code-quality standards, reviews pull requests, and orchestrates architectural schemas across frontend, backend, and data tiers.
-- **Developers (All Members):**
-  - `mde-krui`: Core focus on `Frontend and backend architecture.`.
-  - `dkolodze`: Core focus on `[INSERT e.g., WebSockets implementation, UI components, etc.]`.
-  - `rtorrent`: Core focus on `[INSERT e.g., DevOps pipeline, Database migration, etc.]`.
-  - `diwalaku`: Core focus on `[INSERT e.g., Game rendering, State-management, etc.]`.
-  - `ccraciun`: Core focus on `[INSERT e.g., OAuth integration, Security audits, etc.]`.
+All five members are developers. Main areas per member:
 
----
-
-## 3. Project Management
-
-### Task Management & Tracking
-
-We structured our development roadmap into iterative sprints.
-
-- **Project Management Tool:** [GitHub Projects](https://github.com/users/milandekruijf/projects/3) is used to move components from Backlog $\rightarrow$ In Progress $\rightarrow$ Code Review $\rightarrow$ Done.
-- **Meeting Cadence:** We conducted [INSERT e.g., daily standups / bi-weekly syncs] to review progress, coordinate integrations, and redistribute blockers.
-
-### Team Communication Channels
-
-- **Primary Communications:** A simple Slack channel group.
-- **Asynchronous Coordination:** Critical technical blockers, deployment updates, and environment updates were broadcasted via [INSERT e.g., #dev-announcements channel / Git PR comments].
+| Login      | Main areas                                                                                                                                                                     |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `mde-krui` | Monorepo and tooling, NestJS and tRPC backend architecture, authentication wiring, admin dashboard, profile persistence, Spanish locale.                                       |
+| `diwalaku` | Landing page and navigation, event catalogue (filters, sorting, pagination), event cards and detail page, ticket registration, accessibility fixes, Dutch locale, legal pages. |
+| `dkolodze` | Two-factor authentication, early authentication work, project management, documentation.                                                                                       |
+| `ccraciun` | Real-time layer (events, presence, chat), friends, avatar upload, HTTPS with Caddy, Docker deployment, browser-compatibility test suite, responsive layout.                    |
+| `rtorrent` | Notification system (toasts, mailer, multilingual e-mail templates), "My tickets" page.                                                                                        |
 
 ---
 
-## 4. Technical Stack
+## 3. Project management
 
-Our monorepo architecture (managed by [Vite+](https://viteplus.dev/) and [Bun](https://bun.sh/)) consists of the following components:
+### Task management and tracking
 
-- **Frontend Framework:** [React](https://react.dev/) with [TanStack Start](https://tanstack.com/start) and [TanStack Router](https://tanstack.com/router).
-  - _Justification:_ TanStack Start gives us file-based routing and SSR on top of React, paired with [TanStack Query](https://tanstack.com/query) for server-state/cache management and [TanStack Form](https://tanstack.com/form) for client-side form validation shared against the same Zod schemas the backend validates with.
-- **Backend Framework:** [NestJS](https://nestjs.com/) with [tRPC](https://nestjs-trpc.io/) (via `nestjs-trpc`).
-  - _Justification:_ NestJS's modular, dependency-injected structure suits a growing feature set, and tRPC gives us end-to-end typed API calls (including subscriptions for real-time updates) without hand-written REST client code.
-- **Database Engine:** [PostgreSQL](https://www.postgresql.org/) via [Drizzle ORM](https://orm.drizzle.team/), with [Redis](https://redis.io/) for backend cache and rate-limit storage.
-  - _Justification:_ PostgreSQL fits our relational data (events, registrations, users). Drizzle keeps table definitions, migrations, and Zod validation schemas (via `drizzle-zod`) derived from one shared source in `packages/schemas`.
-- **Styling Engine:** [Tailwind CSS](https://tailwindcss.com/).
-  - _Justification:_ Utility-first styling paired with a shared `shadcn`-based component library gives us consistent, responsive UI without a separate design-system build step.
+The backlog lives on a [GitHub Projects board](https://github.com/users/milandekruijf/projects/3) with the columns Backlog, In Progress, Code Review and Done. The board holds the product spec broken down into tasks with estimates.
 
-See [Stack](./docs/STACK.md) for the full technology list and architecture principles.
+Every feature lives on its own branch and reaches `main` through a pull request that the tech lead reviews. Examples: #53 (event timezone), #64 (e-mail notifications), #65 (chat), #66 (landing page), #68 (profile persistence).
+
+[CI](./.github/workflows/ci.yml) runs formatting, linting, type checks, unit tests and the production build on every pull request and on every push to `main`. A pre-commit hook runs the same checks on staged files.
+
+The team keeps the [`docs/`](./docs/README.md) folder (stack, database, API, authentication, environment, i18n, browser support) in sync with the code. [`AGENTS.md`](./AGENTS.md) points contributors and tools to it.
+
+### Team communication
+
+The team's Slack group is the primary channel. Coordination was mostly asynchronous. Members announced blockers, deployment changes and environment changes there and paired ad hoc when integrating features. Technical discussion happened on pull requests and on the board cards.
 
 ---
 
-## 5. Database Schema
+## 4. Technical stack
 
-Current schema (implemented so far — additional tables for events, registrations, and friends are planned but not yet implemented):
+Vite+ and Bun manage the monorepo, with the workspaces `apps/frontend`, `apps/backend`, `packages/schemas` and `packages/tsconfig`.
+
+**Frontend.** [React 19](https://react.dev/) with [TanStack Start](https://tanstack.com/start) and [TanStack Router](https://tanstack.com/router). We chose it for file-based routing and server-side rendering on plain React and Vite, for type-safe search parameters (the catalogue's filters and page number live in the URL) and because [TanStack Query](https://tanstack.com/query) and [TanStack Form](https://tanstack.com/form) plug into it directly.
+
+**Backend.** [NestJS 11](https://nestjs.com/) with [tRPC](https://trpc.io/) through [`nestjs-trpc`](https://nestjs-trpc.io/). NestJS modules and dependency injection give the nine feature modules (auth, users, events, listings, registrations, friends, presence, chat, notifications) the same router, service and repository layers, and in-memory repositories make them testable without a database. tRPC hands the frontend the backend's types. A renamed field fails the type check instead of failing at runtime, and the same Zod schemas validate input on both sides. tRPC subscriptions over Server-Sent Events carry the real-time updates on the existing HTTPS connection.
+
+**Authentication.** [better-auth](https://www.better-auth.com/) on our own PostgreSQL tables through its Drizzle adapter. It provides sessions, scrypt password hashing with a salt per user, rate limiting and the username, admin and two-factor plugins, so we did not write security-critical code ourselves.
+
+**Database.** [PostgreSQL 17](https://www.postgresql.org/) through [Drizzle ORM](https://orm.drizzle.team/), plus [Redis 8](https://redis.io/) for the backend cache and the rate-limit counters. The data is relational with real constraints: foreign keys with cascades, enums and a partial unique index that allows one active ticket per user per event. Drizzle derives the SQL migrations and, through `drizzle-zod`, the validation schemas from one TypeScript file in `packages/schemas`.
+
+**Styling.** [Tailwind CSS 4](https://tailwindcss.com/) with a [shadcn/ui](https://ui.shadcn.com/) component library that lives in the repository. Utility classes sit on our own design tokens in `apps/frontend/src/styles.css`. The library supplies responsive breakpoints, dark mode and accessible dialogs, sheets, comboboxes and calendars.
+
+**Internationalisation.** [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) compiles the message files for `en`, `nl` and `es` into type-safe functions.
+
+**Delivery.** Docker Compose with a [Caddy](https://caddyserver.com/) TLS reverse proxy. [Mailpit](https://mailpit.axllent.org/) catches outgoing e-mail locally.
+
+**Quality.** [Vitest](https://vitest.dev/) unit tests for backend services, routers, repositories and health indicators. [Playwright](https://playwright.dev/) end-to-end tests and console-cleanliness checks on Chromium and Firefox. Prettier, linting and `tsc` in CI.
+
+[Stack](./docs/STACK.md) has the full list and the architecture principles.
+
+---
+
+## 5. Database schema
+
+Eight tables, defined once in [`packages/schemas/src/database.ts`](./packages/schemas/src/database.ts). Drizzle generates the SQL migrations in `apps/backend/drizzle` from that file.
 
 ```mermaid
 erDiagram
+    USERS ||--o{ SESSIONS : "has"
+    USERS ||--o{ ACCOUNTS : "authenticates with"
+    USERS ||--o| TWO_FACTORS : "secures with"
+    USERS ||--o{ EVENTS : "organizes"
+    USERS ||--o{ REGISTRATIONS : "holds ticket"
+    EVENTS ||--o{ REGISTRATIONS : "has attendee"
+    USERS ||--o{ FRIENDS : "my_id"
+    USERS ||--o{ FRIENDS : "friend_id"
+
     USERS {
         uuid id PK
         text email UK
+        text username UK
+        text display_username
         text name
+        text role "user or admin, default user"
+        boolean banned
+        text ban_reason
+        timestamp ban_expires
+        text about_me
+        text location
+        text language "en, nl or es"
+        text avatar_link "PLACEHOLDER or data URL"
+        boolean email_verified
+        boolean two_factor_enabled
+        timestamp created_at
+        timestamp updated_at
+    }
+    SESSIONS {
+        uuid id PK
+        uuid user_id FK "cascade"
+        text token UK
+        timestamp expires_at
+        text ip_address
+        text user_agent
+        text impersonated_by
+        timestamp created_at
+        timestamp updated_at
+    }
+    ACCOUNTS {
+        uuid id PK
+        uuid user_id FK "cascade"
+        text provider_id "credential"
+        text account_id
+        text password "scrypt salt:hash"
+        text access_token
+        text refresh_token
+        text id_token
+        timestamp access_token_expires_at
+        timestamp refresh_token_expires_at
+        text scope
+        timestamp created_at
+        timestamp updated_at
+    }
+    VERIFICATIONS {
+        uuid id PK
+        text identifier
+        text value
+        timestamp expires_at
+        timestamp created_at
+        timestamp updated_at
+    }
+    TWO_FACTORS {
+        uuid id PK
+        uuid user_id FK "cascade"
+        text secret
+        text backup_codes
+        boolean verified
+        integer failed_verification_count
+        timestamp locked_until
+    }
+    EVENTS {
+        uuid id PK
+        uuid organizer_id FK "cascade"
+        text title
+        jsonb description "text per language"
+        text image_link "PLACEHOLDER or data URL"
+        text location
+        text address
+        timestamp date_time
+        integer max_capacity
+        text_array category "music, culture, food, games, talks, workshops"
+        timestamp created_at
+    }
+    REGISTRATIONS {
+        uuid event_id FK "cascade"
+        uuid user_id FK "cascade"
+        registration_status r_status "active or canceled"
+        timestamp created_at
+    }
+    FRIENDS {
+        uuid my_id FK "cascade"
+        uuid friend_id FK "cascade"
+        friendship_status f_status "pending or accepted"
         timestamp created_at
     }
 ```
 
-See [Database](./docs/DATABASE.md) for the migration workflow and how this schema is kept in sync with API validation.
+Deleting a user removes their sessions, accounts, two-factor secret, owned events, friendships and tickets. Deleting an event removes its registrations.
+
+`registrations` has a partial unique index on `(event_id, user_id) WHERE r_status = 'active'`. A user can cancel and register again, and the history stays, but a user never holds two active tickets for one event. Registration runs in a transaction that checks the capacity, so two concurrent requests cannot sell the last ticket twice.
+
+`registration_status` and `friendship_status` are PostgreSQL enum types.
+
+The tables `sessions`, `accounts`, `verifications` and `two_factors` follow better-auth's model. Passwords live only in `accounts.password` as `salt:hash`, never in `users`.
+
+The database stores pictures as data URLs that the client compressed first, at most 48 kB for an avatar and 72 kB for an event picture. This avoids running file storage. The cost is a larger row.
+
+[Database](./docs/DATABASE.md) describes the migration workflow.
 
 ---
 
-## 6. Features List
+## 6. Features
 
-An inventory of all technical systems and interface modules deployed across the platform, cross-referenced with their primary authors.
-
-_Status: only a demo Users CRUD flow exists in the codebase today (see [API](./docs/API.md)). This table will be filled in as event management, authentication, and the other selected modules from [section 7](#7-modules-matrix) are implemented._
-
-| Feature Area                       | Functional Scope                                                                       | Primary Author   |
-| ---------------------------------- | -------------------------------------------------------------------------------------- | ---------------- |
-| **Authentication & Core Security** | Signup, login, password hashing/salting, and HTTPS middleware routing.                 | `[INSERT Login]` |
-| **Legal Baselines**                | Fully functional and production-mapped Privacy Policy and Terms of Service interfaces. | `[INSERT Login]` |
-| **[INSERT Module Category]**       | [INSERT Description of specific operational logic implemented.]                        | `[INSERT Login]` |
-| **[INSERT Module Category]**       | [INSERT Description of specific operational logic implemented.]                        | `[INSERT Login]` |
-| **[INSERT Module Category]**       | [INSERT Description of specific operational logic implemented.]                        | `[INSERT Login]` |
-
----
-
-## 7. Modules Matrix
-
-Our team selected the following combination of Major (2 pts) and Minor (1 pt) modules, confirmed for a total of 15 points against the mandatory 14-point threshold. **None of these are implemented yet** — the codebase currently contains only a demo Users CRUD flow (see [section 5](#5-database-schema) and [section 6](#6-features-list)); status will be updated as each module lands. Assigned developers and points are tracked per-task on the [GitHub Project board](https://github.com/users/milandekruijf/projects/3).
-
-| Module Selected                                                 | Type  | Points | Status              |
-| --------------------------------------------------------------- | ----- | ------ | ------------------- |
-| Full Framework (NestJS backend + React/TanStack Start frontend) | Major | 2      | Not yet implemented |
-| Database integration via an ORM (Drizzle ORM)                   | Minor | 1      | Not yet implemented |
-| Complete Notification System across all CRUD operations         | Minor | 1      | Not yet implemented |
-| Advanced search functionality (filters, sorting, pagination)    | Minor | 1      | Not yet implemented |
-| Multi-language support (3 languages)                            | Minor | 1      | Not yet implemented |
-| Extended multi-browser support                                  | Minor | 1      | Not yet implemented |
-| Full WCAG 2.1 AA accessibility compliance                       | Major | 2      | Not yet implemented |
-| Standard user management and authentication                     | Major | 2      | Not yet implemented |
-| Remote authentication via OAuth 2.0                             | Minor | 1      | Not yet implemented |
-| Secure Two-Factor Authentication (2FA)                          | Minor | 1      | Not yet implemented |
-| Advanced CRUD permissions and Role Management                   | Major | 2      | Not yet implemented |
-| **TOTAL SELECTED POINTS**                                       |       | **15** |                     |
-
-### Candidate bonus modules (not yet committed to)
-
-These were identified as possible additions if time allows, worth up to 6 more points:
-
-| Module Candidate                                        | Type  | Points |
-| ------------------------------------------------------- | ----- | ------ |
-| Custom-made design system (min. 10 reusable components) | Minor | 1      |
-| Right-to-left (RTL) language support                    | Minor | 1      |
-| Machine learning recommendation system                  | Major | 2      |
-| Sentiment analysis on user-generated content            | Minor | 1      |
-| AI content moderation                                   | Minor | 1      |
+| Feature area                  | What it does                                                                                                                                   | Author(s)                          |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| Monorepo and tooling          | Vite+ and Bun workspaces, shared `packages/schemas` (tables, Zod schemas, generated tRPC types), task graph, CI, pre-commit hooks              | `mde-krui`                         |
+| Backend architecture          | NestJS modules with router, service and repository layers, in-memory repositories for tests, Redis cache and rate limiting, health checks      | `mde-krui`                         |
+| Authentication                | E-mail and password sign-up and login (better-auth, scrypt), sessions, forgot and reset password                                               | `mde-krui`, `dkolodze`, `diwalaku` |
+| Two-factor authentication     | TOTP enrolment with QR code, backup codes, `/verify-2fa` step, lockout counter                                                                 | `dkolodze`, later fixes `mde-krui` |
+| Event catalogue               | Server-side category filter, three sort orders, pagination, state in the URL, featured events, statistics                                      | `diwalaku`                         |
+| Event creation and management | Create, edit and delete with a date picker, a category combobox and an image picker that compresses in the browser. "My events" page           | `diwalaku`, `mde-krui`, `ccraciun` |
+| Ticket registration           | Register and cancel, availability, attendee lists, capacity check inside a transaction                                                         | `diwalaku`                         |
+| My tickets                    | Registered events with search and cancellation                                                                                                 | `rtorrent`                         |
+| Real-time updates             | tRPC subscriptions over SSE with a heartbeat and a reconnect watchdog. Live event list and a live user stream for the admin dashboard          | `ccraciun`                         |
+| Presence and friends          | Online status, friend requests, acceptance and removal, user search                                                                            | `ccraciun`                         |
+| Chat                          | Global live chat room over SSE                                                                                                                 | `ccraciun`                         |
+| Profile and avatar            | Profile page, editable fields, preferred language, avatar upload with an initials fallback                                                     | `mde-krui`, `ccraciun`             |
+| Notifications                 | Toasts on every create, update and delete. Welcome, ticket, event-modified and event-cancelled e-mails in five languages, delivered to Mailpit | `rtorrent`, toasts `mde-krui`      |
+| Admin dashboard               | User table with role changes, table of all events, search                                                                                      | `mde-krui`                         |
+| Internationalisation          | Paraglide with English, Dutch and Spanish, a switcher in the navbar and a per-user preference                                                  | `diwalaku`, `mde-krui`             |
+| Landing page and navigation   | Hero, how it works, categories, FAQ, footer, role-aware navbar with a mobile drawer                                                            | `mde-krui`, `diwalaku`, `ccraciun` |
+| Legal pages                   | Privacy Policy and Terms of Service in three languages, linked from the footer and the sign-up form                                            | `mde-krui`, `diwalaku`             |
+| Database                      | Drizzle schema, migrations, seed script with demo accounts and events                                                                          | `diwalaku`, `mde-krui`             |
+| Deployment and HTTPS          | Docker Compose stack, Caddy TLS proxy, migrations and seeding at start-up, environment handling                                                | `mde-krui`, `ccraciun`             |
+| Browser compatibility and e2e | Playwright suites on Chromium and Firefox, a console check on every route, the [browser support document](./docs/BROWSER_SUPPORT.md)           | `ccraciun`                         |
+| Responsive layout             | Phone and tablet layout: navbar drawer, stacked catalogue, card layout, chat widget                                                            | `ccraciun`                         |
+| Documentation                 | The `docs/` set, README, onboarding                                                                                                            | `mde-krui`, `ccraciun`, `dkolodze` |
 
 ---
 
-## 8. Individual Contributions
+## 7. Modules
 
-Detailed logs outlining development efforts, challenges, and solutions for each developer:
+Major modules count 2 points, minor modules 1 point. The selection below totals 15 points; the minimum is 14.
 
-### Developer 1: `[INSERT Login]`
+| Module                                                  | Type  | Pts | Implementation                                                                                                                                                                                                                                                  | Developer(s)           |
+| ------------------------------------------------------- | ----- | --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| Full framework, backend and frontend                    | Major | 2   | NestJS 11 backend in `apps/backend`, React 19 with TanStack Start in `apps/frontend`, joined by typed tRPC procedures                                                                                                                                           | `mde-krui`             |
+| Real-time features                                      | Major | 2   | tRPC subscriptions over Server-Sent Events. Live event list (`events.onEventChanged`, with a heartbeat and a stale-connection watchdog), presence (`presence.onPresenceChanged`), chat (`chat.onMessage`), admin user stream. `AbortSignal` handles disconnects | `ccraciun`             |
+| Standard user profiles                                  | Major | 2   | `/profile` with editable fields and a compressed avatar upload, friends list with live status dots, friend requests                                                                                                                                             | `mde-krui`, `ccraciun` |
+| Advanced CRUD permissions and role management           | Major | 2   | Three roles with distinct rights. A visitor browses, a user manages their own events, tickets and profile, an admin manages all users and events and changes roles. `ProtectedMiddleware`, `AdminMiddleware` and ownership checks enforce this on the server    | `mde-krui`             |
+| Database integration via an ORM                         | Minor | 1   | Drizzle ORM. Schema in TypeScript, generated migrations, typed repositories, validation through `drizzle-zod`                                                                                                                                                   | `diwalaku`, `mde-krui` |
+| Secure two-factor authentication                        | Minor | 1   | better-auth TOTP plugin. QR enrolment, backup codes, a verification step at login, a lockout after failed attempts                                                                                                                                              | `dkolodze`             |
+| Multi-language support                                  | Minor | 1   | English, Dutch and Spanish for every UI string (374 keys per locale) and the legal pages. Switcher in the navbar, stored per user. E-mails are localised too                                                                                                    | `diwalaku`, `mde-krui` |
+| Server-side rendering                                   | Minor | 1   | TanStack Start with Nitro. Route loaders run on the server and pages arrive rendered with their data                                                                                                                                                            | `mde-krui`             |
+| Extended multi-browser support                          | Minor | 1   | Chrome, Firefox and Edge. Playwright suites on Chromium and Firefox. Findings and limitations in [Browser Support](./docs/BROWSER_SUPPORT.md)                                                                                                                   | `ccraciun`             |
+| Complete notification system across all CRUD operations | Minor | 1   | A toast for every create, update and delete from the global mutation cache, e-mails to the affected users (welcome, ticket confirmation, event modified, event cancelled) and live updates for everyone                                                         | `rtorrent`, `mde-krui` |
+| Advanced search with filtering, sorting and pagination  | Minor | 1   | The catalogue query runs in the backend (`events.getFilteredEvents`). Multi-category filter, sort by upcoming, popular or newest, pages of 8, state in the URL. Text search in the admin dashboard and in "My tickets"                                          | `diwalaku`             |
+| Total                                                   |       | 15  |                                                                                                                                                                                                                                                                 |                        |
 
-- **Key System Additions:** [INSERT List individual features implemented.]
-- **Technical Roadblocks:** [INSERT Detail complex code challenges, network loops, or performance bottlenecks discovered during design phases.]
-- **Resolution Strategy:** [INSERT Explain how you resolved the blocker, redesigned elements, or adjusted logic to meet validation constraints.]
+---
 
-### Developer 2: `[INSERT Login]`
+## 8. Individual contributions
 
-- **Key System Additions:** [INSERT List individual features implemented.]
-- **Technical Roadblocks:** [INSERT Detail complex code challenges, network loops, or performance bottlenecks discovered during design phases.]
-- **Resolution Strategy:** [INSERT Explain how you resolved the blocker, redesigned elements, or adjusted logic to meet validation constraints.]
+### mde-krui, Technical Lead
 
-### Developer 3: `[INSERT Login]`
+**Built.** The monorepo setup (Vite+, Bun workspaces, the shared schemas package, the task graph, CI), the NestJS and tRPC backend architecture with its repository abstraction, the better-auth integration, the admin dashboard, profile persistence, the global mutation toasts, the Spanish locale, parts of the landing page and most of the `docs/` set.
 
-- **Key System Additions:** [INSERT List individual features implemented.]
-- **Technical Roadblocks:** [INSERT Detail complex code challenges, network loops, or performance bottlenecks discovered during design phases.]
-- **Resolution Strategy:** [INSERT Explain how you resolved the blocker, redesigned elements, or adjusted logic to meet validation constraints.]
+**Roadblock.** The admin dashboard hung on "Saving changes". It opened three separate SSE streams (user created, updated, deleted) next to the event, presence and chat streams. Together they used up the browser's connection limit per origin, so a mutation never got a connection.
 
-### Developer 4: `[INSERT Login]`
+**Fix.** One `userChanged` subscription that carries an action field replaced the three streams, the same design the event stream already used (the comment in `packages/schemas/src/users.ts` records this). Route loaders moved to `query` with `staleTime: 'static'`, so a backend restart no longer breaks a page load.
 
-- **Key System Additions:** [INSERT List individual features implemented.]
-- **Technical Roadblocks:** [INSERT Detail complex code challenges, network loops, or performance bottlenecks discovered during design phases.]
-- **Resolution Strategy:** [INSERT Explain how you resolved the blocker, redesigned elements, or adjusted logic to meet validation constraints.]
+### diwalaku, Product Owner
 
-### Developer 5: `[INSERT Login]`
+**Built.** The landing page and navigation, the event catalogue with server-side filtering, sorting and pagination, the event cards and detail page, the ticket registration flow, the Dutch translations, accessibility fixes for contrast and focus styles, and the privacy and terms content.
 
-- **Key System Additions:** [INSERT List individual features implemented.]
-- **Technical Roadblocks:** [INSERT Detail complex code challenges, network loops, or performance bottlenecks discovered during design phases.]
-- **Resolution Strategy:** [INSERT Explain how you resolved the blocker, redesigned elements, or adjusted logic to meet validation constraints.]
+**Roadblock.** Two users registering for the last ticket at the same time could both succeed. The catalogue also filtered and paged in the browser over the full event list.
+
+**Fix.** Registration now runs in a transaction with a capacity check and returns explicit results that map to tRPC errors (`conflictError` for sold out and already registered). The partial unique index backs this up. Filtering, sorting and pagination moved into the repository query.
+
+### dkolodze, Project Manager
+
+**Built.** Two-factor authentication (TOTP enrolment with a QR code, backup codes, the `/verify-2fa` route, the lockout fields), early authentication and environment work, documentation updates. Owner of the board, the timelines and the blockers.
+
+**Roadblock.** better-auth's two-factor flow interrupts a normal sign-in. After a correct password the session is not valid until the code is verified, which the existing login form and route guards did not expect.
+
+**Fix.** An explicit `/verify-2fa` step in the login flow and a settings component on the profile page to enrol and disable two-factor authentication. The schema fields (`two_factors`, `users.two_factor_enabled`) came in through a generated migration.
+
+### ccraciun, Developer
+
+**Built.** The real-time layer (event stream with heartbeat and watchdog, presence, chat), friends, avatar upload with compression in the browser, Caddy and HTTPS routing, the Docker deployment, the Playwright console and cross-browser suites, the responsive layout and the browser support document.
+
+**Roadblocks.** Events came back two hours off between Docker (UTC) and a laptop (Amsterdam), because writes parsed the wall clock as local time while reads formatted it as UTC. The first HTTPS setup still had the browser calling the backend on plain `http://localhost:3001`, which Chrome blocks as mixed content. Firefox aborts requests that are still in flight when the user navigates away and logged them as errors.
+
+**Fix.** One encode and decode pair for the naive `timestamp` column (`toEventDateTime` and `fromEventDateTime`) with a unit test. Caddy became the only published service and proxies `/api/*` on the same origin, so the browser uses relative URLs. The client filters caught errors after `beforeunload`, documented as BS-11.
+
+### rtorrent, Developer
+
+**Built.** The notification system: the toasts, the mailer module, react-email templates for welcome, ticket confirmation, event modification and event cancellation in five languages, and the listeners on the app-events bus. Also the "My tickets" page with search and cancellation.
+
+**Roadblock.** The mailer and react-email dependencies did not load in the Bun workspace at first, and the welcome e-mail went out before the user row existed.
+
+**Fix.** Pinning the mailer dependencies in the lockfile fixed the loading. Listeners on domain events that fire after the database write now send the e-mails (`userCreated`, `registrationCreated`, `eventModified`, `eventCancelled`). Mailpit in the Compose stack shows the delivered mail.
 
 ---
 
 ## 9. Instructions
 
-Follow these steps to configure, build, and deploy the application environment locally.
-
 ### Prerequisites
 
-- [Nix](https://nixos.org/download/) (recommended — see [Dev Environment](./docs/DEVENVIRONMENT.md)) or the [Vite+](https://viteplus.dev/) installer.
-- [Docker Engine](https://docs.docker.com/) $\ge$ v20.10 or Podman equivalent, with Docker Compose v2.
+Running the application needs [Docker Engine](https://docs.docker.com/) 20.10 or newer (or Podman) with Docker Compose v2, and nothing else.
 
-Full setup steps: [Development](./docs/DEVELOPMENT.md).
+Development also needs the [Vite+](https://viteplus.dev/) installer, which provides Bun and the `vp` command. See [Prerequisites](./docs/PREREQUISITES.md) and [Development](./docs/DEVELOPMENT.md).
 
-### Environment Setup (`.env`)
+### Environment
 
-Local development already works out of the box using the committed defaults in `apps/backend/.env.development` (see [Environment](./docs/ENVIRONMENT.md) for the full variable list — `DATABASE_URL`, `PORT`, `REDIS_URL`, cache/throttle tuning). For local overrides or production secrets, create an ignored `.env` file at the repo root or in `apps/backend`.
+Nothing has to be configured to run locally. `docker-compose.yml` and `apps/backend/.env.development` carry labelled localhost defaults. [`.env.example`](./.env.example) lists every variable. Copy it to `.env` at the repository root to override ports, the origin, database credentials, the auth secret or the demo passwords; [Environment](./docs/ENVIRONMENT.md) explains each one. `.env` is git-ignored, and the auth secret in the defaults is an explicit placeholder, so the repository holds no secret.
 
-> **Known gap:** the 42 subject requires a committed `.env.example` file; this repository does not have one yet. Adding it is tracked as a task on the [project board](https://github.com/users/milandekruijf/projects/3).
+### Single-command launch
 
-### Single-Command Application Launch
-
-Build and start the frontend, backend, PostgreSQL, and Redis services with one command:
+From a fresh clone, one command builds and starts the whole stack (Caddy, frontend, backend, PostgreSQL, Redis, Mailpit):
 
 ```bash
-vp run deploy
+docker compose up --build
 ```
 
-This runs the Vite+ `repo:deploy` task, which executes `docker compose up --build`.
-For detached local deployment, use `vp run deploy:detached`.
+`vp run deploy` is an alias for the same command and `vp run deploy:detached` adds `-d`.
 
-Once the stack has started, open the application at `https://localhost:3000`.
+The backend applies the database migrations from `apps/backend/drizzle` when it starts. The one-shot `seed` service then creates the demo accounts and events. It skips anything that already exists, so a rerun is safe.
 
-Caddy terminates TLS with the certificate in `caddy/certs` and is the only service
-published on the host: it forwards `/api/*` to the backend and everything else to the
-frontend, so the browser never talks plain HTTP. The frontend and backend containers are
-reachable only inside the Compose network (`http://frontend:3000`, `http://backend:3001`).
-Plain `http://localhost` redirects to HTTPS.
+Open the application at `https://localhost:3000`. E-mails sent by the app land in Mailpit at `http://localhost:8025`.
 
-Caddy listens on `3000` (HTTPS) and `3080` (redirect to HTTPS) rather than `443`/`80`
-because rootless Docker (Codam machines) can't bind ports below 1024. `HTTPS_PORT`,
-`HTTP_PORT` and `PUBLIC_ORIGIN` in the root `.env` change this — see
-[Environment](./docs/ENVIRONMENT.md#compose-variables).
+Demo accounts (the passwords are the `SEED_*` values, see [Environment](./docs/ENVIRONMENT.md)):
 
-The committed certificate is a local [mkcert](https://github.com/FiloSottile/mkcert) one,
-so a browser that hasn't trusted its mkcert root shows a one-time warning you can click
-through. To get a trusted certificate on your own machine instead, run this from the Nix
-dev shell (it works without sudo — browser trust stores only — which is what Codam
-machines need), then restart your browser and `docker compose restart caddy`:
+| Account       | E-mail                      | Default password    |
+| ------------- | --------------------------- | ------------------- |
+| Administrator | `admin@transcendence.local` | `Transcendence123!` |
+| User          | `didi@example.com`          | `Qwerty123!`        |
+| User          | `homer@example.com`         | `Simpsons123!`      |
+
+Caddy terminates TLS and is the only service published on the host. It forwards `/api/*` to the backend and everything else to the frontend, so the browser never talks plain HTTP. The frontend and backend containers are reachable only inside the Compose network, at `http://frontend:3000` and `http://backend:3001`. Plain `http://localhost` redirects to HTTPS.
+
+Caddy listens on `3000` (HTTPS) and `3080` (redirect to HTTPS) rather than `443` and `80`, because rootless Docker on the Codam machines cannot bind ports below 1024. `HTTPS_PORT`, `HTTP_PORT` and `PUBLIC_ORIGIN` in the root `.env` change this; see [Environment](./docs/ENVIRONMENT.md#compose-variables).
+
+No certificate is committed. On a fresh clone Caddy issues its own self-signed certificate (`tls internal`), so the browser shows a warning once, which you can click through. For a trusted certificate on your own machine, install [mkcert](https://github.com/FiloSottile/mkcert), on Linux together with `certutil` from `libnss3-tools`, which mkcert needs to write the Chrome and Firefox trust stores. Then run the script below, restart the browser and run `docker compose restart caddy`. The script works without sudo, it writes only the browser trust stores, which is what the Codam machines need. It stores the certificate in the git-ignored `caddy/certs/`, and Caddy uses that certificate whenever it is there.
 
 ```bash
 bash scripts/generate-certs.sh
 ```
 
+### Development and tests
+
+```bash
+vp run dev            # PostgreSQL and Redis in Docker, backend and frontend with hot reload
+vp run check          # formatting, linting, type checks (what CI runs)
+vp run test           # Vitest unit tests (backend and frontend)
+vp run test:e2e       # Playwright suites against the running stack (Chromium and Firefox)
+```
+
+[Tooling](./docs/TOOLING.md) lists every command.
+
 ---
 
-## 10. Resources & AI Disclosure
+## 10. Resources and AI disclosure
 
-### Reference Materials
+### Reference materials
 
-- [INSERT Link/Doc title: e.g., MDN WebSockets Protocol Specifications]
-- [INSERT Link/Doc title: e.g., Tailwind Layout Grid System guides]
+- [TanStack Start, Router, Query and Form](https://tanstack.com/)
+- [NestJS](https://docs.nestjs.com/) and [nestjs-trpc](https://nestjs-trpc.io/)
+- [tRPC](https://trpc.io/docs), in particular subscriptions over SSE and error formatting
+- [better-auth](https://www.better-auth.com/docs), in particular e-mail and password, two-factor, admin and username plugins
+- [Drizzle ORM](https://orm.drizzle.team/docs/overview) and [drizzle-zod](https://orm.drizzle.team/docs/zod)
+- [Zod](https://zod.dev/)
+- [Tailwind CSS](https://tailwindcss.com/docs) and [shadcn/ui](https://ui.shadcn.com/docs)
+- [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs)
+- [Caddy](https://caddyserver.com/docs/)
+- [Docker Compose](https://docs.docker.com/compose/), [Playwright](https://playwright.dev/docs/intro), [Vitest](https://vitest.dev/guide/)
+- [react-email](https://react.email/docs) and [Mailpit](https://mailpit.axllent.org/docs/)
+- MDN on [Server-Sent Events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) and [mixed content](https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content)
 
-### Artificial Intelligence (AI) Usage Disclosure
+### AI usage
 
-In strict accordance with the 42 validation rules and this repository's [AGENTS.md](./AGENTS.md) policy, AI assistance here is restricted to documentation maintenance and project-management tasks — never application code, tests, configuration, or secrets.
+We used Claude Code for repetitive and review tasks, within the 42 rules. The team member who merged an AI-assisted change read it, tested it and can explain it.
 
-1. **Where/How AI was Used:** Claude Code was used to (a) audit `docs/**` and this README against the actual source code and fix inaccuracies (stale commands, missing cross-links, unfilled sections that could be answered from real code/config), and (b) break the product spec down into a task backlog on the [GitHub Project board](https://github.com/users/milandekruijf/projects/3) with estimates and a rough roadmap.
-2. **Validation Process:** All documentation edits were reviewed by the team before merging. No application code, tests, or configuration were written or modified by AI. [INSERT: add further entries here as AI assists with additional repetitive/documentation tasks.]
+1. Documentation and project management. Claude Code audited `docs/**` and this README against the source code and fixed inaccuracies, and broke the product spec down into a task backlog on the project board.
+2. A pre-evaluation audit in September 2026 and the fixes that followed from it. The audit compared the codebase with the evaluation criteria. The fixes, which the team reviewed and verified on a fresh clone, were: database migrations and the seed at container start-up, a certificate issued by Caddy when none is present so that no key is committed, stricter server-side validation of event input (date and time format, size limits, image format), a 404 page instead of an error page for an unknown event id, a generic message for unexpected server errors, and removal of leftover debug code. Unit tests, the type checker and the browser suites cover these changes.
+3. The product features (events, tickets, real-time, friends, chat, notifications, two-factor authentication, i18n, admin) were designed and written by the team members named in sections 6 and 8, without AI.

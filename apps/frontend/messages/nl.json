@@ -2,17 +2,15 @@
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "home_page": "Startpagina",
   "about_page": "Over ons",
-  "example_message": "Welkom in je i18n app.",
   "language_label": "Taal",
   "current_locale": "Huidige taal: {locale}",
-  "learn_router": "Leer Paraglide JS",
-
   "button_eventra": "Eventra",
   "button_explore": "Bekijk events",
   "button_create": "Creëer event",
   "button_create_account": "Creëer account",
   "button_view_event": "Bekijk Event",
   "button_all_events": "Alle Events",
+  "button_menu": "Menu",
   "button_login": "Inloggen",
   "button_logout": "Uitloggen",
   "button_privacy": "Privacybeleid",
@@ -26,21 +24,17 @@
   "button_spinner_sending": "Versturen...",
   "button_ok": "OK",
   "button_get_ticket": "Verkrijg Kaartje",
-
   "hero_title_1": "Ontdek leuke evenementen",
   "hero_title_2": "in jouw buurt",
   "hero_subtitle": "Vind concerten, workshops, conferenties, festivals en meer, allemaal op één plek.",
-
   "category_music": "Muziek",
   "category_culture": "Cultuur",
   "category_food": "Eten",
   "category_games": "Spellen",
   "category_talks": "Lezingen",
   "category_workshops": "Workshops",
-
   "featured_events_title": "Uitgelichte evenementen",
   "featured_events_subtitle": "Ontdek bruisende evenementen in jouw buurt",
-
   "how_it_works_title": "Ontdek. Registreer. Geniet.",
   "how_it_works_subtitle": "Je volgende event vinden is nog nooit zo makkelijk geweest.",
   "how_it_works_discover_title": "Ontdek",
@@ -49,17 +43,13 @@
   "how_it_works_register_description": "Meld je aan voor events en verzeker je plek.",
   "how_it_works_enjoy_title": "Geniet",
   "how_it_works_enjoy_description": "Neem deel aan het event en geniet van de ervaring.",
-
   "stats_event_count": "Komende Evenementen",
   "stats_cities": "Steden",
   "stats_categories": "Categorieën",
-
   "halfway_image_title": "Vind je volgende onvergetelijke ervaring",
   "halfway_image_subtitle": "Ontdek een breed scala aan events, van muziekfestival tot tech conferenties, en alles daar tussen. Je volgende avontuur wacht!",
-
   "faq_title": "Veelgestelde vragen",
   "faq_subtitle": "Vind antwoorden op veelgestelde vragen over Eventra.",
-
   "faq_question_1": "Wat is Eventra?",
   "faq_answer_1": "Eventra is een platform waar je evenementen kunt ontdekken, eraan kunt deelnemen en zelf kunt organiseren. Blader door verschillende categorieën, ontdek iets nieuws, meld je eenvoudig aan voor evenementen of maak je eigen evenement aan om met anderen te delen.",
   "faq_question_2": "Hoe vind ik een evenement?",
@@ -72,7 +62,6 @@
   "faq_answer_5": "Ja! Een evenement aanmaken is eenvoudig. Log in, klik op de knop 'Evenement aanmaken', vul de benodigde gegevens in en publiceer je evenement zodat anderen het kunnen ontdekken.",
   "faq_question_6": "Kost Eventra geld?",
   "faq_answer_6": "Nee, het gebruik van Eventra is helemaal gratis. Via het platform kun je kosteloos evenementen aanmaken en je aanmelden voor evenementen.",
-
   "footer_description": "Ontdek, creëer en geniet van evenementen met gemak.",
   "footer_text_explore": "Ontdek",
   "footer_text_account": "Account",
@@ -80,7 +69,6 @@
   "footer_text_contact": "Contact",
   "footer_bottom_text_1": "Met 🧡 gemaakt voor ontdekkers.",
   "footer_bottom_text_2": "© 2026 Eventra. Alle rechten voorbehouden.",
-
   "create_account_title": "Creëer een Eventra Account",
   "create_account_subtitle": "Meld je aan om je evenementen te ontdekken en te beheren",
   "create_account_full_name": "Volledige naam",
@@ -94,7 +82,6 @@
   "create_account_terms": "Gebruikersvoorwaarden",
   "create_account_and": "en",
   "create_account_privacy": "Privacybeleid",
-
   "contact_title": "Neem contact op",
   "contact_subtitle": "Heb je vragen, feedback of hulp nodig? Neem contact op met het Eventra team.",
   "contact_project_support_title": "Project Ondersteuning",
@@ -102,12 +89,10 @@
   "contact_project_support_email": "Email: eventra.team@voorbeeld.com",
   "contact_privacy_requests_title": "Privacy Verzoeken",
   "contact_privacy_requests_description": "Als je vragen hebt over je persoonlijke informatie, accountgegevens, of privacy-gerelateerde verzoeken, neem dan contact op met het Eventra team.",
-
   "placeholder_name": "je naam",
   "placeholder_email": "je.email@voorbeeld.com",
   "placeholder_password": "********",
   "placeholder_username": "jouw gebruikersnaam",
-
   "login_title": "Welkom",
   "login_subtitle": "Log in om je evenementen te beheren",
   "login_email": "Email",
@@ -117,7 +102,6 @@
   "login_no_account": "Geen account?",
   "login_sign_up": "Creëer een account",
   "login_continue": "Door door te gaan, ga je akkoord met onze",
-
   "forgot_password_title": "Je wachtwoord vergeten?",
   "forgot_password_subtitle_1": "Geen probleem!",
   "forgot_password_subtitle_2": "Voer je e-mailadres in om een resetlink te ontvangen.",
@@ -125,7 +109,6 @@
   "forgot_password_button": "Verstuur reset link",
   "forgot_password_remember": "Herinner je je wachtwoord?",
   "forgot_password_error": "Kon de resetlink niet versturen.",
-
   "verify_2fa_title": "Tweestapsverificatie",
   "verify_2fa_subtitle_totp": "Voer de 6-cijferige code uit je authenticator-app in",
   "verify_2fa_subtitle_backup": "Voer een van je back-upcodes in",
@@ -138,7 +121,6 @@
   "verify_2fa_error_default": "Ongeldige code",
   "verify_2fa_session_expired": "Je verificatiesessie is verlopen. Log opnieuw in.",
   "verify_2fa_back_to_login": "Terug naar inloggen",
-
   "two_factor_settings_title": "Beveiliging",
   "two_factor_settings_password_label": "Wachtwoord",
   "two_factor_settings_disabled_description": "Voeg een extra beveiligingslaag toe aan je account door bij het inloggen een code van een authenticator-app te vereisen.",
@@ -154,7 +136,6 @@
   "two_factor_settings_enabled_description": "Tweestapsverificatie is ingeschakeld voor je account.",
   "two_factor_settings_disable_button": "Tweestapsverificatie uitschakelen",
   "two_factor_settings_disable_error": "Kon tweestapsverificatie niet uitschakelen",
-
   "events_page_title": "Alle Events",
   "events_page_subtitle": "Ontdek en neem deel aan evenementen in de buurt.",
   "events_page_empty_title": "Geen events gevonden",
@@ -167,7 +148,6 @@
 
   "events_live_connected": "Live — werkt bij zodra events wijzigen",
   "events_live_reconnecting": "Opnieuw verbinden met live updates…",
-
   "my_events_page_title": "Mijn Events",
   "my_events_page_subtitle": "De events die je hebt aangemaakt.",
   "my_events_page_empty_title": "Je hebt nog geen events aangemaakt",
@@ -175,7 +155,6 @@
   "my_events_manage_title": "Beheer je events",
   "my_events_manage_description": "Bewerk of verwijder de events die je organiseert.",
   "my_events_search": "Zoek in je events",
-
   "profile_avatar_upload": "Avatar uploaden",
   "profile_avatar_remove": "Avatar verwijderen",
   "profile_friends_open_search": "Open vriendenzoeker",
@@ -184,12 +163,10 @@
   "events_tickets_title": "Kaartjes",
   "events_tickets_available": "kaartjes beschikbaar",
   "events_tickets_sold_out": "Uitverkocht",
-
   "event_sorting_upcoming": "Binnenkort",
   "event_sorting_popular": "Meest populair",
   "event_sorting_newest": "Recent toegevoegd",
   "event_sorting_title": "Sorteer evenementen",
-
   "events_registration_success": "Je bent geregistreerd!",
   "events_registration_error": "Kon niet registreren voor het evenement.",
   "events_registration_already_registered": "Geregistreerd",
@@ -200,11 +177,9 @@
   "events_registration_cancel_loading": "Annuleren...",
   "events_registration_cancel_success": "Je registratie is geannuleerd.",
   "events_registration_cancel_error": "Kon je registratie niet annuleren.",
-
   "filter_title": "Filters",
   "filter_category_text": "Categorie",
   "filter_clear": "Reset filters",
-
   "create_event_title": "Creëer een nieuw evenement",
   "create_event_description": "Vul de onderstaande gegevens in om je evenement aan te maken.",
   "create_event_event_title": "Titel van het evenement",
@@ -231,6 +206,7 @@
   "create_event_location_required": "* Voer een locatie in.",
   "create_event_address_required": "* Voer een adres in.",
   "create_event_date_required": "* Selecteer een datum.",
+  "create_event_date_past": "* De datum moet vandaag of later zijn.",
   "create_event_time_required": "* Selecteer een tijd.",
   "create_event_capacity_required": "* Voer het maximale aantal deelnemers in.",
   "event_image_invalid_type": "Kies een afbeeldingsbestand.",
@@ -247,7 +223,6 @@
   "toast_request_too_large": "Het geselecteerde bestand is te groot om te uploaden.",
   "toast_server_response_error": "De server gaf een onleesbaar antwoord. Probeer het opnieuw.",
   "create_event_create_button": "Evenement maken",
-
   "my_tickets_page_title": "Mijn Kaartjes",
   "my_tickets_page_subtitle": "Beheer en bekijk toegangsbewijzen voor voorstellingen die je bezoekt.",
   "my_tickets_card_title": "Beheer je kaartjes",
@@ -264,7 +239,6 @@
   "my_tickets_cancel_description": "Weet je zeker dat je je registratie voor {name} wilt annuleren? Hiermee komt je plek weer vrij voor anderen.",
   "my_tickets_cancel_confirm": "Kaartje annuleren",
   "my_tickets_cancel_abort": "Annulering afbreken",
-
   "privacy_policy_title": "Privacyverklaring",
   "privacy_policy_date": "Ingangsdatum: 22 juli 2026",
   "privacy_policy_1": "1. Inleiding",
@@ -285,7 +259,6 @@
   "privacy_policy_8_text": "Wij kunnen deze privacyverklaring aanpassen wanneer het platform verandert. Bijgewerkte versies worden beschikbaar gesteld via de applicatie.",
   "privacy_policy_9": "9. Contact",
   "privacy_policy_9_text": "Heb je vragen over deze privacyverklaring? Neem dan contact op met het Eventra-projectteam via de officiële communicatiekanalen van het project.",
-
   "terms_title": "Gebruiksvoorwaarden",
   "terms_date": "Ingangsdatum: 22 juli 2026",
   "terms_1": "1. Introductie",
@@ -312,7 +285,6 @@
   "terms_9_text": "Deze gebruiksvoorwaarden kunnen worden bijgewerkt wanneer Eventra verandert of wanneer nieuwe vereisten van toepassing zijn. Door het platform na dergelijke wijzigingen te blijven gebruiken, ga je akkoord met de herziene voorwaarden.",
   "terms_10": "10. Contact",
   "terms_10_text": "Heb je vragen over deze gebruiksvoorwaarden? Neem dan contact op met het Eventra-projectteam via de officiële communicatiekanalen van het project.",
-
   "event_month": [
     {
       "declarations": ["input date", "local formattedMonth = date: datetime month=short"],
@@ -345,7 +317,6 @@
       }
     }
   ],
-
   "event_weekday_long": [
     {
       "declarations": ["input date", "local formattedWeekday = date: datetime weekday=long"],
@@ -395,7 +366,6 @@
   "admin_image": "Evenementafbeelding",
   "admin_confirm_delete": "Definitief verwijderen?",
   "admin_delete_description": "Hiermee verwijder je {name} en de bijbehorende gegevens definitief.",
-
   "event_date": [
     {
       "declarations": [

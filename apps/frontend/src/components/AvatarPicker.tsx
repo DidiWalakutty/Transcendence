@@ -9,13 +9,12 @@ import * as m from '@/@generated/paraglide/messages';
 import { NO_AVATAR, UserAvatar, avatarSource } from '@/components/UserAvatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { compressImage } from '@/lib/image';
+import { MAX_AVATAR_IMAGE_BYTES, validateAndCompress } from '@/lib/image';
 
-const MAX_SOURCE_IMAGE_SIZE = 10 * 1024 * 1024;
 const COMPRESS_OPTIONS = {
   maxWidth: 256,
   maxHeight: 256,
-  maxBytes: 48 * 1024,
+  maxBytes: MAX_AVATAR_IMAGE_BYTES,
   square: true,
 };
 
@@ -35,20 +34,18 @@ export function AvatarPicker({
 
   async function selectImage(file: File | undefined) {
     if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      setError(m.event_image_invalid_type());
-      return;
-    }
-    if (file.size > MAX_SOURCE_IMAGE_SIZE) {
-      setError(m.event_image_too_large());
-      return;
-    }
 
     try {
-      onValueChange(await compressImage(file, COMPRESS_OPTIONS));
+      onValueChange(await validateAndCompress(file, COMPRESS_OPTIONS));
       setError(undefined);
-    } catch {
-      setError(m.event_image_read_error());
+    } catch (error) {
+      if (error instanceof Error && error.message === 'invalid-type') {
+        setError(m.event_image_invalid_type());
+      } else if (error instanceof Error && error.message === 'too-large') {
+        setError(m.event_image_too_large());
+      } else {
+        setError(m.event_image_read_error());
+      }
     }
   }
 
@@ -56,8 +53,14 @@ export function AvatarPicker({
     <div className="flex flex-col items-center gap-3">
       <UserAvatar name={name} username={username} avatar={value} className="size-24 text-4xl" />
 
-      <div className="flex gap-2">
-        <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()}>
+      <div className="flex w-full flex-col gap-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          className="w-full"
+          onClick={() => inputRef.current?.click()}
+        >
           <Upload />
           {m.profile_avatar_upload()}
         </Button>
@@ -67,6 +70,7 @@ export function AvatarPicker({
             type="button"
             variant="ghost"
             size="sm"
+            className="w-full"
             onClick={() => {
               onValueChange(NO_AVATAR);
               setError(undefined);

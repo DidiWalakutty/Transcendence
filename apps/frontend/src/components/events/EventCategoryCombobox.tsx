@@ -10,21 +10,9 @@ import {
   useComboboxAnchor,
 } from '@/components/ui/combobox';
 import * as m from '@/@generated/paraglide/messages';
+import { eventCategories, getCategoryLabel } from '@/lib/categories';
 
-const categories = [
-  { value: 'music', label: m.category_music },
-  { value: 'culture', label: m.category_culture },
-  { value: 'food', label: m.category_food },
-  { value: 'games', label: m.category_games },
-  { value: 'talks', label: m.category_talks },
-  { value: 'workshops', label: m.category_workshops },
-];
-
-const categoryValues = categories.map(({ value }) => value);
-
-function getCategoryLabel(value: string) {
-  return categories.find((category) => category.value === value)?.label() ?? value;
-}
+const categoryValues = [...eventCategories];
 
 export function EventCategoryCombobox({
   id,
