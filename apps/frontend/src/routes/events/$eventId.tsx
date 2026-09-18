@@ -88,7 +88,7 @@ function EventDetailPage() {
               {event?.category.map((category) => (
                 <span
                   key={category}
-                  className="rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary"
+                  className="rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-brand-primary-text"
                 >
                   {categoryTranslations[category]?.() ?? category}
                 </span>
@@ -96,7 +96,7 @@ function EventDetailPage() {
             </div>
 
             {/* Title */}
-            <h1 className="mt-1 pr-[20%] text-4xl font-bold text-primary 2xl:text-5xl">
+            <h1 className="mt-1 pr-[20%] text-4xl font-bold text-brand-primary-text 2xl:text-5xl">
               {event?.title}
             </h1>
 
@@ -105,7 +105,7 @@ function EventDetailPage() {
               <p className="text-lg text-text-muted">{event?.location}</p>
 
               {/* Date */}
-              <div className="mr-6 shrink-0 text-right text-primary">
+              <div className="mr-6 shrink-0 text-right text-brand-primary-text">
                 {eventDate && (
                   <div>
                     <div className="text-lg font-semibold uppercase">
@@ -176,7 +176,9 @@ function EventDetailPage() {
               <h2 className="text-2xl font-bold text-text-primary">{m.events_tickets_title()}</h2>
 
               <p className="mt-4 text-text-muted">
-                <span className="text-3xl font-bold text-primary">{ticketQuery.data ?? '...'}</span>{' '}
+                <span className="text-3xl font-bold text-brand-primary-text">
+                  {ticketQuery.data ?? '...'}
+                </span>{' '}
                 {m.events_tickets_available()}
               </p>
 
@@ -205,7 +207,7 @@ function EventDetailPage() {
                 disabled={
                   registerMutation.isPending || !!registrationQuery.data || ticketQuery.data === 0
                 }
-                className="mt-6 w-full rounded-xl bg-primary px-6 py-4 text-lg font-bold text-white transition hover:opacity-90"
+                className="mt-6 w-full rounded-xl bg-primary px-6 py-4 text-lg font-bold text-brand-primary-foreground transition hover:opacity-90"
               >
                 {!meQuery.data
                   ? m.events_registration_not_logged_in()
