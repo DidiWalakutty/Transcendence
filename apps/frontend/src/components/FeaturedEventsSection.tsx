@@ -1,5 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { EventCard } from '@/components/events/EventCard';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 import * as m from '@/@generated/paraglide/messages';
 import { useTRPC } from '@/integrations/trpc/react';
 
@@ -21,8 +28,7 @@ export function FeaturedEventsSection() {
       <div
         className="
 						mx-auto
-						max-w-6xl
-						2xl:max-w-[1600px]
+						max-w-7xl
 						px-6
 						"
       >
@@ -35,29 +41,31 @@ export function FeaturedEventsSection() {
           <p className="mt-2 text-text-muted text-lg 2xl:text-xl">{m.featured_events_subtitle()}</p>
         </div>
 
-        {/* Event Cards */}
-        <div
-          className="
-						grid
-						grid-cols-1
-						gap-6
-						md:grid-cols-2
-						lg:grid-cols-3
-						2xl:grid-cols-4
-						"
+        {/* Event Carousel */}
+        <Carousel
+          opts={{
+            align: 'start',
+            loop: true,
+          }}
+          className="w-full"
         >
-          {displayedEvents.map((event) => (
-            <EventCard
-              key={event.id}
-              id={event.id}
-              image={event.image}
-              title={event.title}
-              category={event.category}
-              location={event.location}
-              date={event.date}
-            />
-          ))}
-        </div>
+          <CarouselContent className="-ml-6 py-4">
+            {displayedEvents.map((event) => (
+              <CarouselItem key={event.id} className="basis-full pl-6 sm:basis-1/2 lg:basis-1/3">
+                <EventCard
+                  id={event.id}
+                  image={event.image}
+                  title={event.title}
+                  category={event.category}
+                  location={event.location}
+                  date={event.date}
+                />
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className="-left-6" />
+          <CarouselNext className="-right-6" />
+        </Carousel>
       </div>
     </section>
   );

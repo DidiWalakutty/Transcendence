@@ -18,59 +18,67 @@ export function Navbar() {
   usePresenceConnection(!!session);
 
   return (
-    <nav
+    <div
       className="
-						sticky 
-						top-4 
-						z-50
-						mx-2
-						flex 
-						h-16 
-						2xl:h-20 
-						items-center 
+					sticky
+					top-4
+					z-50
+					mx-auto
+					w-full
+					max-w-7xl
+					px-2
+				"
+    >
+      <nav
+        className="
+						flex
+						h-16
+						2xl:h-20
+						items-center
 						justify-between
 						rounded-xl
-						border 
+						border
 						border-border-default
 						bg-surface-card
 						px-8
 						shadow-md
 						text-text-primary
 					"
-    >
-      {/* Logo */}
-      <div>
-        <Link to="/" className="font-bold text-xl 2xl:text-3xl text-brand-primary">
-          {m.button_eventra()}
-        </Link>
-      </div>
-
-      <div className="flex items-center gap-8">
-        {/* Navigation */}
-        {/* All needed links are generated through map based on the user's role */}
-        <div className="flex gap-6 text-lg 2xl:text-2xl">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              to={link.href}
-              className="transition-colors hover:text-brand-primary"
-            >
-              {link.label()}
-            </Link>
-          ))}
+      >
+        {/* Logo */}
+        <div>
+          <Link to="/" className="font-bold text-xl 2xl:text-3xl text-brand-primary">
+            {m.button_eventra()}
+          </Link>
         </div>
 
-        {/* Language Switcher */}
-        <LanguageSwitcher />
+        <div className="flex items-center gap-8">
+          {/* Navigation */}
+          {/* All needed links are generated through map based on the user's role */}
+          <div className="flex gap-6 text-lg 2xl:text-2xl">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                to={link.href}
+                className="transition-colors hover:text-brand-primary"
+              >
+                {link.label()}
+              </Link>
+            ))}
+          </div>
 
-        {/* User Menu */}
-        <UserMenu
-          role={role}
-          name={session?.user.name}
-          username={session?.user.username}
-          avatar={session?.user.image}
-        />
-      </div>
-    </nav>
+          {/* Language Switcher */}
+          <LanguageSwitcher />
+
+          {/* User Menu */}
+          <UserMenu
+            role={role}
+            name={session?.user.name}
+            username={session?.user.username}
+            avatar={session?.user.image}
+          />
+        </div>
+      </nav>
+    </div>
   );
 }

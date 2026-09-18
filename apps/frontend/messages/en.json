@@ -433,7 +433,7 @@
   "profile_about_placeholder": "Tell us about yourself...",
   "profile_location": "Location (optional)",
   "profile_location_placeholder": "Amsterdam, Netherlands",
-  "profile_language_placeholder": "english",
+  "profile_language_placeholder": "Select a language",
   "profile_saved": "Profile saved successfully!",
   "profile_saving": "Saving...",
   "profile_save_button": "Save Profile",

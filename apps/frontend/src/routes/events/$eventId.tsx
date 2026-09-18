@@ -62,7 +62,7 @@ function EventDetailPage() {
   const eventDate = event?.date ? new Date(event.date) : null;
 
   return (
-    <main className="relative min-h-[calc(100vh-180px)] bg-white pb-[500px]">
+    <main className="relative min-h-[calc(100vh-180px)] bg-white">
       {/* Background */}
       <div className="absolute inset-0 flex">
         <div className="w-0 bg-primary md:w-[20%] lg:w-[25%] 2xl:w-[30%]" />
@@ -139,13 +139,8 @@ function EventDetailPage() {
             mt-16
             grid
             max-w-5xl
-            gap-12
-            md:max-w-4xl
-            lg:ml-[30%]
-            lg:max-w-[65%]
+            gap-8
             lg:grid-cols-[1fr_320px]
-            2xl:ml-[15%]
-            2xl:max-w-6xl
           "
         >
           {/* Event Details */}
@@ -172,13 +167,9 @@ function EventDetailPage() {
           {/* Tickets */}
           <aside
             className="
-              w-[320px]
-              shrink-0
-
-              2xl:absolute
-              2xl:right-[-300px]
-              2xl:top-[800px]
-              2xl:w-[320px]
+              w-full
+              lg:w-[320px]
+              lg:shrink-0
             "
           >
             <div className="sticky top-24 rounded-2xl bg-surface-card p-6 shadow-2xl">

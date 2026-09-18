@@ -106,7 +106,7 @@ export function TwoFactorSettings() {
   const secret = enrollment ? new URL(enrollment.totpURI).searchParams.get('secret') : null;
 
   return (
-    <Card className="mt-8">
+    <Card>
       <CardHeader>
         <CardTitle>{m.two_factor_settings_title()}</CardTitle>
       </CardHeader>

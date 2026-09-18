@@ -73,17 +73,8 @@ export function EventForm() {
   return (
     <Card
       className="
-        flex
         w-full
-        max-w-md
-        flex-col
-        rounded-lg
-        bg-white
-        p-6
-        shadow-lg
-        md:max-w-2xl
-        lg:max-w-4xl
-        2xl:max-w-6xl
+        max-w-7xl
       "
     >
       <CardHeader>
@@ -93,9 +84,9 @@ export function EventForm() {
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+        <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-2">
           {/* Image */}
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 lg:col-span-2">
             <Label htmlFor="image">{m.create_event_image()}</Label>
 
             <EventImagePicker
@@ -106,167 +97,171 @@ export function EventForm() {
             />
           </div>
 
-          {/* Title */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="title">{m.create_event_event_title()}</Label>
-
-            <div className="rounded-lg border border-input bg-white">
-              <Input
-                id="title"
-                name="title"
-                value={title}
-                onChange={(event) => setTitle(event.target.value)}
-                placeholder={m.create_event_event_title_placeholder()}
-                className="border-0 bg-transparent focus-visible:ring-0"
-              />
-            </div>
-
-            {showErrors && !title.trim() && (
-              <p className="text-sm text-red-500">{m.create_event_event_title_required()}</p>
-            )}
-          </div>
-
-          {/* Description */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="description">{m.create_event_event_description()}</Label>
-
-            <div className="rounded-lg border border-input bg-white">
-              <Textarea
-                id="description"
-                name="description"
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-                placeholder={m.create_event_event_description_placeholder()}
-                className="min-h-32 resize-y border-0 bg-transparent focus-visible:ring-0"
-              />
-            </div>
-
-            {showErrors && !description.trim() && (
-              <p className="text-sm text-red-500">{m.create_event_event_description_required()}</p>
-            )}
-          </div>
-
-          {/* Category */}
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="category">{m.create_event_category()}</Label>
-
-            <EventCategoryCombobox
-              id="category"
-              value={selectedCategories}
-              onValueChange={setSelectedCategories}
-            />
-
-            {showErrors && selectedCategories.length === 0 && (
-              <p className="text-sm text-red-500">{m.create_event_category_required()}</p>
-            )}
-          </div>
-
-          {/* Location + Address */}
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* Location */}
+          <div className="flex flex-col gap-6">
+            {/* Title */}
             <div className="flex flex-col gap-2">
-              <Label htmlFor="location">{m.create_event_location()}</Label>
+              <Label htmlFor="title">{m.create_event_event_title()}</Label>
 
               <div className="rounded-lg border border-input bg-white">
                 <Input
-                  id="location"
-                  name="location"
-                  value={location}
-                  onChange={(event) => setLocation(event.target.value)}
-                  placeholder={m.create_event_location_placeholder()}
+                  id="title"
+                  name="title"
+                  value={title}
+                  onChange={(event) => setTitle(event.target.value)}
+                  placeholder={m.create_event_event_title_placeholder()}
                   className="border-0 bg-transparent focus-visible:ring-0"
                 />
               </div>
 
-              {showErrors && !location.trim() && (
-                <p className="text-sm text-red-500">{m.create_event_location_required()}</p>
+              {showErrors && !title.trim() && (
+                <p className="text-sm text-red-500">{m.create_event_event_title_required()}</p>
               )}
             </div>
 
-            {/* Address */}
+            {/* Description */}
             <div className="flex flex-col gap-2">
-              <Label htmlFor="address">{m.create_event_address()}</Label>
+              <Label htmlFor="description">{m.create_event_event_description()}</Label>
 
               <div className="rounded-lg border border-input bg-white">
-                <Input
-                  id="address"
-                  name="address"
-                  value={address}
-                  onChange={(event) => setAddress(event.target.value)}
-                  placeholder={m.create_event_address_placeholder()}
-                  className="border-0 bg-transparent focus-visible:ring-0"
+                <Textarea
+                  id="description"
+                  name="description"
+                  value={description}
+                  onChange={(event) => setDescription(event.target.value)}
+                  placeholder={m.create_event_event_description_placeholder()}
+                  className="min-h-32 resize-y border-0 bg-transparent focus-visible:ring-0"
                 />
               </div>
 
-              {showErrors && !address.trim() && (
-                <p className="text-sm text-red-500">{m.create_event_address_required()}</p>
+              {showErrors && !description.trim() && (
+                <p className="text-sm text-red-500">
+                  {m.create_event_event_description_required()}
+                </p>
+              )}
+            </div>
+
+            {/* Category */}
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="category">{m.create_event_category()}</Label>
+
+              <EventCategoryCombobox
+                id="category"
+                value={selectedCategories}
+                onValueChange={setSelectedCategories}
+              />
+
+              {showErrors && selectedCategories.length === 0 && (
+                <p className="text-sm text-red-500">{m.create_event_category_required()}</p>
               )}
             </div>
           </div>
+          <div className="flex flex-col gap-6">
+            {/* Location + Address */}
+            <div className="grid gap-6 md:grid-cols-2">
+              {/* Location */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="location">{m.create_event_location()}</Label>
 
-          {/* Date + Time */}
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* Date */}
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="date">{m.create_event_date()}</Label>
+                <div className="rounded-lg border border-input bg-white">
+                  <Input
+                    id="location"
+                    name="location"
+                    value={location}
+                    onChange={(event) => setLocation(event.target.value)}
+                    placeholder={m.create_event_location_placeholder()}
+                    className="border-0 bg-transparent focus-visible:ring-0"
+                  />
+                </div>
 
-              <EventDatePicker
-                id="date"
-                name="date"
-                value={selectedDate}
-                onValueChange={setSelectedDate}
-              />
+                {showErrors && !location.trim() && (
+                  <p className="text-sm text-red-500">{m.create_event_location_required()}</p>
+                )}
+              </div>
 
-              {showErrors && !selectedDate && (
-                <p className="text-sm text-red-500">{m.create_event_date_required()}</p>
-              )}
+              {/* Address */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="address">{m.create_event_address()}</Label>
+
+                <div className="rounded-lg border border-input bg-white">
+                  <Input
+                    id="address"
+                    name="address"
+                    value={address}
+                    onChange={(event) => setAddress(event.target.value)}
+                    placeholder={m.create_event_address_placeholder()}
+                    className="border-0 bg-transparent focus-visible:ring-0"
+                  />
+                </div>
+
+                {showErrors && !address.trim() && (
+                  <p className="text-sm text-red-500">{m.create_event_address_required()}</p>
+                )}
+              </div>
             </div>
 
-            {/* Time */}
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="time">{m.create_event_time()}</Label>
+            {/* Date + Time */}
+            <div className="grid gap-6 md:grid-cols-2">
+              {/* Date */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="date">{m.create_event_date()}</Label>
+
+                <EventDatePicker
+                  id="date"
+                  name="date"
+                  value={selectedDate}
+                  onValueChange={setSelectedDate}
+                />
+
+                {showErrors && !selectedDate && (
+                  <p className="text-sm text-red-500">{m.create_event_date_required()}</p>
+                )}
+              </div>
+
+              {/* Time */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="time">{m.create_event_time()}</Label>
+
+                <div className="rounded-lg border border-input bg-white">
+                  <Input
+                    id="time"
+                    name="time"
+                    type="time"
+                    value={time}
+                    onChange={(event) => setTime(event.target.value)}
+                    className="w-full border-0 bg-transparent focus-visible:ring-0"
+                  />
+                </div>
+
+                {showErrors && !time && (
+                  <p className="text-sm text-red-500">{m.create_event_time_required()}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Capacity */}
+            <div className="flex flex-col gap-2 md:w-1/2">
+              <Label htmlFor="capacity">{m.create_event_capacity()}</Label>
 
               <div className="rounded-lg border border-input bg-white">
                 <Input
-                  id="time"
-                  name="time"
-                  type="time"
-                  value={time}
-                  onChange={(event) => setTime(event.target.value)}
+                  id="capacity"
+                  name="capacity"
+                  type="number"
+                  min="1"
+                  value={capacity}
+                  onChange={(event) => setCapacity(event.target.value)}
+                  placeholder={m.create_event_capacity_placeholder()}
                   className="w-full border-0 bg-transparent focus-visible:ring-0"
                 />
               </div>
 
-              {showErrors && !time && (
-                <p className="text-sm text-red-500">{m.create_event_time_required()}</p>
+              {showErrors && !capacity && (
+                <p className="text-sm text-red-500">{m.create_event_capacity_required()}</p>
               )}
             </div>
           </div>
-
-          {/* Capacity */}
-          <div className="flex flex-col gap-2 md:w-1/2">
-            <Label htmlFor="capacity">{m.create_event_capacity()}</Label>
-
-            <div className="rounded-lg border border-input bg-white">
-              <Input
-                id="capacity"
-                name="capacity"
-                type="number"
-                min="1"
-                value={capacity}
-                onChange={(event) => setCapacity(event.target.value)}
-                placeholder={m.create_event_capacity_placeholder()}
-                className="w-full border-0 bg-transparent focus-visible:ring-0"
-              />
-            </div>
-
-            {showErrors && !capacity && (
-              <p className="text-sm text-red-500">{m.create_event_capacity_required()}</p>
-            )}
-          </div>
-
           {/* Submit */}
-          <div className="mt-10 flex justify-center pb-10">
+          <div className="flex justify-center lg:col-span-2">
             <Button
               type="submit"
               className="w-fit px-15"
