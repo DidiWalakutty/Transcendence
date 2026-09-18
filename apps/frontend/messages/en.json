@@ -2,11 +2,8 @@
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "home_page": "Home page",
   "about_page": "About page",
-  "example_message": "Welcome to your i18n app.",
   "language_label": "Language",
   "current_locale": "Current locale: {locale}",
-  "learn_router": "Learn Paraglide JS",
-
   "button_eventra": "Eventra",
   "button_explore": "Explore events",
   "button_create": "Create event",
@@ -27,21 +24,17 @@
   "button_spinner_sending": "Sending...",
   "button_ok": "OK",
   "button_get_ticket": "Get Tickets",
-
   "hero_title_1": "Discover exciting events",
   "hero_title_2": "near you",
   "hero_subtitle": "Find concerts, workshops, conferences, festivals and more, all in one place.",
-
   "category_music": "Music",
   "category_culture": "Culture",
   "category_food": "Food",
   "category_games": "Games",
   "category_talks": "Talks",
   "category_workshops": "Workshops",
-
   "featured_events_title": "Featured Events",
   "featured_events_subtitle": "Discover exciting events happening near you",
-
   "how_it_works_title": "Discover. Register. Enjoy.",
   "how_it_works_subtitle": "Finding your next event has never been easier.",
   "how_it_works_discover_title": "Discover",
@@ -50,17 +43,13 @@
   "how_it_works_register_description": "Sign up for events and secure your spot.",
   "how_it_works_enjoy_title": "Enjoy",
   "how_it_works_enjoy_description": "Join the event and enjoy the experience.",
-
   "stats_event_count": "Upcoming Events",
   "stats_cities": "Cities",
   "stats_categories": "Categories",
-
   "halfway_image_title": "Find your next unforgettable experience",
   "halfway_image_subtitle": "Discover a wide range of events, from music festivals to tech conferences, and everything in between. Your next adventure awaits!",
-
   "faq_title": "Frequently Asked Questions",
   "faq_subtitle": "Find answers to common questions about Eventra.",
-
   "faq_question_1": "What is Eventra?",
   "faq_answer_1": "Eventra is a platform where you can discover, join, and create events. Browse events that match your interests, explore something new, register in just a few clicks, or create your own event and share it with others.",
   "faq_question_2": "How can I find an event?",
@@ -73,7 +62,6 @@
   "faq_answer_5": "Yes! Creating an event is easy. Log in, and click the 'Create Event' button, fill in the event details, and publish it for others to discover.",
   "faq_question_6": "Does Eventra cost anything?",
   "faq_answer_6": "No, using Eventra is completely free, and creating or joining events doesn't cost anything through the platform.",
-
   "footer_description": "Discover, create and enjoy events with ease.",
   "footer_text_explore": "Explore",
   "footer_text_account": "Account",
@@ -81,7 +69,6 @@
   "footer_text_contact": "Contact",
   "footer_bottom_text_1": "Made with 🧡 for explorers.",
   "footer_bottom_text_2": "© 2026 Eventra. All rights reserved.",
-
   "create_account_title": "Create an Eventra Account",
   "create_account_subtitle": "Sign up to discover and manage your events",
   "create_account_full_name": "Full Name",
@@ -95,7 +82,6 @@
   "create_account_terms": "Terms of Service",
   "create_account_and": "and",
   "create_account_privacy": "Privacy Policy",
-
   "contact_title": "Contact Us",
   "contact_subtitle": "Have questions, feedback, or need support? Get in touch with the Eventra team.",
   "contact_project_support_title": "Project Support",
@@ -103,12 +89,10 @@
   "contact_project_support_email": "Email: eventra.team@example.com",
   "contact_privacy_requests_title": "Privacy Requests",
   "contact_privacy_requests_description": "If you have questions about your personal information, account data, or privacy-related requests, please contact the Eventra team.",
-
   "placeholder_name": "your name",
   "placeholder_email": "your.email@example.com",
   "placeholder_password": "********",
   "placeholder_username": "your username",
-
   "login_title": "Welcome",
   "login_subtitle": "Log in to manage your events",
   "login_email": "Email",
@@ -118,7 +102,6 @@
   "login_no_account": "Don't have an account?",
   "login_sign_up": "Sign up",
   "login_continue": "By continuing, you agree to our",
-
   "forgot_password_title": "Forgot your password?",
   "forgot_password_subtitle_1": "No worries!",
   "forgot_password_subtitle_2": "Enter your email address to receive a reset link.",
@@ -126,7 +109,6 @@
   "forgot_password_button": "Send reset link",
   "forgot_password_remember": "Remembered your password?",
   "forgot_password_error": "Could not send the reset link.",
-
   "verify_2fa_title": "Two-factor verification",
   "verify_2fa_subtitle_totp": "Enter the 6-digit code from your authenticator app",
   "verify_2fa_subtitle_backup": "Enter one of your backup codes",
@@ -139,7 +121,6 @@
   "verify_2fa_error_default": "Invalid code",
   "verify_2fa_session_expired": "Your verification session has expired. Please log in again.",
   "verify_2fa_back_to_login": "Back to login",
-
   "two_factor_settings_title": "Security",
   "two_factor_settings_password_label": "Password",
   "two_factor_settings_disabled_description": "Add an extra layer of security to your account by requiring a code from an authenticator app at login.",
@@ -155,17 +136,14 @@
   "two_factor_settings_enabled_description": "Two-factor authentication is enabled on your account.",
   "two_factor_settings_disable_button": "Disable two-factor authentication",
   "two_factor_settings_disable_error": "Could not disable two-factor authentication",
-
   "events_page_title": "All Events",
   "events_page_subtitle": "Discover and join events happening near you.",
   "events_page_empty_title": "No events found",
   "events_page_empty_description": "Try clearing your filters or check back later for new events.",
   "events_page_pagination_prev": "Previous",
   "events_page_pagination_next": "Next",
-
   "events_live_connected": "Live — updates as events change",
   "events_live_reconnecting": "Reconnecting to live updates…",
-
   "my_events_page_title": "My Events",
   "my_events_page_subtitle": "The events you have created.",
   "my_events_page_empty_title": "You have not created any events yet",
@@ -173,20 +151,16 @@
   "my_events_manage_title": "Manage your events",
   "my_events_manage_description": "Edit or delete the events you organize.",
   "my_events_search": "Search your events",
-
   "profile_avatar_upload": "Upload avatar",
   "profile_avatar_remove": "Remove avatar",
-
   "events_about_title": "About this event",
   "events_tickets_title": "Tickets",
   "events_tickets_available": "tickets available",
   "events_tickets_sold_out": "Sold out",
-
   "event_sorting_upcoming": "Upcoming",
   "event_sorting_popular": "Most popular",
   "event_sorting_newest": "Recently added",
   "event_sorting_title": "Sort events",
-
   "events_registration_success": "You are registered!",
   "events_registration_error": "Could not register for the event.",
   "events_registration_already_registered": "Registered",
@@ -197,11 +171,9 @@
   "events_registration_cancel_loading": "Cancelling...",
   "events_registration_cancel_success": "Your registration has been canceled.",
   "events_registration_cancel_error": "Could not cancel your registration.",
-
   "filter_title": "Filters",
   "filter_category_text": "Category",
   "filter_clear": "Clear filters",
-
   "create_event_title": "Create an event",
   "create_event_description": "Fill in the details below to create your event.",
   "create_event_event_title": "Event title",
@@ -244,7 +216,6 @@
   "toast_request_too_large": "The selected file is too large to upload.",
   "toast_server_response_error": "The server returned an unreadable response. Please try again.",
   "create_event_create_button": "Create event",
-
   "my_tickets_page_title": "My Tickets",
   "my_tickets_page_subtitle": "Manage and view admission tokens for events you are attending.",
   "my_tickets_card_title": "Manage your tickets",
@@ -261,7 +232,6 @@
   "my_tickets_cancel_description": "Are you sure you want to cancel your registration for {name}? This will release your spot back to the public pool.",
   "my_tickets_cancel_confirm": "Cancel Ticket",
   "my_tickets_cancel_abort": "Abort Cancel",
-
   "privacy_policy_title": "Privacy Policy",
   "privacy_policy_date": "Effective date: July 22, 2026",
   "privacy_policy_1": "1. Introduction",
@@ -282,7 +252,6 @@
   "privacy_policy_8_text": "We may update this Privacy Policy when the platform changes. Updated versions will be made available through the application.",
   "privacy_policy_9": "9. Contact",
   "privacy_policy_9_text": "For questions regarding this Privacy Policy, please contact the Eventra project team through the official project communication channels.",
-
   "terms_title": "Terms of Service",
   "terms_date": "Effective date: July 22, 2026",
   "terms_1": "1. Introduction",
@@ -309,7 +278,6 @@
   "terms_9_text": "These Terms of Service may be updated when Eventra changes or when new requirements apply. Continued use of the platform after updates means that you accept the revised terms.",
   "terms_10": "10. Contact",
   "terms_10_text": "For questions regarding these Terms of Service, please contact the Eventra project team through the official project communication channels.",
-
   "event_month": [
     {
       "declarations": ["input date", "local formattedMonth = date: datetime month=short"],
@@ -342,7 +310,6 @@
       }
     }
   ],
-
   "event_weekday_long": [
     {
       "declarations": ["input date", "local formattedWeekday = date: datetime weekday=long"],
@@ -392,7 +359,6 @@
   "admin_image": "Event image",
   "admin_confirm_delete": "Delete permanently?",
   "admin_delete_description": "This permanently deletes {name} and its related data.",
-
   "event_date": [
     {
       "declarations": [

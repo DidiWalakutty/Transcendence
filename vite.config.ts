@@ -217,6 +217,8 @@ export default defineConfig({
       '**/.output/**',
       '**/node_modules/**',
       '**/routeTree.gen.ts',
+      // Generated HTML reports under docs/ are not hand-edited.
+      'docs/**/*.html',
     ],
     singleQuote: true,
     semi: true,

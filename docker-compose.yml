@@ -38,7 +38,13 @@ services:
     # /health answers only once the app is listening, i.e. after the startup
     # migrations in DatabaseService have run. The seed waits for this.
     healthcheck:
-      test: ['CMD', 'bun', '-e', "fetch('http://localhost:3001/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      test:
+        [
+          'CMD',
+          'bun',
+          '-e',
+          "fetch('http://localhost:3001/health').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))",
+        ]
       interval: 5s
       timeout: 5s
       retries: 20

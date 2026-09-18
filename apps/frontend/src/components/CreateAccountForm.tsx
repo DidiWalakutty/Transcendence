@@ -229,23 +229,6 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
                 </Alert>
               ) : null}
 
-              {/*
-                TODO (OAuth)
-
-                Add social sign-up providers.
-
-                Examples:
-                - Google
-                - GitHub
-                - Microsoft
-
-                Requires:
-                - OAuth provider setup
-                - Backend callback routes
-                - Token verification
-                - Account linking
-              */}
-
               <Field>
                 <div className="flex flex-col items-center gap-4">
                   <form.Subscribe
