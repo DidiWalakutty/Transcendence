@@ -200,6 +200,7 @@
   "create_event_location_required": "* Introduce una ubicación.",
   "create_event_address_required": "* Introduce una dirección.",
   "create_event_date_required": "* Selecciona una fecha.",
+  "create_event_date_past": "* La fecha debe ser hoy o posterior.",
   "create_event_time_required": "* Selecciona una hora.",
   "create_event_capacity_required": "* Introduce la capacidad máxima.",
   "event_image_invalid_type": "Elige un archivo de imagen.",

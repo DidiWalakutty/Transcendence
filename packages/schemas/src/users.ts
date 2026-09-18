@@ -1,7 +1,14 @@
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import { z } from 'zod';
 import { users } from '@repo/schemas/database';
-import { emailField, nameField } from '@repo/schemas/fields';
+import {
+  emailField,
+  imageField,
+  MAX_AVATAR_IMAGE_BYTES,
+  nameField,
+  NO_AVATAR,
+  EVENT_PLACEHOLDER,
+} from '@repo/schemas/fields';
 import { subscriptionSchema } from '@repo/schemas/subscription';
 
 export const userSchema = createSelectSchema(users, {
@@ -65,8 +72,8 @@ export function normalizeUserLanguage(value: unknown): string {
   return resolveUserLocale(value);
 }
 
-export const NO_AVATAR = 'PLACEHOLDER';
-export const EVENT_PLACEHOLDER = 'PLACEHOLDER';
+// Defined in fields.ts (no dependencies) so events.ts can use them too.
+export { NO_AVATAR, EVENT_PLACEHOLDER };
 
 export function avatarSource(avatar?: string | null): string | undefined {
   return !avatar || avatar === NO_AVATAR ? undefined : avatar;
@@ -90,7 +97,7 @@ export const updateUserSchema = createUserSchema.partial().extend({
   aboutMe: z.string().max(500).optional(),
   location: z.string().max(100).optional(),
   preferedLanguage: z.enum(supportedLanguages).optional(),
-  avatar: z.string().optional(),
+  avatar: imageField(NO_AVATAR, MAX_AVATAR_IMAGE_BYTES).optional(),
   displayUsername: z.string().optional(),
 });
 

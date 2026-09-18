@@ -200,6 +200,7 @@
   "create_event_location_required": "* Voer een locatie in.",
   "create_event_address_required": "* Voer een adres in.",
   "create_event_date_required": "* Selecteer een datum.",
+  "create_event_date_past": "* De datum moet vandaag of later zijn.",
   "create_event_time_required": "* Selecteer een tijd.",
   "create_event_capacity_required": "* Voer het maximale aantal deelnemers in.",
   "event_image_invalid_type": "Kies een afbeeldingsbestand.",

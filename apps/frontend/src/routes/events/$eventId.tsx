@@ -1,4 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, notFound } from '@tanstack/react-router';
+import { z } from 'zod';
 import placeholderEvent from '@/assets/placeholder_event.png';
 import { useQuery } from '@tanstack/react-query';
 import { useTRPC } from '@/integrations/trpc/react';
@@ -10,12 +11,28 @@ import * as m from '@/@generated/paraglide/messages';
 import { getCategoryLabel } from '@/lib/categories';
 import { eventImageSource } from '@/lib/image';
 
+// A mistyped or stale link is a 404, not an error page: a non-UUID never
+// reaches the backend, and an unknown id maps its NOT_FOUND onto the router's
+// notFoundComponent. Anything else (backend down…) still surfaces as an error.
+function isNotFoundError(error: unknown): boolean {
+  const code = (error as { data?: { code?: string } } | null)?.data?.code;
+  return code === 'NOT_FOUND' || code === 'BAD_REQUEST';
+}
+
 export const Route = createFileRoute('/events/$eventId')({
   loader: async ({ context, params }) => {
-    await context.queryClient.query({
-      ...context.trpc.eventCreation.getEventById.queryOptions({ id: params.eventId }),
-      staleTime: 'static',
-    });
+    if (!z.uuid().safeParse(params.eventId).success) {
+      throw notFound();
+    }
+    try {
+      await context.queryClient.query({
+        ...context.trpc.eventCreation.getEventById.queryOptions({ id: params.eventId }),
+        staleTime: 'static',
+      });
+    } catch (error) {
+      if (isNotFoundError(error)) throw notFound();
+      throw error;
+    }
   },
   component: EventDetailPage,
 });

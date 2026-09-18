@@ -1,5 +1,15 @@
 import { z } from 'zod';
 import { subscriptionSchema } from '@repo/schemas/subscription';
+import {
+  EVENT_PLACEHOLDER,
+  imageField,
+  MAX_AVATAR_IMAGE_BYTES,
+  MAX_EVENT_IMAGE_BYTES,
+  MAX_SOURCE_IMAGE_SIZE,
+} from '@repo/schemas/fields';
+
+// Kept here for the existing importers (apps/frontend/src/lib/image.ts).
+export { MAX_EVENT_IMAGE_BYTES, MAX_AVATAR_IMAGE_BYTES, MAX_SOURCE_IMAGE_SIZE };
 
 export const eventCategories = ['music', 'culture', 'food', 'games', 'talks', 'workshops'] as const;
 export type EventCategory = (typeof eventCategories)[number];
@@ -45,25 +55,62 @@ export const eventWithAttendeeCountSchema = eventSchema.extend({
 // Array of events - used when reading/listing events
 export const eventsSchema = eventSchema.array();
 
-// Single event - used when reading a single event
+// Single event - used when reading a single event. A non-UUID is rejected here
+// (BAD_REQUEST) instead of reaching PostgreSQL, where it would be a 500.
 export const eventIdSchema = z.object({
-  id: z.string(),
+  id: z.uuid(),
 });
 
-// Creating a new event - used as  mutation input
-export const createEventSchema = z.object({
-  title: z.string().min(1),
-  category: z.array(eventCategorySchema).min(1),
-  location: z.string().min(1),
-  address: z.string().min(1),
-  date: z.string(),
-  time: z.string(),
-  image: z.string().min(1),
-  description: z.string().min(1),
-  maxCapacity: z.number().int().positive(),
+// Upper bounds for what an organiser can type. The form enforces them as
+// native maxLength/max attributes; the server enforces them here.
+export const EVENT_TITLE_MAX = 120;
+export const EVENT_LOCATION_MAX = 120;
+export const EVENT_ADDRESS_MAX = 200;
+export const EVENT_DESCRIPTION_MAX = 5_000;
+export const EVENT_CAPACITY_MAX = 100_000;
+
+// The date picker writes YYYY-MM-DD and <input type="time"> writes HH:MM, but
+// the API can be called without either, so the strings are checked here. A
+// date must also exist on the calendar: JavaScript would silently turn
+// 2026-02-31 into March 3rd.
+export const eventDateField = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Date must be YYYY-MM-DD')
+  .refine((value) => {
+    const parsed = parseEventDate(value);
+    return parsed !== undefined && formatEventDate(parsed) === value;
+  }, 'Not a valid calendar date');
+
+export const eventTimeField = z.string().regex(/^\d{2}:\d{2}(:\d{2})?$/, 'Time must be HH:MM');
+
+export function isEventDateInPast(value: string): boolean {
+  const parsed = parseEventDate(value);
+  if (!parsed) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return parsed < today;
+}
+
+// Everything an organiser sends when creating or editing an event.
+const eventInputSchema = z.object({
+  title: z.string().trim().min(1).max(EVENT_TITLE_MAX),
+  category: z.array(eventCategorySchema).min(1).max(eventCategories.length),
+  location: z.string().trim().min(1).max(EVENT_LOCATION_MAX),
+  address: z.string().trim().min(1).max(EVENT_ADDRESS_MAX),
+  date: eventDateField,
+  time: eventTimeField,
+  image: imageField(EVENT_PLACEHOLDER, MAX_EVENT_IMAGE_BYTES),
+  description: z.string().trim().min(1).max(EVENT_DESCRIPTION_MAX),
+  maxCapacity: z.number().int().positive().max(EVENT_CAPACITY_MAX),
 });
 
-export const updateEventSchema = createEventSchema.extend({
+// Creating a new event - used as mutation input. Only a new event has to be
+// in the future; an organiser may still correct the details of a past one.
+export const createEventSchema = eventInputSchema.extend({
+  date: eventDateField.refine((value) => !isEventDateInPast(value), 'Date must be today or later'),
+});
+
+export const updateEventSchema = eventInputSchema.extend({
   id: z.string().uuid(),
 });
 
@@ -125,10 +172,6 @@ export function parseEventDate(value: string): Date | undefined {
 export function formatEventDate(date: Date): string {
   return fromEventDateTime(date).date;
 }
-
-export const MAX_EVENT_IMAGE_BYTES = 72 * 1024;
-export const MAX_AVATAR_IMAGE_BYTES = 48 * 1024;
-export const MAX_SOURCE_IMAGE_SIZE = 10 * 1024 * 1024;
 
 export type EventDto = z.infer<typeof eventSchema>;
 export type EventSortDto = z.infer<typeof eventSortSchema>;

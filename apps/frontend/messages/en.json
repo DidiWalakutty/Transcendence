@@ -200,6 +200,7 @@
   "create_event_location_required": "* Please enter a location.",
   "create_event_address_required": "* Please enter an address.",
   "create_event_date_required": "* Please select a date.",
+  "create_event_date_past": "* The date must be today or later.",
   "create_event_time_required": "* Please select a time.",
   "create_event_capacity_required": "* Please enter the maximum capacity.",
   "event_image_invalid_type": "Choose an image file.",
