@@ -180,16 +180,29 @@ Local development already works out of the box using the committed defaults in `
 
 ### Single-Command Application Launch
 
-Build and start the frontend, backend, PostgreSQL, and Redis services with one command:
+Build and start the whole stack — Caddy, frontend, backend, PostgreSQL, Redis, Mailpit —
+with one command from a fresh clone:
 
 ```bash
-vp run deploy
+docker compose up --build
 ```
 
-This runs the Vite+ `repo:deploy` task, which executes `docker compose up --build`.
-For detached local deployment, use `vp run deploy:detached`.
+(`vp run deploy` is an alias for the same command; `vp run deploy:detached` adds `-d`.)
+
+Nothing else is needed: the backend applies the database migrations from
+`apps/backend/drizzle` when it starts, and the one-shot `seed` service then creates the
+demo accounts and events (it skips anything that already exists, so reruns are safe).
 
 Once the stack has started, open the application at `https://localhost:3000`.
+E-mails sent by the app land in Mailpit at `http://localhost:8025`.
+
+Demo accounts (passwords are the `SEED_*` values, see [Environment](./docs/ENVIRONMENT.md)):
+
+| Account       | E-mail                      | Default password    |
+| ------------- | --------------------------- | ------------------- |
+| Administrator | `admin@transcendence.local` | `Transcendence123!` |
+| User          | `didi@example.com`          | `Qwerty123!`        |
+| User          | `homer@example.com`         | `Simpsons123!`      |
 
 Caddy terminates TLS and is the only service published on the host: it forwards `/api/*` to the backend and everything else to the
 frontend, so the browser never talks plain HTTP. The frontend and backend containers are

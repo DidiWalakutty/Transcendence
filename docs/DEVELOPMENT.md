@@ -121,10 +121,15 @@ behavior, persistence, or the containerized service integration.
 Build and run the full containerized stack with one command:
 
 ```bash
-vp run deploy
+vp run deploy            # = docker compose up --build
 ```
 
 For a background deployment, use `vp run deploy:detached`.
+
+The backend runs the pending Drizzle migrations at startup (`DatabaseService.onModuleInit`),
+and the one-shot `seed` Compose service inserts the demo accounts and events once the backend
+reports healthy. A fresh clone therefore needs no manual `db:setup` or `db:seed` step; those
+tasks remain for the non-Docker development flow.
 
 ## Useful Commands
 
