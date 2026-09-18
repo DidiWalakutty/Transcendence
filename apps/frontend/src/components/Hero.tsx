@@ -20,7 +20,7 @@ export function Hero() {
       {/* Hero Image */}
       <img
         src={heroImage}
-        alt="People enjoying an event at night"
+        alt={m.hero_image_alt()}
         className="
 					absolute
 					inset-0

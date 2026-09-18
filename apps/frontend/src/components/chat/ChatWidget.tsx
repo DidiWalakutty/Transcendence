@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useChatStream } from '@/hooks/use-chat-stream';
 import { useTRPC } from '@/integrations/trpc/react';
+import * as m from '@/@generated/paraglide/messages';
 
 /**
  * Global chat room, fixed bottom-right. Renders nothing for visitors: the
@@ -24,7 +25,7 @@ export function ChatWidget() {
         <ChatPanel />
       </div>
       <Button size="lg" onClick={() => setOpen((current) => !current)}>
-        {open ? 'Hide chat' : 'Chat'}
+        {open ? m.chat_hide() : m.chat_title()}
       </Button>
     </div>
   );
@@ -51,9 +52,9 @@ function ChatPanel() {
   return (
     <div className="bg-background flex h-[32rem] w-96 flex-col rounded-lg border shadow-lg">
       <div className="flex items-center justify-between border-b px-4 py-3 text-base font-medium">
-        <span>Chat</span>
+        <span>{m.chat_title()}</span>
         <span className="text-muted-foreground text-sm">
-          {connected ? 'online' : 'connecting…'}
+          {connected ? m.chat_online() : m.chat_connecting()}
         </span>
       </div>
       <ul className="flex-1 space-y-2 overflow-y-auto px-4 py-3 text-base">
@@ -69,11 +70,11 @@ function ChatPanel() {
           className="h-12 text-base"
           value={text}
           onChange={(event) => setText(event.target.value)}
-          placeholder="Say something"
+          placeholder={m.chat_placeholder()}
           maxLength={500}
         />
         <Button type="submit" size="lg" disabled={send.isPending}>
-          Send
+          {m.chat_send()}
         </Button>
       </form>
     </div>

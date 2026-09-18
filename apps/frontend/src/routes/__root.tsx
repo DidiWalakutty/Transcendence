@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools';
 
 import { getLocale } from '@/@generated/paraglide/runtime';
+import * as m from '@/@generated/paraglide/messages';
 
 import appCss from '../styles.css?url';
 
@@ -83,13 +84,11 @@ function NotFoundPage() {
     <section className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col items-center justify-center gap-6 px-6 py-16 text-center">
       <p className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">404</p>
       <div className="grid gap-3">
-        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">Page not found</h1>
-        <p className="text-muted-foreground">
-          The page you are looking for does not exist or may have moved.
-        </p>
+        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">{m.not_found_title()}</h1>
+        <p className="text-muted-foreground">{m.not_found_description()}</p>
       </div>
       <Link to="/" className={buttonVariants({ size: 'lg' })}>
-        Back to home
+        {m.not_found_back_home()}
       </Link>
     </section>
   );

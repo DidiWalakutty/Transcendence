@@ -167,7 +167,7 @@ function ProfilePage() {
   if (!session) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Please log in to view your profile.</p>
+        <p className="text-muted-foreground">{m.profile_login_required()}</p>
       </div>
     );
   }
@@ -192,7 +192,7 @@ function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="mb-8 text-3xl font-bold">My Profile</h1>
+      <h1 className="mb-8 text-3xl font-bold">{m.profile_title()}</h1>
 
       <Card>
         {/* Avatar */}
@@ -206,7 +206,7 @@ function ProfilePage() {
           <CardTitle>{user?.displayUsername ?? user?.username}</CardTitle>
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
             <StatusDot online={isSelfOnline} />
-            {isSelfOnline ? 'Online' : 'Offline'}
+            {isSelfOnline ? m.profile_online() : m.profile_offline()}
           </p>
           <p className="text-sm text-muted-foreground">{user?.email}</p>
         </CardHeader>
@@ -215,46 +215,46 @@ function ProfilePage() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             {/* Name */}
             <div className="grid gap-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">{m.profile_name()}</Label>
               <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
             </div>
 
             {/* Username */}
             <div className="grid gap-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">{m.profile_username()}</Label>
               <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
             </div>
 
             {/* About Me */}
             <div className="grid gap-2">
-              <Label htmlFor="aboutMe">About Me</Label>
+              <Label htmlFor="aboutMe">{m.profile_about_me()}</Label>
               <Textarea
                 id="aboutMe"
                 value={aboutMe}
                 onChange={(e) => setAboutMe(e.target.value)}
-                placeholder="Tell us about yourself..."
+                placeholder={m.profile_about_placeholder()}
               />
             </div>
 
             {/* Location */}
             <div className="grid gap-2">
-              <Label htmlFor="location">Location (optional)</Label>
+              <Label htmlFor="location">{m.profile_location()}</Label>
               <Input
                 id="location"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                placeholder="Amsterdam, Netherlands"
+                placeholder={m.profile_location_placeholder()}
               />
             </div>
 
             {/* Language */}
             <div className="grid gap-2">
-              <Label htmlFor="language">Language</Label>
+              <Label htmlFor="language">{m.language_label()}</Label>
               <Input
                 id="language"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                placeholder="english"
+                placeholder={m.profile_language_placeholder()}
               />
             </div>
 
@@ -266,17 +266,17 @@ function ProfilePage() {
 
             {saved && (
               <Alert>
-                <AlertDescription>Profile saved successfully!</AlertDescription>
+                <AlertDescription>{m.profile_saved()}</AlertDescription>
               </Alert>
             )}
 
             <Button type="submit" disabled={updateUser.isPending}>
               {updateUser.isPending ? (
                 <>
-                  <Spinner /> Saving...
+                  <Spinner /> {m.profile_saving()}
                 </>
               ) : (
-                'Save Profile'
+                m.profile_save_button()
               )}
             </Button>
           </form>
@@ -296,16 +296,16 @@ function ProfilePage() {
       <TwoFactorSettings />
       <Card className="mt-8">
         <CardHeader>
-          <CardTitle>Friends</CardTitle>
+          <CardTitle>{m.profile_friends_title()}</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="friend-search">Add a friend</Label>
+            <Label htmlFor="friend-search">{m.profile_friends_add_label()}</Label>
             <Input
               id="friend-search"
               value={friendSearch}
               onChange={(e) => setFriendSearch(e.target.value)}
-              placeholder="Search by username..."
+              placeholder={m.profile_friends_search_placeholder()}
             />
 
             {searchResults.map((candidate) => (
@@ -316,7 +316,7 @@ function ProfilePage() {
                   disabled={addFriend.isPending}
                   onClick={() => addFriend.mutate({ friendId: candidate.id })}
                 >
-                  Add
+                  {m.profile_friends_add_button()}
                 </Button>
               </div>
             ))}
@@ -329,7 +329,9 @@ function ProfilePage() {
           </div>
           {pending.length > 0 && (
             <div className="flex flex-col gap-3">
-              <h3 className="text-sm font-medium text-muted-foreground">Pending requests</h3>
+              <h3 className="text-sm font-medium text-muted-foreground">
+                {m.profile_friends_pending()}
+              </h3>
               {pending.map((person) => (
                 <div key={person.id} className="flex items-center justify-between gap-4">
                   <span className="flex items-center gap-2">
@@ -346,7 +348,7 @@ function ProfilePage() {
                     disabled={acceptFriend.isPending}
                     onClick={() => acceptFriend.mutate({ friendId: person.id })}
                   >
-                    Accept
+                    {m.profile_friends_accept()}
                   </Button>
                 </div>
               ))}
@@ -355,7 +357,7 @@ function ProfilePage() {
 
           <div className="flex flex-col gap-3">
             {friends.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No friends yet.</p>
+              <p className="text-sm text-muted-foreground">{m.profile_friends_empty()}</p>
             ) : (
               friends.map((person) => (
                 <div key={person.id} className="flex items-center justify-between gap-4">
@@ -369,7 +371,7 @@ function ProfilePage() {
                     <StatusDot online={onlineIds.has(person.id)} />
                     {person.displayUsername ?? person.username}
                     <span className="text-xs text-muted-foreground">
-                      {onlineIds.has(person.id) ? 'Online' : 'Offline'}
+                      {onlineIds.has(person.id) ? m.profile_online() : m.profile_offline()}
                     </span>
                   </span>
                   <Button
@@ -378,7 +380,7 @@ function ProfilePage() {
                     disabled={removeFriend.isPending}
                     onClick={() => removeFriend.mutate({ friendId: person.id })}
                   >
-                    Remove
+                    {m.profile_friends_remove()}
                   </Button>
                 </div>
               ))

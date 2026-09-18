@@ -45,7 +45,7 @@ export function UserMenu({ role, name, username, avatar }: UserMenuProps) {
     return (
       <Link
         to="/login"
-        aria-label="Log in"
+        aria-label={m.login_button()}
         className={buttonVariants({
           variant: 'ghost',
           size: 'icon',
@@ -60,7 +60,7 @@ export function UserMenu({ role, name, username, avatar }: UserMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button aria-label="Open Profile Menu" variant="ghost" size="icon" />}
+        render={<Button aria-label={m.button_profile()} variant="ghost" size="icon" />}
       >
         <UserAvatar name={name} username={username} avatar={avatar} className="size-7 2xl:size-9" />
       </DropdownMenuTrigger>

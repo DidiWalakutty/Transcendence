@@ -118,7 +118,7 @@ export function TwoFactorSettings() {
             </p>
 
             {qrDataUrl ? (
-              <img src={qrDataUrl} alt="Two-factor setup QR code" className="h-48 w-48" />
+              <img src={qrDataUrl} alt={m.two_factor_qr_alt()} className="h-48 w-48" />
             ) : null}
 
             {secret ? (

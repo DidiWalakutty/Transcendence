@@ -8,6 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Languages } from 'lucide-react';
 import { locales, setLocale } from '@/@generated/paraglide/runtime';
+import * as m from '@/@generated/paraglide/messages';
 
 function getLanguageName(locale: string) {
   try {
@@ -25,7 +26,7 @@ export function LanguageSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        render={<Button aria-label="Change Language" variant="ghost" size="icon" />}
+        render={<Button aria-label={m.language_label()} variant="ghost" size="icon" />}
       >
         <Languages className="h-5 w-5 text-text-primary 2xl:h-7 2xl:w-7" />
       </DropdownMenuTrigger>

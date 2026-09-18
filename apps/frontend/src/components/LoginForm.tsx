@@ -23,7 +23,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       const { data, error } = await authClient.signIn.email(values);
 
       if (error) {
-        throw new Error(error.message ?? 'Unable to log in');
+        throw new Error(error.message ?? m.login_error_default());
       }
 
       return data;
