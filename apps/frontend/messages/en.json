@@ -161,6 +161,9 @@
   "events_page_empty_description": "Try clearing your filters or check back later for new events.",
   "events_page_pagination_prev": "Previous",
   "events_page_pagination_next": "Next",
+  "events_page_pagination_go_to_page": "Go to page {page}",
+  "events_page_pagination_aria_previous": "Previous page",
+  "events_page_pagination_aria_next": "Next page",
 
   "events_live_connected": "Live — updates as events change",
   "events_live_reconnecting": "Reconnecting to live updates…",

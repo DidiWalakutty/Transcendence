@@ -161,6 +161,9 @@
   "events_page_empty_description": "Probeer je filters te wissen of kom later terug voor nieuwe events.",
   "events_page_pagination_prev": "Vorige",
   "events_page_pagination_next": "Volgende",
+  "events_page_pagination_go_to_page": "Ga naar pagina {page}",
+  "events_page_pagination_aria_previous": "Vorige pagina",
+  "events_page_pagination_aria_next": "Volgende pagina",
 
   "events_live_connected": "Live — werkt bij zodra events wijzigen",
   "events_live_reconnecting": "Opnieuw verbinden met live updates…",
