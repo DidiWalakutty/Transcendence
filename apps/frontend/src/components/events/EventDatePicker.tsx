@@ -8,12 +8,7 @@ import * as m from '@/@generated/paraglide/messages';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-
-function parseDate(value: string): Date | undefined {
-  const [year, month, day] = value.split('-').map(Number);
-  if (!year || !month || !day) return undefined;
-  return new Date(year, month - 1, day);
-}
+import { parseEventDate, formatEventDate } from '@repo/schemas/events';
 
 export function EventDatePicker({
   id,
@@ -26,8 +21,8 @@ export function EventDatePicker({
   value: string;
   onValueChange: (value: string) => void;
 }) {
+  const selectedDate = value ? parseEventDate(value) : undefined;
   const [open, setOpen] = useState(false);
-  const selectedDate = parseDate(value);
   const calendarLocale = getLocale() === 'nl' ? nl : enUS;
 
   return (
@@ -51,7 +46,7 @@ export function EventDatePicker({
             mode="single"
             selected={selectedDate}
             onSelect={(date) => {
-              onValueChange(date ? format(date, 'yyyy-MM-dd') : '');
+              onValueChange(date ? formatEventDate(date) : '');
               // One date is all the field takes, so the pick is the end of
               // the interaction. Left open, the calendar follows the page while
               // the user scrolls on to the next fields, which Firefox flags as

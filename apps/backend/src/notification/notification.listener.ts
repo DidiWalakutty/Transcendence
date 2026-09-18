@@ -1,10 +1,13 @@
 import { Inject, Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import type { UserDto } from '@repo/schemas/users';
+import { resolveUserDisplayName, resolveUserLocale } from '@repo/schemas/users';
+import { fromEventDateTime } from '@repo/schemas/events';
 import { DATABASE } from '../database/database.constants';
 import type { Database } from '../database/database.types';
 import { users, events } from '@repo/schemas/database';
 import { eq } from 'drizzle-orm';
 import { NotificationService } from './notification.service';
+import { APP_EVENTS, offAppEvent, onAppEvent } from '../events/app-events';
 
 @Injectable()
 export class NotificationListener implements OnModuleInit, OnModuleDestroy {
@@ -21,29 +24,44 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
   ) {}
 
   onModuleInit() {
-    process.on('user.created' as any, this.welcomeRef);
-    process.on('registration.created' as any, this.ticketRef);
-    process.on('event.cancelled' as any, this.cancelRef);
-    process.on('event.modified' as any, this.modifyRef);
+    onAppEvent(APP_EVENTS.userCreated, this.welcomeRef);
+    onAppEvent(APP_EVENTS.registrationCreated, this.ticketRef);
+    onAppEvent(APP_EVENTS.eventCancelled, this.cancelRef);
+    onAppEvent(APP_EVENTS.eventModified, this.modifyRef);
   }
 
   onModuleDestroy() {
-    process.off('user.created' as any, this.welcomeRef);
-    process.off('registration.created' as any, this.ticketRef);
-    process.off('event.cancelled' as any, this.cancelRef);
-    process.off('event.modified' as any, this.modifyRef);
+    offAppEvent(APP_EVENTS.userCreated, this.welcomeRef);
+    offAppEvent(APP_EVENTS.registrationCreated, this.ticketRef);
+    offAppEvent(APP_EVENTS.eventCancelled, this.cancelRef);
+    offAppEvent(APP_EVENTS.eventModified, this.modifyRef);
+  }
+
+  private async getNotificationUser(userId: string) {
+    const userRecord = await this.db.query.users.findFirst({
+      where: eq(users.id, userId),
+    });
+    if (!userRecord) return null;
+    return {
+      email: userRecord.email,
+      name: resolveUserDisplayName(
+        userRecord as { name?: string | null; username?: string | null },
+      ),
+      lang: resolveUserLocale((userRecord as { preferedLanguage?: unknown }).preferedLanguage),
+    };
+  }
+
+  private formatEventDateTime(dateTime: Date): { dateString: string; timeString: string } {
+    const { date, time } = fromEventDateTime(dateTime);
+    return { dateString: date, timeString: time };
   }
 
   private async handleUserCreated(user: UserDto) {
     this.logger.log(`Intercepted signup signal event for recipient inbox: ${user.email}`);
 
     try {
-      const dbLang = (user as any).preferedLanguage;
-      const userLang = ['nl', 'es', 'ru', 'ro'].includes(dbLang)
-        ? (dbLang as 'en' | 'nl' | 'es' | 'ru' | 'ro')
-        : 'en';
-
-      const userName = user.name || user.username || 'User';
+      const userLang = resolveUserLocale((user as { preferedLanguage?: unknown }).preferedLanguage);
+      const userName = resolveUserDisplayName(user);
 
       await this.notificationService.sendWelcomeEmail(user.email, userName, userLang);
     } catch (error) {
@@ -71,15 +89,13 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
         return;
       }
 
-      const dbLang = (userRecord as any).preferedLanguage;
-      const userLang = ['nl', 'es', 'ru', 'ro'].includes(dbLang)
-        ? (dbLang as 'en' | 'nl' | 'es' | 'ru' | 'ro')
-        : 'en';
-
-      const userName = userRecord.name || (userRecord as any).username || 'User';
-
-      const dateString = eventRecord.dateTime.toISOString().slice(0, 10);
-      const timeString = eventRecord.dateTime.toISOString().slice(11, 16);
+      const userLang = resolveUserLocale(
+        (userRecord as { preferedLanguage?: unknown }).preferedLanguage,
+      );
+      const userName = resolveUserDisplayName(
+        userRecord as { name?: string | null; username?: string | null },
+      );
+      const { dateString, timeString } = this.formatEventDateTime(eventRecord.dateTime);
 
       await this.notificationService.sendTicketConfirmationEmail(
         userRecord.email,
@@ -137,39 +153,31 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
     await Promise.all(
       attendees.map(async (attendee) => {
         try {
-          const userRecord = await this.db.query.users.findFirst({
-            where: eq(users.id, attendee.id),
-          });
+          const notified = await this.getNotificationUser(attendee.id);
 
-          if (!userRecord) return;
-
-          const dbLang = (userRecord as any).preferedLanguage;
-          const userLang = ['nl', 'es', 'ru', 'ro'].includes(dbLang)
-            ? (dbLang as 'en' | 'nl' | 'es' | 'ru' | 'ro')
-            : 'en';
-          const userName = userRecord.name || (userRecord as any).username || 'User';
+          if (!notified) return;
 
           if (mode === 'cancel') {
             await this.notificationService.sendEventCancellationEmail(
-              userRecord.email,
-              userName,
+              notified.email,
+              notified.name,
               event.title,
               dateString,
               timeString,
               event.location,
               event.address,
-              userLang,
+              notified.lang,
             );
           } else if (mode === 'modify') {
             await this.notificationService.sendEventModificationEmail(
-              userRecord.email,
-              userName,
+              notified.email,
+              notified.name,
               event.title,
               dateString,
               timeString,
               event.location,
               event.address,
-              userLang,
+              notified.lang,
               highlights,
             );
           }

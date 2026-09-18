@@ -1,8 +1,17 @@
-import { Query, Router, Input, Ctx } from 'nestjs-trpc';
-import { unauthorizedError } from '../trpc/trpc.errors';
-import { eventsSchema, eventSortSchema, type EventSortDto } from '@repo/schemas/events';
+import { Query, Router, Input, Ctx, UseMiddlewares } from 'nestjs-trpc';
+import {
+  eventsSchema,
+  eventSortSchema,
+  getEventsQuerySchema,
+  paginatedEventsSchema,
+  type EventSortDto,
+  type GetEventsQueryDto,
+} from '@repo/schemas/events';
 import { EventListingsService } from './event-listings.service';
 import { eventStatsSchema } from '@repo/schemas/stats';
+import { ProtectedMiddleware } from '../auth/protected.middleware';
+import type { ProtectedCtx } from '../auth/auth.types';
+import { z } from 'zod';
 
 @Router({ alias: 'events' })
 export class EventListingsRouter {
@@ -11,6 +20,11 @@ export class EventListingsRouter {
   @Query({ input: eventSortSchema, output: eventsSchema })
   async getEvents(@Input() sort: EventSortDto) {
     return this.eventListingsService.findAll(sort);
+  }
+
+  @Query({ input: getEventsQuerySchema, output: paginatedEventsSchema })
+  async getFilteredEvents(@Input() input: GetEventsQueryDto) {
+    return this.eventListingsService.findFiltered(input);
   }
 
   @Query({ output: eventsSchema })
@@ -23,10 +37,18 @@ export class EventListingsRouter {
     return this.eventListingsService.getStats();
   }
 
+  @UseMiddlewares(ProtectedMiddleware)
   @Query({ output: eventsSchema })
-  async getMyRegisteredEvents(@Ctx() ctx: { user: { id: string } | null }) {
-    const userId = ctx.user?.id;
-    if (!userId) throw unauthorizedError('Not logged in');
-    return this.eventListingsService.findRegisteredByUser(userId);
+  async getMyRegisteredEvents(@Ctx() ctx: ProtectedCtx) {
+    return this.eventListingsService.findRegisteredByUser(ctx.user.id);
+  }
+
+  @UseMiddlewares(ProtectedMiddleware)
+  @Query({
+    input: z.object({ search: z.string().trim().max(200).optional() }),
+    output: eventsSchema,
+  })
+  async searchMyRegisteredEvents(@Input() input: { search?: string }, @Ctx() ctx: ProtectedCtx) {
+    return this.eventListingsService.searchUsersEvents(ctx.user.id, input.search);
   }
 }

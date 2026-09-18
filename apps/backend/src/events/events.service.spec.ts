@@ -15,7 +15,7 @@ const storedEvent: EventDto = {
   organizerId: '2de0f53e-a6a2-4aaf-a47d-0ecaafde7748',
   title: 'Community meetup',
   description: 'Meet people nearby',
-  category: ['culture'],
+  category: ['culture' as const],
   location: 'Amsterdam',
   address: 'Dam 1',
   date: '2026-10-01',
@@ -29,6 +29,7 @@ const mockRegistrationsRepository = {
   findActiveRegistration: async () => null,
   isEventOrganizer: async () => false,
   getEventAttendees: async () => [], // Returns a clean empty array so no cancellations try to loop over missing rows
+  getAttendeeCounts: async (ids: string[]) => ids.map((eventId) => ({ eventId, count: 0 })),
   register: async () => ({ type: 'success' as const, registration: {} as any }),
   create: async () => ({}) as any,
   cancel: async () => null,
@@ -114,8 +115,30 @@ describe('EventsService', () => {
 
     // The listener registers on first pull, so let it start before emitting.
     await Promise.resolve();
-    await service.create({ ...storedEvent, organizerId: storedEvent.organizerId! });
-    await service.update({ ...storedEvent, id: storedEvent.id });
+    await service.create({
+      ...storedEvent,
+      category: storedEvent.category as (
+        | 'culture'
+        | 'food'
+        | 'games'
+        | 'music'
+        | 'talks'
+        | 'workshops'
+      )[],
+      organizerId: storedEvent.organizerId!,
+    });
+    await service.update({
+      ...storedEvent,
+      id: storedEvent.id,
+      category: storedEvent.category as (
+        | 'culture'
+        | 'food'
+        | 'games'
+        | 'music'
+        | 'talks'
+        | 'workshops'
+      )[],
+    });
     await service.delete(storedEvent.id);
     await collect;
     abortController.abort();

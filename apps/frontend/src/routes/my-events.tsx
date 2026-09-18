@@ -1,9 +1,8 @@
-import { createFileRoute, Link, redirect } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { useMemo, useState, type FormEvent } from 'react';
-import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { EventDto } from '@repo/schemas/events';
-import type { EventAttendeeDto } from '@repo/schemas/registrations';
-import { CalendarDays, Plus, Search } from 'lucide-react';
+import { CalendarDays, Plus } from 'lucide-react';
 
 import * as m from '@/@generated/paraglide/messages';
 import { useTRPC } from '@/integrations/trpc/react';
@@ -13,21 +12,21 @@ import {
   EventDeleteDialog,
   EventEditDialog,
   EventManagementTable,
-  formCategories,
-  formString,
+  eventFormToUpdateInput,
 } from '@/components/events/EventManagement';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
-import { Input } from '@/components/ui/input';
+import { SearchInput, EmptyResults } from '@/components/ui/search-input';
 import { Spinner } from '@/components/ui/spinner';
+import { filterByFields } from '@/lib/search';
+import { invalidateEventsLists } from '@/lib/invalidation';
+import { requireAuth } from '@/lib/route-guards';
 
 export const Route = createFileRoute('/my-events')({
   beforeLoad: ({ context: { session } }) => {
-    if (!session) {
-      throw redirect({ to: '/login' });
-    }
+    requireAuth(session);
   },
   loader: async ({ context }) => {
     // Same reasoning as the events listing: an unreachable backend should not
@@ -53,11 +52,12 @@ function MyEventsPage() {
   const [deleteTarget, setDeleteTarget] = useState<EventDto | null>(null);
   const [attendeeTarget, setAttendeeTarget] = useState<EventDto | null>(null);
 
-  const myEventsQuery = useQuery(trpc.eventCreation.getMyEvents.queryOptions());
+  const myEventsQuery = useQuery(trpc.eventCreation.getMyEventsWithCounts.queryOptions());
 
-  const attendeeQueries = useQueries({
-    queries: (myEventsQuery.data ?? []).map((event) =>
-      trpc.registrations.getEventAttendees.queryOptions({ id: event.id }),
+  const attendeeDetailQuery = useQuery({
+    ...trpc.registrations.getEventAttendees.queryOptions(
+      { id: attendeeTarget?.id ?? '' },
+      { enabled: !!attendeeTarget },
     ),
   });
 
@@ -65,10 +65,7 @@ function MyEventsPage() {
   // returns events this user organizes, so the table cannot offer someone
   // else's event in the first place.
   const invalidateEvents = async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: trpc.eventCreation.getMyEvents.queryKey() }),
-      queryClient.invalidateQueries({ queryKey: trpc.events.getEvents.queryKey() }),
-    ]);
+    await invalidateEventsLists(queryClient, trpc);
   };
 
   const updateEvent = useMutation(
@@ -88,59 +85,30 @@ function MyEventsPage() {
     }),
   );
 
-  const events = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    return (myEventsQuery.data ?? []).filter((event) =>
-      [event.title, event.location, event.address, ...event.category].some((value) =>
-        value.toLowerCase().includes(query),
-      ),
-    );
-  }, [search, myEventsQuery.data]);
+  const events = useMemo(
+    () =>
+      filterByFields(myEventsQuery.data ?? [], search, (event) => [
+        event.title,
+        event.location,
+        event.address,
+        ...event.category,
+      ]),
+    [search, myEventsQuery.data],
+  );
 
   const attendeeCounts = useMemo(() => {
     const counts = new Map<string, number>();
-
-    (myEventsQuery.data ?? []).forEach((event, index) => {
-      const attendees = attendeeQueries[index]?.data;
-
-      if (attendees) {
-        counts.set(event.id, attendees.length);
-      }
-    });
-
+    for (const event of myEventsQuery.data ?? []) {
+      counts.set(event.id, event.attendeeCount);
+    }
     return counts;
-  }, [myEventsQuery.data, attendeeQueries]);
+  }, [myEventsQuery.data]);
 
-  const attendees = useMemo(() => {
-    const attendeeMap = new Map<string, EventAttendeeDto[]>();
-
-    (myEventsQuery.data ?? []).forEach((event, index) => {
-      const eventAttendees = attendeeQueries[index]?.data;
-
-      if (eventAttendees) {
-        attendeeMap.set(event.id, eventAttendees);
-      }
-    });
-
-    return attendeeMap;
-  }, [myEventsQuery.data, attendeeQueries]);
-
-  function submitEvent(submitEvent: FormEvent<HTMLFormElement>) {
-    submitEvent.preventDefault();
+  function submitEvent(form: FormEvent<HTMLFormElement>) {
+    form.preventDefault();
     if (!editTarget) return;
-    const data = new FormData(submitEvent.currentTarget);
-    updateEvent.mutate({
-      id: editTarget.id,
-      title: formString(data, 'title'),
-      description: formString(data, 'description'),
-      category: formCategories(data),
-      location: formString(data, 'location'),
-      address: formString(data, 'address'),
-      date: formString(data, 'date'),
-      time: formString(data, 'time'),
-      image: formString(data, 'image'),
-      maxCapacity: Number(data.get('maxCapacity')),
-    });
+    const data = new FormData(form.currentTarget);
+    updateEvent.mutate(eventFormToUpdateInput(editTarget.id, data));
   }
 
   if (myEventsQuery.isPending) {
@@ -206,16 +174,7 @@ function MyEventsPage() {
           <CardHeader>
             <CardTitle>{m.my_events_manage_title()}</CardTitle>
             <CardDescription>{m.my_events_manage_description()}</CardDescription>
-            <div className="relative mt-4 max-w-md">
-              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder={m.my_events_search()}
-                aria-label={m.my_events_search()}
-                className="pl-9"
-              />
-            </div>
+            <SearchInput value={search} onChange={setSearch} placeholder={m.my_events_search()} />
           </CardHeader>
           <CardContent>
             <EventManagementTable
@@ -225,9 +184,7 @@ function MyEventsPage() {
               onEdit={setEditTarget}
               onDelete={setDeleteTarget}
             />
-            {events.length === 0 && (
-              <p className="py-10 text-center text-muted-foreground">{m.admin_no_results()}</p>
-            )}
+            {events.length === 0 && <EmptyResults message={m.admin_no_results()} />}
           </CardContent>
         </Card>
       )}
@@ -247,7 +204,7 @@ function MyEventsPage() {
 
       <EventAttendeeDialog
         event={attendeeTarget}
-        attendees={attendeeTarget ? (attendees.get(attendeeTarget.id) ?? []) : []}
+        attendees={attendeeDetailQuery.data ?? []}
         onClose={() => setAttendeeTarget(null)}
       />
     </div>

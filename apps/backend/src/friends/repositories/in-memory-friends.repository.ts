@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import type { FriendDto } from '@repo/schemas/friends';
+import { isSamePair } from '@repo/schemas/friends';
 import type { UserDto } from '@repo/schemas/users';
 import { FriendsRepository } from './friends.repository';
 
@@ -27,11 +28,7 @@ export class InMemoryFriendsRepository extends FriendsRepository {
   }
 
   async findFriendship(myId: string, friendId: string) {
-    return this.friendships.find(
-      (f) =>
-        (f.myId === myId && f.friendId === friendId) ||
-        (f.myId === friendId && f.friendId === myId),
-    );
+    return this.friendships.find((f) => isSamePair(f, myId, friendId));
   }
   async acceptFriend(myId: string, friendId: string) {
     const friendship = this.friendships.find((f) => f.myId === friendId && f.friendId === myId);
@@ -40,13 +37,13 @@ export class InMemoryFriendsRepository extends FriendsRepository {
   }
 
   async removeFriend(myId: string, friendId: string) {
-    const index = this.friendships.findIndex(
-      (f) =>
-        (f.myId === myId && f.friendId === friendId) ||
-        (f.myId === friendId && f.friendId === myId),
-    );
+    const index = this.friendships.findIndex((f) => isSamePair(f, myId, friendId));
     if (index === -1) return undefined;
     const [friendship] = this.friendships.splice(index, 1);
     return friendship;
+  }
+
+  async findEligibleUsers(_userId: string, _search?: string) {
+    return [];
   }
 }

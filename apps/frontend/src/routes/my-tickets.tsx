@@ -1,25 +1,25 @@
-import { createFileRoute, redirect, Link } from '@tanstack/react-router';
+import { createFileRoute, Link } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import type { EventDto } from '@repo/schemas/events';
-import { Ticket, Search } from 'lucide-react';
+import { Ticket } from 'lucide-react';
 
 import * as m from '@/@generated/paraglide/messages';
 import { useTRPC } from '@/integrations/trpc/react';
 import { TicketManagementTable, TicketCancelDialog } from '@/components/events/EventManagement';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { useRegistrationMutations } from '@/hooks/use-registration-mutations';
 import { buttonVariants } from '@/components/ui/button';
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/components/ui/empty';
+import { SearchInput, EmptyResults } from '@/components/ui/search-input';
+import { filterByFields } from '@/lib/search';
+import { requireAuth } from '@/lib/route-guards';
 
 export const Route = createFileRoute('/my-tickets')({
   beforeLoad: ({ context: { session } }) => {
-    if (!session) {
-      throw redirect({ to: '/login' });
-    }
+    requireAuth(session);
   },
   loader: async ({ context }) => {
     await context.queryClient.query({
@@ -39,14 +39,16 @@ function MyTicketsPage() {
 
   const { cancel: cancelTicket } = useRegistrationMutations(() => setCancelTarget(null));
 
-  const tickets = useMemo(() => {
-    const query = search.trim().toLowerCase();
-    return (myTicketsQuery.data ?? []).filter((ticket) =>
-      [ticket.title, ticket.location, ticket.address, ...ticket.category].some((value) =>
-        value.toLowerCase().includes(query),
-      ),
-    );
-  }, [search, myTicketsQuery.data]);
+  const tickets = useMemo(
+    () =>
+      filterByFields(myTicketsQuery.data ?? [], search, (ticket) => [
+        ticket.title,
+        ticket.location,
+        ticket.address,
+        ...ticket.category,
+      ]),
+    [search, myTicketsQuery.data],
+  );
 
   if (myTicketsQuery.isPending) {
     return <Spinner className="mx-auto my-24" />;
@@ -104,22 +106,15 @@ function MyTicketsPage() {
           <CardHeader>
             <CardTitle>{m.my_tickets_card_title()}</CardTitle>
             <CardDescription>{m.my_tickets_card_description()}</CardDescription>
-            <div className="relative mt-4 max-w-md">
-              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder={m.my_tickets_search_placeholder()}
-                aria-label={m.my_tickets_search_placeholder()}
-                className="pl-9"
-              />
-            </div>
+            <SearchInput
+              value={search}
+              onChange={setSearch}
+              placeholder={m.my_tickets_search_placeholder()}
+            />
           </CardHeader>
           <CardContent>
             <TicketManagementTable tickets={tickets} onCancel={setCancelTarget} />
-            {tickets.length === 0 && (
-              <p className="py-10 text-center text-muted-foreground">{m.my_tickets_no_results()}</p>
-            )}
+            {tickets.length === 0 && <EmptyResults message={m.my_tickets_no_results()} />}
           </CardContent>
         </Card>
       )}

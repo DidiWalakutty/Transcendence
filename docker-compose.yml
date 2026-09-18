@@ -23,6 +23,7 @@ services:
       PORT: 3001
       DATABASE_URL: postgres://${POSTGRES_USER:-transcendence}:${POSTGRES_PASSWORD:-transcendence}@postgres:5432/${POSTGRES_DB:-transcendence}
       REDIS_URL: redis://redis:6379
+      THROTTLE_ENABLED: ${THROTTLE_ENABLED:-true}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-dev-only-insecure-secret-change-in-production}
       BETTER_AUTH_URL: ${PUBLIC_ORIGIN:-https://localhost:3000}
       CORS_ORIGINS: ${PUBLIC_ORIGIN:-https://localhost:3000}

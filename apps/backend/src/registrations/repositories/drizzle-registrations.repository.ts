@@ -5,7 +5,7 @@
 // when users give up their tickets.
 
 import { Inject, Injectable } from '@nestjs/common';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, eq, inArray, sql } from 'drizzle-orm';
 
 import { events, registrations, users } from '@repo/schemas/database';
 import type { registration } from '@repo/schemas/database';
@@ -15,6 +15,11 @@ import { DATABASE } from '../../database/database.constants';
 import type { Database } from '../../database/database.types';
 
 import { RegistrationsRepository, type RegisterResult } from './registrations.repository';
+import {
+  activeRegistrationCountSql,
+  activeRegistrationWhere,
+  isActiveRegistration,
+} from '../registration.conditions';
 
 @Injectable()
 export class DrizzleRegistrationsRepository extends RegistrationsRepository {
@@ -30,11 +35,7 @@ export class DrizzleRegistrationsRepository extends RegistrationsRepository {
     const [result] = await this.db
       .select({
         maxCapacity: events.maxCapacity,
-        registeredCount: sql<number>`
-          count(*) filter (
-            where ${registrations.status} = 'active'
-          )
-        `,
+        registeredCount: activeRegistrationCountSql,
       })
       .from(events)
       .leftJoin(registrations, eq(registrations.eventId, events.id))
@@ -53,13 +54,7 @@ export class DrizzleRegistrationsRepository extends RegistrationsRepository {
     const [registration] = await this.db
       .select()
       .from(registrations)
-      .where(
-        and(
-          eq(registrations.eventId, eventId),
-          eq(registrations.userId, userId),
-          eq(registrations.status, 'active'),
-        ),
-      )
+      .where(activeRegistrationWhere(eventId, userId))
       .limit(1);
     return registration ?? null;
   }
@@ -82,13 +77,7 @@ export class DrizzleRegistrationsRepository extends RegistrationsRepository {
       const [existingRegistration] = await tx
         .select()
         .from(registrations)
-        .where(
-          and(
-            eq(registrations.eventId, eventId),
-            eq(registrations.userId, userId),
-            eq(registrations.status, 'active'),
-          ),
-        )
+        .where(activeRegistrationWhere(eventId, userId))
         .limit(1);
 
       if (existingRegistration) {
@@ -97,11 +86,7 @@ export class DrizzleRegistrationsRepository extends RegistrationsRepository {
 
       const [{ registeredCount }] = await tx
         .select({
-          registeredCount: sql<number>`
-			count(*) filter (
-				where ${registrations.status} = 'active'
-			)
-			`,
+          registeredCount: activeRegistrationCountSql,
         })
         .from(registrations)
         .where(eq(registrations.eventId, eventId));
@@ -146,13 +131,7 @@ export class DrizzleRegistrationsRepository extends RegistrationsRepository {
       .set({
         status: 'canceled',
       })
-      .where(
-        and(
-          eq(registrations.eventId, eventId),
-          eq(registrations.userId, userId),
-          eq(registrations.status, 'active'),
-        ),
-      )
+      .where(activeRegistrationWhere(eventId, userId))
       .returning();
     return registration ?? null;
   }
@@ -167,7 +146,21 @@ export class DrizzleRegistrationsRepository extends RegistrationsRepository {
       })
       .from(registrations)
       .innerJoin(users, eq(registrations.userId, users.id))
-      .where(and(eq(registrations.eventId, eventId), eq(registrations.status, 'active')));
+      .where(and(eq(registrations.eventId, eventId), isActiveRegistration));
+  }
+
+  async getAttendeeCounts(eventIds: string[]) {
+    if (eventIds.length === 0) return [];
+    const rows = await this.db
+      .select({
+        eventId: registrations.eventId,
+        count: sql<number>`count(*)`,
+      })
+      .from(registrations)
+      .where(and(inArray(registrations.eventId, eventIds), isActiveRegistration))
+      .groupBy(registrations.eventId);
+    const byId = new Map(rows.map((r) => [r.eventId, Number(r.count)]));
+    return eventIds.map((eventId) => ({ eventId, count: byId.get(eventId) ?? 0 }));
   }
 
   // Checks if a user is the organizer of an event.

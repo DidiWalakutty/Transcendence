@@ -1,6 +1,22 @@
 import { z } from 'zod';
+import { subscriptionSchema } from '@repo/schemas/subscription';
+
+export const eventCategories = ['music', 'culture', 'food', 'games', 'talks', 'workshops'] as const;
+export type EventCategory = (typeof eventCategories)[number];
+export const eventCategorySchema = z.enum(eventCategories);
 
 export const eventSortSchema = z.enum(['upcoming', 'popular', 'newest']);
+
+// Filtered/paginated listing query. `getEvents` keeps its legacy enum input for
+// backwards compatibility; new callers should use this object so filtering,
+// search and pagination happen in the backend instead of the browser.
+export const getEventsQuerySchema = z.object({
+  sort: eventSortSchema.default('upcoming'),
+  categories: z.array(eventCategorySchema).optional(),
+  search: z.string().trim().max(200).optional(),
+  page: z.number().int().positive().default(1),
+  pageSize: z.number().int().positive().max(100).default(8),
+});
 
 // Reading an events
 export const eventSchema = z.object({
@@ -17,6 +33,15 @@ export const eventSchema = z.object({
   maxCapacity: z.number().int().positive(),
 });
 
+export const paginatedEventsSchema = z.object({
+  items: eventSchema.array(),
+  total: z.number().int().nonnegative(),
+});
+
+export const eventWithAttendeeCountSchema = eventSchema.extend({
+  attendeeCount: z.number().int().nonnegative(),
+});
+
 // Array of events - used when reading/listing events
 export const eventsSchema = eventSchema.array();
 
@@ -28,7 +53,7 @@ export const eventIdSchema = z.object({
 // Creating a new event - used as  mutation input
 export const createEventSchema = z.object({
   title: z.string().min(1),
-  category: z.array(z.string()).min(1),
+  category: z.array(eventCategorySchema).min(1),
   location: z.string().min(1),
   address: z.string().min(1),
   date: z.string(),
@@ -85,10 +110,31 @@ export function fromEventDateTime(dateTime: Date): { date: string; time: string 
 
 // tRPC v11 subscriptions type `output` as the yielded item; nestjs-trpc wraps
 // it as an AsyncIterable, so this must not be the top-level entity schema.
-export const eventChangedSubscriptionSchema = z.custom<AsyncIterable<EventChangedDto>>();
+export const eventChangedSubscriptionSchema = subscriptionSchema<EventChangedDto>();
+
+export const EVENT_HEARTBEAT_STALE_MULTIPLIER = 2.5;
+export const EVENT_WATCHDOG_INTERVAL_MS = 5_000;
+export const EVENT_STALE_AFTER_MS = EVENT_HEARTBEAT_INTERVAL_MS * EVENT_HEARTBEAT_STALE_MULTIPLIER;
+
+export function parseEventDate(value: string): Date | undefined {
+  const [y, m, d] = value.split('-').map(Number);
+  if (!y || !m || !d) return undefined;
+  return new Date(y, m - 1, d);
+}
+
+export function formatEventDate(date: Date): string {
+  return fromEventDateTime(date).date;
+}
+
+export const MAX_EVENT_IMAGE_BYTES = 72 * 1024;
+export const MAX_AVATAR_IMAGE_BYTES = 48 * 1024;
+export const MAX_SOURCE_IMAGE_SIZE = 10 * 1024 * 1024;
 
 export type EventDto = z.infer<typeof eventSchema>;
 export type EventSortDto = z.infer<typeof eventSortSchema>;
+export type GetEventsQueryDto = z.infer<typeof getEventsQuerySchema>;
+export type PaginatedEventsDto = z.infer<typeof paginatedEventsSchema>;
+export type EventWithAttendeeCountDto = z.infer<typeof eventWithAttendeeCountSchema>;
 export type CreateEventDto = z.infer<typeof createEventSchema>;
 export type UpdateEventDto = z.infer<typeof updateEventSchema>;
 export type DeleteEventDto = z.infer<typeof deleteEventSchema>;

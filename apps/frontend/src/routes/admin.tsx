@@ -1,15 +1,10 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
+import { requireAdmin } from '@/lib/route-guards';
 
 export const Route = createFileRoute('/admin')({
   beforeLoad: ({ context: { session } }) => {
-    if (!session) {
-      throw redirect({ to: '/login' });
-    }
-    const hasAdminRole = session.user.role?.split(',').includes('admin');
-    if (!hasAdminRole) {
-      throw redirect({ to: '/' });
-    }
+    requireAdmin(session);
   },
   loader: async ({ context }) => {
     await Promise.all([

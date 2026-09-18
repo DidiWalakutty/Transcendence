@@ -7,3 +7,5 @@ export * from './event-cancellation.i18n';
 export * from './event-modification';
 export * from './event-modification.i18n';
 export * from './theme.tokens';
+export * from './email.types';
+export * from './email-layout';

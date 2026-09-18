@@ -12,6 +12,7 @@ import * as m from '@/@generated/paraglide/messages';
 import { EventCategoryCombobox } from '@/components/events/EventCategoryCombobox';
 import { EventDatePicker } from '@/components/events/EventDatePicker';
 import { EventImagePicker } from '@/components/events/EventImagePicker';
+import { createEventSchema, type EventCategory } from '@repo/schemas/events';
 
 const DEFAULT_EVENT_IMAGE = placeholderEvent;
 
@@ -20,7 +21,7 @@ export function EventForm() {
   const navigate = useNavigate();
   const createEvent = useMutation(trpc.eventCreation.createEvent.mutationOptions());
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<EventCategory[]>([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedImage, setSelectedImage] = useState(DEFAULT_EVENT_IMAGE);
   const [showErrors, setShowErrors] = useState(false);
@@ -50,21 +51,24 @@ export function EventForm() {
       return;
     }
 
+    const parsed = createEventSchema.safeParse({
+      title,
+      description,
+      category: selectedCategories,
+      location,
+      address,
+      date: selectedDate,
+      time,
+      image: selectedImage,
+      maxCapacity: Number(capacity),
+    });
+    if (!parsed.success) {
+      return;
+    }
+
     // A rejected mutation is shown through the global toast; it must not
     // escape as an uncaught promise in the console.
-    const result = await createEvent
-      .mutateAsync({
-        title,
-        description,
-        category: selectedCategories,
-        location,
-        address,
-        date: selectedDate,
-        time,
-        image: selectedImage,
-        maxCapacity: Number(capacity),
-      })
-      .catch(() => undefined);
+    const result = await createEvent.mutateAsync(parsed.data).catch(() => undefined);
 
     if (!result) {
       return;
@@ -155,7 +159,7 @@ export function EventForm() {
               <EventCategoryCombobox
                 id="category"
                 value={selectedCategories}
-                onValueChange={setSelectedCategories}
+                onValueChange={(value) => setSelectedCategories(value as EventCategory[])}
               />
 
               {showErrors && selectedCategories.length === 0 && (

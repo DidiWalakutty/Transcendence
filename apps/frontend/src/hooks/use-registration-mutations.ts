@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { CreateRegistrationDto, RegistrationDto } from '@repo/schemas/registrations';
 import { useTRPC } from '@/integrations/trpc/react';
+import { invalidateEventCaches } from '@/lib/invalidation';
 
 // Both the event detail page and My Tickets change the same registration data.
 export function useRegistrationMutations(onCancelSuccess?: () => void) {
@@ -11,20 +12,7 @@ export function useRegistrationMutations(onCancelSuccess?: () => void) {
     _registration: RegistrationDto,
     { eventId }: CreateRegistrationDto,
   ) => {
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: trpc.events.getMyRegisteredEvents.queryKey() }),
-      queryClient.invalidateQueries({ queryKey: trpc.events.getEvents.queryKey() }),
-      queryClient.invalidateQueries({ queryKey: trpc.events.getFeaturedEvents.queryKey() }),
-      queryClient.invalidateQueries({
-        queryKey: trpc.registrations.getMyRegistration.queryKey({ id: eventId }),
-      }),
-      queryClient.invalidateQueries({
-        queryKey: trpc.registrations.getAvailableTickets.queryKey({ id: eventId }),
-      }),
-      queryClient.invalidateQueries({
-        queryKey: trpc.registrations.getEventAttendees.queryKey({ id: eventId }),
-      }),
-    ]);
+    await invalidateEventCaches(queryClient, trpc, eventId);
   };
 
   const register = useMutation(

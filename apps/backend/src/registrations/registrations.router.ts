@@ -8,13 +8,19 @@
 // ticketAvailabilitySchema = Defines the ticket capacity and availability information for an event
 // CreateRegistrationDto = TypeScript type for the input data when registering or canceling
 
-import { Router, Mutation, Query, Input, Ctx } from 'nestjs-trpc';
+import { Router, Mutation, Query, Input, Ctx, UseMiddlewares } from 'nestjs-trpc';
 
-import { createRegistrationSchema, registrationSchema } from '@repo/schemas/registrations';
+import {
+  attendeeCountsSchema,
+  createRegistrationSchema,
+  registrationSchema,
+  registrationStatusResponseSchema,
+} from '@repo/schemas/registrations';
 
 import type { CreateRegistrationDto } from '@repo/schemas/registrations';
 import { eventAttendeesList } from '@repo/schemas/registrations';
-import { unauthorizedError } from '../trpc/trpc.errors';
+import { ProtectedMiddleware } from '../auth/protected.middleware';
+import type { OptionalAuthCtx, ProtectedCtx } from '../auth/auth.types';
 import { RegistrationsService } from './registrations.service';
 import { eventIdSchema } from '@repo/schemas/events';
 import { z } from 'zod';
@@ -25,30 +31,22 @@ export class RegistrationsRouter {
   constructor(private readonly registrationsService: RegistrationsService) {}
 
   // Registers the logged-in user for an event
+  @UseMiddlewares(ProtectedMiddleware)
   @Mutation({
     input: createRegistrationSchema,
     output: registrationSchema,
   })
-  async register(
-    @Input() input: CreateRegistrationDto,
-    @Ctx() ctx: { user: { id: string } | null },
-  ) {
-    if (!ctx.user) {
-      throw unauthorizedError('Not logged in');
-    }
+  async register(@Input() input: CreateRegistrationDto, @Ctx() ctx: ProtectedCtx) {
     return this.registrationsService.register(input.eventId, ctx.user.id);
   }
 
   // Cancels the logged-in user's registration for an event
+  @UseMiddlewares(ProtectedMiddleware)
   @Mutation({
     input: createRegistrationSchema,
     output: registrationSchema,
   })
-  async cancel(@Input() input: CreateRegistrationDto, @Ctx() ctx: { user: { id: string } | null }) {
-    if (!ctx.user) {
-      throw unauthorizedError('Not logged in');
-    }
-
+  async cancel(@Input() input: CreateRegistrationDto, @Ctx() ctx: ProtectedCtx) {
     return this.registrationsService.cancel(input.eventId, ctx.user.id);
   }
 
@@ -66,10 +64,7 @@ export class RegistrationsRouter {
     input: eventIdSchema,
     output: registrationSchema.nullable(),
   })
-  async getMyRegistration(
-    @Input() input: { id: string },
-    @Ctx() ctx: { user: { id: string } | null },
-  ) {
+  async getMyRegistration(@Input() input: { id: string }, @Ctx() ctx: OptionalAuthCtx) {
     if (!ctx.user) {
       return null;
     }
@@ -77,17 +72,29 @@ export class RegistrationsRouter {
   }
 
   // Gets a list of users who are registered for an event
+  @UseMiddlewares(ProtectedMiddleware)
   @Query({
     input: eventIdSchema,
     output: eventAttendeesList,
   })
-  async getEventAttendees(
-    @Input() input: { id: string },
-    @Ctx() ctx: { user: { id: string } | null },
-  ) {
-    if (!ctx.user) {
-      throw unauthorizedError('Not logged in');
-    }
+  async getEventAttendees(@Input() input: { id: string }, @Ctx() ctx: ProtectedCtx) {
     return this.registrationsService.getEventAttendees(input.id, ctx.user.id);
+  }
+
+  @Query({
+    input: eventIdSchema,
+    output: registrationStatusResponseSchema,
+  })
+  async getRegistrationStatus(@Input() input: { id: string }, @Ctx() ctx: OptionalAuthCtx) {
+    return this.registrationsService.getRegistrationStatus(input.id, ctx.user?.id ?? null);
+  }
+
+  @UseMiddlewares(ProtectedMiddleware)
+  @Query({
+    input: z.object({ ids: z.string().array() }),
+    output: attendeeCountsSchema,
+  })
+  async getAttendeeCounts(@Input() input: { ids: string[] }) {
+    return this.registrationsService.getAttendeeCounts(input.ids);
   }
 }

@@ -3,6 +3,8 @@ import { EventDate } from '@/components/events/EventDate';
 import * as m from '@/@generated/paraglide/messages';
 import { Badge } from '../ui/badge';
 import placeholderEvent from '@/assets/placeholder_event.png';
+import { getCategoryLabel } from '@/lib/categories';
+import { eventImageSource } from '@/lib/image';
 
 type EventListItemProps = {
   id: string;
@@ -12,15 +14,6 @@ type EventListItemProps = {
   location: string;
   date: string;
   description: string;
-};
-
-const categoryLabels: Record<string, () => string> = {
-  music: m.category_music,
-  culture: m.category_culture,
-  food: m.category_food,
-  games: m.category_games,
-  talks: m.category_talks,
-  workshops: m.category_workshops,
 };
 
 // id must currently be passed as _id, because it's not hooked up to the backend yet.
@@ -67,7 +60,7 @@ export function EventListItem({
           {/* Event Image */}
           <div className="h-40 w-40 shrink-0 overflow-hidden rounded-xl">
             <img
-              src={image === 'PLACEHOLDER' ? placeholderEvent : image}
+              src={eventImageSource(image, placeholderEvent)}
               alt={title}
               className="h-full w-full object-cover"
             />
@@ -105,7 +98,7 @@ export function EventListItem({
           {/* Category */}
           <div className="absolute right-6 top-6 flex max-w-[200px] flex-wrap justify-end gap-2">
             {category.length > 0 &&
-              category.map((cat) => <Badge key={cat}>{categoryLabels[cat]?.() ?? cat}</Badge>)}
+              category.map((cat) => <Badge key={cat}>{getCategoryLabel(cat)}</Badge>)}
           </div>
 
           {/* Tickets CTA */}

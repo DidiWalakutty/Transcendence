@@ -5,6 +5,7 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin, username, twoFactor } from 'better-auth/plugins';
 import { users, sessions, accounts, verifications, twoFactors } from '@repo/schemas/database';
 import type { Database } from '../database/database.types';
+import { APP_EVENTS, emitAppEvent } from '../events/app-events';
 
 const logger = new Logger('Auth');
 
@@ -66,7 +67,7 @@ export function createAuth(db: Database, config: ConfigService) {
       user: {
         create: {
           after: async (user) => {
-            process.emit('user.created' as any, user);
+            emitAppEvent(APP_EVENTS.userCreated, user);
           },
         },
       },

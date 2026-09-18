@@ -10,6 +10,10 @@ export class FriendsService {
     return this.repository.findFriends(userId);
   }
 
+  async getEligibleUsers(userId: string, search?: string) {
+    return this.repository.findEligibleUsers(userId, search);
+  }
+
   async addFriend(myId: string, friendId: string) {
     if (myId === friendId) {
       throw conflictError('You cannot add yourself as a friend');

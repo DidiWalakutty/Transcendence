@@ -10,8 +10,33 @@ export type CompressOptions = {
   square?: boolean;
 };
 
+export { MAX_EVENT_IMAGE_BYTES, MAX_AVATAR_IMAGE_BYTES } from '@repo/schemas/events';
+export { EVENT_PLACEHOLDER, NO_AVATAR, avatarSource, eventImageSource } from '@repo/schemas/users';
+
+import { MAX_SOURCE_IMAGE_SIZE } from '@repo/schemas/events';
+
+export { MAX_SOURCE_IMAGE_SIZE };
+
 const QUALITY_STEPS = [0.82, 0.68, 0.54, 0.4];
 const RESIZE_ATTEMPTS = 5;
+
+export type ImageUploadError = 'invalid-type' | 'too-large' | 'read-error';
+
+export async function validateAndCompress(file: File, options: CompressOptions): Promise<string> {
+  if (!file.type.startsWith('image/')) {
+    throw new Error('invalid-type');
+  }
+  if (file.size > MAX_SOURCE_IMAGE_SIZE) {
+    throw new Error('too-large');
+  }
+  try {
+    return await compressImage(file, options);
+  } catch (error) {
+    if (error instanceof Error && error.message === 'invalid-type') throw error;
+    if (error instanceof Error && error.message === 'too-large') throw error;
+    throw new Error('read-error');
+  }
+}
 
 function readFile(file: File): Promise<string> {
   return new Promise((resolve, reject) => {

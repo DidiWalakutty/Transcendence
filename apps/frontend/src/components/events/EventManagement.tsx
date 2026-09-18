@@ -46,15 +46,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { EventCategoryCombobox } from '@/components/events/EventCategoryCombobox';
 import { EventDatePicker } from '@/components/events/EventDatePicker';
 import { EventImagePicker } from '@/components/events/EventImagePicker';
-
-const categoryLabels: Record<string, () => string> = {
-  music: m.category_music,
-  culture: m.category_culture,
-  food: m.category_food,
-  games: m.category_games,
-  talks: m.category_talks,
-  workshops: m.category_workshops,
-};
+import { getCategoryLabel } from '@/lib/categories';
 
 export function ActionButton({
   label,
@@ -131,7 +123,7 @@ export function EventManagementTable({
               <div className="flex gap-1 pt-1">
                 {event.category.slice(0, 2).map((category) => (
                   <Badge key={category} variant="outline">
-                    {categoryLabels[category]?.() ?? category}
+                    {getCategoryLabel(category)}
                   </Badge>
                 ))}
               </div>
@@ -396,6 +388,37 @@ export function formCategories(data: FormData): string[] {
     .filter(Boolean);
 }
 
+export function eventFormToUpdateInput(
+  id: string,
+  data: FormData,
+): import('@repo/schemas/events').UpdateEventDto {
+  return {
+    id,
+    title: formString(data, 'title'),
+    description: formString(data, 'description'),
+    category: formCategories(data) as import('@repo/schemas/events').UpdateEventDto['category'],
+    location: formString(data, 'location'),
+    address: formString(data, 'address'),
+    date: formString(data, 'date'),
+    time: formString(data, 'time'),
+    image: formString(data, 'image'),
+    maxCapacity: Number(data.get('maxCapacity')),
+  };
+}
+
+export function userFormToAdminUpdateInput(
+  id: string,
+  data: FormData,
+): { id: string; name: string; username: string; email: string; role: 'user' | 'admin' } {
+  return {
+    id,
+    name: formString(data, 'name'),
+    username: formString(data, 'username'),
+    email: formString(data, 'email'),
+    role: data.get('adminRole') === 'on' ? 'admin' : 'user',
+  };
+}
+
 export function TicketManagementTable({
   tickets,
   onCancel,
@@ -421,7 +444,7 @@ export function TicketManagementTable({
               <div className="flex gap-1 pt-1">
                 {ticket.category.slice(0, 2).map((category) => (
                   <Badge key={category} variant="outline">
-                    {categoryLabels[category]?.() ?? category}
+                    {getCategoryLabel(category)}
                   </Badge>
                 ))}
               </div>

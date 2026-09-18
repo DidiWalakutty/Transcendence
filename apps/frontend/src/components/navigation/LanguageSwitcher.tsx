@@ -9,20 +9,36 @@ import { Button } from '@/components/ui/button';
 import { Languages } from 'lucide-react';
 import { locales, setLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
-
-function getLanguageName(locale: string) {
-  try {
-    const nativeName = new Intl.DisplayNames([locale], { type: 'language' }).of(locale);
-    if (nativeName) {
-      return nativeName.charAt(0).toUpperCase() + nativeName.slice(1);
-    }
-  } catch {
-    // Ignore and fall through to the code fallback below.
-  }
-  return locale.toUpperCase();
-}
+import { getLanguageName } from '@/lib/i18n';
+import { useRouteContext } from '@tanstack/react-router';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTRPC } from '@/integrations/trpc/react';
 
 export function LanguageSwitcher() {
+  const { session } = useRouteContext({ from: '__root__' });
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const updateUser = useMutation(
+    trpc.users.updateUser.mutationOptions({
+      onSuccess: (updatedUser) => {
+        queryClient.setQueryData(trpc.users.getMe.queryKey(), updatedUser);
+      },
+    }),
+  );
+
+  const changeLanguage = (locale: (typeof locales)[number]) => {
+    if (!session) {
+      void setLocale(locale);
+      return;
+    }
+    if (updateUser.isPending) return;
+
+    updateUser.mutate(
+      { id: session.user.id, preferedLanguage: locale },
+      { onSuccess: () => void setLocale(locale) },
+    );
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -33,7 +49,7 @@ export function LanguageSwitcher() {
 
       <DropdownMenuContent>
         {locales.map((locale) => (
-          <DropdownMenuItem key={locale} onClick={() => void setLocale(locale)}>
+          <DropdownMenuItem key={locale} onClick={() => changeLanguage(locale)}>
             {getLanguageName(locale)}
           </DropdownMenuItem>
         ))}

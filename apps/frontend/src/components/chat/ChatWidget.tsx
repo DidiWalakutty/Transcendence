@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { useChatStream } from '@/hooks/use-chat-stream';
 import { useTRPC } from '@/integrations/trpc/react';
 import * as m from '@/@generated/paraglide/messages';
+import { CHAT_MAX_LENGTH } from '@repo/schemas/chat';
 
 /**
  * Global chat room, fixed bottom-right. Renders nothing for visitors: the
@@ -71,7 +72,7 @@ function ChatPanel() {
           value={text}
           onChange={(event) => setText(event.target.value)}
           placeholder={m.chat_placeholder()}
-          maxLength={500}
+          maxLength={CHAT_MAX_LENGTH}
         />
         <Button type="submit" size="lg" disabled={send.isPending}>
           {m.chat_send()}

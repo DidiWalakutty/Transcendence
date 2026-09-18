@@ -48,28 +48,35 @@ The current router aliases are:
 eventCreation, events, friends, presence, registrations, users
 ```
 
-| Procedure                           | Type         | Access         | Notes                                                                          |
-| ----------------------------------- | ------------ | -------------- | ------------------------------------------------------------------------------ |
-| `events.getEvents`                  | Query        | Public         | Reads and sorts events.                                                        |
-| `events.getMyRegisteredEvents`      | Query        | Authenticated  | Lists the current user's active registrations as events, soonest first.        |
-| `registrations.register`            | Mutation     | Authenticated  | Registers the current user using the shared registration input schema.         |
-| `registrations.cancel`              | Mutation     | Authenticated  | Cancels the current user's active registration; rejects missing registrations. |
-| `registrations.getMyRegistration`   | Query        | Public         | Returns the current user's active registration, or null without a session.     |
-| `registrations.getAvailableTickets` | Query        | Public         | Returns the event's remaining capacity.                                        |
-| `registrations.getEventAttendees`   | Query        | Organizer      | Lists the event's active attendees.                                            |
-| `eventCreation.getEventById`        | Query        | Public         | Reads one event.                                                               |
-| `eventCreation.getMyEvents`         | Query        | Authenticated  | Lists the events the current user organizes.                                   |
-| `eventCreation.onEventChanged`      | Subscription | Public         | Streams event create/update/delete plus a heartbeat.                           |
-| `eventCreation.createEvent`         | Mutation     | Authenticated  | Creates an event owned by the current user.                                    |
-| `eventCreation.updateEvent`         | Mutation     | Owner or admin | Updates an event after checking organizer ownership.                           |
-| `eventCreation.deleteEvent`         | Mutation     | Owner or admin | Deletes an event and its registrations.                                        |
-| `users.getUsers`                    | Query        | Authenticated  | Reads the user directory.                                                      |
-| `users.getMe`                       | Query        | Public         | Returns the current user, or `null`.                                           |
-| `users.updateUser`                  | Mutation     | Self or admin  | Updates profile fields.                                                        |
-| `users.createUser`                  | Mutation     | Admin          | Legacy passwordless user creation procedure.                                   |
-| `users.adminUpdateUser`             | Mutation     | Admin          | Updates any user, including their Better Auth role.                            |
-| `users.deleteUser`                  | Mutation     | Admin          | Deletes a user; cascades remove related owned records.                         |
-| `users.onUserCreated/Updated/...`   | Subscription | Admin          | Streams user lifecycle changes.                                                |
+| Procedure                             | Type         | Access         | Notes                                                                          |
+| ------------------------------------- | ------------ | -------------- | ------------------------------------------------------------------------------ |
+| `events.getEvents`                    | Query        | Public         | Reads and sorts events (legacy enum input; prefer `getFilteredEvents`).        |
+| `events.getFilteredEvents`            | Query        | Public         | Filtered/paginated listing: sort, categories, search, page, pageSize.          |
+| `events.getMyRegisteredEvents`        | Query        | Authenticated  | Lists the current user's active registrations as events, soonest first.        |
+| `events.searchMyRegisteredEvents`     | Query        | Authenticated  | Server-side search over the current user's registrations.                      |
+| `registrations.register`              | Mutation     | Authenticated  | Registers the current user using the shared registration input schema.         |
+| `registrations.cancel`                | Mutation     | Authenticated  | Cancels the current user's active registration; rejects missing registrations. |
+| `registrations.getMyRegistration`     | Query        | Public         | Returns the current user's active registration, or null without a session.     |
+| `registrations.getAvailableTickets`   | Query        | Public         | Returns the event's remaining capacity.                                        |
+| `registrations.getRegistrationStatus` | Query        | Public         | Single-call ticket status: availability, my registration, canRegister, reason. |
+| `registrations.getAttendeeCounts`     | Query        | Authenticated  | Batched active attendee counts for a list of event ids.                        |
+| `registrations.getEventAttendees`     | Query        | Organizer      | Lists the event's active attendees.                                            |
+| `eventCreation.getEventById`          | Query        | Public         | Reads one event.                                                               |
+| `eventCreation.getMyEvents`           | Query        | Authenticated  | Lists the events the current user organizes.                                   |
+| `eventCreation.getMyEventsWithCounts` | Query        | Authenticated  | Same plus `attendeeCount` per event; replaces N+1 attendee queries.            |
+| `eventCreation.onEventChanged`        | Subscription | Public         | Streams event create/update/delete plus a heartbeat.                           |
+| `eventCreation.createEvent`           | Mutation     | Authenticated  | Creates an event owned by the current user.                                    |
+| `eventCreation.updateEvent`           | Mutation     | Owner or admin | Updates an event after checking organizer ownership.                           |
+| `eventCreation.deleteEvent`           | Mutation     | Owner or admin | Deletes an event and its registrations.                                        |
+| `friends.getEligibleUsers`            | Query        | Authenticated  | Minimal user directory excluding self/friends/pending; optional search.        |
+| `users.getUsers`                      | Query        | Authenticated  | Reads the user directory.                                                      |
+| `users.searchUsers`                   | Query        | Authenticated  | Server-side search over name/username/email.                                   |
+| `users.getMe`                         | Query        | Public         | Returns the current user, or `null`.                                           |
+| `users.updateUser`                    | Mutation     | Self or admin  | Updates profile fields.                                                        |
+| `users.createUser`                    | Mutation     | Admin          | Legacy passwordless user creation procedure.                                   |
+| `users.adminUpdateUser`               | Mutation     | Admin          | Updates any user, including their Better Auth role.                            |
+| `users.deleteUser`                    | Mutation     | Admin          | Deletes a user; cascades remove related owned records.                         |
+| `users.onUserCreated/Updated/...`     | Subscription | Admin          | Streams user lifecycle changes.                                                |
 
 Better Auth's admin plugin additionally exposes its user-management API below `/api/auth/admin/*`.
 The dashboard's tRPC procedures authorize exclusively against Better Auth's `role` model.

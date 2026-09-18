@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import {
   Activity,
   Palette,
@@ -10,6 +11,18 @@ import {
 
 import { CategoryCard } from './CategoryCard';
 import * as m from '@/@generated/paraglide/messages';
+import { getCategoryLabel } from '@/lib/categories';
+
+const CATEGORY_ICONS: Record<string, ReactNode> = {
+  music: <Activity className="size-8 text-brand-primary-text 2xl:size-10" />,
+  culture: <Palette className="size-8 text-brand-primary-text 2xl:size-10" />,
+  food: <Utensils className="size-8 text-brand-primary-text 2xl:size-10" />,
+  games: <Dices className="size-8 text-brand-primary-text 2xl:size-10" />,
+  talks: <MicVocal className="size-8 text-brand-primary-text 2xl:size-10" />,
+  workshops: <Scissors className="size-8 text-brand-primary-text 2xl:size-10" />,
+};
+
+const CATEGORY_IDS = ['music', 'culture', 'food', 'games', 'talks', 'workshops'] as const;
 
 export function CategorySection() {
   return (
@@ -42,41 +55,14 @@ export function CategorySection() {
 							justify-items-center
 						"
         >
-          <CategoryCard
-            category="music"
-            icon={<Activity className="size-8 text-brand-primary-text 2xl:size-10" />}
-            title={m.category_music()}
-          />
-
-          <CategoryCard
-            category="culture"
-            icon={<Palette className="size-8 text-brand-primary-text 2xl:size-10" />}
-            title={m.category_culture()}
-          />
-
-          <CategoryCard
-            category="food"
-            icon={<Utensils className="size-8 text-brand-primary-text 2xl:size-10" />}
-            title={m.category_food()}
-          />
-
-          <CategoryCard
-            category="games"
-            icon={<Dices className="size-8 text-brand-primary-text 2xl:size-10" />}
-            title={m.category_games()}
-          />
-
-          <CategoryCard
-            category="talks"
-            icon={<MicVocal className="size-8 text-brand-primary-text 2xl:size-10" />}
-            title={m.category_talks()}
-          />
-
-          <CategoryCard
-            category="workshops"
-            icon={<Scissors className="size-8 text-brand-primary-text 2xl:size-10" />}
-            title={m.category_workshops()}
-          />
+          {CATEGORY_IDS.map((id) => (
+            <CategoryCard
+              key={id}
+              category={id}
+              icon={CATEGORY_ICONS[id]}
+              title={getCategoryLabel(id)}
+            />
+          ))}
 
           <CategoryCard
             category="all"

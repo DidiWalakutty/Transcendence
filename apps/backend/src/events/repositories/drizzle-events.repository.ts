@@ -3,15 +3,11 @@
 
 import { Inject, Injectable } from '@nestjs/common';
 import { events } from '@repo/schemas/database';
-import {
-  fromEventDateTime,
-  toEventDateTime,
-  type EventDto,
-  type UpdateEventDto,
-} from '@repo/schemas/events';
+import { toEventDateTime, type EventDto, type UpdateEventDto } from '@repo/schemas/events';
 import { DATABASE } from '../../database/database.constants';
 import type { Database } from '../../database/database.types';
 import { EventsRepository, type CreateEventRecord } from './events.repository';
+import { toEventDto } from '../event.mapper';
 import { asc, eq } from 'drizzle-orm';
 
 @Injectable()
@@ -49,7 +45,7 @@ export class DrizzleEventsRepository extends EventsRepository {
   async findById(id: string): Promise<EventDto | null> {
     const [event] = await this.db.select().from(events).where(eq(events.id, id)).limit(1);
 
-    return event ? this.toDto(event) : null;
+    return event ? toEventDto(event) : null;
   }
 
   // Find every event a user organizes, soonest first.
@@ -60,7 +56,7 @@ export class DrizzleEventsRepository extends EventsRepository {
       .where(eq(events.organizerId, organizerId))
       .orderBy(asc(events.dateTime));
 
-    return organizerEvents.map((event) => this.toDto(event));
+    return organizerEvents.map((event) => toEventDto(event));
   }
 
   async update({ id, date, time, description, ...data }: UpdateEventDto): Promise<EventDto | null> {
@@ -74,27 +70,12 @@ export class DrizzleEventsRepository extends EventsRepository {
       .where(eq(events.id, id))
       .returning();
 
-    return event ? this.toDto(event) : null;
+    return event ? toEventDto(event) : null;
   }
 
   async delete(id: string): Promise<EventDto | null> {
     const [event] = await this.db.delete(events).where(eq(events.id, id)).returning();
 
-    return event ? this.toDto(event) : null;
-  }
-
-  private toDto(event: typeof events.$inferSelect): EventDto {
-    return {
-      id: event.id,
-      organizerId: event.organizerId,
-      title: event.title,
-      category: event.category,
-      location: event.location,
-      address: event.address,
-      ...fromEventDateTime(event.dateTime),
-      maxCapacity: event.maxCapacity,
-      image: event.image,
-      description: event.description.en ?? '',
-    };
+    return event ? toEventDto(event) : null;
   }
 }
