@@ -6,7 +6,6 @@ import superjson from 'superjson';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule, seconds } from '@nestjs/throttler';
-import { ThrottlerStorageRedisService } from '@nest-lab/throttler-storage-redis';
 import { createKeyv } from '@keyv/redis';
 import { environment, environmentFilePaths } from './config/environment';
 import { HealthModule } from './health/health.module';
@@ -56,15 +55,10 @@ import { NotificationModule } from './notification/notification.module';
     ThrottlerModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const useFixtures = config.getOrThrow<boolean>('DEV_FIXTURES');
-
         return {
-          skipIf: () => config.get<string>('NODE_ENV') === 'test',
-          ...(useFixtures
-            ? {}
-            : {
-                storage: new ThrottlerStorageRedisService(config.getOrThrow<string>('REDIS_URL')),
-              }),
+          skipIf: () =>
+            !config.getOrThrow<boolean>('THROTTLE_ENABLED') ||
+            config.get<string>('NODE_ENV') === 'test',
           throttlers: [
             {
               name: 'default',

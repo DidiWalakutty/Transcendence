@@ -4,12 +4,9 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
+import { NO_AVATAR, avatarSource } from '@/lib/image';
 
-export const NO_AVATAR = 'PLACEHOLDER';
-
-export function avatarSource(avatar?: string | null): string | undefined {
-  return !avatar || avatar === NO_AVATAR ? undefined : avatar;
-}
+export { NO_AVATAR, avatarSource };
 
 export function avatarInitials(name?: string | null, username?: string | null): string {
   const source = name?.trim() || username?.trim() || '';

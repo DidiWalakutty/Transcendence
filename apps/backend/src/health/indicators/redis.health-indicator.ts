@@ -2,22 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HealthIndicatorService } from '@nestjs/terminus';
 import { createClient } from '@keyv/redis';
+import { BaseHealthIndicator } from './base.health-indicator';
 
 @Injectable()
-export class RedisHealthIndicator {
-  constructor(
-    private readonly healthIndicator: HealthIndicatorService,
-    private readonly config: ConfigService,
-  ) {}
+export class RedisHealthIndicator extends BaseHealthIndicator {
+  constructor(healthIndicator: HealthIndicatorService, config: ConfigService) {
+    super(healthIndicator, config);
+  }
 
   async isHealthy() {
-    const check = this.healthIndicator.check('redis');
-
-    if (this.config.getOrThrow<boolean>('DEV_FIXTURES')) {
-      return check.up({
-        mode: 'fixtures',
-        skipped: true,
-      });
+    if (this.isFixtureMode()) {
+      return this.fixturesSkip('redis');
     }
 
     const client = createClient({
@@ -31,9 +26,9 @@ export class RedisHealthIndicator {
     try {
       await client.connect();
       await client.ping();
-      return check.up();
+      return this.healthIndicator.check('redis').up();
     } catch {
-      return check.down('Redis ping failed');
+      return this.healthIndicator.check('redis').down('Redis ping failed');
     } finally {
       if (client.isOpen) {
         client.destroy();

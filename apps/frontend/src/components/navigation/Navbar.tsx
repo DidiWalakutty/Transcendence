@@ -6,11 +6,12 @@ import { navigationItems, type UserRole } from './navigation.config';
 
 import { usePresenceConnection } from '@/hooks/use-presence';
 import * as m from '@/@generated/paraglide/messages';
+import { hasAdminRole } from '@repo/schemas/users';
 
 export function Navbar() {
   const { session } = useRouteContext({ from: '__root__' });
-  const hasAdminRole = session?.user.role?.split(',').includes('admin');
-  const role: UserRole = !session ? 'visitor' : hasAdminRole ? 'admin' : 'user';
+  const isAdmin = hasAdminRole(session?.user ?? null);
+  const role: UserRole = !session ? 'visitor' : isAdmin ? 'admin' : 'user';
   const links = navigationItems[role];
 
   // Keeps the current user marked online for as long as the app is open in

@@ -3,30 +3,19 @@ import { ConfigService } from '@nestjs/config';
 import { HealthIndicatorService } from '@nestjs/terminus';
 
 import { DatabaseService } from '../../database/database.service';
+import { BaseHealthIndicator } from './base.health-indicator';
 
 @Injectable()
-export class PostgresHealthIndicator {
+export class PostgresHealthIndicator extends BaseHealthIndicator {
   constructor(
-    private readonly healthIndicator: HealthIndicatorService,
-    private readonly config: ConfigService,
+    healthIndicator: HealthIndicatorService,
+    config: ConfigService,
     @Optional() private readonly database?: DatabaseService,
-  ) {}
+  ) {
+    super(healthIndicator, config);
+  }
 
   async isHealthy() {
-    const check = this.healthIndicator.check('postgres');
-
-    if (this.config.getOrThrow<boolean>('DEV_FIXTURES')) {
-      return check.up({
-        mode: 'fixtures',
-        skipped: true,
-      });
-    }
-
-    try {
-      await this.database!.ping();
-      return check.up();
-    } catch {
-      return check.down('PostgreSQL ping failed');
-    }
+    return this.pingCheck('postgres', () => this.database!.ping(), 'PostgreSQL ping failed');
   }
 }

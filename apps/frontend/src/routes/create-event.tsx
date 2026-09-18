@@ -1,13 +1,10 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { EventForm } from '@/components/events/EventForm';
+import { requireAuth } from '@/lib/route-guards';
 
 export const Route = createFileRoute('/create-event')({
   beforeLoad: ({ context: { session } }) => {
-    if (!session) {
-      throw redirect({
-        to: '/login',
-      });
-    }
+    requireAuth(session);
   },
   component: CreateEventPage,
 });

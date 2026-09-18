@@ -3,6 +3,8 @@ import { asc, desc, eq, sql, and } from 'drizzle-orm';
 
 import { events, registrations } from '@repo/schemas/database';
 import { fromEventDateTime, type EventSortDto } from '@repo/schemas/events';
+import { extractDescription } from '../../events/event.mapper';
+import { isActiveRegistration } from '../../registrations/registration.conditions';
 
 import { DATABASE } from '../../database/database.constants';
 import type { Database } from '../../database/database.types';
@@ -11,6 +13,33 @@ import {
   type EventStats,
   EventListingsRepository,
 } from './event-listings.repository';
+
+const EVENT_LISTING_COLUMNS = {
+  id: events.id,
+  title: events.title,
+  organizerId: events.organizerId,
+  createdAt: events.createdAt,
+  description: events.description,
+  image: events.image,
+  location: events.location,
+  address: events.address,
+  dateTime: events.dateTime,
+  maxCapacity: events.maxCapacity,
+  category: events.category,
+} as const;
+
+const REGISTRATION_COUNT = sql<number>`count(${registrations.eventId})`;
+
+async function getCategoryCount(db: Database): Promise<number> {
+  const categoryCountResult = await db.execute(sql`
+		SELECT COUNT(DISTINCT category) AS count
+		FROM (
+		SELECT unnest(category) AS category
+		FROM events
+		) AS categories
+	`);
+  return Number(categoryCountResult.rows[0]?.count ?? 0);
+}
 
 @Injectable()
 export class DrizzleEventListingsRepository extends EventListingsRepository {
@@ -21,61 +50,28 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
     super();
   }
 
-  async findAll(sort: EventSortDto): Promise<EventListingRecord[]> {
-    const registrationCount = sql<number>`count(${registrations.eventId})`;
-
-    const rows = await this.db
-      .select({
-        id: events.id,
-        title: events.title,
-        organizerId: events.organizerId,
-        createdAt: events.createdAt,
-        description: events.description,
-        image: events.image,
-        location: events.location,
-        address: events.address,
-        dateTime: events.dateTime,
-        maxCapacity: events.maxCapacity,
-        category: events.category,
-        registrationsCount: sql<number>`count(${registrations.eventId})`,
-      })
+  private baseListingQuery() {
+    return this.db
+      .select({ ...EVENT_LISTING_COLUMNS, registrationsCount: REGISTRATION_COUNT })
       .from(events)
       .leftJoin(registrations, eq(registrations.eventId, events.id))
-      .groupBy(events.id)
-      .orderBy(
-        sort === 'popular'
-          ? desc(registrationCount)
-          : sort === 'newest'
-            ? desc(events.createdAt)
-            : asc(events.dateTime),
-        asc(events.createdAt),
-      );
+      .groupBy(events.id);
+  }
+
+  async findAll(sort: EventSortDto): Promise<EventListingRecord[]> {
+    const rows = await this.baseListingQuery().orderBy(
+      sort === 'popular'
+        ? desc(REGISTRATION_COUNT)
+        : sort === 'newest'
+          ? desc(events.createdAt)
+          : asc(events.dateTime),
+      asc(events.createdAt),
+    );
 
     return rows.map((row) => this.toRecord(row));
   }
   async findFeatured(): Promise<EventListingRecord[]> {
-    const registrationCount = sql<number>`count(${registrations.eventId})`;
-
-    const rows = await this.db
-      .select({
-        id: events.id,
-        title: events.title,
-        organizerId: events.organizerId,
-        createdAt: events.createdAt,
-        description: events.description,
-        image: events.image,
-        location: events.location,
-        address: events.address,
-        dateTime: events.dateTime,
-        maxCapacity: events.maxCapacity,
-        category: events.category,
-        registrationsCount: registrationCount,
-      })
-      .from(events)
-      .leftJoin(registrations, eq(registrations.eventId, events.id))
-      .groupBy(events.id)
-      .orderBy(asc(events.dateTime))
-      .limit(8);
+    const rows = await this.baseListingQuery().orderBy(asc(events.dateTime)).limit(8);
 
     return rows.map((row) => this.toRecord(row));
   }
@@ -92,39 +88,21 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       })
       .from(events);
 
-    const categoryCountResult = await this.db.execute(sql`
-		SELECT COUNT(DISTINCT category) AS count
-		FROM (
-		SELECT unnest(category) AS category
-		FROM events
-		) AS categories
-	`);
+    const categoryCount = await getCategoryCount(this.db);
 
     return {
       eventCount: Number(eventCountResult.count),
       locationCount: Number(locationCountResult.count),
-      categoryCount: Number(categoryCountResult.rows[0]?.count ?? 0),
+      categoryCount,
     };
   }
 
   async findRegisteredByUser(userId: string): Promise<EventListingRecord[]> {
     const rows = await this.db
-      .select({
-        id: events.id,
-        title: events.title,
-        organizerId: events.organizerId,
-        createdAt: events.createdAt,
-        description: events.description,
-        image: events.image,
-        location: events.location,
-        address: events.address,
-        dateTime: events.dateTime,
-        maxCapacity: events.maxCapacity,
-        category: events.category,
-      })
+      .select(EVENT_LISTING_COLUMNS)
       .from(registrations)
       .innerJoin(events, eq(registrations.eventId, events.id))
-      .where(and(eq(registrations.userId, userId), eq(registrations.status, 'active')))
+      .where(and(eq(registrations.userId, userId), isActiveRegistration))
       .orderBy(asc(events.dateTime));
 
     return rows.map((row) => this.toRecord({ ...row, registrationsCount: 0 }));
@@ -154,7 +132,7 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       ...fromEventDateTime(row.dateTime),
       maxCapacity: row.maxCapacity,
       image: row.image,
-      description: Object.values(row.description).find((value) => value.length > 0) ?? '',
+      description: extractDescription(row.description),
       createdAt: row.createdAt,
       registrationsCount: Number(row.registrationsCount),
     };

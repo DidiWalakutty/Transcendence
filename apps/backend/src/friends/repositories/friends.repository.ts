@@ -1,4 +1,4 @@
-import type { FriendDto } from '@repo/schemas/friends';
+import type { EligibleUserDto, FriendDto } from '@repo/schemas/friends';
 import type { UserDto } from '@repo/schemas/users';
 
 export abstract class FriendsRepository {
@@ -8,4 +8,5 @@ export abstract class FriendsRepository {
   abstract acceptFriend(myId: string, friendId: string): Promise<FriendDto | undefined>;
   abstract removeFriend(myId: string, friendId: string): Promise<FriendDto | undefined>;
   abstract findFriendship(myId: string, friendId: string): Promise<FriendDto | undefined>;
+  abstract findEligibleUsers(userId: string, search?: string): Promise<EligibleUserDto[]>;
 }

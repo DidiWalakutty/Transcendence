@@ -1,13 +1,15 @@
 import { z } from 'zod';
+import { uuidField } from '@repo/schemas/fields';
+import { subscriptionSchema } from '@repo/schemas/subscription';
 
 export const presenceChangedSchema = z.object({
-  userId: z.uuid(),
+  userId: uuidField(),
   online: z.boolean(),
 });
-export const presenceChangedSubscriptionSchema = z.custom<AsyncIterable<PresenceChangedDto>>();
+export const presenceChangedSubscriptionSchema = subscriptionSchema<PresenceChangedDto>();
 
 export const getOnlineUserIdsSchema = z.object({
-  userIds: z.uuid().array(),
+  userIds: uuidField().array(),
 });
 
 export type PresenceChangedDto = z.infer<typeof presenceChangedSchema>;

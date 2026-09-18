@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTRPC } from '@/integrations/trpc/react';
@@ -13,9 +13,14 @@ import { Spinner } from '@/components/ui/spinner';
 import { Link } from '@tanstack/react-router';
 import { TwoFactorSettings } from '@/components/TwoFactorSettings';
 import * as m from '@/@generated/paraglide/messages';
-import { locales } from '@/@generated/paraglide/runtime';
+import { getLocale, locales, setLocale } from '@/@generated/paraglide/runtime';
 import { AvatarPicker } from '@/components/AvatarPicker';
 import { NO_AVATAR, UserAvatar } from '@/components/UserAvatar';
+import { StatusDot } from '@/components/ui/status-dot';
+import { getLanguageName } from '@/lib/i18n';
+import { normalizeUserLanguage, getUserLabel } from '@repo/schemas/users';
+import { requireAuth } from '@/lib/route-guards';
+import { toast } from 'sonner';
 import {
   Select,
   SelectContent,
@@ -34,9 +39,7 @@ import {
 
 export const Route = createFileRoute('/profile')({
   beforeLoad: ({ context: { session } }) => {
-    if (!session) {
-      throw redirect({ to: '/login' });
-    }
+    requireAuth(session);
   },
   loader: async ({ context }) => {
     await Promise.all([
@@ -53,7 +56,7 @@ export const Route = createFileRoute('/profile')({
         staleTime: 'static',
       }),
       context.queryClient.query({
-        ...context.trpc.users.getUsers.queryOptions(),
+        ...context.trpc.friends.getEligibleUsers.queryOptions({}),
         staleTime: 'static',
       }),
     ]);
@@ -61,33 +64,8 @@ export const Route = createFileRoute('/profile')({
   component: ProfilePage,
 });
 
-function StatusDot({ online }: { online: boolean }) {
-  return (
-    <span
-      className={`inline-block h-2.5 w-2.5 rounded-full ${online ? 'bg-green-500' : 'bg-muted-foreground'}`}
-      aria-hidden="true"
-    />
-  );
-}
-
-function getLanguageName(locale: string) {
-  try {
-    const nativeName = new Intl.DisplayNames([locale], { type: 'language' }).of(locale);
-    if (nativeName) {
-      return nativeName.charAt(0).toUpperCase() + nativeName.slice(1);
-    }
-  } catch {
-    // Ignore and fall through to the code fallback below.
-  }
-  return locale.toUpperCase();
-}
-
 function normalizeLanguage(value: unknown): string {
-  if (typeof value !== 'string') return '';
-  if ((locales as readonly string[]).includes(value)) return value;
-  // Legacy rows stored the English name instead of the locale code.
-  if (value === 'english') return 'en';
-  return '';
+  return normalizeUserLanguage(value);
 }
 
 function ProfilePage() {
@@ -95,6 +73,8 @@ function ProfilePage() {
   const queryClient = useQueryClient();
   const { session } = Route.useRouteContext();
   const [saved, setSaved] = useState(false);
+
+  const activeLocale = getLocale();
 
   const userQuery = useQuery(trpc.users.getMe.queryOptions());
   const user = userQuery.data;
@@ -124,11 +104,31 @@ function ProfilePage() {
     trpc.users.updateUser.mutationOptions({
       onSuccess: (updatedUser) => {
         queryClient.setQueryData(trpc.users.getMe.queryKey(), updatedUser);
+        setAvatar(updatedUser.avatar ?? NO_AVATAR);
         setSaved(true);
         setTimeout(() => setSaved(false), 3000);
       },
     }),
   );
+
+  const handleAvatarChange = (nextAvatar: string) => {
+    if (!user || updateUser.isPending || nextAvatar === (user.avatar ?? NO_AVATAR)) return;
+
+    const previousAvatar = avatar;
+    setAvatar(nextAvatar);
+    const saveAvatar = updateUser.mutateAsync({ id: user.id, avatar: nextAvatar });
+
+    toast.promise(saveAvatar, {
+      loading: m.profile_saving(),
+      success: m.profile_saved(),
+      error: (error) => (error instanceof Error ? error.message : String(error)),
+    });
+
+    void saveAvatar.catch(() => {
+      setAvatar(previousAvatar);
+    });
+  };
+
   const friendsQuery = useQuery(trpc.friends.getFriends.queryOptions());
   const pendingQuery = useQuery(trpc.friends.getPendingRequests.queryOptions());
 
@@ -172,9 +172,30 @@ function ProfilePage() {
     });
   };
 
+  // The language picker applies immediately: it persists a minimal payload so
+  // unsaved edits to the other profile fields are left untouched, then
+  // switches the UI locale. Without this, picking a language only staged form
+  // state and a refresh reverted it.
+  const handleLanguageChange = (next: string) => {
+    if (!next || !user || next === language) return;
+    const previous = language;
+    setLanguage(next);
+    updateUser.mutate(
+      { id: user.id, preferedLanguage: next as 'en' | 'nl' | 'es' },
+      {
+        onSuccess: () => {
+          void setLocale(next as (typeof locales)[number]);
+        },
+        onError: () => {
+          setLanguage(previous);
+        },
+      },
+    );
+  };
+
   const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
 
-  const usersQuery = useQuery(trpc.users.getUsers.queryOptions());
+  const eligibleQuery = useQuery(trpc.friends.getEligibleUsers.queryOptions({}));
 
   const addFriend = useMutation(
     trpc.friends.addFriend.mutationOptions({
@@ -183,23 +204,20 @@ function ProfilePage() {
         void queryClient.invalidateQueries({
           queryKey: trpc.friends.getPendingRequests.queryKey(),
         });
+        void queryClient.invalidateQueries({
+          queryKey: trpc.friends.getEligibleUsers.queryKey({}),
+        });
       },
     }),
   );
 
-  const friendIds = new Set(friends.map((f) => f.id));
-  const pendingIds = new Set(pending.map((p) => p.id));
-
-  const eligibleUsers = (usersQuery.data ?? []).filter(
-    (candidate) =>
-      candidate.id !== user?.id && !friendIds.has(candidate.id) && !pendingIds.has(candidate.id),
-  );
+  const eligibleUsers = eligibleQuery.data ?? [];
   const eligibleIds = eligibleUsers.map((candidate) => candidate.id);
   const eligibleById = new Map(eligibleUsers.map((candidate) => [candidate.id, candidate]));
 
   function getFriendLabel(id: string) {
     const candidate = eligibleById.get(id);
-    return candidate ? (candidate.displayUsername ?? candidate.username) : id;
+    return candidate ? getUserLabel(candidate) : id;
   }
   if (!session) {
     return (
@@ -239,7 +257,7 @@ function ProfilePage() {
               value={avatar}
               name={user?.name}
               username={user?.username}
-              onValueChange={setAvatar}
+              onValueChange={handleAvatarChange}
             />
             <CardTitle>{user?.displayUsername ?? user?.username}</CardTitle>
             <p className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -317,9 +335,14 @@ function ProfilePage() {
                     <Label htmlFor="language">{m.language_label()}</Label>
                     <Select
                       value={language}
+                      itemToStringLabel={(value) => (value ? getLanguageName(value) : '')}
+                      disabled={
+                        updateUser.isPending ||
+                        normalizeLanguage(user?.preferedLanguage) !== activeLocale
+                      }
                       onValueChange={(value) => {
                         if (value) {
-                          setLanguage(value);
+                          handleLanguageChange(value);
                         }
                       }}
                     >

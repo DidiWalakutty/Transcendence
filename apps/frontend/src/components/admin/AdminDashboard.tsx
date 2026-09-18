@@ -2,12 +2,15 @@ import { useMemo, useState, type FormEvent } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { EventDto } from '@repo/schemas/events';
 import type { UserDto } from '@repo/schemas/users';
-import { CalendarDays, Eye, Pencil, Search, Trash2, Users } from 'lucide-react';
+import { hasAdminRole } from '@repo/schemas/users';
+import { CalendarDays, Eye, Pencil, Trash2, Users } from 'lucide-react';
 
 import * as m from '@/@generated/paraglide/messages';
 import { useTRPC } from '@/integrations/trpc/react';
 import { useEventStream } from '@/hooks/use-event-stream';
 import { useUserStream } from '@/hooks/use-user-stream';
+import { filterByFields } from '@/lib/search';
+import { EmptyResults, SearchInput } from '@/components/ui/search-input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   AlertDialog,
@@ -30,7 +33,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Spinner } from '@/components/ui/spinner';
 import { Switch } from '@/components/ui/switch';
@@ -48,8 +50,8 @@ import {
   EventEditDialog,
   EventManagementTable,
   FormField,
-  formCategories,
-  formString,
+  eventFormToUpdateInput,
+  userFormToAdminUpdateInput,
 } from '@/components/events/EventManagement';
 
 type UserDialog = { mode: 'view' | 'edit'; user: UserDto } | null;
@@ -106,21 +108,26 @@ export function AdminDashboard() {
     }),
   );
 
-  const users = useMemo(() => {
-    const query = userSearch.trim().toLowerCase();
-    return (usersQuery.data ?? []).filter((user) =>
-      [user.name, user.username, user.email].some((value) => value.toLowerCase().includes(query)),
-    );
-  }, [userSearch, usersQuery.data]);
+  const users = useMemo(
+    () =>
+      filterByFields(usersQuery.data ?? [], userSearch, (user) => [
+        user.name,
+        user.username,
+        user.email,
+      ]),
+    [userSearch, usersQuery.data],
+  );
 
-  const events = useMemo(() => {
-    const query = eventSearch.trim().toLowerCase();
-    return (eventsQuery.data ?? []).filter((event) =>
-      [event.title, event.location, event.address, ...event.category].some((value) =>
-        value.toLowerCase().includes(query),
-      ),
-    );
-  }, [eventSearch, eventsQuery.data]);
+  const events = useMemo(
+    () =>
+      filterByFields(eventsQuery.data ?? [], eventSearch, (event) => [
+        event.title,
+        event.location,
+        event.address,
+        ...event.category,
+      ]),
+    [eventSearch, eventsQuery.data],
+  );
 
   const mutationError =
     updateUser.error ?? deleteUser.error ?? updateEvent.error ?? deleteEvent.error;
@@ -129,31 +136,14 @@ export function AdminDashboard() {
     event.preventDefault();
     if (!userDialog || userDialog.mode !== 'edit') return;
     const data = new FormData(event.currentTarget);
-    updateUser.mutate({
-      id: userDialog.user.id,
-      name: formString(data, 'name'),
-      username: formString(data, 'username'),
-      email: formString(data, 'email'),
-      role: data.get('adminRole') === 'on' ? 'admin' : 'user',
-    });
+    updateUser.mutate(userFormToAdminUpdateInput(userDialog.user.id, data));
   }
 
   function submitEvent(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!eventDialog) return;
     const data = new FormData(event.currentTarget);
-    updateEvent.mutate({
-      id: eventDialog.id,
-      title: formString(data, 'title'),
-      description: formString(data, 'description'),
-      category: formCategories(data),
-      location: formString(data, 'location'),
-      address: formString(data, 'address'),
-      date: formString(data, 'date'),
-      time: formString(data, 'time'),
-      image: formString(data, 'image'),
-      maxCapacity: Number(data.get('maxCapacity')),
-    });
+    updateEvent.mutate(eventFormToUpdateInput(eventDialog.id, data));
   }
 
   function confirmDelete() {
@@ -225,7 +215,7 @@ export function AdminDashboard() {
               <SearchInput
                 value={userSearch}
                 onChange={setUserSearch}
-                label={m.admin_search_users()}
+                placeholder={m.admin_search_users()}
               />
             </CardHeader>
             <CardContent>
@@ -275,7 +265,7 @@ export function AdminDashboard() {
                   ))}
                 </TableBody>
               </Table>
-              {users.length === 0 && <EmptySearch />}
+              {users.length === 0 && <EmptyResults message={m.admin_no_results()} />}
             </CardContent>
           </Card>
         </TabsContent>
@@ -288,7 +278,7 @@ export function AdminDashboard() {
               <SearchInput
                 value={eventSearch}
                 onChange={setEventSearch}
-                label={m.admin_search_events()}
+                placeholder={m.admin_search_events()}
               />
             </CardHeader>
             <CardContent>
@@ -297,7 +287,7 @@ export function AdminDashboard() {
                 onEdit={setEventDialog}
                 onDelete={(event) => setDeleteTarget({ kind: 'event', item: event })}
               />
-              {events.length === 0 && <EmptySearch />}
+              {events.length === 0 && <EmptyResults message={m.admin_no_results()} />}
             </CardContent>
           </Card>
         </TabsContent>
@@ -345,37 +335,6 @@ export function AdminDashboard() {
       </AlertDialog>
     </div>
   );
-}
-
-function SearchInput({
-  value,
-  onChange,
-  label,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  label: string;
-}) {
-  return (
-    <div className="relative mt-4 max-w-md">
-      <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-      <Input
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        placeholder={label}
-        aria-label={label}
-        className="pl-9"
-      />
-    </div>
-  );
-}
-
-function EmptySearch() {
-  return <p className="py-10 text-center text-muted-foreground">{m.admin_no_results()}</p>;
-}
-
-function hasAdminRole(user: UserDto): boolean {
-  return user.role.split(',').includes('admin');
 }
 
 function UserDialog({

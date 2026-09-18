@@ -8,7 +8,9 @@ import {
   type SendChatMessageDto,
 } from '@repo/schemas/chat';
 import { ProtectedMiddleware } from '../auth/protected.middleware';
+import type { ChatCtx } from '../auth/auth.types';
 import { ChatEvents } from './chat.events';
+import { forwardSubscription } from '../trpc/subscription.helpers';
 
 @Router({ alias: 'chat' })
 export class ChatRouter {
@@ -16,10 +18,7 @@ export class ChatRouter {
 
   @UseMiddlewares(ProtectedMiddleware)
   @Mutation({ input: sendChatMessageSchema, output: chatMessageSchema })
-  send(
-    @Input() input: SendChatMessageDto,
-    @Ctx() ctx: { user: { id: string; name: string } },
-  ): ChatMessage {
+  send(@Input() input: SendChatMessageDto, @Ctx() ctx: ChatCtx): ChatMessage {
     const message: ChatMessage = {
       from: ctx.user.id,
       fromName: ctx.user.name,
@@ -35,8 +34,6 @@ export class ChatRouter {
   async *onMessage(
     @Options() opts: { signal?: AbortSignal },
   ): AsyncGenerator<ChatMessage, void, void> {
-    for await (const message of this.chatEvents.listenMessages(opts.signal)) {
-      yield message;
-    }
+    yield* forwardSubscription(this.chatEvents.listenMessages(opts.signal));
   }
 }

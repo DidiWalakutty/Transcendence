@@ -16,7 +16,11 @@ export const Route = createFileRoute('/events/')({
     category: z.string().optional(),
     sort: z.enum(['upcoming', 'popular', 'newest']).optional(),
   }),
-  loaderDeps: ({ search }) => ({ sort: search.sort ?? 'upcoming' }),
+  loaderDeps: ({ search }) => ({
+    sort: search.sort ?? 'upcoming',
+    category: search.category ?? '',
+    page: search.page ?? 1,
+  }),
   loader: async ({ context, deps }) => {
     // A loader throw fails the whole route, so a backend that is down turns
     // this page into an error screen. Render the shell instead and let the
@@ -24,7 +28,22 @@ export const Route = createFileRoute('/events/')({
     // does after a reconnect.
     await context.queryClient
       .query({
-        ...context.trpc.events.getEvents.queryOptions(deps.sort),
+        ...context.trpc.events.getFilteredEvents.queryOptions({
+          sort: deps.sort,
+          categories:
+            deps.category.length > 0
+              ? (deps.category.split(',') as (
+                  | 'music'
+                  | 'culture'
+                  | 'food'
+                  | 'games'
+                  | 'talks'
+                  | 'workshops'
+                )[])
+              : undefined,
+          page: deps.page,
+          pageSize: 8,
+        }),
         staleTime: 'static',
       })
       .catch(() => undefined);
@@ -43,8 +62,27 @@ function EventsPage() {
   // Keeps this listing current while it is open: another user creating,
   // editing or deleting an event patches the cache here without a refetch.
   const { connected, failed } = useEventStream();
-  const eventsQuery = useQuery(trpc.events.getEvents.queryOptions(selectedSort));
-  const events = eventsQuery.data ?? [];
+  const eventsQuery = useQuery(
+    trpc.events.getFilteredEvents.queryOptions({
+      sort: selectedSort,
+      categories:
+        selectedCategories.length > 0
+          ? (selectedCategories as (
+              | 'music'
+              | 'culture'
+              | 'food'
+              | 'games'
+              | 'talks'
+              | 'workshops'
+            )[])
+          : undefined,
+      page: currentPage,
+      pageSize: eventsPerPage,
+    }),
+  );
+  const filteredEvents = eventsQuery.data?.items ?? [];
+  const totalPages = Math.max(1, Math.ceil((eventsQuery.data?.total ?? 0) / eventsPerPage));
+  const displayedEvents = filteredEvents;
 
   const updateSearch = (updates: {
     page?: number;
@@ -59,20 +97,6 @@ function EventsPage() {
       replace: true,
     });
   };
-
-  const filteredEvents = events.filter((event) => {
-    if (selectedCategories.length === 0) {
-      return true;
-    }
-
-    return selectedCategories.some((category) => event.category.includes(category));
-  });
-
-  const totalPages = Math.max(1, Math.ceil(filteredEvents.length / eventsPerPage));
-
-  const startIndex = (currentPage - 1) * eventsPerPage;
-
-  const displayedEvents = filteredEvents.slice(startIndex, startIndex + eventsPerPage);
 
   const handleCategoryChange = (category: string) => {
     const newCategories = selectedCategories.includes(category)

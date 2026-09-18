@@ -1,32 +1,8 @@
 import * as m from '@/@generated/paraglide/messages';
 import { Button } from '../ui/button';
+import { getCategoryOptions } from '@/lib/categories';
 
-const categories = [
-  {
-    id: 'music',
-    title: m.category_music,
-  },
-  {
-    id: 'culture',
-    title: m.category_culture,
-  },
-  {
-    id: 'food',
-    title: m.category_food,
-  },
-  {
-    id: 'games',
-    title: m.category_games,
-  },
-  {
-    id: 'talks',
-    title: m.category_talks,
-  },
-  {
-    id: 'workshops',
-    title: m.category_workshops,
-  },
-];
+const categories = getCategoryOptions();
 
 type EventFiltersProps = {
   selectedCategories: string[];

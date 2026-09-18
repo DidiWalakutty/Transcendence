@@ -12,6 +12,7 @@ import * as m from '@/@generated/paraglide/messages';
 import { EventCategoryCombobox } from '@/components/events/EventCategoryCombobox';
 import { EventDatePicker } from '@/components/events/EventDatePicker';
 import { EventImagePicker } from '@/components/events/EventImagePicker';
+import { createEventSchema, type EventCategory } from '@repo/schemas/events';
 
 const DEFAULT_EVENT_IMAGE = placeholderEvent;
 
@@ -20,7 +21,7 @@ export function EventForm() {
   const navigate = useNavigate();
   const createEvent = useMutation(trpc.eventCreation.createEvent.mutationOptions());
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<EventCategory[]>([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedImage, setSelectedImage] = useState(DEFAULT_EVENT_IMAGE);
   const [showErrors, setShowErrors] = useState(false);
@@ -50,7 +51,7 @@ export function EventForm() {
       return;
     }
 
-    const result = await createEvent.mutateAsync({
+    const parsed = createEventSchema.safeParse({
       title,
       description,
       category: selectedCategories,
@@ -61,6 +62,11 @@ export function EventForm() {
       image: selectedImage,
       maxCapacity: Number(capacity),
     });
+    if (!parsed.success) {
+      return;
+    }
+
+    const result = await createEvent.mutateAsync(parsed.data);
 
     await navigate({
       to: '/events/$eventId',
@@ -147,7 +153,7 @@ export function EventForm() {
               <EventCategoryCombobox
                 id="category"
                 value={selectedCategories}
-                onValueChange={setSelectedCategories}
+                onValueChange={(value) => setSelectedCategories(value as EventCategory[])}
               />
 
               {showErrors && selectedCategories.length === 0 && (

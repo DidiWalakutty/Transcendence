@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { type FormEvent, useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -44,12 +44,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { removeById, replaceById, upsertById } from '@/lib/collection-by-id';
+import { requireAdmin } from '@/lib/route-guards';
 
 export const Route = createFileRoute('/example')({
   beforeLoad: ({ context: { session } }) => {
-    if (!session?.user.role?.split(',').includes('admin')) {
-      throw redirect({ to: '/' });
-    }
+    requireAdmin(session);
   },
   loader: async ({ context }) => {
     await context.queryClient.query({
@@ -77,13 +76,9 @@ function Home() {
   useSubscription(
     trpc.users.onUserCreated.subscriptionOptions(undefined, {
       onData: (user) => {
-        queryClient.setQueryData(trpc.users.getUsers.queryKey(), (users) => {
-          if (!users) {
-            return [user];
-          }
-
-          return upsertById(users, user);
-        });
+        queryClient.setQueryData(trpc.users.getUsers.queryKey(), (users) =>
+          upsertById(users, user),
+        );
       },
     }),
   );

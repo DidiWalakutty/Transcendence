@@ -48,6 +48,14 @@
     "./registrations": {
       "types": "./src/registrations.ts",
       "default": "./src/registrations.ts"
+    },
+    "./fields": {
+      "types": "./src/fields.ts",
+      "default": "./src/fields.ts"
+    },
+    "./subscription": {
+      "types": "./src/subscription.ts",
+      "default": "./src/subscription.ts"
     }
   },
   "dependencies": {

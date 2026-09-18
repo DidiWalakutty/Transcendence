@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TRPCError } from '@trpc/server';
 import type { MiddlewareOptions, TRPCMiddleware } from 'nestjs-trpc';
+import { hasAdminRole } from './roles';
 
 @Injectable()
 export class AdminMiddleware implements TRPCMiddleware {
@@ -14,8 +15,7 @@ export class AdminMiddleware implements TRPCMiddleware {
       throw new TRPCError({ code: 'UNAUTHORIZED' });
     }
 
-    const roles = user.role?.split(',') ?? [];
-    if (!roles.includes('admin')) {
+    if (!hasAdminRole(user)) {
       throw new TRPCError({ code: 'FORBIDDEN', message: 'Administrator access required' });
     }
 

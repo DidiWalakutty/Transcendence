@@ -34,6 +34,7 @@ const environmentSchema = z
     SEED_DIDI_PASSWORD: z.string().min(1),
     SEED_HOMER_PASSWORD: z.string().min(1),
     CACHE_TTL_MS: z.coerce.number().int().positive().default(30_000),
+    THROTTLE_ENABLED: booleanString,
     THROTTLE_TTL_SECONDS: z.coerce.number().int().positive().default(60),
     THROTTLE_LIMIT: z.coerce.number().int().positive().default(100),
     DEV_FIXTURES: booleanString,

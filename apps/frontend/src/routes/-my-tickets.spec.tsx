@@ -121,7 +121,14 @@ function setup({
                     ? currentTickets.length
                       ? registration
                       : null
-                    : currentTickets;
+                    : path === 'registrations.getRegistrationStatus'
+                      ? {
+                          available: event.maxCapacity - currentTickets.length,
+                          myRegistration: currentTickets.length ? registration : null,
+                          canRegister: currentTickets.length === 0,
+                          reason: currentTickets.length ? 'ALREADY_REGISTERED' : 'OK',
+                        }
+                      : currentTickets;
           return new Response(JSON.stringify({ result: { data: superjson.serialize(data) } }));
         },
       }),
@@ -130,11 +137,18 @@ function setup({
   const trpc = createTRPCOptionsProxy({ client: trpcClient, queryClient });
   const registrationKey = trpc.registrations.getMyRegistration.queryKey({ id: event.id });
   const availabilityKey = trpc.registrations.getAvailableTickets.queryKey({ id: event.id });
+  const statusKey = trpc.registrations.getRegistrationStatus.queryKey({ id: event.id });
   queryClient.setQueryData(
     registrationKey,
     tickets.length ? { eventId: event.id, userId: 'user', status: 'active' } : null,
   );
   queryClient.setQueryData(availabilityKey, tickets.length ? 0 : event.maxCapacity);
+  queryClient.setQueryData(statusKey, {
+    available: tickets.length ? 0 : event.maxCapacity,
+    myRegistration: tickets.length ? { eventId: event.id, userId: 'user', status: 'active' } : null,
+    canRegister: tickets.length === 0,
+    reason: tickets.length ? 'ALREADY_REGISTERED' : 'OK',
+  });
   const ticketsKey = trpc.events.getMyRegisteredEvents.queryKey();
   queryClient.setQueryData(ticketsKey, tickets);
   vi.spyOn(DetailRoute, 'useParams').mockReturnValue({ eventId: event.id });

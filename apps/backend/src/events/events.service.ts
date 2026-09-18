@@ -11,6 +11,7 @@ import {
 } from '@repo/schemas/events';
 import { EventsRepository, type CreateEventRecord } from './repositories/events.repository';
 import { RegistrationsRepository } from '../registrations/repositories/registrations.repository';
+import { APP_EVENTS, emitAppEvent } from './app-events';
 
 const MAX_BUFFERED_EVENTS = 100;
 
@@ -52,6 +53,13 @@ export class EventsService {
     return this.repository.findByOrganizer(organizerId);
   }
 
+  async findByOrganizerWithCounts(organizerId: string) {
+    const events = await this.repository.findByOrganizer(organizerId);
+    const counts = await this.registrationsRepository.getAttendeeCounts(events.map((e) => e.id));
+    const byId = new Map(counts.map((c) => [c.eventId, c.count]));
+    return events.map((event) => ({ ...event, attendeeCount: byId.get(event.id) ?? 0 }));
+  }
+
   async update(data: UpdateEventDto): Promise<EventDto | null> {
     const oldEventDetails = await this.repository.findById(data.id);
     const event = await this.repository.update(data);
@@ -60,7 +68,7 @@ export class EventsService {
       this.emitChanged('updated', event);
       const attendees = await this.registrationsRepository.getEventAttendees(event.id);
 
-      process.emit('event.modified' as any, { event, attendees, oldEvent: oldEventDetails });
+      emitAppEvent(APP_EVENTS.eventModified, { event, attendees, oldEvent: oldEventDetails });
     }
 
     return event;
@@ -74,7 +82,7 @@ export class EventsService {
 
     if (event) {
       this.emitChanged('deleted', event);
-      process.emit('event.cancelled' as any, { event: eventDetails, attendees });
+      emitAppEvent(APP_EVENTS.eventCancelled, { event: eventDetails, attendees });
     }
 
     return event;

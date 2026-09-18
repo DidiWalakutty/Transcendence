@@ -4,6 +4,7 @@
 import { m } from '@/@generated/paraglide/messages';
 import { getLocale, locales, setLocale } from '@/@generated/paraglide/runtime';
 import { Button } from './ui/button';
+import { getLanguageName } from '@/lib/i18n';
 
 export default function ParaglideLocaleSwitcher() {
   const currentLocale = getLocale();
@@ -36,7 +37,7 @@ export default function ParaglideLocaleSwitcher() {
               letterSpacing: '0.01em',
             }}
           >
-            {locale.toUpperCase()}
+            {getLanguageName(locale)}
           </Button>
         ))}
       </div>

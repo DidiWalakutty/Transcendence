@@ -1,5 +1,4 @@
-import { Router, Query, Subscription, Input, Options, Ctx } from 'nestjs-trpc';
-import { z } from 'zod';
+import { Router, Query, Subscription, Input, Options, Ctx, UseMiddlewares } from 'nestjs-trpc';
 
 import {
   getOnlineUserIdsSchema,
@@ -7,7 +6,9 @@ import {
   type GetOnlineUserIdsDto,
   type PresenceChangedDto,
 } from '@repo/schemas/presence';
-import { unauthorizedError } from '../trpc/trpc.errors';
+import { uuidField } from '@repo/schemas/fields';
+import { ProtectedMiddleware } from '../auth/protected.middleware';
+import type { ProtectedCtx } from '../auth/auth.types';
 import { PresenceEvents } from './presence.events';
 import { PresenceService } from './presence.service';
 
@@ -18,22 +19,18 @@ export class PresenceRouter {
     private readonly presenceEvents: PresenceEvents,
   ) {}
 
-  @Query({ input: getOnlineUserIdsSchema, output: z.uuid().array() })
-  getOnlineUserIds(
-    @Input() input: GetOnlineUserIdsDto,
-    @Ctx() ctx: { user: { id: string } | null },
-  ) {
-    if (!ctx.user) throw unauthorizedError('Not logged in');
+  @UseMiddlewares(ProtectedMiddleware)
+  @Query({ input: getOnlineUserIdsSchema, output: uuidField().array() })
+  getOnlineUserIds(@Input() input: GetOnlineUserIdsDto) {
     return this.presenceService.getOnlineUserIds(input.userIds);
   }
 
+  @UseMiddlewares(ProtectedMiddleware)
   @Subscription({ output: presenceChangedSubscriptionSchema })
   async *onPresenceChanged(
-    @Ctx() ctx: { user: { id: string } | null },
+    @Ctx() ctx: ProtectedCtx,
     @Options() opts: { signal?: AbortSignal },
   ): AsyncGenerator<PresenceChangedDto, void, void> {
-    if (!ctx.user) throw unauthorizedError('Not logged in');
-
     const userId = ctx.user.id;
     const { connectionId, wasOffline } = this.presenceService.connect(userId);
 

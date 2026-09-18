@@ -3,15 +3,8 @@ import { Calendar, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import * as m from '@/@generated/paraglide/messages';
 import placeholderEvent from '@/assets/placeholder_event.png';
-
-const categoryLabels: Record<string, () => string> = {
-  music: m.category_music,
-  culture: m.category_culture,
-  food: m.category_food,
-  games: m.category_games,
-  talks: m.category_talks,
-  workshops: m.category_workshops,
-};
+import { formatCategories } from '@/lib/categories';
+import { eventImageSource } from '@/lib/image';
 
 type EventCardProps = {
   id: string;
@@ -67,7 +60,7 @@ export function EventCard({ id, image, title, category, location, date }: EventC
         {/* Event Image */}
         <div className="relative">
           <img
-            src={image === 'PLACEHOLDER' ? placeholderEvent : image}
+            src={eventImageSource(image, placeholderEvent)}
             alt={title}
             className="
               h-52
@@ -145,7 +138,7 @@ export function EventCard({ id, image, title, category, location, date }: EventC
               text-brand-primary-text
             "
           >
-            {category.map((item) => categoryLabels[item]?.() ?? item).join(' • ')}
+            {formatCategories(category)}
           </p>
 
           {/* Event Title */}
