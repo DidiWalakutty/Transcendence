@@ -12,13 +12,9 @@ Vite+ manages:
 6. Commit hooks.
 7. Generated artifacts such as tRPC router types.
 
-## Nix Shell Equivalent
-
-Inside a [Nix dev shell](./DEVENVIRONMENT.md), `node_modules/.bin/vp` is already installed locally, and every command below also works as a Bun script shorthand: `bun dev` runs the same task as `vp run dev`, `bun check:fix` the same as `vp run check:fix`, and so on. There is no need to install Vite+ globally on this path.
-
 ## Install
 
-Install Vite+ before running the project outside the devcontainer (skip this if you use Nix — see above).
+Install Vite+ before running the project outside the devcontainer.
 
 You can also run the repository helper script:
 
@@ -46,10 +42,7 @@ vp install
 
 The root `postinstall` script repairs the executable permissions of the
 `nestjs-trpc` native generator on Unix systems. This runs for both the Vite+
-installation path and direct `bun install`. On Linux, the recommended Nix shell
-then uses Nix's `autoPatchelfHook` to connect the packaged generator to the
-shell-provided GLIBC. This supports hosts whose system GLIBC is older than the
-packaged binary requires.
+installation path and direct `bun install`.
 
 ## Common Commands
 
@@ -81,10 +74,11 @@ packaged binary requires.
 
 Vite+ installs and manages Bun for the project, so contributors do not need to install Bun manually.
 
-For environments that cannot use Nix, the repository also vendors a compiled
-`nestjs-trpc` CLI at `bin/nestjs-trpc`. The tRPC generation tasks invoke that
-binary directly from the backend workspace, so you can run the code generation
-path without relying on the packaged `bunx nestjs-trpc` executable.
+The repository also vendors a compiled `nestjs-trpc` CLI at `bin/nestjs-trpc`,
+because the packaged binary requires a newer GLIBC than some Linux
+distributions provide. The tRPC generation tasks invoke that binary directly
+from the backend workspace, so you can run the code generation path without
+relying on the packaged `bunx nestjs-trpc` executable.
 
 ## Task Configuration
 

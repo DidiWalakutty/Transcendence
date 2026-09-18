@@ -161,15 +161,19 @@ function ProfilePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    await updateUser.mutateAsync({
-      id: user.id,
-      name,
-      username,
-      aboutMe,
-      location,
-      ...(language ? { preferedLanguage: language as 'en' | 'nl' | 'es' } : {}),
-      avatar,
-    });
+    // A rejected mutation is shown through the mutation's error state and the
+    // global toast; it must not escape as an uncaught promise in the console.
+    await updateUser
+      .mutateAsync({
+        id: user.id,
+        name,
+        username,
+        aboutMe,
+        location,
+        ...(language ? { preferedLanguage: language as 'en' | 'nl' | 'es' } : {}),
+        avatar,
+      })
+      .catch(() => undefined);
   };
 
   // The language picker applies immediately: it persists a minimal payload so

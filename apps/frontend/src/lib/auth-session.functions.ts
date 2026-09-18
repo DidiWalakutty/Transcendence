@@ -1,7 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
-import { getRequestHeader } from '@tanstack/react-start/server';
 
 import { authClient } from '@/lib/auth-client';
+import { getForwardedRequestHeaders } from '@/lib/forwarded-headers';
 
 // Runs in the root route's beforeLoad, so throwing here fails the whole route
 // tree: when the backend is unreachable every render throws, the CatchBoundary
@@ -9,12 +9,10 @@ import { authClient } from '@/lib/auth-client';
 // unhappy backend means "no session" instead, which renders the app as a
 // visitor and lets route guards redirect normally.
 export const getAuthSession = createServerFn({ method: 'GET' }).handler(async () => {
-  const cookie = getRequestHeader('cookie');
-
   try {
     const { data, error } = await authClient.getSession({
       fetchOptions: {
-        headers: cookie ? { cookie } : undefined,
+        headers: getForwardedRequestHeaders(),
       },
     });
 

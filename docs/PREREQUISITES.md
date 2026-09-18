@@ -4,23 +4,28 @@ This document lists the host tools needed before working on the project.
 
 ## Required
 
-| Requirement                    | Description                                                                                     |
-| ------------------------------ | ----------------------------------------------------------------------------------------------- |
-| Git                            | Required to clone the repository and collaborate through version control.                       |
-| Docker / Docker Desktop        | Required to run root Docker Compose services such as PostgreSQL and Redis. Not provided by Nix. |
-| Nix (recommended) **or** Vite+ | Either path gets you a working Bun + Vite+ toolchain. See below.                                |
+| Requirement             | Description                                                                                |
+| ----------------------- | ------------------------------------------------------------------------------------------ |
+| Git                     | Required to clone the repository and collaborate through version control.                  |
+| Docker / Docker Desktop | Required to run root Docker Compose services such as PostgreSQL, Redis, Caddy and Mailpit. |
+| Vite+                   | Provides the `vp` command and manages Bun for the project. See below.                      |
 
-## Recommended: Nix
+## Vite+
 
-`nix develop` provisions Bun, Node, Git, and mkcert for you — including on Codam machines, where it works without root access — and its shell hook automatically runs `bun install`. From inside the shell you never need a globally installed `vp`: commands like `bun dev` and `bun check` resolve to the locally installed Vite+ (`node_modules/.bin/vp`) through Bun's script shorthand.
+Install Vite+ globally with the commands in [Development](./DEVELOPMENT.md). A global `vp` is what bootstraps `node_modules` (via `vp install`) before any workspace scripts exist.
 
-See [Dev Environment](./DEVENVIRONMENT.md) for setup steps.
+You do not need to install Bun manually. Vite+ manages the project runtime and package manager.
 
-## Alternative: Vite+ installer
+## Optional: trusted local HTTPS
 
-If you are not using Nix, install Vite+ globally with the commands in [Development](./DEVELOPMENT.md). A global `vp` is what bootstraps `node_modules` (via `vp install`) before any workspace scripts exist, so this path needs the installer where the Nix path does not.
+The Compose stack serves `https://localhost:3000` with the [mkcert](https://github.com/FiloSottile/mkcert) certificate committed in `caddy/certs`. Browsers only trust it once the mkcert root CA is in their trust store, which `scripts/generate-certs.sh` sets up. That script needs:
 
-You do not need to install Bun manually on either path. Vite+ manages the project runtime and package manager.
+| Tool                  | Why                                                                                                                   |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| mkcert                | Generates the certificate and registers its root CA. A single binary; on Linux it can be dropped into `~/.local/bin`. |
+| certutil (Linux only) | From the `libnss3-tools` package. mkcert needs it to write the Chrome and Firefox trust stores.                       |
+
+Without them the site still works, but the browser shows a certificate warning once per session. See [Browser Support](./BROWSER_SUPPORT.md#3-how-to-test) for the per-browser details.
 
 ## Docker Compose
 
@@ -32,4 +37,4 @@ The devcontainer is responsible for tooling and editor consistency only. Postgre
 
 Once the devcontainer is available, it should provide the expected tooling and editor setup automatically.
 
-Until then, contributors should use Nix (or the Vite+ installer) plus Docker / Docker Desktop.
+Until then, contributors should use the Vite+ installer plus Docker / Docker Desktop.

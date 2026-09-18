@@ -4,12 +4,11 @@ This directory contains the project documentation for local development, archite
 
 ## Start Here
 
-| Document                               | Purpose                                                                     |
-| -------------------------------------- | --------------------------------------------------------------------------- |
-| [Dev Environment](./DEVENVIRONMENT.md) | Recommended Nix-based setup: install Nix, enter the shell, useful commands. |
-| [Development](./DEVELOPMENT.md)        | Local setup, install steps, development commands, and troubleshooting.      |
-| [Stack](./STACK.md)                    | The approved technology stack and architecture principles.                  |
-| [Subject](./SUBJECT.md)                | The 42 subject summary and evaluation requirements.                         |
+| Document                        | Purpose                                                                |
+| ------------------------------- | ---------------------------------------------------------------------- |
+| [Development](./DEVELOPMENT.md) | Local setup, install steps, development commands, and troubleshooting. |
+| [Stack](./STACK.md)             | The approved technology stack and architecture principles.             |
+| [Subject](./SUBJECT.md)         | The 42 subject summary and evaluation requirements.                    |
 
 ## Architecture
 
@@ -32,6 +31,12 @@ This directory contains the project documentation for local development, archite
 | [Commit Hooks](./COMMIT_HOOKS.md)   | Pre-commit checks and how to fix hook failures.       |
 | [CI](./CI.md)                       | Continuous integration responsibilities.              |
 | [Prerequisites](./PREREQUISITES.md) | Required host tools before running the project.       |
+
+## Testing
+
+| Document                                | Purpose                                                                   |
+| --------------------------------------- | ------------------------------------------------------------------------- |
+| [Browser Support](./BROWSER_SUPPORT.md) | Browser test plan, feature matrix, console checks, and known limitations. |
 
 ## Editor
 

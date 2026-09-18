@@ -1,6 +1,7 @@
 import { format } from 'date-fns';
 import { enUS, nl } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
+import { useState } from 'react';
 
 import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
@@ -21,11 +22,12 @@ export function EventDatePicker({
   onValueChange: (value: string) => void;
 }) {
   const selectedDate = value ? parseEventDate(value) : undefined;
+  const [open, setOpen] = useState(false);
   const calendarLocale = getLocale() === 'nl' ? nl : enUS;
 
   return (
     <>
-      <Popover>
+      <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
           id={id}
           type="button"
@@ -43,7 +45,14 @@ export function EventDatePicker({
           <Calendar
             mode="single"
             selected={selectedDate}
-            onSelect={(date) => onValueChange(date ? formatEventDate(date) : '')}
+            onSelect={(date) => {
+              onValueChange(date ? formatEventDate(date) : '');
+              // One date is all the field takes, so the pick is the end of
+              // the interaction. Left open, the calendar follows the page while
+              // the user scrolls on to the next fields, which Firefox flags as
+              // a scroll-linked positioning effect (BS-14).
+              setOpen(false);
+            }}
             locale={calendarLocale}
           />
         </PopoverContent>
