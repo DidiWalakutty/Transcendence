@@ -637,9 +637,12 @@ installed in Firefox and/or Chrome/Chromium!`, and the browser keeps showing
 
 ### BS-15: Home and `/events` did not fit a 375 px wide screen
 
-- **Status:** Fixed on branch `test/browser-compatibility` (`Navbar.tsx`,
+- **Status:** Fixed on branch `fix/responsive-layout` (`Navbar.tsx`,
   `Hero.tsx`, `routes/events/index.tsx`, `EventListItem.tsx`,
-  `EventFilters.tsx`, `ChatWidget.tsx`).
+  `EventFilters.tsx`, `ChatWidget.tsx`). The fix is kept apart from this
+  branch because it is layout work (subject "Technical Requirements —
+  Frontend"), not a browser difference; this branch still shows the
+  symptom until the two are merged.
 - **Browsers:** all (confirmed 2026-09-18 in Chromium, Firefox and WebKit at
   375 × 667; `/events` also at 768 × 1024). The layout was the same in every
   browser, so this was a responsive-layout problem (subject "Technical

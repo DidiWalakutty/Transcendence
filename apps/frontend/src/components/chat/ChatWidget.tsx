@@ -23,13 +23,7 @@ export function ChatWidget() {
       <div className={open ? 'contents' : 'hidden'}>
         <ChatPanel />
       </div>
-      {/* Toggle button, smaller below `md`: the `size` prop cannot change
-          with the viewport, so the phone sizes are given as classes. */}
-      <Button
-        size="lg"
-        className="h-9 px-4 text-sm md:h-12 md:px-6 md:text-base"
-        onClick={() => setOpen((current) => !current)}
-      >
+      <Button size="lg" onClick={() => setOpen((current) => !current)}>
         {open ? 'Hide chat' : 'Chat'}
       </Button>
     </div>
@@ -55,14 +49,14 @@ function ChatPanel() {
   };
 
   return (
-    <div className="bg-background flex h-[60vh] max-h-[32rem] w-[calc(100vw-2rem)] max-w-96 flex-col rounded-lg border text-sm shadow-lg md:text-base">
-      <div className="flex items-center justify-between border-b px-4 py-3 font-medium">
+    <div className="bg-background flex h-[32rem] w-96 flex-col rounded-lg border shadow-lg">
+      <div className="flex items-center justify-between border-b px-4 py-3 text-base font-medium">
         <span>Chat</span>
-        <span className="text-muted-foreground text-xs md:text-sm">
+        <span className="text-muted-foreground text-sm">
           {connected ? 'online' : 'connecting…'}
         </span>
       </div>
-      <ul className="flex-1 space-y-2 overflow-y-auto px-4 py-3">
+      <ul className="flex-1 space-y-2 overflow-y-auto px-4 py-3 text-base">
         {messages.map((message) => (
           <li key={`${message.from}-${message.at}`}>
             <span className="font-medium">{message.fromName}</span>{' '}
@@ -72,18 +66,13 @@ function ChatPanel() {
       </ul>
       <form onSubmit={submit} className="flex gap-3 border-t p-3">
         <Input
-          className="h-9 text-sm md:h-12 md:text-base"
+          className="h-12 text-base"
           value={text}
           onChange={(event) => setText(event.target.value)}
           placeholder="Say something"
           maxLength={500}
         />
-        <Button
-          type="submit"
-          size="lg"
-          className="h-9 px-4 text-sm md:h-12 md:px-6 md:text-base"
-          disabled={send.isPending}
-        >
+        <Button type="submit" size="lg" disabled={send.isPending}>
           Send
         </Button>
       </form>

@@ -48,20 +48,17 @@ export function Hero() {
         className="
 						relative
 						z-10
-						mx-6
-						pt-16
+						ml-20
+						pt-30
 						max-w-xl
-						md:ml-20
-						md:pt-30
 						text-left
 						text-text-on-image
 						"
       >
         <h1
           className="
-							text-4xl
+							text-5xl
 							font-bold
-							md:text-5xl
 							2xl:text-6xl
 							"
         >
@@ -84,11 +81,9 @@ export function Hero() {
 
         <div
           className="
-						mt-8
+						mt-12
 						flex
-						flex-wrap
 						gap-4
-						md:mt-12
 						"
         >
           <Button size="hero" className="text-white [text-shadow:0_1px_2px_#190b02]">
