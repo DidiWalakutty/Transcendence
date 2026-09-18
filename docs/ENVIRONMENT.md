@@ -15,22 +15,22 @@ Earlier files take precedence when the same variable is defined.
 
 ### Variables
 
-| Variable               | Required                   | Default Development Value                                             | Purpose                                                                                        |
-| ---------------------- | -------------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `NODE_ENV`             | No                         | `development`                                                         | Selects development, production, or test behavior.                                             |
-| `DATABASE_URL`         | Unless `DEV_FIXTURES=true` | `postgres://transcendence:transcendence@localhost:5432/transcendence` | PostgreSQL connection string used by the backend and Drizzle Kit.                              |
-| `PORT`                 | No                         | `3001`                                                                | Backend HTTP port.                                                                             |
-| `REDIS_URL`            | No                         | `redis://localhost:6379`                                              | Redis connection string for backend cache and throttling storage.                              |
-| `BETTER_AUTH_SECRET`   | Yes                        | (see `apps/backend/.env.development`)                                 | Signing secret for Better Auth sessions and tokens. See [Authentication](./AUTHENTICATION.md). |
-| `BETTER_AUTH_URL`      | No                         | `http://localhost:3001`                                               | The backend's own base URL, used by Better Auth to build absolute links.                       |
-| `CACHE_TTL_MS`         | No                         | `30000`                                                               | Default backend cache TTL in milliseconds.                                                     |
-| `THROTTLE_TTL_SECONDS` | No                         | `60`                                                                  | Rate-limit window length in seconds.                                                           |
-| `THROTTLE_LIMIT`       | No                         | `100`                                                                 | Maximum requests allowed during the throttle window.                                           |
-| `DEV_FIXTURES`         | No                         | `false`                                                               | Use in-memory users, cache, and throttling without PostgreSQL or Redis.                        |
-| `CORS_ORIGINS`         | No                         | `http://localhost:3000`                                               | Comma-separated browser origins allowed to call the backend.                                   |
-| `SEED_ADMIN_PASSWORD`  | Yes                        | (see `apps/backend/.env.development`)                                 | Password for the seeded admin user created by `vp run db:seed`.                                |
-| `SEED_DIDI_PASSWORD`   | Yes                        | (see `apps/backend/.env.development`)                                 | Password for a seeded demo user created by `vp run db:seed`.                                   |
-| `SEED_HOMER_PASSWORD`  | Yes                        | (see `apps/backend/.env.development`)                                 | Password for a seeded demo user created by `vp run db:seed`.                                   |
+| Variable               | Required                   | Default Development Value                                             | Purpose                                                                                                                                                                         |
+| ---------------------- | -------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NODE_ENV`             | No                         | `development`                                                         | Selects development, production, or test behavior.                                                                                                                              |
+| `DATABASE_URL`         | Unless `DEV_FIXTURES=true` | `postgres://transcendence:transcendence@localhost:5432/transcendence` | PostgreSQL connection string used by the backend and Drizzle Kit.                                                                                                               |
+| `PORT`                 | No                         | `3001`                                                                | Backend HTTP port.                                                                                                                                                              |
+| `REDIS_URL`            | No                         | `redis://localhost:6379`                                              | Redis connection string for backend cache and throttling storage.                                                                                                               |
+| `BETTER_AUTH_SECRET`   | Yes                        | (see `apps/backend/.env.development`)                                 | Signing secret for Better Auth sessions and tokens. See [Authentication](./AUTHENTICATION.md).                                                                                  |
+| `BETTER_AUTH_URL`      | No                         | `http://localhost:3001`                                               | The backend's public base URL, used by Better Auth to build absolute links and to decide on `Secure` cookies. Behind Caddy this is the HTTPS origin (`https://localhost:3000`). |
+| `CACHE_TTL_MS`         | No                         | `30000`                                                               | Default backend cache TTL in milliseconds.                                                                                                                                      |
+| `THROTTLE_TTL_SECONDS` | No                         | `60`                                                                  | Rate-limit window length in seconds.                                                                                                                                            |
+| `THROTTLE_LIMIT`       | No                         | `100`                                                                 | Maximum requests allowed during the throttle window.                                                                                                                            |
+| `DEV_FIXTURES`         | No                         | `false`                                                               | Use in-memory users, cache, and throttling without PostgreSQL or Redis.                                                                                                         |
+| `CORS_ORIGINS`         | No                         | `http://localhost:3000`                                               | Comma-separated browser origins allowed to call the backend (also Better Auth's trusted origins).                                                                               |
+| `SEED_ADMIN_PASSWORD`  | Yes                        | (see `apps/backend/.env.development`)                                 | Password for the seeded admin user created by `vp run db:seed`.                                                                                                                 |
+| `SEED_DIDI_PASSWORD`   | Yes                        | (see `apps/backend/.env.development`)                                 | Password for a seeded demo user created by `vp run db:seed`.                                                                                                                    |
+| `SEED_HOMER_PASSWORD`  | Yes                        | (see `apps/backend/.env.development`)                                 | Password for a seeded demo user created by `vp run db:seed`.                                                                                                                    |
 
 The committed development fallback lives in:
 
@@ -62,22 +62,40 @@ The frontend uses `@t3-oss/env-core`.
 
 Client-side variables must use the `VITE_` prefix.
 
-| Variable         | Required | Purpose                                             |
-| ---------------- | -------- | --------------------------------------------------- |
-| `VITE_APP_TITLE` | No       | Optional frontend application title.                |
-| `VITE_API_URL`   | No       | Optional frontend API URL.                          |
-| `SERVER_URL`     | No       | Backend URL used by the frontend server during SSR. |
+| Variable         | Required | Purpose                                                                                                                                                                                  |
+| ---------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_APP_TITLE` | No       | Optional frontend application title.                                                                                                                                                     |
+| `VITE_API_URL`   | No       | Backend origin the browser calls. Build-time only. Unset, a production build uses the page's own origin (`/api/...` through Caddy) and the Vite dev server uses `http://localhost:3001`. |
+| `SERVER_URL`     | No       | Backend origin the frontend server calls during SSR. Read at runtime from the process environment (`http://backend:3001` in Compose).                                                    |
+
+How the frontend picks the backend URL lives in one place:
+[`apps/frontend/src/lib/api-base-url.ts`](../apps/frontend/src/lib/api-base-url.ts).
 
 ## Compose Variables
 
 The root `docker-compose.yml` supports these optional overrides:
 
-| Variable            | Default         | Purpose                                     |
-| ------------------- | --------------- | ------------------------------------------- |
-| `POSTGRES_DB`       | `transcendence` | PostgreSQL database name.                   |
-| `POSTGRES_USER`     | `transcendence` | PostgreSQL user.                            |
-| `POSTGRES_PASSWORD` | `transcendence` | PostgreSQL password.                        |
-| `FRONTEND_PORT`     | `3000`          | Host port mapped to the frontend container. |
-| `BACKEND_PORT`      | `3001`          | Host port mapped to the backend container.  |
-| `POSTGRES_PORT`     | `5432`          | Host port mapped to PostgreSQL.             |
-| `REDIS_PORT`        | `6380`          | Host port mapped to Redis.                  |
+| Variable            | Default                  | Purpose                                                                                                                    |
+| ------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `POSTGRES_DB`       | `transcendence`          | PostgreSQL database name.                                                                                                  |
+| `POSTGRES_USER`     | `transcendence`          | PostgreSQL user.                                                                                                           |
+| `POSTGRES_PASSWORD` | `transcendence`          | PostgreSQL password.                                                                                                       |
+| `HTTPS_PORT`        | `3000`                   | Host port Caddy serves HTTPS on.                                                                                           |
+| `HTTP_PORT`         | `3080`                   | Host port Caddy serves the HTTP → HTTPS redirect on.                                                                       |
+| `PUBLIC_ORIGIN`     | `https://localhost:3000` | Origin the app is opened on. Fed to the backend as `BETTER_AUTH_URL` and `CORS_ORIGINS`; its port must match `HTTPS_PORT`. |
+| `SEED_*_PASSWORD`   | (dev values)             | Seed-user passwords the backend requires at startup; see the backend table above.                                          |
+| `POSTGRES_PORT`     | `5432`                   | Host port mapped to PostgreSQL.                                                                                            |
+| `REDIS_PORT`        | `6380`                   | Host port mapped to Redis.                                                                                                 |
+
+The frontend and backend containers publish no host ports; Caddy is the only entry
+point to the application.
+
+The defaults stay above 1024 because rootless Docker (Codam machines) cannot bind
+lower ports. To serve on the standard ports instead, put this in the root `.env` and
+open `https://localhost`:
+
+```text
+HTTP_PORT=80
+HTTPS_PORT=443
+PUBLIC_ORIGIN=https://localhost
+```
