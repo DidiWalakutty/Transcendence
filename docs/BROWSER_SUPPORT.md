@@ -639,7 +639,7 @@ installed in Firefox and/or Chrome/Chromium!`, and the browser keeps showing
 
 - **Status:** Fixed on branch `test/browser-compatibility` (`Navbar.tsx`,
   `Hero.tsx`, `routes/events/index.tsx`, `EventListItem.tsx`,
-  `EventFilters.tsx`).
+  `EventFilters.tsx`, `ChatWidget.tsx`).
 - **Browsers:** all (confirmed 2026-09-18 in Chromium, Firefox and WebKit at
   375 × 667; `/events` also at 768 × 1024). The layout was the same in every
   browser, so this was a responsive-layout problem (subject "Technical
@@ -667,7 +667,11 @@ installed in Firefox and/or Chrome/Chromium!`, and the browser keeps showing
   stack above the list, and the date gets a small orange tile. Each card
   puts the image above the text below `md`. Nothing changes from `lg`
   upwards. No route is wider than its viewport at 375, 768, 1024 or 1280 px
-  (measured with `document.documentElement.scrollWidth`).
+  (measured with `document.documentElement.scrollWidth`). The chat widget
+  (`ChatWidget.tsx`) follows the same rule: below `md` its panel is
+  `100vw - 2rem` wide (at most 24 rem) and 60 % of the viewport high, and its
+  buttons, input and text use the smaller sizes; from `md` upwards it is
+  unchanged.
 
 _Add new entries below as `BS-16`, `BS-17`, … using the template in section 9._
 
