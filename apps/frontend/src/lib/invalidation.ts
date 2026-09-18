@@ -7,6 +7,9 @@ type TrpcLike = {
     getFilteredEvents: { queryKey: (input: object) => readonly unknown[] };
     getFeaturedEvents: { queryKey: () => readonly unknown[] };
   };
+  eventCreation: {
+    getMyEventsWithCounts: { queryKey: () => readonly unknown[] };
+  };
   registrations: {
     getMyRegistration: { queryKey: (input: { id: string }) => readonly unknown[] };
     getAvailableTickets: { queryKey: (input: { id: string }) => readonly unknown[] };
@@ -25,6 +28,9 @@ export async function invalidateEventCaches(
     queryClient.invalidateQueries({ queryKey: trpc.events.getEvents.queryKey() }),
     queryClient.invalidateQueries({ queryKey: trpc.events.getFilteredEvents.queryKey({}) }),
     queryClient.invalidateQueries({ queryKey: trpc.events.getFeaturedEvents.queryKey() }),
+    queryClient.invalidateQueries({
+      queryKey: trpc.eventCreation.getMyEventsWithCounts.queryKey(),
+    }),
   ];
   if (eventId) {
     tasks.push(
@@ -47,10 +53,13 @@ export async function invalidateEventCaches(
 
 export async function invalidateEventsLists(
   queryClient: QueryClient,
-  trpc: Pick<TrpcLike, 'events'>,
+  trpc: Pick<TrpcLike, 'events' | 'eventCreation'>,
 ): Promise<void> {
   await Promise.all([
     queryClient.invalidateQueries({ queryKey: trpc.events.getMyRegisteredEvents.queryKey() }),
     queryClient.invalidateQueries({ queryKey: trpc.events.getEvents.queryKey() }),
+    queryClient.invalidateQueries({
+      queryKey: trpc.eventCreation.getMyEventsWithCounts.queryKey(),
+    }),
   ]);
 }
