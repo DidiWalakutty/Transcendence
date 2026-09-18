@@ -8,19 +8,14 @@ import { getRequestHeader } from '@tanstack/react-start/server';
 
 import type { AppRouter } from '@repo/schemas/trpc';
 import { TRPCProvider } from '@/integrations/trpc/react';
-import { env } from '@/env';
+import { getApiBaseUrl } from '@/lib/api-base-url';
 import * as m from '@/@generated/paraglide/messages';
 
 import { MutationCache } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 function getUrl() {
-  const baseUrl =
-    env.VITE_API_URL ??
-    (typeof window === 'undefined' ? env.SERVER_URL : undefined) ??
-    'http://localhost:3001';
-
-  return `${baseUrl}/api/trpc`;
+  return `${getApiBaseUrl() ?? ''}/api/trpc`;
 }
 
 async function fetchWithCredentials(input: RequestInfo | URL, init?: RequestInit) {
