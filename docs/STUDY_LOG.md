@@ -286,6 +286,20 @@ Still untaught, and deliberately deferred: TLS/cert, mkcert, reverse proxy (Wedn
 already my strongest area), DI, abstract repository, ORM/migration (fold into Mon/Tue as they come
 up).
 
+**ORM / migration — passed**, and the first answer delivered payoff-first unprompted (the third
+method rule working within one exchange of learning it). Beats: every machine lands on the same
+database → tables declared in TypeScript, Drizzle writes the SQL → a migration is one versioned SQL
+file, replayed in order. Payoff is my own commit `42ddc4d`: migrate and seed on `docker compose up`,
+which is what makes the single-command launch real.
+
+One misconception corrected: _why not hand-edit the migration SQL?_ I answered "the file would
+differ per machine" — wrong, it is committed, so it would not. The divergence is **vertical, not
+sideways**: Drizzle generates migrations by **diffing `database.ts` against migration history**, so
+a hand-edited file makes the history describe a database that does not exist, and the next generated
+migration is built on a fiction. **The code lies about the database and nothing tells you** —
+TypeScript cannot catch it, since types are erased and were never connected to the live database.
+"We don't edit the DB by hand" is the rule; this is the reason, and evaluators ask for reasons.
+
 Next, Monday: **cold retention check first** — friends chain, heartbeat, Zod, and above all **DI's
 mechanism** ("the service never knows"), which was left deliberately undrilled on Sunday in favour of
 spacing. If it is still missing, it needs a different approach, not another rep. Then the real-time
