@@ -154,6 +154,41 @@ Two instances would each have their own Map, so a user online on A looks offline
 B, and a restart wipes everyone offline. The `Set` is also the two-tabs answer: closing one tab
 leaves the user online until the set empties.
 
+### Sunday afternoon block — DI and the abstract repository
+
+**Passed:** abstract repository, including the sharp question — _why an `abstract class` and not an
+`interface`?_ Because **interfaces are erased**; an abstract class compiles to a real JS class, so
+Nest has a runtime token to inject against. Same erasure fact that justifies Zod. Erasure is the
+load-bearing fact of this whole stack.
+
+**DI — partial.** Payoff and boundary land; the _mechanism_ keeps slipping. Four reps, each holding
+a different two of the three parts.
+
+- **Payoff:** two run modes, database-backed or in-memory. `DEV_FIXTURES=true` → no Postgres, no
+  Docker.
+- **Boundary (the strong part, most people cannot give it):** it is _not_ the whole app. Swappable
+  via `.register({ persistence })`: `UsersModule`, `EventListingsModule`, `FriendsModule`,
+  `HealthModule`, plus cache (Redis → in-memory) and the throttler. **Always database:**
+  `EventsModule`, `RegistrationsModule` — so in fixtures mode I can browse events but not create one
+  or register for one. Chat and presence do not participate: nothing to persist.
+- **Mechanism (the gap):** `FriendsService`'s constructor asks for the abstract `FriendsRepository`
+  and **never finds out** which implementation arrived. `FriendsModule.register()` maps the token
+  with `{ provide: FriendsRepository, useClass: repository }`; only `app.module.ts` reads
+  `DEV_FIXTURES`. The knowledge lives in one place and the feature code stays ignorant. **Hook: "the
+  service never knows."** `DEV_FIXTURES` is the switch, not the mechanism — I reached for the env
+  var three times running.
+
+**Third method rule, from the pattern across tRPC, DI and friends:** I reliably retain beats 1–2
+(mechanism) and drop beat 3 (the payoff) — the worst half to lose, since beat 3 is the only one the
+evaluator cares about. **Fix: answer payoff first, then mechanism, then the boundary.** It is also
+simply a better answer shape.
+
+**Retention check, 1 h gap:** heartbeat, friends chain and Zod all survived. One slip worth noting:
+said **SSL** when meaning **SSE**. SSL/TLS = encryption and certificates, Caddy's job. SSE =
+Server-Sent Events, the subscription's transport. Unrelated, three shared letters. Also killed the
+phrase "Zod recreates the types" — nothing recreates types at runtime; **Zod replaces types with
+code that checks**.
+
 ## TypeScript for C++ programmers
 
 The mental-model shifts. Read once, refer back when something feels wrong.
@@ -251,6 +286,10 @@ Still untaught, and deliberately deferred: TLS/cert, mkcert, reverse proxy (Wedn
 already my strongest area), DI, abstract repository, ORM/migration (fold into Mon/Tue as they come
 up).
 
-Next, Monday: **start with a cold retention check** on the friends skeleton and the heartbeat
-skeleton — if they have decayed overnight, the method needs another look before adding material.
-Then the real-time session: events + heartbeat, presence, chat.
+Next, Monday: **cold retention check first** — friends chain, heartbeat, Zod, and above all **DI's
+mechanism** ("the service never knows"), which was left deliberately undrilled on Sunday in favour of
+spacing. If it is still missing, it needs a different approach, not another rep. Then the real-time
+session: events + heartbeat, presence, chat.
+
+Remaining untaught: ORM/migration, TLS/cert, mkcert, reverse proxy (the last three on Wednesday with
+infra).
