@@ -61,12 +61,12 @@ Speaking-first. Every sitting, no exceptions:
 
 15 hours. Today is Sunday 2026-09-20.
 
-| When | h   | What                                                                                       | Done        |
-| ---- | --- | ------------------------------------------------------------------------------------------ | ----------- |
-| Sun  | 3   | Vocabulary (the 10 glossary terms) until they can be said cold. Prerequisite for the rest. | [x] partial |
-| Mon  | 4   | Real-time: events + heartbeat, presence, chat. The big one.                                | [ ]         |
-| Tue  | 4   | Friends, avatar upload, and one request traced end to end.                                 | [ ]         |
-| Wed  | 4   | Infra + Playwright + responsive (1.5 h) → full mock (1.5 h) → patch the misses (1 h)       | [ ]         |
+| When | h   | What                                                                                       | Done          |
+| ---- | --- | ------------------------------------------------------------------------------------------ | ------------- |
+| Sun  | 3   | Vocabulary (the 10 glossary terms) until they can be said cold. Prerequisite for the rest. | [x]           |
+| Mon  | 4   | Real-time: events + heartbeat, presence, chat. The big one.                                | [x] chat left |
+| Tue  | 4   | Friends, avatar upload, and one request traced end to end.                                 | [ ]           |
+| Wed  | 4   | Infra + Playwright + responsive (1.5 h) → full mock (1.5 h) → patch the misses (1 h)       | [ ]           |
 
 Monday is load-bearing: the real-time layer is the most mine and the hardest to explain. If it
 overruns, chat compresses into Tuesday and the avatar drops to one sentence.
@@ -84,9 +84,9 @@ Rewrite each in my own words before ticking.
 | 4   | TLS / cert         |                                                                                     | [ ]  |
 | 5   | mkcert             |                                                                                     | [ ]  |
 | 6   | Reverse proxy      |                                                                                     | [ ]  |
-| 7   | DI                 |                                                                                     | [ ]  |
-| 8   | Abstract repo      |                                                                                     | [ ]  |
-| 9   | ORM / migration    |                                                                                     | [ ]  |
+| 7   | DI                 | three places, decreasing knowledge; the service never knows which one arrived       | [x]  |
+| 8   | Abstract repo      | abstract class not interface — interfaces are erased, Nest needs a runtime token    | [x]  |
+| 9   | ORM / migration    | tables in TypeScript, Drizzle writes the SQL; a migration is one versioned change   | [x]  |
 | 10  | Subscription / SSE | opened once, server pushes; heartbeat because silence is ambiguous                  | [x]  |
 
 ### Reference answers
@@ -153,6 +153,102 @@ _One entry per area, in my words, ticked once said cold. Filled Mon–Wed._
 Two instances would each have their own Map, so a user online on A looks offline to anyone served by
 B, and a restart wipes everyone offline. The `Set` is also the two-tabs answer: closing one tab
 leaves the user online until the set empties.
+
+### Monday real-time block — 2026-09-21
+
+**The seven-beat event chain (A creates, B updates), taught and recited:** mutation → write then
+read back → emit → B already listening → yield → `onData` splits create from update/delete →
+re-render.
+
+**Invalidate vs patch — passed after two label slips.** Create refetches because the **server owns
+the sort** (upcoming by date, newest, most popular by registration count) and `EventDto` carries no
+count, so the client cannot compute the slot. Update/delete are patched in place because neither can
+move a row under any of those sorts. Line: **"the message says _when_ to ask, the server decides
+what the list looks like."**
+
+**Read-back — passed after assembling three pieces.** The input lacks id, defaults and normalised
+date → broadcasting it would make the stream disagree with a refetch → **"the input is a request,
+not a record."** Wrong first answer was a concurrency story ("someone else may have changed the
+row"); nobody else has the id yet.
+
+**Presence — passed, including both limits.** Online is **a side effect of an open SSE stream**, not
+a column: `presence.router.ts:35` calls `connect()` on open, line 52 calls `disconnect()` in a
+**`finally`** (the RAII analogue). `Map<userId, Set<connectionId>>` — the `Set` is why closing one
+of two tabs leaves the dot green; a boolean or a single id would flip it offline.
+
+Two limits, own them rather than paper over them:
+
+- **Hard power loss is not detected.** No FIN, no RST, and nothing writes to the presence socket to
+  fail against (presence has **no heartbeat** — that belongs to the events stream). The entry sits
+  in the Map until TCP keepalive gives up; Caddy sets no timeout either.
+- **Single instance only** — the Map is process memory.
+- **One fix covers both:** presence in Redis with a TTL refreshed by a client heartbeat.
+
+**Correction worth keeping: do not fuse the two mechanisms.** The 25 s watchdog is client-side and
+governs the _events_ stream only. Answering "the dot goes out in 25 seconds" invents a timeout that
+does not exist in the code, and the next question is "show me where."
+
+### Layering vocabulary — 2026-09-21
+
+Asked for, taught, not yet drilled. Each layer answers one question: **router** = what arrived and
+who is asking (`ctx`, Zod, middleware — the only layer that knows a network exists); **service** =
+what should happen (no HTTP, no SQL — the layer that would survive a rewrite as a CLI);
+**repository** = how it is stored (the only place Drizzle appears); **module** = who gets what (the
+assembly manifest, no runtime logic). **Placement rule: mentions `ctx` → router; mentions a table →
+repository; neither → service.**
+
+**"Events" means three things in this repo** — say which one or the evaluator loses the thread:
+
+1. the **feature** (`events` table, listings users create), 2. the **subscription bus**
+   (`EventsService.emit/listen`, `EventEmitter2`, pushes to browsers over SSE), 3. **app events**
+   (`app-events.ts`, Node's `process.emit`, server-side side effects — `notification.listener.ts`).
+
+Why two buses: bus 2 is injected, so only Nest-managed classes reach it. `auth/auth.instance.ts` is
+Better Auth's own config object, built outside Nest's container — **not a provider, so there is
+nothing to inject into it** — hence `process.emit`. Same DI idea from the other side.
+
+### Monday retention check — 2026-09-21
+
+Cold, no notes, 24 h gap. **4 of 4 recovered**, but two needed a format change to come out.
+
+**Friends chain — passed on the second route.** Two "describe the defence" reps gave one beat each
+and reintroduced the word _mismatch_. Switching to **"walk the attack"** produced all four steps
+immediately. Correction that stuck: **nothing is compared.** `addFriendSchema` carries only
+`friendId` — there is no "my id" field in the payload to swap, so the evaluator's premise is false.
+The `UPDATE`'s `WHERE` is built from `ctx.user.id` (`drizzle-friends.repository.ts:62`), the row
+`myId=bob AND friendId=alice` was never written, zero rows change, `orNotFound`.
+
+**Heartbeat — passed.** Two fixes: the arrow points **server → client** (it tells the _browser_ the
+stream is alive, not the server that the client is), and the answer has to end at the **watchdog**,
+not at "proof of life". Follow-up ammo held back: why 2.5 and not 1 (one late tick must not kill a
+healthy stream) and that `EVENT_HEARTBEAT_INTERVAL_MS` / `..._STALE_MULTIPLIER` live in
+`packages/schemas/src/events.ts`, so client and server cannot drift.
+
+**Zod — the real misconception, now found.** Asked how an attacker defeats browser-side validation,
+I answered **"you cannot."** That belief is why the server-side answer never had a reason attached.
+**Client-side validation is not bypassed, it is skipped** — `curl` straight at the endpoint, no
+React, no form, no `onSubmit`. General law to keep: **anything that runs on the client is a
+suggestion.** Also, second slip of the same phrase: Zod types do **not** "survive at runtime".
+Nothing about a type survives; a schema is a runtime object with `.parse()`. Zod replaces types with
+code that checks.
+
+**DI mechanism — landed, fifth attempt, cold, without reaching for `DEV_FIXTURES`.** The opening
+trap ("where in `FriendsService` decides?") answered correctly: _there is no code there that
+decides._ New hook that made the mechanism stick — **three places, knowledge decreasing:**
+
+1. `app.module.ts:80` reads `DEV_FIXTURES`. Knows the environment, knows nothing about SQL.
+2. `friends.module.ts` `register(options)` is **told** which persistence and maps the token:
+   `{ provide: FriendsRepository, useClass: repository }`. Does not know why.
+3. `friends.service.ts` asks its constructor for the abstract `FriendsRepository` — **and never
+   finds out which one arrived.**
+
+Step 2 only works because the token is an `abstract class`, not an `interface`: interfaces are
+erased. Erasure now carries three separate answers (Zod, abstract repo, DI) — say that out loud and
+it reads as one system instead of three facts.
+
+**Method rule 4, earned today:** when a beat will not come out as a description, ask for the
+**attack trace** instead — "you are the attacker, defeat this." Knowledge that is present but
+unspeakable in one format comes out immediately in the other.
 
 ### Sunday afternoon block — DI and the abstract repository
 
@@ -251,59 +347,41 @@ first, improvise the sentences around it.** Prose-reproduction reps are abandone
 
 _Rewritten at the end of every sitting: file, line, concept, next step._
 
-2026-09-20, sitting 2. **Passed: term 10 (subscription / SSE), term 2 (`ctx`), and the friends
-authorisation chain** — the last one only after switching from prose reps to beat skeletons (three
-prose reps failed, the first skeleton rep passed). Accepted answer for friends, in my words: "I
-cannot fake ctx data, and if the request is not made to my id there is no way to accept it."
+**2026-09-21, Monday (sitting 3).** Retention check 4/4 after 24 h, then the real-time block.
+Details in the [answer bank](#answer-bank): Monday retention check, Monday real-time block, layering
+vocabulary.
 
-**Two method rules, earned tonight and non-negotiable from here:**
+**Passed today:** friends chain (via attack trace), heartbeat + watchdog, Zod's trust boundary, the
+DI mechanism (fifth attempt, cold), the seven-beat event chain, invalidate-vs-patch, read-back,
+presence including both its limits.
 
-1. **Beats before prose.** Memorise the ordered skeleton, improvise the sentences around it.
-2. **Every answer needs a contrast.** "`ctx` has my id" is inert; "`ctx` has my id _and the input
-   does not_" is an argument. Name the thing it is not.
+**Three method rules confirmed or added:**
 
-Skeletons established so far, to be recited before any prose:
+4. **When a beat will not come out as a description, ask for the attack trace** — "you are the
+   attacker, defeat this." Twice today knowledge that was unspeakable in one format came out
+   immediately in the other.
+5. **Never invent a mechanism that is not in the code.** Two near-misses: a 25 s presence timeout
+   (that watchdog is client-side and belongs to events) and a heartbeat on the presence stream
+   (there is none). An invented detail invites "show me where," and there is no where.
+6. **Own the limitation.** Presence's hard-disconnect blindness and single-instance ceiling are
+   stronger answers than a tidy evasion, because the fix — Redis with a TTL — covers both.
 
-- **Subscription:** opened once → server pushes → silence is ambiguous → heartbeat 10 s → watchdog
-  stale at 25 s (2.5x) → reset + refetch.
-- **`ctx`:** cookie → session lookup → `ctx.user`. The router only _reads_ the third one.
-- **"Can I accept someone else's friend request?":** 1. COOKIE signed · 2. MIDDLEWARE
-  (`ProtectedMiddleware`) · 3. **`ctx`, NOT INPUT** — client sends only `friendId`, `myId` comes
-  from `ctx.user.id`, and the WHERE only matches a row where I am the recipient. Layers 1-2 are
-  _authentication_, layer 3 is _authorisation_.
+**The failure mode to watch: paired nouns swap under load.** Four times today — `create`/`update`,
+`db`/`list`, `input`/`output`, and earlier `SSL`/`SSE`. The concept was right every time; the label
+was wrong. The evaluator cannot see the concept. **Slow down on the one word when reaching for a
+paired term.** Cheapest available fix.
 
-**Sunday finished: 5 passed** — subscription/SSE, `ctx`, the friends authorisation chain, tRPC,
-Zod. All four load-bearing terms for Monday are done. Skeletons for tRPC and Zod:
+**Still open, in priority order:**
 
-- **tRPC:** 1. call a server function · 2. types are generated · 3. **a mismatch breaks the build,
-  not the browser** (REST finds out at runtime, in production; tRPC at compile time, on my machine).
-- **Zod:** 1. runtime validator · 2. **types are erased** — at runtime there is nothing left to
-  check against · 3. one shape, two jobs (validates _and_ types; derived from the Drizzle tables).
-  Contrast: tRPC protects me from my own team renaming a field; Zod protects me from a hostile
-  client. Types cannot stop an attacker — the attacker is not running my build.
+1. **Chat** — the only High-weight area untouched. Do it first tomorrow.
+2. Tuesday as scheduled: friends (done — retest cold only), avatar upload, one request traced end to
+   end.
+3. Wednesday: TLS/cert, mkcert, reverse proxy (terms 4-6, still untaught), infra, Playwright,
+   responsive, then the full mock.
 
-Still untaught, and deliberately deferred: TLS/cert, mkcert, reverse proxy (Wednesday, with infra —
-already my strongest area), DI, abstract repository, ORM/migration (fold into Mon/Tue as they come
-up).
+**Open cold-check list for tomorrow:** the seven-beat chain, invalidate-vs-patch, presence's two
+limits, and the DI mechanism again (it landed once — once is not retention).
 
-**ORM / migration — passed**, and the first answer delivered payoff-first unprompted (the third
-method rule working within one exchange of learning it). Beats: every machine lands on the same
-database → tables declared in TypeScript, Drizzle writes the SQL → a migration is one versioned SQL
-file, replayed in order. Payoff is my own commit `42ddc4d`: migrate and seed on `docker compose up`,
-which is what makes the single-command launch real.
-
-One misconception corrected: _why not hand-edit the migration SQL?_ I answered "the file would
-differ per machine" — wrong, it is committed, so it would not. The divergence is **vertical, not
-sideways**: Drizzle generates migrations by **diffing `database.ts` against migration history**, so
-a hand-edited file makes the history describe a database that does not exist, and the next generated
-migration is built on a fiction. **The code lies about the database and nothing tells you** —
-TypeScript cannot catch it, since types are erased and were never connected to the live database.
-"We don't edit the DB by hand" is the rule; this is the reason, and evaluators ask for reasons.
-
-Next, Monday: **cold retention check first** — friends chain, heartbeat, Zod, and above all **DI's
-mechanism** ("the service never knows"), which was left deliberately undrilled on Sunday in favour of
-spacing. If it is still missing, it needs a different approach, not another rep. Then the real-time
-session: events + heartbeat, presence, chat.
-
-Remaining untaught: ORM/migration, TLS/cert, mkcert, reverse proxy (the last three on Wednesday with
-infra).
+**Doc bug spotted, not yet fixed:** `CLAUDE.md` claims `ProtectedMiddleware` "isn't applied anywhere
+yet". It is applied throughout `friends.router.ts` and on the event mutations. Add to
+[Stale docs](#stale-docs) or fix the file.
