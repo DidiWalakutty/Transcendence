@@ -424,5 +424,13 @@
   "not_found_back_home": "Back to home",
   "hero_image_alt": "People enjoying an event at night",
   "halfway_image_alt": "People enjoying an outdoor event",
-  "two_factor_qr_alt": "Two-factor setup QR code"
+  "two_factor_qr_alt": "Two-factor setup QR code",
+  "profile_change_password_title": "Change password",
+  "profile_old_password_label": "Current password",
+  "profile_new_password_label": "New password",
+  "profile_confirm_password_label": "Confirm new password",
+  "profile_password_submit_button": "Update password",
+  "profile_password_success": "Your password has been changed successfully.",
+  "profile_password_error_match": "New passwords do not match",
+  "profile_password_error_invalid": "Invalid current password"
 }

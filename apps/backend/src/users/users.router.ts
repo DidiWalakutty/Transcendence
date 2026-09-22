@@ -10,6 +10,7 @@ import {
 } from 'nestjs-trpc';
 
 import { z } from 'zod';
+import { Inject } from '@nestjs/common';
 import {
   adminUpdateUserSchema,
   createUserSchema,
@@ -32,6 +33,8 @@ import { ProtectedMiddleware } from '../auth/protected.middleware';
 import { handleUserEmailConflict, forbiddenError, orNotFound } from '../trpc/trpc.errors';
 import { hasAdminRole } from '../auth/roles';
 import type { OptionalAuthCtx, ProtectedCtx } from '../auth/auth.types';
+import { AUTH } from '../auth/auth.constants';
+import type { Auth } from '../auth/auth.instance';
 import { UsersEvents } from './users.events';
 import { UsersService } from './users.service';
 import { forwardSubscription } from '../trpc/subscription.helpers';
@@ -49,7 +52,39 @@ export class UsersRouter {
   constructor(
     private readonly usersEvents: UsersEvents,
     private readonly usersService: UsersService,
+    @Inject(AUTH) private readonly auth: Auth,
   ) {}
+
+  @UseMiddlewares(ProtectedMiddleware)
+  @Mutation({
+    input: z.object({
+      oldPassword: z.string().min(1),
+      newPassword: z.string().min(8).max(100),
+      confirmPassword: z.string().min(1),
+    }),
+    output: z.object({ success: z.boolean() }),
+  })
+  async changePassword(@Input() input: any, @Ctx() ctx: any) {
+    if (input.newPassword !== input.confirmPassword) {
+      throw forbiddenError('passwords_do_not_match');
+    }
+
+    try {
+      // Direct, safe execution through Better Auth API
+      await this.auth.api.changePassword({
+        headers:
+          ctx.req.headers instanceof Headers ? ctx.req.headers : new Headers(ctx.req.headers),
+        body: {
+          currentPassword: input.oldPassword,
+          newPassword: input.newPassword,
+        },
+      });
+      return { success: true };
+    } catch {
+      // Pass precise message down to match frontend expectation
+      throw forbiddenError('invalid_current_password');
+    }
+  }
 
   @UseMiddlewares(AdminMiddleware)
   @Mutation({ input: createUserSchema, output: userSchema })

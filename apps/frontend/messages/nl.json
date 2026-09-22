@@ -424,5 +424,13 @@
   "not_found_back_home": "Terug naar home",
   "hero_image_alt": "Mensen die 's avonds van een evenement genieten",
   "halfway_image_alt": "Mensen die van een buitenevenement genieten",
-  "two_factor_qr_alt": "QR-code voor tweestapsverificatie"
+  "two_factor_qr_alt": "QR-code voor tweestapsverificatie",
+  "profile_change_password_title": "Wachtwoord wijzigen",
+  "profile_old_password_label": "Huidig wachtwoord",
+  "profile_new_password_label": "Nieuw wachtwoord",
+  "profile_confirm_password_label": "Bevestig nieuw wachtwoord",
+  "profile_password_submit_button": "Wachtwoord bijwerken",
+  "profile_password_success": "Je wachtwoord is succesvol gewijzigd.",
+  "profile_password_error_match": "Nieuwe wachtwoorden komen niet overeen",
+  "profile_password_error_invalid": "Huidig wachtwoord is onjuist"
 }

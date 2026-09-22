@@ -10,7 +10,7 @@ describe('UsersRouter', () => {
     const usersService = {
       create: vi.fn().mockRejectedValue(new UserEmailAlreadyExistsError()),
     } as unknown as UsersService;
-    const router = new UsersRouter({} as UsersEvents, usersService);
+    const router = new UsersRouter({} as UsersEvents, usersService, {} as any);
 
     await expect(
       router.createUser({
@@ -27,7 +27,7 @@ describe('UsersRouter', () => {
     const usersService = {
       delete: vi.fn().mockResolvedValue(undefined),
     } as unknown as UsersService;
-    const router = new UsersRouter({} as UsersEvents, usersService);
+    const router = new UsersRouter({} as UsersEvents, usersService, {} as any);
 
     await expect(
       router.deleteUser({
@@ -39,7 +39,7 @@ describe('UsersRouter', () => {
   });
 
   it('prevents a regular user from updating another profile', async () => {
-    const router = new UsersRouter({} as UsersEvents, {} as UsersService);
+    const router = new UsersRouter({} as UsersEvents, {} as UsersService, {} as any);
 
     await expect(
       router.updateUser(
