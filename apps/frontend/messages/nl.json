@@ -86,7 +86,7 @@
   "contact_subtitle": "Heb je vragen, feedback of hulp nodig? Neem contact op met het Eventra team.",
   "contact_project_support_title": "Project Ondersteuning",
   "contact_project_support_description": "Voor vragen, feedback, of problemen met betrekking tot Eventra, neem contact op met het projectteam via het e-mailadres hieronder.",
-  "contact_project_support_email": "Email: eventra.team@voorbeeld.com",
+  "contact_project_support_email": "Email: admin.eventra@gmail.com",
   "contact_privacy_requests_title": "Privacy Verzoeken",
   "contact_privacy_requests_description": "Als je vragen hebt over je persoonlijke informatie, accountgegevens, of privacy-gerelateerde verzoeken, neem dan contact op met het Eventra team.",
   "placeholder_name": "je naam",
@@ -258,7 +258,7 @@
   "privacy_policy_8": "8. Wijzigingen in deze privacyverklaring",
   "privacy_policy_8_text": "Wij kunnen deze privacyverklaring aanpassen wanneer het platform verandert. Bijgewerkte versies worden beschikbaar gesteld via de applicatie.",
   "privacy_policy_9": "9. Contact",
-  "privacy_policy_9_text": "Heb je vragen over deze privacyverklaring? Neem dan contact op met het Eventra-projectteam via de officiële communicatiekanalen van het project.",
+  "privacy_policy_9_text": "Heb je vragen over deze privacyverklaring? Neem dan contact op met het Eventra-projectteam via email: admin.eventra@gmail.com.",
   "terms_title": "Gebruiksvoorwaarden",
   "terms_date": "Ingangsdatum: 22 juli 2026",
   "terms_1": "1. Introductie",
@@ -284,7 +284,7 @@
   "terms_9": "9. Wijzigingen in deze gebruiksvoorwaarden",
   "terms_9_text": "Deze gebruiksvoorwaarden kunnen worden bijgewerkt wanneer Eventra verandert of wanneer nieuwe vereisten van toepassing zijn. Door het platform na dergelijke wijzigingen te blijven gebruiken, ga je akkoord met de herziene voorwaarden.",
   "terms_10": "10. Contact",
-  "terms_10_text": "Heb je vragen over deze gebruiksvoorwaarden? Neem dan contact op met het Eventra-projectteam via de officiële communicatiekanalen van het project.",
+  "terms_10_text": "Heb je vragen over deze gebruiksvoorwaarden? Neem dan contact op met het Eventra-projectteam via email: admin.eventra@gmail.com.",
   "event_month": [
     {
       "declarations": ["input date", "local formattedMonth = date: datetime month=short"],

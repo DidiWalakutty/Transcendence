@@ -86,7 +86,7 @@
   "contact_subtitle": "Have questions, feedback, or need support? Get in touch with the Eventra team.",
   "contact_project_support_title": "Project Support",
   "contact_project_support_description": "For questions, feedback, or issues related to Eventra, please contact the project team using the email address below.",
-  "contact_project_support_email": "Email: eventra.team@example.com",
+  "contact_project_support_email": "Email: admin.eventra@gmail.com",
   "contact_privacy_requests_title": "Privacy Requests",
   "contact_privacy_requests_description": "If you have questions about your personal information, account data, or privacy-related requests, please contact the Eventra team.",
   "placeholder_name": "your name",
@@ -258,7 +258,7 @@
   "privacy_policy_8": "8. Changes to This Policy",
   "privacy_policy_8_text": "We may update this Privacy Policy when the platform changes. Updated versions will be made available through the application.",
   "privacy_policy_9": "9. Contact",
-  "privacy_policy_9_text": "For questions regarding this Privacy Policy, please contact the Eventra project team through the official project communication channels.",
+  "privacy_policy_9_text": "For questions regarding this Privacy Policy, please contact the Eventra project team through email: admin.eventra@gmail.com.",
   "terms_title": "Terms of Service",
   "terms_date": "Effective date: July 22, 2026",
   "terms_1": "1. Introduction",
@@ -284,7 +284,7 @@
   "terms_9": "9. Changes to These Terms",
   "terms_9_text": "These Terms of Service may be updated when Eventra changes or when new requirements apply. Continued use of the platform after updates means that you accept the revised terms.",
   "terms_10": "10. Contact",
-  "terms_10_text": "For questions regarding these Terms of Service, please contact the Eventra project team through the official project communication channels.",
+  "terms_10_text": "For questions regarding these Terms of Service, please contact the Eventra project team through email: admin.eventra@gmail.com.",
   "event_month": [
     {
       "declarations": ["input date", "local formattedMonth = date: datetime month=short"],
