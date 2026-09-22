@@ -55,6 +55,7 @@ export function CategorySection() {
 							justify-items-center
 						"
         >
+          {/* Category Cards */}
           {CATEGORY_IDS.map((id) => (
             <CategoryCard
               key={id}
