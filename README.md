@@ -328,11 +328,11 @@ Open the application at `https://localhost:3000`. E-mails sent by the app land i
 
 Demo accounts (the passwords are the `SEED_*` values, see [Environment](./docs/ENVIRONMENT.md)):
 
-| Account       | E-mail                      | Default password    |
-| ------------- | --------------------------- | ------------------- |
-| Administrator | `admin@transcendence.local` | `Transcendence123!` |
-| User          | `didi@example.com`          | `Qwerty123!`        |
-| User          | `homer@example.com`         | `Simpsons123!`      |
+| Account       | E-mail                    | Default password    |
+| ------------- | ------------------------- | ------------------- |
+| Administrator | `admin.eventra@gmail.com` | `Transcendence123!` |
+| User          | `didi@example.com`        | `Qwerty123!`        |
+| User          | `homer@example.com`       | `Simpsons123!`      |
 
 Caddy terminates TLS and is the only service published on the host. It forwards `/api/*` to the backend and everything else to the frontend, so the browser never talks plain HTTP. The frontend and backend containers are reachable only inside the Compose network, at `http://frontend:3000` and `http://backend:3001`. Plain `http://localhost` redirects to HTTPS.
 

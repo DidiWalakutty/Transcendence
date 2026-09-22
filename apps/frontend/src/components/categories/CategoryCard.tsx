@@ -1,12 +1,7 @@
 import { Link } from '@tanstack/react-router';
 
 type CategoryCardProps = {
-  category: string;
-
-  // TODO:
-  //  Icons are currently passed from CategorySection.
-  // Once category.config.ts has been created, CategoryCard should use the categoryKey to
-  // determine which icon to render
+  category?: string;
   icon: React.ReactNode;
   title: string;
 };
@@ -15,11 +10,7 @@ export function CategoryCard({ icon, title, category }: CategoryCardProps) {
   return (
     <Link
       to="/events"
-      // TODO:
-      // Once filtering has been implemented on the events page,
-      // read this search parameter and automatically select the matching category filter.
-      search={{ category }}
-
+      search={category ? { category } : undefined}
       className="
 						group
 						flex

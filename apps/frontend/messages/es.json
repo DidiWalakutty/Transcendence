@@ -86,7 +86,7 @@
   "contact_subtitle": "¿Tienes preguntas, comentarios o necesitas ayuda? Ponte en contacto con el equipo de Eventra.",
   "contact_project_support_title": "Soporte del proyecto",
   "contact_project_support_description": "Si tienes preguntas, comentarios o problemas relacionados con Eventra, contacta con el equipo del proyecto en la dirección de correo siguiente.",
-  "contact_project_support_email": "Correo electrónico: eventra.team@example.com",
+  "contact_project_support_email": "Correo electrónico: admin.eventra@gmail.com",
   "contact_privacy_requests_title": "Solicitudes de privacidad",
   "contact_privacy_requests_description": "Si tienes preguntas sobre tu información personal, los datos de tu cuenta o solicitudes relacionadas con la privacidad, contacta con el equipo de Eventra.",
   "placeholder_name": "tu nombre",
@@ -257,7 +257,7 @@
   "privacy_policy_8": "8. Cambios en esta política",
   "privacy_policy_8_text": "Podemos actualizar esta Política de privacidad cuando la plataforma cambie. Las versiones actualizadas estarán disponibles a través de la aplicación.",
   "privacy_policy_9": "9. Contacto",
-  "privacy_policy_9_text": "Si tienes preguntas sobre esta Política de privacidad, contacta con el equipo del proyecto Eventra a través de los canales oficiales de comunicación del proyecto.",
+  "privacy_policy_9_text": "Si tienes preguntas sobre esta Política de privacidad, contacta con el equipo del proyecto Eventra a través del correo electrónico: admin.eventra@gmail.com.",
   "terms_title": "Términos del servicio",
   "terms_date": "Fecha de entrada en vigor: 22 de julio de 2026",
   "terms_1": "1. Introducción",
@@ -283,7 +283,7 @@
   "terms_9": "9. Cambios en estos términos",
   "terms_9_text": "Estos Términos del servicio pueden actualizarse cuando Eventra cambie o cuando se apliquen nuevos requisitos. Seguir usando la plataforma después de las actualizaciones significa que aceptas los términos revisados.",
   "terms_10": "10. Contacto",
-  "terms_10_text": "Si tienes preguntas sobre estos Términos del servicio, contacta con el equipo del proyecto Eventra a través de los canales oficiales de comunicación del proyecto.",
+  "terms_10_text": "Si tienes preguntas sobre estos Términos del servicio, contacta con el equipo del proyecto Eventra a través del correo electrónico: admin.eventra@gmail.com.",
   "event_month": [
     {
       "declarations": ["input date", "local formattedMonth = date: datetime month=short"],

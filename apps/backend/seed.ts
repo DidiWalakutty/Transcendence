@@ -64,7 +64,7 @@ const auth = betterAuth({
 const users = [
   {
     name: 'Admin User',
-    email: 'admin@transcendence.local',
+    email: 'admin.eventra@gmail.com',
     username: 'admin',
     password: environment.SEED_ADMIN_PASSWORD!,
     role: 'admin',
@@ -124,7 +124,7 @@ async function seed() {
   }
 
   const organizer = await db.query.users.findFirst({
-    where: eq(schema.users.email, 'admin@transcendence.local'),
+    where: eq(schema.users.email, 'admin.eventra@gmail.com'),
   });
 
   if (!organizer) {

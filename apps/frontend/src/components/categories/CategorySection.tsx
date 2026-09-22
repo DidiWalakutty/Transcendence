@@ -55,6 +55,7 @@ export function CategorySection() {
 							justify-items-center
 						"
         >
+          {/* Category Cards */}
           {CATEGORY_IDS.map((id) => (
             <CategoryCard
               key={id}
@@ -64,8 +65,8 @@ export function CategorySection() {
             />
           ))}
 
+          {/* All Events Card */}
           <CategoryCard
-            category="all"
             icon={<InfinityIcon className="size-8 text-brand-primary-text 2xl:size-10" />}
             title={m.button_all_events()}
           />
