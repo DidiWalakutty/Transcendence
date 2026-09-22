@@ -2,6 +2,7 @@ import { Module, Global } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { NotificationService } from './notification.service';
 import { NotificationListener } from './notification.listener';
+import { NotificationScheduler } from './notification.scheduler';
 import { DatabaseModule } from '../database/database.module';
 
 @Global()
@@ -26,7 +27,7 @@ import { DatabaseModule } from '../database/database.module';
       },
     }),
   ],
-  providers: [NotificationService, NotificationListener],
+  providers: [NotificationService, NotificationListener, NotificationScheduler],
   exports: [NotificationService],
 })
 export class NotificationModule {}

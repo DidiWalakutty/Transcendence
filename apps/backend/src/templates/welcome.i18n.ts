@@ -22,7 +22,7 @@ export const welcomeTranslations: Record<'en' | 'nl' | 'es' | 'ru' | 'ro', Welco
       greeting: 'Welcome aboard, {userName}! (NL Placeholder)',
       description:
         'Thank you for creating an account on Eventra. We are thrilled to have you with us as we organize incredible events together. (NL Placeholder)',
-      buttonLabel: 'Go to Dashboard (NL Placeholder)',
+      buttonLabel: 'Explore Events (NL Placeholder)',
       footerNotice:
         'This is an automated system message. Please do not reply directly to this inbox address. (NL Placeholder)',
     },
@@ -31,7 +31,7 @@ export const welcomeTranslations: Record<'en' | 'nl' | 'es' | 'ru' | 'ro', Welco
       greeting: '¡Te damos la bienvenida a bordo, {userName}!',
       description:
         'Tu nueva cuenta ha sido verificada y activada correctamente. Ya tienes todo listo para sumergirte en experiencias inolvidables o para gestionar tus propios eventos de forma sencilla.',
-      buttonLabel: 'Explorar Eventos',
+      buttonLabel: 'Explorar eventos',
       footerNotice:
         'Mensaje generado automáticamente por Eventra. Si no has registrado cuenta alguna, puedes ignorar este correo de forma segura.',
     },
@@ -40,7 +40,7 @@ export const welcomeTranslations: Record<'en' | 'nl' | 'es' | 'ru' | 'ro', Welco
       greeting: 'Welcome aboard, {userName}! (RU Placeholder)',
       description:
         'Thank you for creating an account on Eventra. We are thrilled to have you with us as we organize incredible events together. (RU Placeholder)',
-      buttonLabel: 'Go to Dashboard (RU Placeholder)',
+      buttonLabel: 'Explore Events (RU Placeholder)',
       footerNotice:
         'This is an automated system message. Please do not reply directly to this inbox address. (RU Placeholder)',
     },
@@ -49,7 +49,7 @@ export const welcomeTranslations: Record<'en' | 'nl' | 'es' | 'ru' | 'ro', Welco
       greeting: 'Welcome aboard, {userName}! (RO Placeholder)',
       description:
         'Thank you for creating an account on Eventra. We are thrilled to have you with us as we organize incredible events together. (RO Placeholder)',
-      buttonLabel: 'Go to Dashboard (RO Placeholder)',
+      buttonLabel: 'Explore Events (RO Placeholder)',
       footerNotice:
         'This is an automated system message. Please do not reply directly to this inbox address. (RO Placeholder)',
     },
