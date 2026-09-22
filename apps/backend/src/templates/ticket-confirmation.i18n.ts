@@ -45,15 +45,15 @@ export const ticketConfirmationTranslations: Record<
   },
   es: {
     previewText: '¡Tu plaza está asegurada! Aquí tienes la confirmación de tu entrada.',
-    subjectText: 'Entrada Confirmada:',
+    subjectText: 'Entrada confirmada:',
     greeting: '¡Tu entrada está asegurada, {userName}!',
     description:
       'Haz un hueco en tu agenda y toma nota: ¡Tu inscripción se ha procesado correctamente! Ya formas parte de la lista oficial de asistentes para este próximo espectáculo.',
-    detailsHeader: 'Resumen de la Reserva',
+    detailsHeader: 'Resumen de la reserva',
     labelEvent: 'Espectáculo',
-    labelDateTime: 'Fecha y Hora',
+    labelDateTime: 'Fecha y hora',
     labelLocation: 'Ubicación',
-    buttonLabel: 'Ver Mis Entradas',
+    buttonLabel: 'Ver mis entradas',
     footerNotice:
       'Mensaje generado automáticamente por Eventra. Si no has registrado cuenta alguna, puedes ignorar este correo de forma segura.',
   },

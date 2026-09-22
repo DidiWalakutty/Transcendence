@@ -11,6 +11,8 @@ import {
   eventCancellationTranslations,
   EventModificationEmail,
   eventModificationTranslations,
+  FriendlyReminderEmail,
+  friendlyReminderTranslations,
   pickDictionary,
 } from '../templates/index';
 
@@ -171,6 +173,39 @@ export class NotificationService {
       html: htmlContent,
       successLog: `Event modification email (${lang.toUpperCase()}) sent to ${toEmail}`,
       failureLog: `Failed to execute modification notification routine for ${toEmail}`,
+    });
+  }
+
+  /**
+   * Compiles and dispatches a friendly 24-hour pre-event reminder notice
+   */
+  async sendFriendlyReminderEmail(
+    toEmail: string,
+    userName: string,
+    eventTitle: string,
+    eventDate: string,
+    eventTime: string,
+    eventLocation: string,
+    eventAddress: string,
+    lang: NotificationLanguage = 'en',
+  ): Promise<void> {
+    const selectedDictionary = this.pick(friendlyReminderTranslations, lang);
+    const htmlContent = FriendlyReminderEmail({
+      userName,
+      eventTitle,
+      eventDate,
+      eventTime,
+      eventLocation,
+      eventAddress,
+      lang,
+      dictionary: selectedDictionary,
+    });
+    await this.dispatch({
+      to: toEmail,
+      subject: `${selectedDictionary.subjectText} ${eventTitle}`,
+      html: htmlContent,
+      successLog: `Friendly 24h reminder email (${lang.toUpperCase()}) successfully sent to ${toEmail}`,
+      failureLog: `Failed to execute 24h friendly reminder notification routine for ${toEmail}`,
     });
   }
 }
