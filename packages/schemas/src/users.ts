@@ -8,6 +8,7 @@ import {
   nameField,
   NO_AVATAR,
   EVENT_PLACEHOLDER,
+  passwordField,
 } from '@repo/schemas/fields';
 import { subscriptionSchema } from '@repo/schemas/subscription';
 
@@ -115,3 +116,5 @@ export type CreateUserDto = z.infer<typeof createUserSchema>;
 export type UpdateUserDto = z.infer<typeof updateUserSchema>;
 export type AdminUpdateUserDto = z.infer<typeof adminUpdateUserSchema>;
 export type DeleteUserDto = z.infer<typeof deleteUserSchema>;
+
+export { passwordField };

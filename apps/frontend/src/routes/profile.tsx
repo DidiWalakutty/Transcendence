@@ -18,7 +18,7 @@ import { AvatarPicker } from '@/components/AvatarPicker';
 import { NO_AVATAR, UserAvatar } from '@/components/UserAvatar';
 import { StatusDot } from '@/components/ui/status-dot';
 import { getLanguageName } from '@/lib/i18n';
-import { normalizeUserLanguage, getUserLabel } from '@repo/schemas/users';
+import { normalizeUserLanguage, getUserLabel, passwordField } from '@repo/schemas/users';
 import { requireAuth } from '@/lib/route-guards';
 import { toast } from 'sonner';
 import {
@@ -84,8 +84,6 @@ function ProfilePage() {
   const [aboutMe, setAboutMe] = useState('');
   const [location, setLocation] = useState('');
   const [language, setLanguage] = useState('');
-  // Seeded from the loader-prefetched user so the avatar renders server-side
-  // instead of flashing initials until the sync effect runs.
   const [avatar, setAvatar] = useState<string>(user?.avatar ?? NO_AVATAR);
 
   // Sync form state when user loads
@@ -153,16 +151,12 @@ function ProfilePage() {
 
   const friends = friendsQuery.data ?? [];
   const pending = pendingQuery.data ?? [];
-  // Derived directly from this tab's own subscription connection state rather
-  // than round-tripping through the server, since that round trip otherwise
-  // races the connection itself and can show "Offline" right after login.
   const isSelfOnline = usePresenceConnection(!!user);
   const onlineIds = usePresence(friends.map((f) => f.id));
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    // A rejected mutation is shown through the mutation's error state and the
-    // global toast; it must not escape as an uncaught promise in the console.
     await updateUser
       .mutateAsync({
         id: user.id,
@@ -176,10 +170,6 @@ function ProfilePage() {
       .catch(() => undefined);
   };
 
-  // The language picker applies immediately: it persists a minimal payload so
-  // unsaved edits to the other profile fields are left untouched, then
-  // switches the UI locale. Without this, picking a language only staged form
-  // state and a refresh reverted it.
   const handleLanguageChange = (next: string) => {
     if (!next || !user || next === language) return;
     const previous = language;
@@ -197,8 +187,67 @@ function ProfilePage() {
     );
   };
 
-  const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
 
+  const changePasswordMutation = useMutation(
+    trpc.users.changePassword.mutationOptions({
+      onSuccess: () => {
+        setPasswordSuccess(true);
+        setPasswordError(null);
+        setOldPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        toast.success(m.profile_password_success());
+        setTimeout(() => setPasswordSuccess(false), 5000);
+      },
+      onError: (err: any) => {
+        setPasswordSuccess(false);
+
+        if (err.message && err.message.startsWith('[')) {
+          setPasswordError(m.create_account_password_info());
+          return;
+        }
+
+        if (err.message === 'invalid_current_password') {
+          setPasswordError(m.profile_password_error_invalid());
+        } else if (err.message === 'passwords_do_not_match') {
+          setPasswordError(m.profile_password_error_match());
+        } else {
+          setPasswordError(err.message || 'An unexpected error occurred');
+        }
+      },
+    }),
+  );
+
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const validationCheck = passwordField.safeParse(newPassword);
+    if (!validationCheck.success) {
+      setPasswordError(m.create_account_password_info());
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError(m.profile_password_error_match());
+      return;
+    }
+    setPasswordError(null);
+
+    await changePasswordMutation
+      .mutateAsync({
+        oldPassword,
+        newPassword,
+        confirmPassword,
+      })
+      .catch(() => undefined);
+  };
+
+  const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
   const eligibleQuery = useQuery(trpc.friends.getEligibleUsers.queryOptions({}));
 
   const addFriend = useMutation(
@@ -223,6 +272,7 @@ function ProfilePage() {
     const candidate = eligibleById.get(id);
     return candidate ? getUserLabel(candidate) : id;
   }
+
   if (!session) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -254,7 +304,7 @@ function ProfilePage() {
       <h1 className="mb-8 text-3xl font-bold">{m.profile_title()}</h1>
 
       <div className="grid items-start gap-8 lg:grid-cols-[320px_minmax(0,1fr)]">
-        {/* Identity */}
+        {/* Identity Column */}
         <Card className="lg:sticky lg:top-24">
           <CardHeader className="flex flex-col items-center gap-4 text-center">
             <AvatarPicker
@@ -270,7 +320,6 @@ function ProfilePage() {
             </p>
             <p className="text-sm text-muted-foreground">{user?.email}</p>
           </CardHeader>
-
           <CardContent className="flex flex-col gap-3">
             <Link
               to="/my-events"
@@ -278,7 +327,6 @@ function ProfilePage() {
             >
               {m.button_my_events()}
             </Link>
-
             <Link
               to="/my-tickets"
               className={buttonVariants({ variant: 'outline', className: 'w-full' })}
@@ -288,7 +336,7 @@ function ProfilePage() {
           </CardContent>
         </Card>
 
-        {/* Details */}
+        {/* Details Column Wrapper */}
         <div className="flex min-w-0 flex-col gap-8">
           <Card>
             <CardContent>
@@ -388,7 +436,89 @@ function ProfilePage() {
               </form>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>{m.profile_change_password_title()}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handlePasswordSubmit} className="flex flex-col gap-6">
+                {/* Aligned Current Password Box Row */}
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="grid gap-2">
+                    <Label htmlFor="oldPassword">{m.profile_old_password_label()}</Label>
+                    <Input
+                      id="oldPassword"
+                      type="password"
+                      placeholder="********"
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="hidden sm:block" />
+                </div>
+
+                {/* New Password & Confirmation Input Split Row */}
+                <div className="grid gap-6 sm:grid-cols-2">
+                  <div className="grid gap-2">
+                    <Label htmlFor="newPassword">{m.profile_new_password_label()}</Label>
+                    <Input
+                      id="newPassword"
+                      type="password"
+                      placeholder="********"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="confirmPassword">{m.profile_confirm_password_label()}</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="********"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {passwordError && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{passwordError}</AlertDescription>
+                  </Alert>
+                )}
+
+                {passwordSuccess && (
+                  <Alert>
+                    <AlertDescription>{m.profile_password_success()}</AlertDescription>
+                  </Alert>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={changePasswordMutation.isPending}
+                  className="sm:self-start"
+                >
+                  {changePasswordMutation.isPending ? (
+                    <>
+                      <Spinner /> {m.profile_saving()}
+                    </>
+                  ) : (
+                    m.profile_password_submit_button()
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Two-Factor Settings Module Wrapper */}
           <TwoFactorSettings />
+
+          {/* Friends Tracking Section */}
           <Card>
             <CardHeader>
               <CardTitle>{m.profile_friends_title()}</CardTitle>
@@ -440,6 +570,7 @@ function ProfilePage() {
                   </Alert>
                 )}
               </div>
+
               {pending.length > 0 && (
                 <div className="flex flex-col gap-3">
                   <h3 className="text-sm font-medium text-muted-foreground">
@@ -469,6 +600,9 @@ function ProfilePage() {
               )}
 
               <div className="flex flex-col gap-3">
+                <h3 className="text-sm font-medium text-muted-foreground">
+                  {m.profile_friends_title()}
+                </h3>
                 {friends.length === 0 ? (
                   <p className="text-sm text-muted-foreground">{m.profile_friends_empty()}</p>
                 ) : (

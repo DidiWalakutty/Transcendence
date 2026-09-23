@@ -52,8 +52,10 @@ export function createAuth(db: Database, config: ConfigService) {
     emailAndPassword: {
       enabled: true,
       requireEmailVerification: false,
+      expiresIn: 900, // 15-minute token
       sendResetPassword: async ({ user, url }) => {
         logger.log(`Password reset link for ${user.email}: ${url}`);
+        emitAppEvent(APP_EVENTS.passwordResetRequested, { user, url });
       },
     },
     plugins: [

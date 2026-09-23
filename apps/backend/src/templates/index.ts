@@ -8,6 +8,8 @@ export * from './event-modification';
 export * from './event-modification.i18n';
 export * from './friendly-reminder';
 export * from './friendly-reminder.i18n';
+export * from './password-reset.i18n';
+export * from './password-reset';
 export * from './theme.tokens';
 export * from './email.types';
 export * from './email-layout';
