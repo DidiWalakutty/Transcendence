@@ -17,6 +17,7 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
   private readonly ticketRef = (payload: any) => this.handleTicketRegistration(payload);
   private readonly cancelRef = (payload: any) => this.handleEventBroadcast(payload, 'cancel');
   private readonly modifyRef = (payload: any) => this.handleEventBroadcast(payload, 'modify');
+  private readonly resetRef = (payload: any) => this.handlePasswordResetRequested(payload);
 
   constructor(
     private readonly notificationService: NotificationService,
@@ -28,6 +29,7 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
     onAppEvent(APP_EVENTS.registrationCreated, this.ticketRef);
     onAppEvent(APP_EVENTS.eventCancelled, this.cancelRef);
     onAppEvent(APP_EVENTS.eventModified, this.modifyRef);
+    onAppEvent(APP_EVENTS.passwordResetRequested, this.resetRef);
   }
 
   onModuleDestroy() {
@@ -35,6 +37,7 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
     offAppEvent(APP_EVENTS.registrationCreated, this.ticketRef);
     offAppEvent(APP_EVENTS.eventCancelled, this.cancelRef);
     offAppEvent(APP_EVENTS.eventModified, this.modifyRef);
+    offAppEvent(APP_EVENTS.passwordResetRequested, this.resetRef);
   }
 
   private async getNotificationUser(userId: string) {
@@ -54,6 +57,23 @@ export class NotificationListener implements OnModuleInit, OnModuleDestroy {
   private formatEventDateTime(dateTime: Date): { dateString: string; timeString: string } {
     const { date, time } = fromEventDateTime(dateTime);
     return { dateString: date, timeString: time };
+  }
+
+  private async handlePasswordResetRequested(payload: { user: any; url: string }) {
+    const { user, url } = payload;
+    this.logger.log(`Intercepted password recovery token event for user: ${user.email}`);
+
+    try {
+      const userLang = resolveUserLocale((user as { preferedLanguage?: unknown }).preferedLanguage);
+      const userName = resolveUserDisplayName(user);
+
+      await this.notificationService.sendPasswordResetEmail(user.email, userName, url, userLang);
+    } catch (error) {
+      this.logger.error(
+        `Failed to execute password notification dispatch routine for ${user.email}`,
+        error instanceof Error ? error.stack : error,
+      );
+    }
   }
 
   private async handleUserCreated(user: UserDto) {

@@ -3,6 +3,7 @@ export const APP_EVENTS = {
   registrationCreated: 'registration.created',
   eventModified: 'event.modified',
   eventCancelled: 'event.cancelled',
+  passwordResetRequested: 'password.reset.requested',
 } as const;
 
 export type AppEventName = (typeof APP_EVENTS)[keyof typeof APP_EVENTS];
