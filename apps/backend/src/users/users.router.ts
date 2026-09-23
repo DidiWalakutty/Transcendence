@@ -70,7 +70,7 @@ export class UsersRouter {
     }
 
     try {
-      // Direct, safe execution through Better Auth API
+      // execution through Better Auth API
       await this.auth.api.changePassword({
         headers:
           ctx.req.headers instanceof Headers ? ctx.req.headers : new Headers(ctx.req.headers),
@@ -81,7 +81,6 @@ export class UsersRouter {
       });
       return { success: true };
     } catch {
-      // Pass precise message down to match frontend expectation
       throw forbiddenError('invalid_current_password');
     }
   }

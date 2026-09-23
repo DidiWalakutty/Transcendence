@@ -429,7 +429,7 @@
   "profile_old_password_label": "Current password",
   "profile_new_password_label": "New password",
   "profile_confirm_password_label": "Confirm new password",
-  "profile_password_submit_button": "Update password",
+  "profile_password_submit_button": "Update Password",
   "profile_password_success": "Your password has been changed successfully.",
   "profile_password_error_match": "New passwords do not match",
   "profile_password_error_invalid": "Invalid current password"
