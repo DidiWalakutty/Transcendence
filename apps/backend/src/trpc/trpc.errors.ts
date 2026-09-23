@@ -1,5 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import { UserEmailAlreadyExistsError } from '../users/errors/user-email-already-exists.error';
+import { UserUsernameAlreadyExistsError } from '../users/errors/user-username-already-exists.error';
 
 export function notFoundError(message: string) {
   return new TRPCError({
@@ -45,17 +46,21 @@ export function assertFound<T>(
   }
 }
 
-export function mapUserEmailConflict(error: unknown): never {
-  if (error instanceof UserEmailAlreadyExistsError) {
+export function mapUserConflict(error: unknown): never {
+  if (
+    error instanceof UserEmailAlreadyExistsError ||
+    error instanceof UserUsernameAlreadyExistsError
+  ) {
     throw conflictError(error.message);
   }
+
   throw error;
 }
 
-export async function handleUserEmailConflict<T>(fn: () => Promise<T>): Promise<T> {
+export async function handleUserConflict<T>(fn: () => Promise<T>): Promise<T> {
   try {
     return await fn();
   } catch (error) {
-    return mapUserEmailConflict(error);
+    return mapUserConflict(error);
   }
 }
