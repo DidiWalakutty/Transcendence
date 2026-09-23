@@ -4,9 +4,10 @@ import { users } from '@repo/schemas/database';
 import type { AdminUpdateUserDto, CreateUserDto, UpdateUserDto } from '@repo/schemas/users';
 
 import { DATABASE } from '../../database/database.constants';
-import { isUniqueViolation } from '../../database/database.errors';
+import { getDatabaseConstraint, isUniqueViolation } from '../../database/database.errors';
 import type { Database } from '../../database/database.types';
 import { UserEmailAlreadyExistsError } from '../errors/user-email-already-exists.error';
+import { UserUsernameAlreadyExistsError } from '../errors/user-username-already-exists.error';
 import { UsersRepository } from './users.repository';
 
 @Injectable()
@@ -64,7 +65,15 @@ export class DrizzleUsersRepository extends UsersRepository {
 
   private rethrowKnownError(error: unknown): never {
     if (isUniqueViolation(error)) {
-      throw new UserEmailAlreadyExistsError();
+      const constraint = getDatabaseConstraint(error);
+
+      if (constraint === 'users_email_unique') {
+        throw new UserEmailAlreadyExistsError();
+      }
+
+      if (constraint === 'users_username_unique') {
+        throw new UserUsernameAlreadyExistsError();
+      }
     }
 
     throw error;
