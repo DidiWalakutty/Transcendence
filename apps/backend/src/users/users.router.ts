@@ -30,7 +30,7 @@ import {
 } from '@repo/schemas/users';
 import { AdminMiddleware } from '../auth/admin.middleware';
 import { ProtectedMiddleware } from '../auth/protected.middleware';
-import { handleUserEmailConflict, forbiddenError, orNotFound } from '../trpc/trpc.errors';
+import { handleUserConflict, forbiddenError, orNotFound } from '../trpc/trpc.errors';
 import { hasAdminRole } from '../auth/roles';
 import type { OptionalAuthCtx, ProtectedCtx } from '../auth/auth.types';
 import { AUTH } from '../auth/auth.constants';
@@ -43,7 +43,7 @@ async function updateUserOrThrow(
   usersService: UsersService,
   input: UpdateUserDto | AdminUpdateUserDto,
 ) {
-  const user = await handleUserEmailConflict(() => usersService.update(input));
+  const user = await handleUserConflict(() => usersService.update(input));
   return orNotFound(user, 'User not found');
 }
 
@@ -88,7 +88,7 @@ export class UsersRouter {
   @UseMiddlewares(AdminMiddleware)
   @Mutation({ input: createUserSchema, output: userSchema })
   async createUser(@Input() input: CreateUserDto) {
-    return handleUserEmailConflict(() => this.usersService.create(input));
+    return handleUserConflict(() => this.usersService.create(input));
   }
 
   @UseMiddlewares(ProtectedMiddleware)
