@@ -54,11 +54,23 @@ function mutationToastMessages(key: readonly unknown[] | undefined) {
   return { loading: m.toast_working(), success: m.toast_complete() };
 }
 
-function mutationErrorMessage(error: unknown): string {
+function mutationErrorMessage(error: unknown): string | null {
   if (!(error instanceof Error)) return String(error);
+
   if (error.message.includes('Unable to transform response from server')) {
     return m.toast_server_response_error();
   }
+
+  // Validation errors are shown next to the relevant form field.
+  try {
+    const issues = JSON.parse(error.message);
+    if (Array.isArray(issues)) {
+      return null;
+    }
+  } catch {
+    // Not a validation error.
+  }
+
   return error.message;
 }
 
@@ -96,7 +108,14 @@ export function getContext() {
         mutationToastIds.delete(mutation);
       },
       onError: (error, _variables, _context, mutation) => {
-        toast.error(mutationErrorMessage(error), { id: mutationToastIds.get(mutation) });
+        const message = mutationErrorMessage(error);
+
+        if (message) {
+          toast.error(message, { id: mutationToastIds.get(mutation) });
+        } else {
+          toast.dismiss(mutationToastIds.get(mutation));
+        }
+
         mutationToastIds.delete(mutation);
       },
     }),
