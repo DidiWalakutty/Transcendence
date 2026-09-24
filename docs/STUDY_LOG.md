@@ -293,6 +293,13 @@ opposite of the question); the **server** yields, B receives. Why-refetch-on-cre
 _the message does not include how many people registered, so the browser does not have the number
 to sort by._
 
+**Chat — taught today, five beats recited first try:** send → stamp → emit → yield → append. Three
+differences from events: no database (history gone on refresh), append not refetch (arrival order
+is the sort, so the client can own it), login required for both send and listen. Impersonation
+attack, in my words: _Zod only takes the text; the router fills the sender from ctx, derived from
+the attacker's own cookie._ Add the ending: **it posts under the attacker's name, no error.** Same
+trap as friends again: I said "fails when ctx does not match" — **nothing is compared.**
+
 ## TypeScript for C++ programmers
 
 The mental-model shifts. Read once, refer back when something feels wrong.
@@ -355,41 +362,19 @@ first, improvise the sentences around it.** Prose-reproduction reps are abandone
 
 _Rewritten at the end of every sitting: file, line, concept, next step._
 
-**2026-09-21, Monday (sitting 3).** Retention check 4/4 after 24 h, then the real-time block.
-Details in the [answer bank](#answer-bank): Monday retention check, Monday real-time block, layering
-vocabulary.
+**2026-09-24, Thursday (sitting 4). Eval 1 is tomorrow, Friday 2026-09-25.** Tue/Wed were not
+studied. Details in the [answer bank](#answer-bank), Thursday entry.
 
-**Passed today:** friends chain (via attack trace), heartbeat + watchdog, Zod's trust boundary, the
-DI mechanism (fifth attempt, cold), the seven-beat event chain, invalidate-vs-patch, read-back,
-presence including both its limits.
+**Passed today:** seven-beat events chain (labels then sentences), why-refetch-on-create with the
+concrete fact (no registration count in the message), chat's five beats, chat impersonation attack.
 
-**Three method rules confirmed or added:**
+**Stopped at:** the chat limitation question, unanswered — _"I open chat after ten minutes of
+talking; what do I see, and how would you fix it?"_ Answer shape: nothing, it is not stored; a
+messages table plus load the last N on open. Also single-instance (in-process bus), same ceiling as
+presence; Redis pub/sub fixes it.
 
-4. **When a beat will not come out as a description, ask for the attack trace** — "you are the
-   attacker, defeat this." Twice today knowledge that was unspeakable in one format came out
-   immediately in the other.
-5. **Never invent a mechanism that is not in the code.** Two near-misses: a 25 s presence timeout
-   (that watchdog is client-side and belongs to events) and a heartbeat on the presence stream
-   (there is none). An invented detail invites "show me where," and there is no where.
-6. **Own the limitation.** Presence's hard-disconnect blindness and single-instance ceiling are
-   stronger answers than a tidy evasion, because the fix — Redis with a TTL — covers both.
+**Remaining for today, in order:** chat limitation → presence + heartbeat cold → friends cold →
+TLS / mkcert / Caddy one sentence each → short mock. Avatar and Playwright: one sentence each.
 
-**The failure mode to watch: paired nouns swap under load.** Four times today — `create`/`update`,
-`db`/`list`, `input`/`output`, and earlier `SSL`/`SSE`. The concept was right every time; the label
-was wrong. The evaluator cannot see the concept. **Slow down on the one word when reaching for a
-paired term.** Cheapest available fix.
-
-**Still open, in priority order:**
-
-1. **Chat** — the only High-weight area untouched. Do it first tomorrow.
-2. Tuesday as scheduled: friends (done — retest cold only), avatar upload, one request traced end to
-   end.
-3. Wednesday: TLS/cert, mkcert, reverse proxy (terms 4-6, still untaught), infra, Playwright,
-   responsive, then the full mock.
-
-**Open cold-check list for tomorrow:** the seven-beat chain, invalidate-vs-patch, presence's two
-limits, and the DI mechanism again (it landed once — once is not retention).
-
-**Doc bug spotted, not yet fixed:** `CLAUDE.md` claims `ProtectedMiddleware` "isn't applied anywhere
-yet". It is applied throughout `friends.router.ts` and on the event mutations. Add to
-[Stale docs](#stale-docs) or fix the file.
+**Watch:** "refetch the **list**", never "the page"; the **server** yields; **nothing is compared**
+(friends and chat both); paired nouns swap under load — slow down on the one word.
