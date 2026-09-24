@@ -285,6 +285,14 @@ Server-Sent Events, the subscription's transport. Unrelated, three shared letter
 phrase "Zod recreates the types" — nothing recreates types at runtime; **Zod replaces types with
 code that checks**.
 
+### Thursday — 2026-09-24, eval tomorrow
+
+Seven-beat chain had decayed after 3 days; relearned from the skeleton, labels recited in order
+first try, then as sentences. Fixes: **"refetch the list", never "the page"** (a page reload is the
+opposite of the question); the **server** yields, B receives. Why-refetch-on-create, in my words:
+_the message does not include how many people registered, so the browser does not have the number
+to sort by._
+
 ## TypeScript for C++ programmers
 
 The mental-model shifts. Read once, refer back when something feels wrong.
