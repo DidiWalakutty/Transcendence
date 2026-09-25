@@ -8,6 +8,7 @@ describe('DrizzleUsersRepository', () => {
   it('translates PostgreSQL uniqueness failures into a domain error', async () => {
     const returning = vi.fn().mockRejectedValue({
       code: '23505',
+      constraint: 'users_email_unique',
     });
     const database = {
       insert: vi.fn(() => ({
