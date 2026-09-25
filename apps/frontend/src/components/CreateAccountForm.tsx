@@ -1,7 +1,7 @@
 import { Link, useNavigate, useRouter } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
-import { signUpSchema } from '@repo/schemas/auth';
+import { makeSignUpSchema } from '@repo/schemas/auth';
 
 import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
@@ -55,7 +55,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<'div'>)
       confirmPassword: '',
     },
     validators: {
-      onChange: signUpSchema,
+      onChange: makeSignUpSchema(locale),
     },
     onSubmit: async ({ value }) => {
       const { confirmPassword: _confirmPassword, ...values } = value;

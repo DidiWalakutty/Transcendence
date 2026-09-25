@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
-import { forgotPasswordSchema } from '@repo/schemas/auth';
+import { makeForgotPasswordSchema } from '@repo/schemas/auth';
 import { cn } from '@/lib/utils';
 import { authClient } from '@/lib/auth-client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import * as m from '@/@generated/paraglide/messages';
-import { localizeHref } from '@/@generated/paraglide/runtime';
+import { getLocale, localizeHref } from '@/@generated/paraglide/runtime';
 
 export function ForgotPassword({ className, ...props }: React.ComponentProps<'div'>) {
   const requestReset = useMutation({
@@ -35,7 +35,7 @@ export function ForgotPassword({ className, ...props }: React.ComponentProps<'di
       email: '',
     },
     validators: {
-      onChange: forgotPasswordSchema,
+      onChange: makeForgotPasswordSchema(getLocale()),
     },
     onSubmit: async ({ value }) => {
       // A rejected mutation is shown through the mutation's error state and the

@@ -18,7 +18,8 @@ import { AvatarPicker } from '@/components/AvatarPicker';
 import { NO_AVATAR, UserAvatar } from '@/components/UserAvatar';
 import { StatusDot } from '@/components/ui/status-dot';
 import { getLanguageName } from '@/lib/i18n';
-import { normalizeUserLanguage, getUserLabel, passwordField } from '@repo/schemas/users';
+import { normalizeUserLanguage, getUserLabel } from '@repo/schemas/users';
+import { makePasswordField } from '@repo/schemas/fields';
 import { requireAuth } from '@/lib/route-guards';
 import { toast } from 'sonner';
 import {
@@ -283,7 +284,7 @@ function ProfilePage() {
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const validationCheck = passwordField.safeParse(newPassword);
+    const validationCheck = makePasswordField(getLocale()).safeParse(newPassword);
     if (!validationCheck.success) {
       setPasswordError(m.create_account_password_info());
       return;

@@ -1,37 +1,59 @@
 import { z } from 'zod';
-import { emailField, nameField, passwordField, usernameField } from '@repo/schemas/fields';
+import {
+  getValidationMessage,
+  makeEmailField,
+  makeNameField,
+  makePasswordField,
+  makeUsernameField,
+} from '@repo/schemas/fields';
 
-export const signInSchema = z.object({
-  email: emailField,
-  password: z.string().min(1, 'Password is required'),
-});
-
-export const signUpSchema = z
-  .object({
-    name: nameField,
-    email: emailField,
-    username: usernameField,
-    password: passwordField,
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
+export function makeSignInSchema(locale: string = 'en') {
+  return z.object({
+    email: makeEmailField(locale),
+    password: z.string().min(1, getValidationMessage(locale, 'passwordRequired')),
   });
+}
 
-export const forgotPasswordSchema = z.object({
-  email: emailField,
-});
+export const signInSchema = makeSignInSchema();
 
-export const resetPasswordSchema = z
-  .object({
-    newPassword: passwordField,
-    confirmPassword: z.string().min(1, 'Please confirm your password'),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: 'Passwords do not match',
-    path: ['confirmPassword'],
+export function makeSignUpSchema(locale: string = 'en') {
+  return z
+    .object({
+      name: makeNameField(locale),
+      email: makeEmailField(locale),
+      username: makeUsernameField(locale),
+      password: makePasswordField(locale),
+      confirmPassword: z.string().min(1, getValidationMessage(locale, 'confirmPassword')),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: getValidationMessage(locale, 'passwordsDoNotMatch'),
+      path: ['confirmPassword'],
+    });
+}
+
+export const signUpSchema = makeSignUpSchema();
+
+export function makeForgotPasswordSchema(locale: string = 'en') {
+  return z.object({
+    email: makeEmailField(locale),
   });
+}
+
+export const forgotPasswordSchema = makeForgotPasswordSchema();
+
+export function makeResetPasswordSchema(locale: string = 'en') {
+  return z
+    .object({
+      newPassword: makePasswordField(locale),
+      confirmPassword: z.string().min(1, getValidationMessage(locale, 'confirmPassword')),
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: getValidationMessage(locale, 'passwordsDoNotMatch'),
+      path: ['confirmPassword'],
+    });
+}
+
+export const resetPasswordSchema = makeResetPasswordSchema();
 
 export const verifyTotpSchema = z.object({
   code: z.string().length(6),

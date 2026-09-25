@@ -1,9 +1,10 @@
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
-import { resetPasswordSchema } from '@repo/schemas/auth';
+import { makeResetPasswordSchema } from '@repo/schemas/auth';
 import { cn } from '@/lib/utils';
 import { authClient } from '@/lib/auth-client';
+import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -44,7 +45,7 @@ export function ResetPasswordForm({
       confirmPassword: '',
     },
     validators: {
-      onChange: resetPasswordSchema,
+      onChange: makeResetPasswordSchema(getLocale()),
     },
     onSubmit: async ({ value }) => {
       // A rejected mutation is shown through the mutation's error state and the

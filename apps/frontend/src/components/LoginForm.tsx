@@ -1,8 +1,9 @@
 import { Link, useNavigate, useRouter } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
-import { signInSchema } from '@repo/schemas/auth';
+import { makeSignInSchema } from '@repo/schemas/auth';
 
+import { getLocale } from '@/@generated/paraglide/runtime';
 import * as m from '@/@generated/paraglide/messages';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -49,7 +50,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<'div'>) 
       password: '',
     },
     validators: {
-      onChange: signInSchema,
+      onChange: makeSignInSchema(getLocale()),
     },
     onSubmit: async ({ value }) => {
       // A rejected mutation is shown through the mutation's error state and the
