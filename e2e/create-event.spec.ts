@@ -16,7 +16,7 @@ test('create an event with an image', async ({ page, console: recorder }) => {
   // Image: the file input is visually hidden but still receives files.
   await page
     .locator('input[type="file"]')
-    .setInputFiles(path.join(__dirname, 'fixtures', 'event.png'));
+    .setInputFiles(path.join(import.meta.dirname, 'fixtures', 'event.png'));
   await expect(page.locator('img[src^="data:image/"]')).toBeVisible();
 
   const title = `E2E event ${Date.now()}`;

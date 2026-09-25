@@ -1,13 +1,23 @@
 import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { betterAuth } from 'better-auth';
+import { APIError } from 'better-auth/api';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { admin, username, twoFactor } from 'better-auth/plugins';
 import { users, sessions, accounts, verifications, twoFactors } from '@repo/schemas/database';
+import { nameField } from '@repo/schemas/fields';
 import type { Database } from '../database/database.types';
 import { APP_EVENTS, emitAppEvent } from '../events/app-events';
 
 const logger = new Logger('Auth');
+
+function validateAuthName(name: unknown, required: boolean) {
+  if (name === undefined && !required) return;
+
+  if (!nameField.safeParse(name).success) {
+    throw new APIError('BAD_REQUEST', { message: 'invalid_name' });
+  }
+}
 
 export function createAuth(db: Database, config: ConfigService) {
   return betterAuth({
@@ -51,6 +61,8 @@ export function createAuth(db: Database, config: ConfigService) {
     },
     emailAndPassword: {
       enabled: true,
+      minPasswordLength: 8,
+      maxPasswordLength: 128,
       requireEmailVerification: false,
       expiresIn: 900, // 15-minute token
       sendResetPassword: async ({ user, url }) => {
@@ -60,7 +72,10 @@ export function createAuth(db: Database, config: ConfigService) {
     },
     plugins: [
       admin(),
-      username(),
+      username({
+        minUsernameLength: 3,
+        maxUsernameLength: 30,
+      }),
       twoFactor({
         issuer: 'ft_transcendence',
       }),
@@ -68,8 +83,18 @@ export function createAuth(db: Database, config: ConfigService) {
     databaseHooks: {
       user: {
         create: {
+          before: async (user) => {
+            validateAuthName(user.name, true);
+            return { data: user };
+          },
           after: async (user) => {
             emitAppEvent(APP_EVENTS.userCreated, user);
+          },
+        },
+        update: {
+          before: async (user) => {
+            validateAuthName(user.name, false);
+            return { data: user };
           },
         },
       },
