@@ -126,6 +126,8 @@ describe('EventsService', () => {
         | 'workshops'
       )[],
       organizerId: storedEvent.organizerId!,
+      contactName: storedEvent.contactName ?? undefined,
+      contactEmail: storedEvent.contactEmail ?? undefined,
     });
     await service.update({
       ...storedEvent,
@@ -138,6 +140,8 @@ describe('EventsService', () => {
         | 'talks'
         | 'workshops'
       )[],
+      contactName: storedEvent.contactName ?? undefined,
+      contactEmail: storedEvent.contactEmail ?? undefined,
     });
     await service.delete(storedEvent.id);
     await collect;

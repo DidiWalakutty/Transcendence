@@ -23,6 +23,7 @@ import {
   type EventCategory,
 } from '@repo/schemas/events';
 import { EVENT_PLACEHOLDER } from '@repo/schemas/users';
+import { authClient } from '@/lib/auth-client';
 
 // The sentinel, not the bundled asset URL: the picker shows the asset for it
 // (eventImageSource), while the stored value stays independent of the build's
@@ -52,6 +53,12 @@ export function EventForm() {
   const [address, setAddress] = useState('');
   const [time, setTime] = useState('');
   const [capacity, setCapacity] = useState('');
+  const [hasContactInfo, setHasContactInfo] = useState(false);
+  const [contactName, setContactName] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+
+  const session = authClient.useSession();
+  const currentUser = session.data?.user;
 
   const handleSubmit = async (event: React.SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -81,6 +88,8 @@ export function EventForm() {
       time,
       image: selectedImage,
       maxCapacity: Number(capacity),
+      contactName: hasContactInfo ? contactName.trim() || undefined : undefined,
+      contactEmail: hasContactInfo ? contactEmail.trim() || undefined : undefined,
     });
     if (!parsed.success) {
       return;
@@ -299,6 +308,59 @@ export function EventForm() {
                 <p className="text-sm text-red-500">{m.create_event_capacity_required()}</p>
               )}
             </div>
+
+            {/* Contact Toggle Checkbox */}
+            <div className="flex items-center space-x-2 rounded-lg border border-input p-4 bg-white mt-4">
+              <input
+                type="checkbox"
+                id="hasContactInfo"
+                checked={hasContactInfo}
+                onChange={(e) => {
+                  const isChecked = e.target.checked;
+                  setHasContactInfo(isChecked);
+                  if (isChecked) {
+                    // Instantly pre-populate fields with active user's credentials
+                    setContactName(currentUser?.name || '');
+                    setContactEmail(currentUser?.email || '');
+                  } else {
+                    // Wipe values completely clean if unchecked
+                    setContactName('');
+                    setContactEmail('');
+                  }
+                }}
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <label htmlFor="hasContactInfo" className="text-sm font-medium text-gray-700">
+                Include organizer contact information for this event
+              </label>
+            </div>
+
+            {/* Slide-out Field Containers */}
+            {hasContactInfo && (
+              <div className="grid gap-6 md:grid-cols-2 mt-4 p-4 rounded-lg bg-gray-50 border border-input">
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="contactName">Contact Name</Label>
+                  <Input
+                    id="contactName"
+                    value={contactName}
+                    onChange={(e) => setContactName(e.target.value)}
+                    placeholder="Enter contact name"
+                    className="bg-white"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="contactEmail">Contact Email</Label>
+                  <Input
+                    id="contactEmail"
+                    type="email"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    placeholder="organizer@example.com"
+                    className="bg-white"
+                  />
+                </div>
+              </div>
+            )}
           </div>
           {/* Submit */}
           <div className="flex justify-center lg:col-span-2">

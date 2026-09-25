@@ -99,6 +99,8 @@ export const events = pgTable('events', {
   dateTime: timestamp('date_time').notNull(),
   maxCapacity: integer('max_capacity').notNull(),
   category: text('category').array().notNull(),
+  contactName: text('contact_name'),
+  contactEmail: text('contact_email'),
 });
 
 export const friendshipStatus = pgEnum('friendship_status', ['pending', 'accepted']);

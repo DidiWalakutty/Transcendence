@@ -162,6 +162,32 @@ function EventDetailPage() {
                 {event?.address}, {event?.location}
               </p>
             </section>
+
+            {/* Event Contact Information Panel */}
+            {(event?.contactName || event?.contactEmail) && (
+              <section className="mt-8 border-t border-gray-100 pt-6">
+                <h2 className="text-2xl font-bold text-text-primary">Event Contact</h2>
+                <div className="mt-2 flex flex-col gap-1 text-lg text-text-muted">
+                  {event.contactName && (
+                    <p>
+                      <span className="font-semibold text-text-primary">Name:</span>{' '}
+                      {event.contactName}
+                    </p>
+                  )}
+                  {event.contactEmail && (
+                    <p>
+                      <span className="font-semibold text-text-primary">Email:</span>{' '}
+                      <a
+                        href={`mailto:${event.contactEmail}`}
+                        className="font-medium text-primary underline hover:opacity-80"
+                      >
+                        {event.contactEmail}
+                      </a>
+                    </p>
+                  )}
+                </div>
+              </section>
+            )}
           </div>
 
           {/* Tickets */}
