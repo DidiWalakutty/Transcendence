@@ -9,6 +9,7 @@ const validationMessages = {
     nameMin: 'Name must be at least 3 characters',
     usernameMin: 'Username must be at least 3 characters',
     passwordMin: 'Password must be at least 8 characters',
+    passwordMax: 'Password must be at most 128 characters',
     imageTooLarge: 'Image is too large',
     imageInvalid: 'Image must be an uploaded picture',
     passwordsDoNotMatch: 'Passwords do not match',
@@ -20,6 +21,7 @@ const validationMessages = {
     nameMin: 'Naam moet minimaal 3 tekens lang zijn',
     usernameMin: 'Gebruikersnaam moet minimaal 3 tekens lang zijn',
     passwordMin: 'Wachtwoord moet minimaal 8 tekens lang zijn',
+    passwordMax: 'Wachtwoord mag maximaal 128 tekens lang zijn',
     imageTooLarge: 'Afbeelding is te groot',
     imageInvalid: 'Afbeelding moet een geüploade foto zijn',
     passwordsDoNotMatch: 'Wachtwoorden komen niet overeen',
@@ -31,6 +33,7 @@ const validationMessages = {
     nameMin: 'El nombre debe tener al menos 3 caracteres',
     usernameMin: 'El nombre de usuario debe tener al menos 3 caracteres',
     passwordMin: 'La contraseña debe tener al menos 8 caracteres',
+    passwordMax: 'La contraseña debe tener como máximo 128 caracteres',
     imageTooLarge: 'La imagen es demasiado grande',
     imageInvalid: 'La imagen debe ser una foto subida',
     passwordsDoNotMatch: 'Las contraseñas no coinciden',
@@ -63,7 +66,10 @@ export function makeUsernameField(locale: string = 'en') {
 }
 
 export function makePasswordField(locale: string = 'en') {
-  return z.string().min(8, getValidationMessage(locale, 'passwordMin'));
+  return z
+    .string()
+    .min(8, getValidationMessage(locale, 'passwordMin'))
+    .max(128, getValidationMessage(locale, 'passwordMax'));
 }
 
 export const emailField = makeEmailField();

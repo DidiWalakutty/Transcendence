@@ -95,6 +95,13 @@ The `username` plugin (`better-auth/plugins`) is what makes the existing `userna
 as a login credential: it validates the sign-up input, normalizes it for uniqueness, and adds the
 `displayUsername` column to preserve the original casing shown in the UI.
 
+Authentication constraints are enforced on both sides: the shared schemas validate the forms in
+the browser, while Better Auth explicitly enforces an 8-128 character password and a 3-30
+character username on the server. Better Auth database hooks also validate the shared 3-50
+character `nameField` before creating or updating a user. Password confirmation and localized
+validation messages remain client concerns; requests that bypass the browser still receive
+server-side validation errors.
+
 The `admin` plugin is the only source of truth for application roles. Its default `user` and
 `admin` roles are used by the navigation, admin route guard, and backend authorization.
 
