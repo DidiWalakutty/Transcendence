@@ -462,8 +462,8 @@ export function eventFormToUpdateInput(
     time: formString(data, 'time'),
     image: formString(data, 'image'),
     maxCapacity: Number(data.get('maxCapacity')),
-    contactName: contactNameStr || undefined,
-    contactEmail: contactEmailStr || undefined,
+    contactName: contactNameStr || null,
+    contactEmail: contactEmailStr || null,
   };
 }
 

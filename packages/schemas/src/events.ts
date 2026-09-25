@@ -104,8 +104,8 @@ const eventInputSchema = z.object({
   image: imageField(EVENT_PLACEHOLDER, MAX_EVENT_IMAGE_BYTES),
   description: z.string().trim().min(1).max(EVENT_DESCRIPTION_MAX),
   maxCapacity: z.number().int().positive().max(EVENT_CAPACITY_MAX),
-  contactName: z.string().trim().max(120).optional(),
-  contactEmail: z.string().trim().email().or(z.literal('')).optional(),
+  contactName: z.string().trim().max(120).nullable().optional(),
+  contactEmail: z.string().trim().email().or(z.literal('')).nullable().optional(),
 });
 
 // Creating a new event - used as mutation input. Only a new event has to be
