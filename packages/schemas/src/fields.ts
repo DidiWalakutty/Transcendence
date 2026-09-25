@@ -7,7 +7,9 @@ const validationMessages = {
   en: {
     invalidEmail: 'Must be a valid email address',
     nameMin: 'Name must be at least 3 characters',
+    nameMax: 'Name must be at most 50 characters',
     usernameMin: 'Username must be at least 3 characters',
+    usernameMax: 'Username must be at most 30 characters',
     passwordMin: 'Password must be at least 8 characters',
     passwordMax: 'Password must be at most 128 characters',
     imageTooLarge: 'Image is too large',
@@ -19,7 +21,9 @@ const validationMessages = {
   nl: {
     invalidEmail: 'Voer een geldig e-mailadres in',
     nameMin: 'Naam moet minimaal 3 tekens lang zijn',
+    nameMax: 'Naam mag maximaal 50 tekens lang zijn',
     usernameMin: 'Gebruikersnaam moet minimaal 3 tekens lang zijn',
+    usernameMax: 'Gebruikersnaam mag maximaal 30 tekens lang zijn',
     passwordMin: 'Wachtwoord moet minimaal 8 tekens lang zijn',
     passwordMax: 'Wachtwoord mag maximaal 128 tekens lang zijn',
     imageTooLarge: 'Afbeelding is te groot',
@@ -31,7 +35,9 @@ const validationMessages = {
   es: {
     invalidEmail: 'Debe ser una dirección de correo válida',
     nameMin: 'El nombre debe tener al menos 3 caracteres',
+    nameMax: 'El nombre debe tener como máximo 50 caracteres',
     usernameMin: 'El nombre de usuario debe tener al menos 3 caracteres',
+    usernameMax: 'El nombre de usuario debe tener como máximo 30 caracteres',
     passwordMin: 'La contraseña debe tener al menos 8 caracteres',
     passwordMax: 'La contraseña debe tener como máximo 128 caracteres',
     imageTooLarge: 'La imagen es demasiado grande',
@@ -58,11 +64,17 @@ export function makeEmailField(locale: string = 'en') {
 }
 
 export function makeNameField(locale: string = 'en') {
-  return z.string().min(3, getValidationMessage(locale, 'nameMin')).max(50);
+  return z
+    .string()
+    .min(3, getValidationMessage(locale, 'nameMin'))
+    .max(50, getValidationMessage(locale, 'nameMax'));
 }
 
 export function makeUsernameField(locale: string = 'en') {
-  return z.string().min(3, getValidationMessage(locale, 'usernameMin')).max(30);
+  return z
+    .string()
+    .min(3, getValidationMessage(locale, 'usernameMin'))
+    .max(30, getValidationMessage(locale, 'usernameMax'));
 }
 
 export function makePasswordField(locale: string = 'en') {
