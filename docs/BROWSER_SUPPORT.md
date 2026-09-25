@@ -17,11 +17,11 @@ Chrome and Edge share one rendering engine (Blink), Firefox has its own (Gecko).
 Firefox is the second engine, Edge the second product. Safari is not supported:
 no Mac is available to test it.
 
-| Browser         | Engine | Role               | Minimum\* | Version tested | OS  | Date | Result |
-| --------------- | ------ | ------------------ | --------- | -------------- | --- | ---- | ------ |
-| Google Chrome   | Blink  | Mandatory          | 111       |                |     |      |        |
-| Mozilla Firefox | Gecko  | Module — browser 1 | 128       |                |     |      |        |
-| Microsoft Edge  | Blink  | Module — browser 2 | 111       |                |     |      |        |
+| Browser         | Engine | Role               | Minimum\* | Version tested |
+| --------------- | ------ | ------------------ | --------- | -------------- |
+| Google Chrome   | Blink  | Mandatory          | 111       | 153            |
+| Mozilla Firefox | Gecko  | Module — browser 1 | 128       | 156            |
+| Microsoft Edge  | Blink  | Module — browser 2 | 111       | 153            |
 
 \* Tailwind CSS v4 needs `@property`, `color-mix()` and cascade layers; older
 browsers render unstyled (BS-2). Versions: `chrome://version`, `about:support`,
@@ -144,16 +144,3 @@ School PCs (keep the browser downloads out of the home directory):
 PLAYWRIGHT_BROWSERS_PATH=/goinfre/$USER/ms-playwright vp run test:e2e:install
 PLAYWRIGHT_BROWSERS_PATH=/goinfre/$USER/ms-playwright vp run test:e2e
 ```
-
-Not covered by the suite: certificate trust, native pickers, 2FA with a real
-authenticator, Edge as a product (Chromium stands in for it), my-events /
-my-tickets / admin flows, forgot-password end to end.
-
-## 7. Before the defense
-
-- [ ] Chrome, Firefox and Edge installed; versions in section 2.
-- [ ] `scripts/generate-certs.sh` run, browsers restarted, lock icon in all three.
-- [ ] `vp run deploy` up; seed accounts known to the team.
-- [ ] Section 4 filled in from the manual pass; every ⚠️ has a BS entry.
-- [ ] README Modules Matrix row _Extended multi-browser support_ links here.
-- [ ] Two browsers pre-logged-in as two users for the real-time demo.
