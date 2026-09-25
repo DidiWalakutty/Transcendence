@@ -453,6 +453,7 @@ function ProfilePage() {
                     value={aboutMe}
                     onChange={(e) => setAboutMe(e.target.value)}
                     placeholder={m.profile_about_placeholder()}
+                    className="bg-input/50"
                   />
                 </div>
 
@@ -481,7 +482,7 @@ function ProfilePage() {
                         }
                       }}
                     >
-                      <SelectTrigger id="language" className="w-full">
+                      <SelectTrigger id="language" className="w-full bg-input/50">
                         <SelectValue placeholder={m.profile_language_placeholder()} />
                       </SelectTrigger>
                       <SelectContent>
