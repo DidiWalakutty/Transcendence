@@ -38,7 +38,7 @@ export const userChangedSubscriptionSchema = subscriptionSchema<UserChangedDto>(
 export const supportedLanguages = ['en', 'nl', 'es'] as const;
 export type SupportedLanguage = (typeof supportedLanguages)[number];
 
-export const notificationLanguages = ['en', 'nl', 'es', 'ru', 'ro'] as const;
+export const notificationLanguages = ['en', 'nl', 'es'] as const;
 export type NotificationLanguage = (typeof notificationLanguages)[number];
 
 export function hasAdminRole(user: { role?: string | null } | null | undefined): boolean {
