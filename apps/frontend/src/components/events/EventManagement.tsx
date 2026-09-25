@@ -290,8 +290,8 @@ function EventEditForm({
         min={1}
         defaultValue={event.maxCapacity}
       />
-      <div className="flex flex-col justify-end h-full">
-        <div className="flex items-center space-x-2 rounded-lg border border-input p-3 bg-white h-[40px] mb-[2px]">
+      <div className="flex flex-col justify-end h-full self-flex-end">
+        <div className="flex items-center space-x-2 rounded-lg border border-input p-3 bg-white h-[40px]">
           <input
             type="checkbox"
             id="edit-hasContactInfo"
