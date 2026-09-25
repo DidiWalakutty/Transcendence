@@ -135,13 +135,16 @@ function EventDetailPage() {
         {/* Main Content */}
         <div
           className="
-            mx-auto
-            mt-16
-            grid
-            max-w-5xl
-            gap-8
-            lg:grid-cols-[1fr_320px]
-          "
+			mx-auto
+			mt-16
+			grid
+			max-w-4xl
+			gap-8
+			lg:ml-[28%]
+			lg:mr-auto
+			lg:grid-cols-[1fr_320px]
+			2xl:mx-auto
+		"
         >
           {/* Event Details */}
           <div>

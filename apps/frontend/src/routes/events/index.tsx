@@ -113,9 +113,8 @@ function EventsPage() {
   return (
     <div className="relative min-h-[calc(100vh-180px)] bg-white">
       {/* Background */}
-      <div className="absolute inset-0 hidden lg:flex">
-        <div className="w-[30%] bg-primary" />
-        <div className="flex-1 bg-white" />
+      <div className="absolute inset-0 hidden lg:block">
+        <div className="absolute inset-y-0 left-0 w-[calc((100vw-80rem)/2+26rem)] bg-primary" />
       </div>
 
       {/* Content */}
