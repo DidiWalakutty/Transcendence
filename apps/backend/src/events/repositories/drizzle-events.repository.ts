@@ -35,6 +35,8 @@ export class DrizzleEventsRepository extends EventsRepository {
         dateTime: toEventDateTime(data.date, data.time),
         maxCapacity: data.maxCapacity,
         category: data.category,
+        contactName: data.contactName,
+        contactEmail: data.contactEmail,
       })
       .returning({ id: events.id });
 

@@ -15,6 +15,8 @@ export function toEventDto(event: EventRow): EventDto {
     maxCapacity: event.maxCapacity,
     image: event.image,
     description: extractDescription(event.description),
+    contactName: event.contactName,
+    contactEmail: event.contactEmail,
   };
 }
 

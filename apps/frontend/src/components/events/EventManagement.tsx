@@ -226,6 +226,11 @@ function EventEditForm({
   const [categories, setCategories] = useState(event.category);
   const [date, setDate] = useState(event.date);
   const [image, setImage] = useState(event.image);
+  const [hasContactInfo, setHasContactInfo] = useState(
+    Boolean(event.contactName || event.contactEmail),
+  );
+  const [contactName, setContactName] = useState(event.contactName || '');
+  const [contactEmail, setContactEmail] = useState(event.contactEmail || '');
 
   return (
     <form onSubmit={onSubmit} className="grid gap-4 sm:grid-cols-2">
@@ -285,6 +290,57 @@ function EventEditForm({
         min={1}
         defaultValue={event.maxCapacity}
       />
+      <div className="flex flex-col justify-end h-full">
+        <div className="flex items-center space-x-2 rounded-lg border border-input p-3 bg-white h-[40px] mb-[2px]">
+          <input
+            type="checkbox"
+            id="edit-hasContactInfo"
+            checked={hasContactInfo}
+            onChange={(e) => {
+              const isChecked = e.target.checked;
+              setHasContactInfo(isChecked);
+              if (!isChecked) {
+                setContactName('');
+                setContactEmail('');
+              }
+            }}
+            className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+          />
+          <label
+            htmlFor="edit-hasContactInfo"
+            className="text-sm font-medium text-gray-700 select-none cursor-pointer"
+          >
+            Include contact information
+          </label>
+        </div>
+      </div>
+      {hasContactInfo && (
+        <div className="grid gap-4 grid-cols-2 sm:col-span-2 p-4 rounded-lg bg-gray-50 border border-input">
+          <div className="space-y-2 col-span-1">
+            <Label htmlFor="edit-contactName">Contact Name</Label>
+            <Input
+              id="edit-contactName"
+              name="contactName"
+              value={contactName}
+              onChange={(e) => setContactName(e.target.value)}
+              placeholder="Enter contact name"
+              className="bg-white"
+            />
+          </div>
+          <div className="space-y-2 col-span-1">
+            <Label htmlFor="edit-contactEmail">Contact Email</Label>
+            <Input
+              id="edit-contactEmail"
+              name="contactEmail"
+              type="email"
+              value={contactEmail}
+              onChange={(e) => setContactEmail(e.target.value)}
+              placeholder="organizer@example.com"
+              className="bg-white"
+            />
+          </div>
+        </div>
+      )}
       <div className="space-y-2 sm:col-span-2">
         <Label htmlFor="event-image">{m.admin_image()}</Label>
         <EventImagePicker id="event-image" name="image" value={image} onValueChange={setImage} />
@@ -392,6 +448,9 @@ export function eventFormToUpdateInput(
   id: string,
   data: FormData,
 ): import('@repo/schemas/events').UpdateEventDto {
+  const contactNameStr = formString(data, 'contactName').trim();
+  const contactEmailStr = formString(data, 'contactEmail').trim();
+
   return {
     id,
     title: formString(data, 'title'),
@@ -403,6 +462,8 @@ export function eventFormToUpdateInput(
     time: formString(data, 'time'),
     image: formString(data, 'image'),
     maxCapacity: Number(data.get('maxCapacity')),
+    contactName: contactNameStr || undefined,
+    contactEmail: contactEmailStr || undefined,
   };
 }
 
