@@ -95,102 +95,100 @@ Eight tables, defined once in [`packages/schemas/src/database.ts`](./packages/sc
 
 ```mermaid
 erDiagram
-    USERS ||--o{ SESSIONS : "has"
-    USERS ||--o{ ACCOUNTS : "authenticates with"
-    USERS ||--o| TWO_FACTORS : "secures with"
-    USERS ||--o{ EVENTS : "organizes"
-    USERS ||--o{ REGISTRATIONS : "holds ticket"
-    EVENTS ||--o{ REGISTRATIONS : "has attendee"
-    USERS ||--o{ FRIENDS : "my_id"
-    USERS ||--o{ FRIENDS : "friend_id"
-
     USERS {
         uuid id PK
-        text email UK
-        text username UK
-        text display_username
-        text name
-        text role "user or admin, default user"
-        boolean banned
-        text ban_reason
-        timestamp ban_expires
-        text about_me
-        text location
-        text language "en, nl or es"
-        text avatar_link "PLACEHOLDER or data URL"
-        boolean email_verified
-        boolean two_factor_enabled
-        timestamp created_at
-        timestamp updated_at
+        text email UK "Not Null"
+        text name "Not Null"
+        text role "Not Null, Default: user"
+        timestamp created_at "Not Null"
+        timestamp updated_at "Not Null"
+        text about_me "Nullable"
+        text location "Nullable"
+        text language "Default: english"
+        text avatar_link "Default: PLACEHOLDER"
+        text username UK "Not Null"
+        text display_username "Nullable"
+        boolean email_verified "Not Null, Default: false"
+        boolean two_factor_enabled "Not Null, Default: false"
     }
     SESSIONS {
         uuid id PK
-        uuid user_id FK "cascade"
-        text token UK
-        timestamp expires_at
-        text ip_address
-        text user_agent
-        text impersonated_by
-        timestamp created_at
-        timestamp updated_at
+        uuid user_id FK "References users.id, Cascade"
+        text token UK "Not Null"
+        timestamp expires_at "Not Null"
+        text ip_address "Nullable"
+        text user_agent "Nullable"
+        timestamp created_at "Not Null"
+        timestamp updated_at "Not Null"
+        text impersonated_by "Nullable"
     }
     ACCOUNTS {
         uuid id PK
-        uuid user_id FK "cascade"
-        text provider_id "credential"
-        text account_id
-        text password "scrypt salt:hash"
-        text access_token
-        text refresh_token
-        text id_token
-        timestamp access_token_expires_at
-        timestamp refresh_token_expires_at
-        text scope
-        timestamp created_at
-        timestamp updated_at
+        uuid user_id FK "References users.id, Cascade"
+        text account_id "Not Null"
+        text provider_id "Not Null"
+        text access_token "Nullable"
+        text refresh_token "Nullable"
+        text id_token "Nullable"
+        timestamp access_token_expires_at "Nullable"
+        timestamp refresh_token_expires_at "Nullable"
+        text scope "Nullable"
+        text password "Nullable"
+        timestamp created_at "Not Null"
+        timestamp updated_at "Not Null"
     }
     VERIFICATIONS {
         uuid id PK
-        text identifier
-        text value
-        timestamp expires_at
-        timestamp created_at
-        timestamp updated_at
+        text identifier "Not Null"
+        text value "Not Null"
+        timestamp expires_at "Not Null"
+        timestamp created_at "Not Null"
+        timestamp updated_at "Not Null"
     }
     TWO_FACTORS {
         uuid id PK
-        uuid user_id FK "cascade"
-        text secret
-        text backup_codes
-        boolean verified
-        integer failed_verification_count
-        timestamp locked_until
+        uuid user_id FK "References users.id, Cascade"
+        text secret "Not Null"
+        text backup_codes "Not Null"
+        boolean verified "Not Null, Default: true"
+        integer failed_verification_count "Not Null, Default: 0"
+        timestamp locked_until "Nullable"
     }
     EVENTS {
         uuid id PK
-        uuid organizer_id FK "cascade"
-        text title
-        jsonb description "text per language"
-        text image_link "PLACEHOLDER or data URL"
-        text location
-        text address
-        timestamp date_time
-        integer max_capacity
-        text_array category "music, culture, food, games, talks, workshops"
-        timestamp created_at
-    }
-    REGISTRATIONS {
-        uuid event_id FK "cascade"
-        uuid user_id FK "cascade"
-        registration_status r_status "active or canceled"
-        timestamp created_at
+        text title "Not Null"
+        timestamp created_at "Not Null"
+        jsonb description "Not Null, Record<string, string>"
+        text image_link "Not Null"
+        uuid organizer_id FK "References users.id, Cascade"
+        text location "Not Null"
+        text address "Not Null"
+        timestamp date_time "Not Null"
+        integer max_capacity "Not Null"
+        text_array category "Not Null, Array"
+        text contact_name "Nullable, Optional Feature Field"
+        text contact_email "Nullable, Optional Feature Field"
     }
     FRIENDS {
-        uuid my_id FK "cascade"
-        uuid friend_id FK "cascade"
-        friendship_status f_status "pending or accepted"
-        timestamp created_at
+        uuid my_id FK "References users.id, Cascade"
+        uuid friend_id FK "References users.id, Cascade"
+        friendship_status f_status "Not Null, Default: pending"
+        timestamp created_at "Not Null"
     }
+    REGISTRATIONS {
+        uuid event_id FK "References events.id, Cascade"
+        uuid user_id FK "References users.id, Cascade"
+        registration_status r_status "Not Null, Default: active"
+        timestamp created_at "Not Null"
+    }
+
+    USERS ||--o{ SESSIONS : "establishes"
+    USERS ||--o{ ACCOUNTS : "links"
+    USERS ||--o{ TWO_FACTORS : "configures"
+    USERS ||--o{ EVENTS : "organizes"
+    USERS ||--o{ FRIENDS : "befriends"
+    USERS ||--o{ REGISTRATIONS : "submits"
+    EVENTS ||--o{ REGISTRATIONS : "accepts"
 ```
 
 Deleting a user removes their sessions, accounts, two-factor secret, owned events, friendships and tickets. Deleting an event removes its registrations.
