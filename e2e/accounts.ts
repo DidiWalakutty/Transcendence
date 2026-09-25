@@ -93,5 +93,7 @@ export async function expectLoggedIn(page: Page) {
 }
 
 export async function expectLoggedOut(page: Page) {
-  await expect(page.getByRole('link', { name: 'Login', exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('navigation').getByRole('link', { name: 'Login', exact: true }),
+  ).toBeVisible();
 }
