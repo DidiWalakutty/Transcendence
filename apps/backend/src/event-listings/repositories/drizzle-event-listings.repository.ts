@@ -26,6 +26,8 @@ const EVENT_LISTING_COLUMNS = {
   dateTime: events.dateTime,
   maxCapacity: events.maxCapacity,
   category: events.category,
+  contactName: events.contactName,
+  contactEmail: events.contactEmail,
 } as const;
 
 const REGISTRATION_COUNT = sql<number>`count(${registrations.eventId})`;
@@ -121,6 +123,8 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
     description: Record<string, string>;
     createdAt: Date;
     registrationsCount: number;
+    contactName: string | null;
+    contactEmail: string | null;
   }): EventListingRecord {
     return {
       id: row.id,
@@ -135,6 +139,8 @@ export class DrizzleEventListingsRepository extends EventListingsRepository {
       description: extractDescription(row.description),
       createdAt: row.createdAt,
       registrationsCount: Number(row.registrationsCount),
+      contactName: row.contactName,
+      contactEmail: row.contactEmail,
     };
   }
 }

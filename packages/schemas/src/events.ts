@@ -41,8 +41,8 @@ export const eventSchema = z.object({
   image: z.string(),
   description: z.string(),
   maxCapacity: z.number().int().positive(),
-  contactName: z.string().nullable().optional(),
-  contactEmail: z.string().nullable().optional(),
+  contactName: z.string().trim().nullable().optional(),
+  contactEmail: z.string().trim().email().or(z.literal('')).nullable().optional(),
 });
 
 export const paginatedEventsSchema = z.object({
