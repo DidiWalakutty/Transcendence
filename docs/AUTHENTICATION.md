@@ -115,22 +115,19 @@ requires a session, and `updateUser` accepts only the account owner or an admini
 
 ## Password reset (development)
 
-No email provider is configured. `sendResetPassword` in `auth.instance.ts` logs the reset link to
-the backend's own console instead of sending an email:
+The password recovery workflow uses an event-driven lifecycle integrated directly with the notification layer.
 
-```text
-[Auth] Password reset link for alan@example.com: http://localhost:3001/api/auth/reset-password/<token>?callbackURL=...
+When a recovery transaction is initialized via `authClient.requestPasswordReset`, Better Auth's backend engine captures the request, registers a security token in the database `verifications` table, and emits an internal `password.reset.requested` process event.
+
+The background `NotificationListener` intercepts the event string token, maps the recipient's language preference using `resolveUserLocale()`, and invokes:
+
+```ts
+notificationService.sendPasswordResetEmail(toEmail, userName, resetUrl, lang);
 ```
 
-Opening that link makes the backend validate the token and 302-redirect the browser to the
-frontend's `/reset-password?token=...` page, which posts the new password back to
-`/api/auth/reset-password`. The `redirectTo` passed from `ForgotPasswordForm.tsx` must be an
-**absolute** URL (`${window.location.origin}/reset-password`) — a relative path resolves against
-the _backend's_ origin (`localhost:3001`), not the frontend's, and the redirect lands on the wrong
-server.
+The delivery framework routes the rich-text multilingual message block to the local **Mailpit** sandbox listener running on `localhost:1025`. Developers and evaluators can view, test, and inspect the delivery links in real time by opening the web console interface dashboard on **http://localhost:8025**.
 
-Swapping in a real provider (e.g. Resend, or a local Mailpit container) means replacing the body
-of `sendResetPassword` with an actual send call — the rest of the flow is unaffected.
+Opening the secure link from the sandboxed inbox validates the token cryptographic signatures against the database. The backend then issues a 302-redirect to the frontend's `/reset-password?token=...` page view. The token value is extracted from the URL query parameters by TanStack Router, staging it invisibly for the final password mutation submission back to the server.
 
 ## Frontend usage
 

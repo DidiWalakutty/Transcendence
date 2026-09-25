@@ -12,16 +12,17 @@ This directory contains the project documentation for local development, archite
 
 ## Architecture
 
-| Document                              | Purpose                                                                     |
-| ------------------------------------- | --------------------------------------------------------------------------- |
-| [API](./API.md)                       | Current tRPC API surface and generated router types.                        |
-| [Authentication](./AUTHENTICATION.md) | Better Auth wiring, schema, dual user-creation paths, and password reset.   |
-| [Validation](./VALIDATION.md)         | Shared schema validation flow across frontend, tRPC, backend, and database. |
-| [Database](./DATABASE.md)             | PostgreSQL, Drizzle ORM, migrations, and local database commands.           |
-| [Environment](./ENVIRONMENT.md)       | Environment variables used by backend, frontend, Drizzle, and Compose.      |
-| [Internationalization](./I18N.md)     | Inlang Paraglide locales, message files, generated runtime, and switcher.   |
-| [Monorepo](./MONOREPO.md)             | Workspace layout and Vite+ task orchestration.                              |
-| [Ports](./PORTS.md)                   | Reserved local ports for app and infrastructure services.                   |
+| Document                              | Purpose                                                                                                           |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| [API](./API.md)                       | Current tRPC API surface and generated router types.                                                              |
+| [Authentication](./AUTHENTICATION.md) | Better Auth wiring, schema, dual user-creation paths, and password reset.                                         |
+| [Validation](./VALIDATION.md)         | Shared schema validation flow across frontend, tRPC, backend, and database.                                       |
+| [Database](./DATABASE.md)             | PostgreSQL, Drizzle ORM, migrations, and local database commands.                                                 |
+| [Environment](./ENVIRONMENT.md)       | Environment variables used by backend, frontend, Drizzle, and Compose.                                            |
+| [Internationalization](./I18N.md)     | Inlang Paraglide locales, message files, generated runtime, and switcher.                                         |
+| [Email](./EMAIL.md)                   | Zero-config sandboxing infrastructure, local Mailpit port mapping matrix, and production deployment instructions. |
+| [Monorepo](./MONOREPO.md)             | Workspace layout and Vite+ task orchestration.                                                                    |
+| [Ports](./PORTS.md)                   | Reserved local ports for app and infrastructure services.                                                         |
 
 ## Tooling
 

@@ -326,6 +326,8 @@ The backend applies the database migrations from `apps/backend/drizzle` when it 
 
 Open the application at `https://localhost:3000`. E-mails sent by the app land in Mailpit at `http://localhost:8025`.
 
+Detailed full-stack technical reference manuals for these notification flows are available in the [Email Notification Subsystem Manual](./docs/EMAIL.md).
+
 Demo accounts (the passwords are the `SEED_*` values, see [Environment](./docs/ENVIRONMENT.md)):
 
 | Account       | E-mail                    | Default password    |
