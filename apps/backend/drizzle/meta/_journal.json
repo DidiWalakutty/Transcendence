@@ -71,6 +71,13 @@
       "when": 1789143620004,
       "tag": "0009_cloudy_victor_mancha",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790311432892,
+      "tag": "0010_dusty_lockjaw",
+      "breakpoints": true
     }
   ]
 }

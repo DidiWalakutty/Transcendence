@@ -41,6 +41,8 @@ export const eventSchema = z.object({
   image: z.string(),
   description: z.string(),
   maxCapacity: z.number().int().positive(),
+  contactName: z.string().trim().nullable().optional(),
+  contactEmail: z.string().trim().email().or(z.literal('')).nullable().optional(),
 });
 
 export const paginatedEventsSchema = z.object({
@@ -102,6 +104,8 @@ const eventInputSchema = z.object({
   image: imageField(EVENT_PLACEHOLDER, MAX_EVENT_IMAGE_BYTES),
   description: z.string().trim().min(1).max(EVENT_DESCRIPTION_MAX),
   maxCapacity: z.number().int().positive().max(EVENT_CAPACITY_MAX),
+  contactName: z.string().trim().max(120).nullable().optional(),
+  contactEmail: z.string().trim().email().or(z.literal('')).nullable().optional(),
 });
 
 // Creating a new event - used as mutation input. Only a new event has to be

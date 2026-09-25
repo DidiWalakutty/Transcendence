@@ -431,5 +431,12 @@
   "profile_password_submit_button": "Actualizar contraseña",
   "profile_password_success": "Tu contraseña ha sido cambiada correctamente.",
   "profile_password_error_match": "Las nuevas contraseñas no coinciden",
-  "profile_password_error_invalid": "Contraseña actual incorrecta"
+  "profile_password_error_invalid": "Contraseña actual incorrecta",
+  "event_contact_title": "Contacto del evento",
+  "event_contact_name": "Nombre",
+  "event_contact_email": "Correo electrónico",
+  "event_contact_include": "Incluir información de contacto",
+  "event_contact_name_label": "Nombre del contacto",
+  "event_contact_email_label": "Correo electrónico del contacto",
+  "event_contact_name_placeholder": "Introduce el nombre del contacto"
 }
