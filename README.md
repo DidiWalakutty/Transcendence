@@ -1,4 +1,4 @@
-_This project has been created as part of the 42 curriculum by mde-krui, diwalaku, dkolodze, ccraciun, rtorrent._
+_This project has been created as part of the 42 curriculum by mde-krui, diwalaku, ccraciun, rtorrent._
 
 # ft_transcendence (Eventra)
 
@@ -32,18 +32,18 @@ What the application does:
 | Role                       | Login      | Responsibilities                                                                                    |
 | -------------------------- | ---------- | --------------------------------------------------------------------------------------------------- |
 | Product Owner              | `diwalaku` | Product vision, backlog priorities, acceptance criteria, validation of finished work.               |
-| Project Manager            | `dkolodze` | Coordination, blockers, milestones and timelines, keeping the team in sync.                         |
+| Project Manager            | `ccraciun` | Coordination, blockers, milestones and timelines, keeping the team in sync.                         |
 | Technical Lead / Architect | `mde-krui` | Stack decisions, code-quality standards, pull-request reviews, architecture across the three tiers. |
 
 All five members are developers. Main areas per member:
 
-| Login      | Main areas                                                                                                                                                                     |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `mde-krui` | Monorepo and tooling, NestJS and tRPC backend architecture, authentication wiring, admin dashboard, profile persistence, Spanish locale.                                       |
-| `diwalaku` | Landing page and navigation, event catalogue (filters, sorting, pagination), event cards and detail page, ticket registration, accessibility fixes, Dutch locale, legal pages. |
-| `dkolodze` | Two-factor authentication, early authentication work, project management, documentation.                                                                                       |
-| `ccraciun` | Real-time layer (events, presence, chat), friends, avatar upload, HTTPS with Caddy, Docker deployment, browser-compatibility test suite, responsive layout.                    |
-| `rtorrent` | Notification system (toasts, mailer, multilingual e-mail templates), "My tickets" page.                                                                                        |
+| Login       | Main areas                                                                                                                                                                     |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `mde-krui`  | Monorepo and tooling, NestJS and tRPC backend architecture, authentication wiring, admin dashboard, profile persistence, Spanish locale.                                       |
+| `diwalaku`  | Landing page and navigation, event catalogue (filters, sorting, pagination), event cards and detail page, ticket registration, accessibility fixes, Dutch locale, legal pages. |
+| `ccraciun`  | Real-time layer (events, presence, chat), friends, avatar upload, HTTPS with Caddy, Docker deployment, browser-compatibility test suite, responsive layout.                    |
+| `rtorrent`  | Notification system (toasts, mailer, multilingual e-mail templates), "My tickets" page.                                                                                        |
+| `*dkolodze` | Two-factor authentication, early authentication work, project management, documentation.                                                                                       |
 
 ---
 
@@ -215,7 +215,7 @@ The database stores pictures as data URLs that the client compressed first, at m
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
 | Monorepo and tooling          | Vite+ and Bun workspaces, shared `packages/schemas` (tables, Zod schemas, generated tRPC types), task graph, CI, pre-commit hooks                         | `mde-krui`                                     |
 | Backend architecture          | NestJS modules with router, service and repository layers, in-memory repositories for tests, Redis cache and rate limiting, health checks                 | `mde-krui`                                     |
-| Authentication                | E-mail and password sign-up and login (better-auth, scrypt), sessions, forgot and reset password                                                          | `mde-krui`, `dkolodze`, `diwalaku`, `rtorrent` |
+| Authentication                | E-mail and password sign-up and login (better-auth, scrypt), sessions, forgot and reset password                                                          | `mde-krui`, `diwalaku`, `rtorrent`, `dkolodze` |
 | Two-factor authentication     | TOTP enrolment with QR code, backup codes, `/verify-2fa` step, lockout counter                                                                            | `dkolodze`, later fixes `mde-krui`             |
 | Event catalogue               | Server-side category filter, three sort orders, pagination, state in the URL, featured events, statistics                                                 | `diwalaku`                                     |
 | Event creation and management | Create, edit and delete with a date picker, a category combobox and an image picker that compresses in the browser. "My events" page                      | `diwalaku`, `mde-krui`, `ccraciun`             |
@@ -234,7 +234,7 @@ The database stores pictures as data URLs that the client compressed first, at m
 | Deployment and HTTPS          | Docker Compose stack, Caddy TLS proxy, migrations and seeding at start-up, environment handling                                                           | `mde-krui`, `ccraciun`                         |
 | Browser compatibility and e2e | Playwright suites on Chromium and Firefox, a console check on every route, the [browser support document](./docs/BROWSER_SUPPORT.md)                      | `ccraciun`                                     |
 | Responsive layout             | Phone and tablet layout: navbar drawer, stacked catalogue, card layout, chat widget                                                                       | `ccraciun`                                     |
-| Documentation                 | The `docs/` set, README, onboarding                                                                                                                       | `mde-krui`, `ccraciun`, `dkolodze`, `rtorrent` |
+| Documentation                 | The `docs/` set, README, onboarding                                                                                                                       | `mde-krui`, `ccraciun`, `rtorrent`, `dkolodze` |
 
 ---
 
@@ -248,6 +248,7 @@ Major modules count 2 points, minor modules 1 point. The selection below totals 
 | Real-time features                                      | Major | 2   | tRPC subscriptions over Server-Sent Events. Live event list (`events.onEventChanged`, with a heartbeat and a stale-connection watchdog), presence (`presence.onPresenceChanged`), chat (`chat.onMessage`), admin user stream. `AbortSignal` handles disconnects | `ccraciun`             |
 | Standard user profiles                                  | Major | 2   | `/profile` with editable fields and a compressed avatar upload, friends list with live status dots, friend requests                                                                                                                                             | `mde-krui`, `ccraciun` |
 | Advanced CRUD permissions and role management           | Major | 2   | Three roles with distinct rights. A visitor browses, a user manages their own events, tickets and profile, an admin manages all users and events and changes roles. `ProtectedMiddleware`, `AdminMiddleware` and ownership checks enforce this on the server    | `mde-krui`             |
+| WCAG 2.1 AA compliance                                  | Major | 2   | Accessible HTML structure, keyboard navigation, visible focus states, form labels, ARIA labels, color contrast, alt text and page language. Tested with Lighthouse/Axe and manual keyboard checks                                                               | `diwalaku`             |
 | Database integration via an ORM                         | Minor | 1   | Drizzle ORM. Schema in TypeScript, generated migrations, typed repositories, validation through `drizzle-zod`                                                                                                                                                   | `diwalaku`, `mde-krui` |
 | Secure two-factor authentication                        | Minor | 1   | better-auth TOTP plugin. QR enrolment, backup codes, a verification step at login, a lockout after failed attempts                                                                                                                                              | `dkolodze`             |
 | Multi-language support                                  | Minor | 1   | English, Dutch and Spanish for every UI string (374 keys per locale) and the legal pages. Switcher in the navbar, stored per user. E-mails are localised too                                                                                                    | `diwalaku`, `mde-krui` |
@@ -255,7 +256,7 @@ Major modules count 2 points, minor modules 1 point. The selection below totals 
 | Extended multi-browser support                          | Minor | 1   | Chrome, Firefox and Edge. Playwright suites on Chromium and Firefox. Findings and limitations in [Browser Support](./docs/BROWSER_SUPPORT.md)                                                                                                                   | `ccraciun`             |
 | Complete notification system across all CRUD operations | Minor | 1   | A toast for every create, update and delete from the global mutation cache, e-mails to the affected users (welcome, ticket confirmation, event modified, event cancelled) and live updates for everyone                                                         | `rtorrent`, `mde-krui` |
 | Advanced search with filtering, sorting and pagination  | Minor | 1   | The catalogue query runs in the backend (`events.getFilteredEvents`). Multi-category filter, sort by upcoming, popular or newest, pages of 8, state in the URL. Text search in the admin dashboard and in "My tickets"                                          | `diwalaku`             |
-| Total                                                   |       | 15  |                                                                                                                                                                                                                                                                 |                        |
+| Total                                                   |       | 17  |                                                                                                                                                                                                                                                                 |                        |
 
 ---
 
@@ -277,15 +278,7 @@ Major modules count 2 points, minor modules 1 point. The selection below totals 
 
 **Fix.** Registration now runs in a transaction with a capacity check and returns explicit results that map to tRPC errors (`conflictError` for sold out and already registered). The partial unique index backs this up. Filtering, sorting and pagination moved into the repository query.
 
-### dkolodze, Project Manager
-
-**Built.** Two-factor authentication (TOTP enrolment with a QR code, backup codes, the `/verify-2fa` route, the lockout fields), early authentication and environment work, documentation updates. Owner of the board, the timelines and the blockers.
-
-**Roadblock.** better-auth's two-factor flow interrupts a normal sign-in. After a correct password the session is not valid until the code is verified, which the existing login form and route guards did not expect.
-
-**Fix.** An explicit `/verify-2fa` step in the login flow and a settings component on the profile page to enrol and disable two-factor authentication. The schema fields (`two_factors`, `users.two_factor_enabled`) came in through a generated migration.
-
-### ccraciun, Developer
+### ccraciun, Project Manager
 
 **Built.** The real-time layer (event stream with heartbeat and watchdog, presence, chat), friends, avatar upload with compression in the browser, Caddy and HTTPS routing, the Docker deployment, the Playwright console and cross-browser suites, the responsive layout and the browser support document.
 
@@ -300,6 +293,14 @@ Major modules count 2 points, minor modules 1 point. The selection below totals 
 **Roadblock.** The mailer and react-email dependencies did not load in the Bun workspace at first, and the welcome e-mail went out before the user row existed.
 
 **Fix.** Pinning the mailer dependencies in the lockfile fixed the loading. Listeners on domain events that fire after the database write now send the e-mails (`userCreated`, `registrationCreated`, `eventModified`, `eventCancelled`). Mailpit in the Compose stack shows the delivered mail.
+
+### dkolodze, Developer
+
+**Built.** Two-factor authentication (TOTP enrolment with a QR code, backup codes, the `/verify-2fa` route, the lockout fields), early authentication and environment work, documentation updates. Owner of the board, the timelines and the blockers.
+
+**Roadblock.** better-auth's two-factor flow interrupts a normal sign-in. After a correct password the session is not valid until the code is verified, which the existing login form and route guards did not expect.
+
+**Fix.** An explicit `/verify-2fa` step in the login flow and a settings component on the profile page to enrol and disable two-factor authentication. The schema fields (`two_factors`, `users.two_factor_enabled`) came in through a generated migration.
 
 ---
 
