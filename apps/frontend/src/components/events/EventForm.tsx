@@ -320,7 +320,6 @@ export function EventForm() {
                   setHasContactInfo(isChecked);
                   if (isChecked) {
                     setContactName(currentUser?.name || '');
-                    setContactEmail(currentUser?.email || '');
                   } else {
                     setContactName('');
                     setContactEmail('');
