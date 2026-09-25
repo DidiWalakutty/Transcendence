@@ -310,14 +310,14 @@ function EventEditForm({
             htmlFor="edit-hasContactInfo"
             className="text-sm font-medium text-gray-700 select-none cursor-pointer"
           >
-            Include contact information
+            {m.event_contact_include()}
           </label>
         </div>
       </div>
       {hasContactInfo && (
         <div className="grid gap-4 grid-cols-2 sm:col-span-2 p-4 rounded-lg bg-gray-50 border border-input">
           <div className="space-y-2 col-span-1">
-            <Label htmlFor="edit-contactName">Contact Name</Label>
+            <Label htmlFor="edit-contactName">{m.event_contact_name_label()}</Label>
             <Input
               id="edit-contactName"
               name="contactName"
@@ -328,7 +328,7 @@ function EventEditForm({
             />
           </div>
           <div className="space-y-2 col-span-1">
-            <Label htmlFor="edit-contactEmail">Contact Email</Label>
+            <Label htmlFor="edit-contactEmail">{m.event_contact_email_label()}</Label>
             <Input
               id="edit-contactEmail"
               name="contactEmail"

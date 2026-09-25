@@ -319,11 +319,9 @@ export function EventForm() {
                   const isChecked = e.target.checked;
                   setHasContactInfo(isChecked);
                   if (isChecked) {
-                    // Instantly pre-populate fields with active user's credentials
                     setContactName(currentUser?.name || '');
                     setContactEmail(currentUser?.email || '');
                   } else {
-                    // Wipe values completely clean if unchecked
                     setContactName('');
                     setContactEmail('');
                   }
@@ -331,7 +329,7 @@ export function EventForm() {
                 className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
               />
               <label htmlFor="hasContactInfo" className="text-sm font-medium text-gray-700">
-                Include organizer contact information for this event
+                {m.event_contact_include()}
               </label>
             </div>
 
@@ -339,7 +337,7 @@ export function EventForm() {
             {hasContactInfo && (
               <div className="grid gap-6 md:grid-cols-2 mt-4 p-4 rounded-lg bg-gray-50 border border-input">
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="contactName">Contact Name</Label>
+                  <Label htmlFor="contactName">{m.event_contact_name_label()}</Label>
                   <Input
                     id="contactName"
                     value={contactName}
@@ -349,7 +347,7 @@ export function EventForm() {
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="contactEmail">Contact Email</Label>
+                  <Label htmlFor="contactEmail">{m.event_contact_email_label()}</Label>
                   <Input
                     id="contactEmail"
                     type="email"

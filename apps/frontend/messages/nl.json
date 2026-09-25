@@ -432,5 +432,11 @@
   "profile_password_submit_button": "Wachtwoord bijwerken",
   "profile_password_success": "Je wachtwoord is succesvol gewijzigd.",
   "profile_password_error_match": "Nieuwe wachtwoorden komen niet overeen",
-  "profile_password_error_invalid": "Huidig wachtwoord is onjuist"
+  "profile_password_error_invalid": "Huidig wachtwoord is onjuist",
+  "event_contact_title": "Contactpersoon evenement",
+  "event_contact_name": "Naam",
+  "event_contact_email": "E-mailadres",
+  "event_contact_include": "Contactgegevens toevoegen",
+  "event_contact_name_label": "Naam contactpersoon",
+  "event_contact_email_label": "E-mailadres contactpersoon"
 }
