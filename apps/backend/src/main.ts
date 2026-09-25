@@ -9,7 +9,10 @@ import { AUTH } from './auth/auth.constants';
 import type { Auth } from './auth/auth.instance';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule, { bodyParser: false });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    bodyParser: false,
+    forceCloseConnections: true,
+  });
 
   // The backend sits behind the Caddy TLS proxy, so the real client address
   // arrives in X-Forwarded-For. Without this, rate limiting keys every request
