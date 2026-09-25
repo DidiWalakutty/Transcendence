@@ -60,7 +60,8 @@ function EventsPage() {
   const selectedSort = sort ?? 'upcoming';
   const trpc = useTRPC();
   // Keeps this listing current while it is open: another user creating,
-  // editing or deleting an event patches the cache here without a refetch.
+  // editing or deleting an event refetches it, since only the server applies
+  // the active filter.
   const { connected, failed } = useEventStream();
   const eventsQuery = useQuery(
     trpc.events.getFilteredEvents.queryOptions({
