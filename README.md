@@ -14,12 +14,13 @@ browser without a reload.
 What the application does:
 
 - Public event catalogue with category filters, three sort orders and server-side pagination.
+- Accounts with e-mail and password sign-up, password reset (15-minute token expiry), and optional two-factor authentication (TOTP enrolment, QR codes, backup keys, and verification gates).
 - Accounts with e-mail and password sign-up, password reset and optional two-factor authentication.
 - Ticket registration with a capacity guarantee. A user holds at most one active ticket per event and an event never sells more tickets than its capacity.
 - Event creation and editing for organisers, with a "My events" page and a "My tickets" page.
 - Profiles with avatar upload, about and location fields and a preferred language.
 - Friends with requests and acceptance, live online status and a global chat.
-- A notification on every create, update and delete. The person acting sees a toast, the people affected receive an e-mail (welcome, ticket confirmation, event modified, event cancelled) in their language.
+- A notification on every create, update and delete. The person acting sees a toast, the people affected receive an e-mail (welcome, ticket confirmation, event modified, event cancelled, 24-hour friendly reminder) in their language.
 - Admin dashboard with a user table, role changes and a table of all events.
 - Interface in English, Dutch and Spanish, switchable in the app and remembered per user.
 - Server-side rendering, HTTPS for every request and a single-command Docker deployment.
