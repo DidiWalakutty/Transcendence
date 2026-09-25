@@ -9,6 +9,7 @@ import {
   NO_AVATAR,
   EVENT_PLACEHOLDER,
   passwordField,
+  usernameField,
 } from '@repo/schemas/fields';
 import { subscriptionSchema } from '@repo/schemas/subscription';
 
@@ -87,6 +88,7 @@ export function eventImageSource(image: string | null | undefined, fallback: str
 export const createUserSchema = createInsertSchema(users, {
   email: () => emailField,
   name: () => nameField,
+  username: () => usernameField,
 }).pick({
   email: true,
   name: true,

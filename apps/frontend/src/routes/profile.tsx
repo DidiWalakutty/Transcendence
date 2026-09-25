@@ -64,6 +64,56 @@ export const Route = createFileRoute('/profile')({
   component: ProfilePage,
 });
 
+function getProfileValidationErrors(error: unknown): {
+  name?: string;
+  username?: string;
+  language?: string;
+} {
+  const message = error instanceof Error ? error.message : String(error);
+
+  if (message === 'A user with this username already exists') {
+    return {
+      username: 'A user with this username already exists',
+    };
+  }
+
+  try {
+    const issues = JSON.parse(message);
+
+    if (!Array.isArray(issues)) {
+      return {};
+    }
+
+    const errors: {
+      name?: string;
+      username?: string;
+      language?: string;
+    } = {};
+
+    for (const issue of issues) {
+      const field = issue?.path?.[0];
+
+      if (
+        typeof field === 'string' &&
+        typeof issue?.message === 'string' &&
+        (field === 'name' || field === 'username' || field === 'language')
+      ) {
+        if (field === 'name') {
+          errors.name = issue.message;
+        } else if (field === 'username') {
+          errors.username = issue.message;
+        } else {
+          errors.language = issue.message;
+        }
+      }
+    }
+
+    return errors;
+  } catch {
+    return {};
+  }
+}
+
 function normalizeLanguage(value: unknown): string {
   return normalizeUserLanguage(value);
 }
@@ -73,8 +123,12 @@ function ProfilePage() {
   const queryClient = useQueryClient();
   const { session } = Route.useRouteContext();
   const [saved, setSaved] = useState(false);
-
-  const activeLocale = getLocale();
+  const [profileErrors, setProfileErrors] = useState<{
+    name?: string;
+    username?: string;
+    language?: string;
+    form?: string;
+  }>({});
 
   const userQuery = useQuery(trpc.users.getMe.queryOptions());
   const user = userQuery.data;
@@ -156,9 +210,13 @@ function ProfilePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!user) return;
-    await updateUser
-      .mutateAsync({
+
+    setProfileErrors({});
+
+    try {
+      const updatedUser = await updateUser.mutateAsync({
         id: user.id,
         name,
         username,
@@ -166,25 +224,24 @@ function ProfilePage() {
         location,
         ...(language ? { preferedLanguage: language as 'en' | 'nl' | 'es' } : {}),
         avatar,
-      })
-      .catch(() => undefined);
-  };
+      });
 
-  const handleLanguageChange = (next: string) => {
-    if (!next || !user || next === language) return;
-    const previous = language;
-    setLanguage(next);
-    updateUser.mutate(
-      { id: user.id, preferedLanguage: next as 'en' | 'nl' | 'es' },
-      {
-        onSuccess: () => {
-          void setLocale(next as (typeof locales)[number]);
-        },
-        onError: () => {
-          setLanguage(previous);
-        },
-      },
-    );
+      const savedLanguage = normalizeLanguage(updatedUser.preferedLanguage);
+
+      if (savedLanguage !== getLocale()) {
+        await setLocale(savedLanguage as (typeof locales)[number]);
+      }
+    } catch (error) {
+      const validationErrors = getProfileValidationErrors(error);
+
+      if (Object.keys(validationErrors).length > 0) {
+        setProfileErrors(validationErrors);
+      } else {
+        setProfileErrors({
+          form: 'Unable to save your profile. Please try again.',
+        });
+      }
+    }
   };
 
   const [oldPassword, setOldPassword] = useState('');
@@ -345,17 +402,45 @@ function ProfilePage() {
                   {/* Name */}
                   <div className="grid gap-2">
                     <Label htmlFor="name">{m.profile_name()}</Label>
-                    <Input id="name" value={name} onChange={(e) => setName(e.target.value)} />
+
+                    <Input
+                      id="name"
+                      value={name}
+                      aria-invalid={!!profileErrors.name}
+                      aria-describedby={profileErrors.name ? 'name-error' : undefined}
+                      onChange={(e) => {
+                        setName(e.target.value);
+                        setProfileErrors((prev) => ({ ...prev, name: undefined }));
+                      }}
+                    />
+
+                    {profileErrors.name && (
+                      <p id="name-error" className="text-sm text-destructive">
+                        {profileErrors.name}
+                      </p>
+                    )}
                   </div>
 
                   {/* Username */}
                   <div className="grid gap-2">
                     <Label htmlFor="username">{m.profile_username()}</Label>
+
                     <Input
                       id="username"
                       value={username}
-                      onChange={(e) => setUsername(e.target.value)}
+                      aria-invalid={!!profileErrors.username}
+                      aria-describedby={profileErrors.username ? 'username-error' : undefined}
+                      onChange={(e) => {
+                        setUsername(e.target.value);
+                        setProfileErrors((prev) => ({ ...prev, username: undefined }));
+                      }}
                     />
+
+                    {profileErrors.username && (
+                      <p id="username-error" className="text-sm text-destructive">
+                        {profileErrors.username}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -388,13 +473,10 @@ function ProfilePage() {
                     <Select
                       value={language}
                       itemToStringLabel={(value) => (value ? getLanguageName(value) : '')}
-                      disabled={
-                        updateUser.isPending ||
-                        normalizeLanguage(user?.preferedLanguage) !== activeLocale
-                      }
+                      disabled={updateUser.isPending}
                       onValueChange={(value) => {
                         if (value) {
-                          handleLanguageChange(value);
+                          setLanguage(value);
                         }
                       }}
                     >
@@ -412,9 +494,9 @@ function ProfilePage() {
                   </div>
                 </div>
 
-                {updateUser.error && (
+                {profileErrors.form && (
                   <Alert variant="destructive">
-                    <AlertDescription>{updateUser.error.message}</AlertDescription>
+                    <AlertDescription>{profileErrors.form}</AlertDescription>
                   </Alert>
                 )}
 
