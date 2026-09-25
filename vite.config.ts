@@ -15,96 +15,17 @@ const devRedisUrl = `REDIS_URL="\${REDIS_URL:-redis://${redisHost}:${redisPort}}
 export default defineConfig({
   run: {
     tasks: {
-      'repo:trpc:generate': {
-        command:
-          'if [ -d /goinfre ]; then vp exec --filter @repo/backend ../../bin/nestjs-trpc generate --entrypoint src/app.module.ts --output ../../packages/schemas/src/@generated; else vp exec --filter @repo/backend bunx nestjs-trpc generate --entrypoint src/app.module.ts --output ../../packages/schemas/src/@generated; fi',
-        cache: false,
-      },
-      'repo:frontend:generate': {
-        command:
-          'vp exec --filter @repo/frontend paraglide-js compile --project ./project.inlang --outdir ./src/@generated/paraglide --strategy url baseLocale --silent && vp exec --filter @repo/frontend tsr generate',
-        cache: false,
-      },
-      'repo:dev': {
-        command: `${devDatabaseUrl} ${devRedisUrl} vp run --filter @repo/backend --filter @repo/frontend --fail-if-no-match --parallel dev`,
-        dependsOn: ['repo:dev:prepare'],
-        cache: false,
-      },
-      'repo:dev:prepare': {
-        command:
-          'vp run -w repo:services:setup && vp run -w repo:trpc:generate && vp run -w repo:frontend:generate',
-        cache: false,
-      },
-      'repo:dev:frontend': {
-        command: 'vp run --filter @repo/frontend --fail-if-no-match --parallel dev',
-        dependsOn: ['repo:dev:frontend:prepare'],
-        cache: false,
-      },
-      'repo:dev:frontend:prepare': {
-        command: 'vp run -w repo:trpc:generate && vp run -w repo:frontend:generate',
-        cache: false,
-      },
-      'repo:dev:backend': {
-        command: `${devDatabaseUrl} ${devRedisUrl} vp run --filter @repo/backend --fail-if-no-match --parallel dev`,
-        dependsOn: ['repo:dev:backend:prepare'],
-        cache: false,
-      },
-      'repo:dev:backend:prepare': {
-        command: 'vp run -w repo:services:setup && vp run -w repo:trpc:generate',
-        cache: false,
-      },
-      'repo:dev:fixtures': {
-        command:
-          'DEV_FIXTURES=true vp run --filter @repo/backend --filter @repo/frontend --fail-if-no-match --parallel dev',
-        dependsOn: ['repo:dev:fixtures:prepare'],
-        cache: false,
-      },
-      'repo:dev:fixtures:prepare': {
-        command: 'vp run -w repo:trpc:generate && vp run -w repo:frontend:generate',
-        cache: false,
-      },
-      'repo:deploy': {
-        command: 'docker compose up --build',
-        cache: false,
-      },
-      'repo:deploy:detached': {
-        command: 'docker compose up -d --build',
-        cache: false,
-      },
-      'repo:services:setup': {
-        command: `docker compose up -d --wait postgres redis mailpit`,
-        cache: false,
-      },
-      'repo:redis:setup': {
-        command: 'docker compose up -d redis',
-        cache: false,
-      },
-      'repo:db:generate': {
-        command: 'vp exec --filter @repo/backend drizzle-kit generate --config drizzle.config.ts',
-        cache: false,
-      },
-      'repo:db:migrate': {
-        command: `${connectDevcontainerToComposeNetwork} && ${devDatabaseUrl} vp exec --filter @repo/backend drizzle-kit migrate --config drizzle.config.ts`,
-        dependsOn: ['repo:services:setup'],
-        cache: false,
-      },
-      'repo:db:seed': {
-        command: `${connectDevcontainerToComposeNetwork} && ${devDatabaseUrl} vp exec --filter @repo/backend bun seed.ts`,
-        dependsOn: ['repo:db:migrate'],
-        cache: false,
-      },
-      'repo:db:push': {
-        command: `${connectDevcontainerToComposeNetwork} && ${devDatabaseUrl} vp exec --filter @repo/backend drizzle-kit push --config drizzle.config.ts`,
-        cache: false,
-      },
-      'repo:db:studio': {
-        command: `${connectDevcontainerToComposeNetwork} && ${devDatabaseUrl} vp exec --filter @repo/backend drizzle-kit studio --config drizzle.config.ts`,
-        cache: false,
-      },
       'repo:build': {
         command: 'true',
         dependsOn: ['repo:build:backend', 'repo:build:frontend'],
         cache: false,
+      },
+      'repo:build:backend': {
+        command: 'cd apps/backend && ./node_modules/.bin/nest build',
+        dependsOn: ['repo:trpc:generate'],
+        cache: true,
+        input: [{ auto: true }, '!apps/backend/dist/**', '!apps/backend/tsconfig.tsbuildinfo'],
+        output: [{ pattern: 'apps/backend/dist/**', base: 'workspace' }],
       },
       'repo:build:frontend': {
         command: 'cd apps/frontend && ./node_modules/.bin/vite build',
@@ -125,21 +46,143 @@ export default defineConfig({
           { pattern: 'apps/frontend/.tanstack/**', base: 'workspace' },
         ],
       },
-      'repo:build:backend': {
-        command: 'cd apps/backend && ./node_modules/.bin/nest build',
+      'repo:check': {
+        command: 'vp check',
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
+      },
+      'repo:check:backend': {
+        command: 'vp check apps/backend packages/schemas',
         dependsOn: ['repo:trpc:generate'],
-        cache: true,
-        input: [{ auto: true }, '!apps/backend/dist/**', '!apps/backend/tsconfig.tsbuildinfo'],
-        output: [{ pattern: 'apps/backend/dist/**', base: 'workspace' }],
+      },
+      'repo:check:fix': {
+        command: 'vp check --fix',
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
+        cache: false,
+      },
+      'repo:check:fix:backend': {
+        command: 'vp check --fix apps/backend packages/schemas',
+        dependsOn: ['repo:trpc:generate'],
+        cache: false,
+      },
+      'repo:check:fix:frontend': {
+        command: 'vp check --fix apps/frontend packages/schemas',
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
+        cache: false,
+      },
+      'repo:check:frontend': {
+        command: 'vp check apps/frontend packages/schemas',
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
+      },
+      'repo:db:generate': {
+        command: 'vp exec --filter @repo/backend drizzle-kit generate --config drizzle.config.ts',
+        cache: false,
+      },
+      'repo:db:setup': {
+        command: `${connectDevcontainerToComposeNetwork} && docker compose up -d --wait postgres && ${devDatabaseUrl} vp exec --filter @repo/backend drizzle-kit migrate --config drizzle.config.ts`,
+        cache: false,
+      },
+      'repo:db:migrate': {
+        command: `${connectDevcontainerToComposeNetwork} && ${devDatabaseUrl} vp exec --filter @repo/backend drizzle-kit migrate --config drizzle.config.ts`,
+        dependsOn: ['repo:services:setup'],
+        cache: false,
+      },
+      'repo:db:push': {
+        command: `${connectDevcontainerToComposeNetwork} && ${devDatabaseUrl} vp exec --filter @repo/backend drizzle-kit push --config drizzle.config.ts`,
+        cache: false,
+      },
+      'repo:db:seed': {
+        command: `${connectDevcontainerToComposeNetwork} && ${devDatabaseUrl} vp exec --filter @repo/backend bun seed.ts`,
+        dependsOn: ['repo:db:migrate'],
+        cache: false,
+      },
+      'repo:db:studio': {
+        command: `${connectDevcontainerToComposeNetwork} && ${devDatabaseUrl} vp exec --filter @repo/backend drizzle-kit studio --config drizzle.config.ts`,
+        cache: false,
+      },
+      'repo:deploy': {
+        command: 'docker compose up --build',
+        cache: false,
+      },
+      'repo:deploy:detached': {
+        command: 'docker compose up -d --build',
+        cache: false,
+      },
+      'repo:dev': {
+        command: `${devDatabaseUrl} ${devRedisUrl} vp run --filter @repo/backend --fail-if-no-match dev & backend_task_pid=$!; trap 'kill "$backend_task_pid" 2>/dev/null || true' EXIT; until curl --fail --silent http://127.0.0.1:3001/health >/dev/null 2>&1; do if ! kill -0 "$backend_task_pid" 2>/dev/null; then wait "$backend_task_pid"; exit 1; fi; sleep 1; done; vp run --filter @repo/frontend --fail-if-no-match --parallel dev`,
+        dependsOn: ['repo:dev:prepare'],
+        cache: false,
+      },
+      'repo:dev:backend': {
+        command: `${devDatabaseUrl} ${devRedisUrl} vp run --filter @repo/backend --fail-if-no-match --parallel dev`,
+        dependsOn: ['repo:dev:backend:prepare'],
+        cache: false,
+      },
+      'repo:dev:backend:prepare': {
+        command: 'true',
+        dependsOn: ['repo:services:setup', 'repo:trpc:generate'],
+        cache: false,
+      },
+      'repo:dev:fixtures': {
+        command:
+          'DEV_FIXTURES=true vp run --filter @repo/backend --filter @repo/frontend --fail-if-no-match --parallel dev',
+        dependsOn: ['repo:dev:fixtures:prepare'],
+        cache: false,
+      },
+      'repo:dev:fixtures:prepare': {
+        command: 'true',
+        dependsOn: ['repo:frontend:generate'],
+        cache: false,
+      },
+      'repo:dev:frontend': {
+        command: 'vp run --filter @repo/frontend --fail-if-no-match --parallel dev',
+        dependsOn: ['repo:dev:frontend:prepare'],
+        cache: false,
+      },
+      'repo:dev:frontend:prepare': {
+        command: 'true',
+        dependsOn: ['repo:frontend:generate'],
+        cache: false,
+      },
+      'repo:dev:prepare': {
+        command: 'true',
+        dependsOn: ['repo:services:setup', 'repo:frontend:generate'],
+        cache: false,
+      },
+      'repo:frontend:generate': {
+        command:
+          'vp exec --filter @repo/frontend paraglide-js compile --project ./project.inlang --outdir ./src/@generated/paraglide --strategy url baseLocale --silent && vp exec --filter @repo/frontend tsr generate',
+        dependsOn: ['repo:trpc:generate'],
+        cache: false,
+      },
+      'repo:lint': {
+        command: 'vp lint',
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
+      },
+      'repo:lint:backend': {
+        command: 'vp lint apps/backend packages/schemas',
+        dependsOn: ['repo:trpc:generate'],
+      },
+      'repo:lint:frontend': {
+        command: 'vp lint apps/frontend packages/schemas',
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
+      },
+      'repo:redis:setup': {
+        command: 'docker compose up -d redis',
+        cache: false,
+      },
+      'repo:services:setup': {
+        command: `docker compose up -d --wait postgres redis mailpit`,
+        cache: false,
+      },
+      'repo:staged': {
+        command: 'vp staged',
+        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
+        cache: false,
       },
       'repo:test': {
         command: 'true',
         dependsOn: ['repo:test:backend', 'repo:test:frontend'],
         cache: false,
-      },
-      'repo:test:frontend': {
-        command: 'vp test --project frontend',
-        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
       },
       'repo:test:backend': {
         command: 'vp test --project backend',
@@ -157,48 +200,13 @@ export default defineConfig({
         command: './node_modules/.bin/playwright install chromium firefox',
         cache: false,
       },
-      'repo:check': {
-        command: 'vp check',
+      'repo:test:frontend': {
+        command: 'vp test --project frontend',
         dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
       },
-      'repo:check:frontend': {
-        command: 'vp check apps/frontend packages/schemas',
-        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
-      },
-      'repo:check:backend': {
-        command: 'vp check apps/backend packages/schemas',
-        dependsOn: ['repo:trpc:generate'],
-      },
-      'repo:check:fix': {
-        command: 'vp check --fix',
-        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
-        cache: false,
-      },
-      'repo:check:fix:frontend': {
-        command: 'vp check --fix apps/frontend packages/schemas',
-        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
-        cache: false,
-      },
-      'repo:check:fix:backend': {
-        command: 'vp check --fix apps/backend packages/schemas',
-        dependsOn: ['repo:trpc:generate'],
-        cache: false,
-      },
-      'repo:lint': {
-        command: 'vp lint',
-        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
-      },
-      'repo:lint:frontend': {
-        command: 'vp lint apps/frontend packages/schemas',
-        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
-      },
-      'repo:lint:backend': {
-        command: 'vp lint apps/backend packages/schemas',
-        dependsOn: ['repo:trpc:generate'],
-      },
-      'repo:staged': {
-        command: 'vp staged',
-        dependsOn: ['repo:trpc:generate', 'repo:frontend:generate'],
+      'repo:trpc:generate': {
+        command:
+          'if [ -d /goinfre ]; then vp exec --filter @repo/backend ../../bin/nestjs-trpc generate --entrypoint src/app.module.ts --output ../../packages/schemas/src/@generated; else vp exec --filter @repo/backend bunx nestjs-trpc generate --entrypoint src/app.module.ts --output ../../packages/schemas/src/@generated; fi',
         cache: false,
       },
       'repo:trpc:watch': {
