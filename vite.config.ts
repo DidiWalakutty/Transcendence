@@ -71,12 +71,8 @@ export default defineConfig({
         command: 'docker compose up -d --build',
         cache: false,
       },
-      'repo:db:setup': {
-        command: `docker compose up -d --wait postgres && ${connectDevcontainerToComposeNetwork} && vp run -w repo:db:migrate`,
-        cache: false,
-      },
       'repo:services:setup': {
-        command: `docker compose up -d --wait postgres redis && ${connectDevcontainerToComposeNetwork} && vp run -w repo:db:migrate`,
+        command: `docker compose up -d --wait postgres redis mailpit`,
         cache: false,
       },
       'repo:redis:setup': {
@@ -89,10 +85,12 @@ export default defineConfig({
       },
       'repo:db:migrate': {
         command: `${connectDevcontainerToComposeNetwork} && ${devDatabaseUrl} vp exec --filter @repo/backend drizzle-kit migrate --config drizzle.config.ts`,
+        dependsOn: ['repo:services:setup'],
         cache: false,
       },
       'repo:db:seed': {
         command: `${connectDevcontainerToComposeNetwork} && ${devDatabaseUrl} vp exec --filter @repo/backend bun seed.ts`,
+        dependsOn: ['repo:db:migrate'],
         cache: false,
       },
       'repo:db:push': {

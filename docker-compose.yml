@@ -49,6 +49,28 @@ services:
       timeout: 5s
       retries: 20
 
+  # One-shot: runs the backend database migrations before the app is started.
+  # Exits 0 when done; `docker compose up` keeps the stack running.
+  migrate:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+      target: builder
+    container_name: ft_transcendence_migrate
+    restart: 'no'
+    working_dir: /app/apps/backend
+    command: ['bun', 'run', 'migrate']
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-transcendence}:${POSTGRES_PASSWORD:-transcendence}@postgres:5432/${POSTGRES_DB:-transcendence}
+      REDIS_URL: redis://redis:6379
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-dev-only-insecure-secret-change-in-production}
+      BETTER_AUTH_URL: ${PUBLIC_ORIGIN:-https://localhost:3000}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   # One-shot: creates the demo accounts and events (apps/backend/seed.ts, which
   # skips anything that already exists) once the backend has migrated the
   # database. Exits 0 when done; `docker compose up` keeps the stack running.
@@ -70,6 +92,8 @@ services:
       SEED_DIDI_PASSWORD: ${SEED_DIDI_PASSWORD:-Qwerty123!}
       SEED_HOMER_PASSWORD: ${SEED_HOMER_PASSWORD:-Simpsons123!}
     depends_on:
+      migrate:
+        condition: service_completed_successfully
       backend:
         condition: service_healthy
 
