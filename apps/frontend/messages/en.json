@@ -438,5 +438,6 @@
   "event_contact_email": "Email",
   "event_contact_include": "Include contact information",
   "event_contact_name_label": "Contact Name",
-  "event_contact_email_label": "Contact Email"
+  "event_contact_email_label": "Contact Email",
+  "event_contact_name_placeholder": "Enter contact name"
 }

@@ -437,5 +437,6 @@
   "event_contact_email": "Correo electrónico",
   "event_contact_include": "Incluir información de contacto",
   "event_contact_name_label": "Nombre del contacto",
-  "event_contact_email_label": "Correo electrónico del contacto"
+  "event_contact_email_label": "Correo electrónico del contacto",
+  "event_contact_name_placeholder": "Introduce el nombre del contacto"
 }

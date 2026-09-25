@@ -438,5 +438,6 @@
   "event_contact_email": "E-mailadres",
   "event_contact_include": "Contactgegevens toevoegen",
   "event_contact_name_label": "Naam contactpersoon",
-  "event_contact_email_label": "E-mailadres contactpersoon"
+  "event_contact_email_label": "E-mailadres contactpersoon",
+  "event_contact_name_placeholder": "Voer naam contactpersoon in"
 }

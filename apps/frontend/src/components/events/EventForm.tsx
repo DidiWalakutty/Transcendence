@@ -342,7 +342,7 @@ export function EventForm() {
                     id="contactName"
                     value={contactName}
                     onChange={(e) => setContactName(e.target.value)}
-                    placeholder="Enter contact name"
+                    placeholder={m.event_contact_name_placeholder()}
                     className="bg-white"
                   />
                 </div>
