@@ -14,12 +14,13 @@ browser without a reload.
 What the application does:
 
 - Public event catalogue with category filters, three sort orders and server-side pagination.
+- Accounts with e-mail and password sign-up, password reset (15-minute token expiry), and optional two-factor authentication (TOTP enrolment, QR codes, backup keys, and verification gates).
 - Accounts with e-mail and password sign-up, password reset and optional two-factor authentication.
 - Ticket registration with a capacity guarantee. A user holds at most one active ticket per event and an event never sells more tickets than its capacity.
 - Event creation and editing for organisers, with a "My events" page and a "My tickets" page.
 - Profiles with avatar upload, about and location fields and a preferred language.
 - Friends with requests and acceptance, live online status and a global chat.
-- A notification on every create, update and delete. The person acting sees a toast, the people affected receive an e-mail (welcome, ticket confirmation, event modified, event cancelled) in their language.
+- A notification on every create, update and delete. The person acting sees a toast, the people affected receive an e-mail (welcome, ticket confirmation, event modified, event cancelled, 24-hour friendly reminder) in their language.
 - Admin dashboard with a user table, role changes and a table of all events.
 - Interface in English, Dutch and Spanish, switchable in the app and remembered per user.
 - Server-side rendering, HTTPS for every request and a single-command Docker deployment.
@@ -208,30 +209,32 @@ The database stores pictures as data URLs that the client compressed first, at m
 
 ## 6. Features
 
-| Feature area                  | What it does                                                                                                                                   | Author(s)                          |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
-| Monorepo and tooling          | Vite+ and Bun workspaces, shared `packages/schemas` (tables, Zod schemas, generated tRPC types), task graph, CI, pre-commit hooks              | `mde-krui`                         |
-| Backend architecture          | NestJS modules with router, service and repository layers, in-memory repositories for tests, Redis cache and rate limiting, health checks      | `mde-krui`                         |
-| Authentication                | E-mail and password sign-up and login (better-auth, scrypt), sessions, forgot and reset password                                               | `mde-krui`, `dkolodze`, `diwalaku` |
-| Two-factor authentication     | TOTP enrolment with QR code, backup codes, `/verify-2fa` step, lockout counter                                                                 | `dkolodze`, later fixes `mde-krui` |
-| Event catalogue               | Server-side category filter, three sort orders, pagination, state in the URL, featured events, statistics                                      | `diwalaku`                         |
-| Event creation and management | Create, edit and delete with a date picker, a category combobox and an image picker that compresses in the browser. "My events" page           | `diwalaku`, `mde-krui`, `ccraciun` |
-| Ticket registration           | Register and cancel, availability, attendee lists, capacity check inside a transaction                                                         | `diwalaku`                         |
-| My tickets                    | Registered events with search and cancellation                                                                                                 | `rtorrent`                         |
-| Real-time updates             | tRPC subscriptions over SSE with a heartbeat and a reconnect watchdog. Live event list and a live user stream for the admin dashboard          | `ccraciun`                         |
-| Presence and friends          | Online status, friend requests, acceptance and removal, user search                                                                            | `ccraciun`                         |
-| Chat                          | Global live chat room over SSE                                                                                                                 | `ccraciun`                         |
-| Profile and avatar            | Profile page, editable fields, preferred language, avatar upload with an initials fallback                                                     | `mde-krui`, `ccraciun`             |
-| Notifications                 | Toasts on every create, update and delete. Welcome, ticket, event-modified and event-cancelled e-mails in five languages, delivered to Mailpit | `rtorrent`, toasts `mde-krui`      |
-| Admin dashboard               | User table with role changes, table of all events, search                                                                                      | `mde-krui`                         |
-| Internationalisation          | Paraglide with English, Dutch and Spanish, a switcher in the navbar and a per-user preference                                                  | `diwalaku`, `mde-krui`             |
-| Landing page and navigation   | Hero, how it works, categories, FAQ, footer, role-aware navbar with a mobile drawer                                                            | `mde-krui`, `diwalaku`, `ccraciun` |
-| Legal pages                   | Privacy Policy and Terms of Service in three languages, linked from the footer and the sign-up form                                            | `mde-krui`, `diwalaku`             |
-| Database                      | Drizzle schema, migrations, seed script with demo accounts and events                                                                          | `diwalaku`, `mde-krui`             |
-| Deployment and HTTPS          | Docker Compose stack, Caddy TLS proxy, migrations and seeding at start-up, environment handling                                                | `mde-krui`, `ccraciun`             |
-| Browser compatibility and e2e | Playwright suites on Chromium and Firefox, a console check on every route, the [browser support document](./docs/BROWSER_SUPPORT.md)           | `ccraciun`                         |
-| Responsive layout             | Phone and tablet layout: navbar drawer, stacked catalogue, card layout, chat widget                                                            | `ccraciun`                         |
-| Documentation                 | The `docs/` set, README, onboarding                                                                                                            | `mde-krui`, `ccraciun`, `dkolodze` |
+## 6. Features
+
+| Feature area                  | What it does                                                                                                                                              | Author(s)                                      |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| Monorepo and tooling          | Vite+ and Bun workspaces, shared `packages/schemas` (tables, Zod schemas, generated tRPC types), task graph, CI, pre-commit hooks                         | `mde-krui`                                     |
+| Backend architecture          | NestJS modules with router, service and repository layers, in-memory repositories for tests, Redis cache and rate limiting, health checks                 | `mde-krui`                                     |
+| Authentication                | E-mail and password sign-up and login (better-auth, scrypt), sessions, forgot and reset password                                                          | `mde-krui`, `dkolodze`, `diwalaku`, `rtorrent` |
+| Two-factor authentication     | TOTP enrolment with QR code, backup codes, `/verify-2fa` step, lockout counter                                                                            | `dkolodze`, later fixes `mde-krui`             |
+| Event catalogue               | Server-side category filter, three sort orders, pagination, state in the URL, featured events, statistics                                                 | `diwalaku`                                     |
+| Event creation and management | Create, edit and delete with a date picker, a category combobox and an image picker that compresses in the browser. "My events" page                      | `diwalaku`, `mde-krui`, `ccraciun`             |
+| Ticket registration           | Register and cancel, availability, attendee lists, capacity check inside a transaction                                                                    | `diwalaku`                                     |
+| My tickets                    | Registered events with search and cancellation                                                                                                            | `rtorrent`                                     |
+| Real-time updates             | tRPC subscriptions over SSE with a heartbeat and a reconnect watchdog. Live event list and a live user stream for the admin dashboard                     | `ccraciun`                                     |
+| Presence and friends          | Online status, friend requests, acceptance and removal, user search                                                                                       | `ccraciun`                                     |
+| Chat                          | Global live chat room over SSE                                                                                                                            | `ccraciun`                                     |
+| Profile and avatar            | Profile page, editable fields, preferred language, password modification, avatar upload with an initials fallback                                         | `mde-krui`, `ccraciun`, `rtorrent`             |
+| Notifications                 | Toasts on every create, update and delete. Multilingual welcome, ticket, event-modified, event-cancelled and 24-hr reminder e-mails, delivered to Mailpit | `rtorrent`, toasts `mde-krui`                  |
+| Admin dashboard               | User table with role changes, table of all events, search                                                                                                 | `mde-krui`                                     |
+| Internationalisation          | Paraglide with English, Dutch and Spanish, a switcher in the navbar and a per-user preference                                                             | `diwalaku`, `mde-krui`                         |
+| Landing page and navigation   | Hero, how it works, categories, FAQ, footer, role-aware navbar with a mobile drawer                                                                       | `mde-krui`, `diwalaku`, `ccraciun`             |
+| Legal pages                   | Privacy Policy and Terms of Service in three languages, linked from the footer and the sign-up form                                                       | `mde-krui`, `diwalaku`                         |
+| Database                      | Drizzle schema, migrations, seed script with demo accounts and events                                                                                     | `diwalaku`, `mde-krui`                         |
+| Deployment and HTTPS          | Docker Compose stack, Caddy TLS proxy, migrations and seeding at start-up, environment handling                                                           | `mde-krui`, `ccraciun`                         |
+| Browser compatibility and e2e | Playwright suites on Chromium and Firefox, a console check on every route, the [browser support document](./docs/BROWSER_SUPPORT.md)                      | `ccraciun`                                     |
+| Responsive layout             | Phone and tablet layout: navbar drawer, stacked catalogue, card layout, chat widget                                                                       | `ccraciun`                                     |
+| Documentation                 | The `docs/` set, README, onboarding                                                                                                                       | `mde-krui`, `ccraciun`, `dkolodze`, `rtorrent` |
 
 ---
 
@@ -325,6 +328,8 @@ docker compose up --build
 The backend applies the database migrations from `apps/backend/drizzle` when it starts. The one-shot `seed` service then creates the demo accounts and events. It skips anything that already exists, so a rerun is safe.
 
 Open the application at `https://localhost:3000`. E-mails sent by the app land in Mailpit at `http://localhost:8025`.
+
+Detailed full-stack technical reference manuals for these notification flows are available in the [Email Notification Subsystem Manual](./docs/EMAIL.md).
 
 Demo accounts (the passwords are the `SEED_*` values, see [Environment](./docs/ENVIRONMENT.md)):
 

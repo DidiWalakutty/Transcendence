@@ -11,6 +11,8 @@ Application services run through Vite+ tasks. Infrastructure services are provid
 | `3001` | Backend    | NestJS API and tRPC services.                                                                            |
 | `5432` | PostgreSQL | Primary relational database.                                                                             |
 | `6380` | Redis      | Host port for backend cache and throttling.                                                              |
+| `1025` | Mailpit    | Local SMTP mail listener. Intercepts backend outbound email records.                                     |
+| `8025` | Mailpit    | Web UI Management Console dashboard. Displays the sandboxed inbox queue.                                 |
 
 The frontend and backend containers of the Docker stack bind no host ports; the app is
 exposed through Caddy only, on `3000` — the same number the Vite dev server uses, so run
