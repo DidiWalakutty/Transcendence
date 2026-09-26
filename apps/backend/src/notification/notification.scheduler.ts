@@ -1,4 +1,10 @@
-import { Inject, Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  OnApplicationBootstrap,
+  OnModuleDestroy,
+} from '@nestjs/common';
 import { resolveUserDisplayName, resolveUserLocale } from '@repo/schemas/users';
 import { fromEventDateTime } from '@repo/schemas/events';
 import { DATABASE } from '../database/database.constants';
@@ -9,7 +15,7 @@ import { NotificationService } from './notification.service';
 import { isActiveRegistration } from '../registrations/registration.conditions';
 
 @Injectable()
-export class NotificationScheduler implements OnModuleInit, OnModuleDestroy {
+export class NotificationScheduler implements OnApplicationBootstrap, OnModuleDestroy {
   private readonly logger = new Logger(NotificationScheduler.name);
   private intervalId: NodeJS.Timeout | null = null;
 
@@ -18,7 +24,7 @@ export class NotificationScheduler implements OnModuleInit, OnModuleDestroy {
     @Inject(DATABASE) private readonly db: Database,
   ) {}
 
-  onModuleInit() {
+  onApplicationBootstrap() {
     this.logger.log('Background 24-Hour Pre-Event Friendly Reminder scheduler activated.');
     void this.runReminderCheckSweep();
 
