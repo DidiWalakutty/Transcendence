@@ -93,6 +93,16 @@ export class EventsRouter {
   }
 
   @UseMiddlewares(ProtectedMiddleware)
+  @Query({ output: eventWithAttendeeCountSchema.array() })
+  async getAllEventsWithCounts(@Ctx() ctx: ProtectedCtx) {
+    if (!hasAdminRole(ctx.user)) {
+      throw forbiddenError('Admin access required');
+    }
+
+    return this.eventsService.findAllWithCounts();
+  }
+
+  @UseMiddlewares(ProtectedMiddleware)
   @Mutation({ input: updateEventSchema, output: eventSchema })
   async updateEvent(@Input() input: UpdateEventDto, @Ctx() ctx: ProtectedCtx) {
     await assertCanManage(this.eventsService, input.id, ctx.user);

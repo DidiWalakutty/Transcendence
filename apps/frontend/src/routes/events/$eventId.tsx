@@ -50,7 +50,12 @@ function EventDetailPage() {
   );
 
   const statusQuery = useQuery(
-    trpc.registrations.getRegistrationStatus.queryOptions({ id: eventId }),
+    trpc.registrations.getRegistrationStatus.queryOptions(
+      { id: eventId },
+      {
+        refetchOnMount: 'always',
+      },
+    ),
   );
 
   const { register: registerMutation, cancel: cancelMutation } = useRegistrationMutations();
