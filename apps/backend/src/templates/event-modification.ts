@@ -44,7 +44,7 @@ export const EventModificationEmail = ({
         highlightLocation: highlights.location,
         highlightAddress: highlights.address,
       }),
-      EmailCta({ href: `http://localhost:3000/${lang}/events`, label: dictionary.buttonLabel }),
+      EmailCta({ href: `https://localhost:3000/${lang}/events`, label: dictionary.buttonLabel }),
     ].join(''),
     footer: dictionary.footerNotice,
   });

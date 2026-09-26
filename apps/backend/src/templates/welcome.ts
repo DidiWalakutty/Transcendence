@@ -18,7 +18,7 @@ export const WelcomeEmail = ({ userName, lang, dictionary }: WelcomeEmailProps):
     greeting: dictionary.greeting.replace('{userName}', userName),
     description: dictionary.description,
     children: EmailCta({
-      href: `http://localhost:3000/${lang}/events`,
+      href: `https://localhost:3000/${lang}/events`,
       label: dictionary.buttonLabel,
     }),
     footer: dictionary.footerNotice,
