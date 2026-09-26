@@ -48,11 +48,13 @@ export class RegistrationsService {
   }
 
   // Returns a list of users who are registered for an event
-  async getEventAttendees(eventId: string, userId: string) {
-    const isOrganizer = await this.repository.isEventOrganizer(eventId, userId);
+  async getEventAttendees(eventId: string, userId: string, isAdmin: boolean) {
+    if (!isAdmin) {
+      const isOrganizer = await this.repository.isEventOrganizer(eventId, userId);
 
-    if (!isOrganizer) {
-      throw forbiddenError('User is not the organizer of this event.');
+      if (!isOrganizer) {
+        throw forbiddenError('User is not the organizer of this event.');
+      }
     }
 
     return this.repository.getEventAttendees(eventId);

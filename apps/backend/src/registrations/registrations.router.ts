@@ -24,6 +24,7 @@ import type { OptionalAuthCtx, ProtectedCtx } from '../auth/auth.types';
 import { RegistrationsService } from './registrations.service';
 import { eventIdSchema } from '@repo/schemas/events';
 import { z } from 'zod';
+import { hasAdminRole } from '../auth/roles';
 
 // Handles API requests for event registrations
 @Router({ alias: 'registrations' })
@@ -78,7 +79,11 @@ export class RegistrationsRouter {
     output: eventAttendeesList,
   })
   async getEventAttendees(@Input() input: { id: string }, @Ctx() ctx: ProtectedCtx) {
-    return this.registrationsService.getEventAttendees(input.id, ctx.user.id);
+    return this.registrationsService.getEventAttendees(
+      input.id,
+      ctx.user.id,
+      hasAdminRole(ctx.user),
+    );
   }
 
   @Query({
