@@ -20,16 +20,18 @@ services:
     container_name: ft_transcendence_backend
     restart: unless-stopped
     environment:
+      NODE_ENV: ${NODE_ENV}
       PORT: 3001
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_FROM: ${MAIL_FROM}
       THROTTLE_ENABLED: ${THROTTLE_ENABLED}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${PUBLIC_ORIGIN}
       CORS_ORIGINS: ${PUBLIC_ORIGIN}
       SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD}
-      SEED_DIDI_PASSWORD: ${SEED_DIDI_PASSWORD}
-      SEED_HOMER_PASSWORD: ${SEED_HOMER_PASSWORD}
     depends_on:
       postgres:
         condition: service_healthy
@@ -71,9 +73,8 @@ services:
       redis:
         condition: service_healthy
 
-  # One-shot: creates the demo accounts and events (apps/backend/seed.ts, which
-  # skips anything that already exists) once the backend has migrated the
-  # database. Exits 0 when done; `docker compose up` keeps the stack running.
+  # One-shot: seeds the admin account in production, or demo accounts and
+  # events in development (apps/backend/seed.ts). It skips existing data.
   seed:
     build:
       context: .
@@ -84,13 +85,14 @@ services:
     working_dir: /app/apps/backend
     command: ['bun', 'seed.ts']
     environment:
+      NODE_ENV: ${NODE_ENV}
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${PUBLIC_ORIGIN}
       SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD}
-      SEED_DIDI_PASSWORD: ${SEED_DIDI_PASSWORD}
-      SEED_HOMER_PASSWORD: ${SEED_HOMER_PASSWORD}
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL}
+      SEED_ADMIN_USERNAME: ${SEED_ADMIN_USERNAME}
     depends_on:
       migrate:
         condition: service_completed_successfully

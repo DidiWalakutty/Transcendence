@@ -121,10 +121,16 @@ behavior, persistence, or the containerized service integration.
 Build and run the full containerized stack with one command:
 
 ```bash
-vp run deploy            # = docker compose up --build
+./scripts/deploy.sh
 ```
 
-For a background deployment, use `vp run deploy:detached`.
+The script installs dependencies through Vite+ before loading the repository
+task graph, so it works on a fresh clone without Bun installed. For a
+background deployment, use `./scripts/deploy.sh --detached`.
+
+To remove the Compose containers, networks, and PostgreSQL/Redis volumes before
+rebuilding from scratch, use `./scripts/reset-deploy.sh`. It only resets the
+deployment and asks for confirmation; pass `--yes` for a non-interactive reset.
 
 The backend runs the pending Drizzle migrations at startup (`DatabaseService.onModuleInit`),
 and the one-shot `seed` Compose service inserts the demo accounts and events once the backend
@@ -133,20 +139,21 @@ tasks remain for the non-Docker development flow.
 
 ## Useful Commands
 
-| Command                  | Purpose                                   |
-| ------------------------ | ----------------------------------------- |
-| `vp run dev`             | Start the full development stack.         |
-| `vp run dev:fixtures`    | Start fixture mode without Docker.        |
-| `vp run dev:frontend`    | Start only the frontend.                  |
-| `vp run dev:backend`     | Start database setup and the backend.     |
-| `vp run deploy`          | Build and run the full Compose stack.     |
-| `vp run deploy:detached` | Build and run the Compose stack detached. |
-| `vp run services:setup`  | Start PostgreSQL and Redis, then migrate. |
-| `vp run check`           | Run formatting, linting, and type checks. |
-| `vp run check:fix`       | Fix formatting and safe lint issues.      |
-| `vp run test`            | Run tests.                                |
-| `vp run test:e2e`        | Run browser tests against the stack.      |
-| `vp run build`           | Build all workspaces.                     |
+| Command                          | Purpose                                                  |
+| -------------------------------- | -------------------------------------------------------- |
+| `vp run dev`                     | Start the full development stack.                        |
+| `vp run dev:fixtures`            | Start fixture mode without Docker.                       |
+| `vp run dev:frontend`            | Start only the frontend.                                 |
+| `vp run dev:backend`             | Start database setup and the backend.                    |
+| `./scripts/deploy.sh`            | Install dependencies and run the full Compose stack.     |
+| `./scripts/deploy.sh --detached` | Install dependencies and run the Compose stack detached. |
+| `./scripts/reset-deploy.sh`      | Delete deployment volumes and rebuild from scratch.      |
+| `vp run services:setup`          | Start PostgreSQL and Redis, then migrate.                |
+| `vp run check`                   | Run formatting, linting, and type checks.                |
+| `vp run check:fix`               | Fix formatting and safe lint issues.                     |
+| `vp run test`                    | Run tests.                                               |
+| `vp run test:e2e`                | Run browser tests against the stack.                     |
+| `vp run build`                   | Build all workspaces.                                    |
 
 For more commands, see [Tooling](./TOOLING.md).
 

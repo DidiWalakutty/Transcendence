@@ -100,11 +100,11 @@ export default defineConfig({
         cache: false,
       },
       'repo:deploy': {
-        command: 'docker compose up --build',
+        command: 'docker compose --env-file .env up --build',
         cache: false,
       },
       'repo:deploy:detached': {
-        command: 'docker compose up -d --build',
+        command: 'docker compose --env-file .env up -d --build',
         cache: false,
       },
       'repo:dev': {

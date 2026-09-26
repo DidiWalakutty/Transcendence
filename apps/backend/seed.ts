@@ -64,29 +64,31 @@ const auth = betterAuth({
 const users = [
   {
     name: 'Admin User',
-    email: 'admin.eventra@gmail.com',
-    username: 'admin',
+    email: environment.SEED_ADMIN_EMAIL,
+    username: environment.SEED_ADMIN_USERNAME,
     password: environment.SEED_ADMIN_PASSWORD!,
     role: 'admin',
   },
   {
     name: 'Didi Walakutty',
-    email: 'didi@example.com',
-    username: 'didi_walakutty',
+    email: environment.SEED_DIDI_EMAIL,
+    username: environment.SEED_DIDI_USERNAME,
     password: environment.SEED_DIDI_PASSWORD!,
     role: 'user',
   },
   {
     name: 'Homer Simpson',
-    email: 'homer@example.com',
-    username: 'homer_simpson',
+    email: environment.SEED_HOMER_EMAIL,
+    username: environment.SEED_HOMER_USERNAME,
     password: environment.SEED_HOMER_PASSWORD!,
     role: 'user',
   },
 ];
 
 async function seed() {
-  for (const user of users) {
+  const usersToSeed = environment.NODE_ENV === 'production' ? [users[0]] : users;
+
+  for (const user of usersToSeed) {
     const existingUser = await db.query.users.findFirst({
       where: eq(schema.users.email, user.email),
     });
@@ -123,8 +125,13 @@ async function seed() {
     console.log(`Created ${user.role}: ${user.email}`);
   }
 
+  if (environment.NODE_ENV === 'production') {
+    console.log('Production seed complete: admin user only.');
+    return;
+  }
+
   const organizer = await db.query.users.findFirst({
-    where: eq(schema.users.email, 'admin.eventra@gmail.com'),
+    where: eq(schema.users.email, environment.SEED_ADMIN_EMAIL),
   });
 
   if (!organizer) {
