@@ -31,8 +31,8 @@ const environmentSchema = z
     BETTER_AUTH_SECRET: z.string().min(1),
     BETTER_AUTH_URL: z.string().url().default('http://localhost:3001'),
     SEED_ADMIN_PASSWORD: z.string().min(1),
-    SEED_DIDI_PASSWORD: z.string().min(1).optional(),
-    SEED_HOMER_PASSWORD: z.string().min(1).optional(),
+    SEED_DIDI_PASSWORD: z.string().min(1),
+    SEED_HOMER_PASSWORD: z.string().min(1),
     SEED_ADMIN_EMAIL: z.string().email().default('admin.eventra@gmail.com'),
     SEED_DIDI_EMAIL: z.string().email().default('didi@example.com'),
     SEED_HOMER_EMAIL: z.string().email().default('homer@example.com'),
@@ -56,18 +56,6 @@ const environmentSchema = z
       .pipe(z.array(z.string().url()).min(1)),
   })
   .superRefine((environment, context) => {
-    if (environment.NODE_ENV !== 'production') {
-      for (const variable of ['SEED_DIDI_PASSWORD', 'SEED_HOMER_PASSWORD'] as const) {
-        if (!environment[variable]) {
-          context.addIssue({
-            code: 'custom',
-            message: `${variable} is required outside production`,
-            path: [variable],
-          });
-        }
-      }
-    }
-
     if (!environment.DEV_FIXTURES && !environment.DATABASE_URL) {
       context.addIssue({
         code: 'custom',

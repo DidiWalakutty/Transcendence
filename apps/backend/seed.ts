@@ -86,9 +86,7 @@ const users = [
 ];
 
 async function seed() {
-  const usersToSeed = environment.NODE_ENV === 'production' ? [users[0]] : users;
-
-  for (const user of usersToSeed) {
+  for (const user of users) {
     const existingUser = await db.query.users.findFirst({
       where: eq(schema.users.email, user.email),
     });
@@ -123,11 +121,6 @@ async function seed() {
       .where(eq(schema.users.id, result.user.id));
 
     console.log(`Created ${user.role}: ${user.email}`);
-  }
-
-  if (environment.NODE_ENV === 'production') {
-    console.log('Production seed complete: admin user only.');
-    return;
   }
 
   const organizer = await db.query.users.findFirst({

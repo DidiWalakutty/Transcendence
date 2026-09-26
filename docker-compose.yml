@@ -32,6 +32,14 @@ services:
       BETTER_AUTH_URL: ${PUBLIC_ORIGIN}
       CORS_ORIGINS: ${PUBLIC_ORIGIN}
       SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD}
+      SEED_DIDI_PASSWORD: ${SEED_DIDI_PASSWORD}
+      SEED_HOMER_PASSWORD: ${SEED_HOMER_PASSWORD}
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL}
+      SEED_DIDI_EMAIL: ${SEED_DIDI_EMAIL}
+      SEED_HOMER_EMAIL: ${SEED_HOMER_EMAIL}
+      SEED_ADMIN_USERNAME: ${SEED_ADMIN_USERNAME}
+      SEED_DIDI_USERNAME: ${SEED_DIDI_USERNAME}
+      SEED_HOMER_USERNAME: ${SEED_HOMER_USERNAME}
     depends_on:
       postgres:
         condition: service_healthy
@@ -73,8 +81,8 @@ services:
       redis:
         condition: service_healthy
 
-  # One-shot: seeds the admin account in production, or demo accounts and
-  # events in development (apps/backend/seed.ts). It skips existing data.
+  # One-shot: creates all configured seed accounts and events
+  # (apps/backend/seed.ts). It skips existing data.
   seed:
     build:
       context: .
@@ -91,8 +99,14 @@ services:
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
       BETTER_AUTH_URL: ${PUBLIC_ORIGIN}
       SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD}
+      SEED_DIDI_PASSWORD: ${SEED_DIDI_PASSWORD}
+      SEED_HOMER_PASSWORD: ${SEED_HOMER_PASSWORD}
       SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL}
+      SEED_DIDI_EMAIL: ${SEED_DIDI_EMAIL}
+      SEED_HOMER_EMAIL: ${SEED_HOMER_EMAIL}
       SEED_ADMIN_USERNAME: ${SEED_ADMIN_USERNAME}
+      SEED_DIDI_USERNAME: ${SEED_DIDI_USERNAME}
+      SEED_HOMER_USERNAME: ${SEED_HOMER_USERNAME}
     depends_on:
       migrate:
         condition: service_completed_successfully
