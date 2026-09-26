@@ -30,7 +30,7 @@
     "test:backend:e2e": "vp run -w repo:test:backend:e2e",
     "test:e2e": "vp run -w repo:test:e2e",
     "test:e2e:install": "vp run -w repo:test:e2e:install",
-    "check": "vp run -w repo:check",
+    "check": "NODE_ENV=development vp run -w repo:check",
     "check:frontend": "vp run -w repo:check:frontend",
     "check:backend": "vp run -w repo:check:backend",
     "check:fix": "vp run -w repo:check:fix",
