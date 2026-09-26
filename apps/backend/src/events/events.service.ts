@@ -60,6 +60,18 @@ export class EventsService {
     return events.map((event) => ({ ...event, attendeeCount: byId.get(event.id) ?? 0 }));
   }
 
+  // Find all events with attendee counts.
+  async findAllWithCounts() {
+    const events = await this.repository.findAll();
+    const counts = await this.registrationsRepository.getAttendeeCounts(events.map((e) => e.id));
+    const byId = new Map(counts.map((c) => [c.eventId, c.count]));
+
+    return events.map((event) => ({
+      ...event,
+      attendeeCount: byId.get(event.id) ?? 0,
+    }));
+  }
+
   async update(data: UpdateEventDto): Promise<EventDto | null> {
     const oldEventDetails = await this.repository.findById(data.id);
     const event = await this.repository.update(data);

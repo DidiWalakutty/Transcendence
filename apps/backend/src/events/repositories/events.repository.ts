@@ -12,6 +12,7 @@ export type CreateEventRecord = CreateEventDto & {
 export abstract class EventsRepository {
   abstract create(data: CreateEventRecord): Promise<string>;
   abstract findById(id: string): Promise<EventDto | null>;
+  abstract findAll(): Promise<EventDto[]>;
   abstract findByOrganizer(organizerId: string): Promise<EventDto[]>;
   abstract update(data: UpdateEventDto): Promise<EventDto | null>;
   abstract delete(id: string): Promise<EventDto | null>;

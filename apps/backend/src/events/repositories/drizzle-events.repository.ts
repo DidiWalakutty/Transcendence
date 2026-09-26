@@ -50,6 +50,13 @@ export class DrizzleEventsRepository extends EventsRepository {
     return event ? toEventDto(event) : null;
   }
 
+  // Find all events, soonest first.
+  async findAll(): Promise<EventDto[]> {
+    const allEvents = await this.db.select().from(events).orderBy(asc(events.dateTime));
+
+    return allEvents.map((event) => toEventDto(event));
+  }
+
   // Find every event a user organizes, soonest first.
   async findByOrganizer(organizerId: string): Promise<EventDto[]> {
     const organizerEvents = await this.db
