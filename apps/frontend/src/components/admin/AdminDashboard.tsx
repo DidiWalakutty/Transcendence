@@ -48,6 +48,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   ActionButton,
   EventEditDialog,
+  EventAttendeeDialog,
   EventManagementTable,
   FormField,
   eventFormToUpdateInput,
@@ -64,6 +65,7 @@ export function AdminDashboard() {
   const [eventSearch, setEventSearch] = useState('');
   const [userDialog, setUserDialog] = useState<UserDialog>(null);
   const [eventDialog, setEventDialog] = useState<EventDto | null>(null);
+  const [attendeeTarget, setAttendeeTarget] = useState<EventDto | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
 
   // Both tables follow the backend's own broadcasts, so a change made by
@@ -73,7 +75,24 @@ export function AdminDashboard() {
   useEventStream();
 
   const usersQuery = useQuery(trpc.users.getUsers.queryOptions());
-  const eventsQuery = useQuery(trpc.events.getEvents.queryOptions('newest'));
+  const eventsQuery = useQuery(trpc.eventCreation.getAllEventsWithCounts.queryOptions());
+
+  const attendeeDetailQuery = useQuery({
+    ...trpc.registrations.getEventAttendees.queryOptions(
+      { id: attendeeTarget?.id ?? '' },
+      { enabled: !!attendeeTarget },
+    ),
+  });
+
+  const attendeeCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+
+    for (const event of eventsQuery.data ?? []) {
+      counts.set(event.id, event.attendeeCount);
+    }
+
+    return counts;
+  }, [eventsQuery.data]);
 
   const updateUser = useMutation(
     trpc.users.adminUpdateUser.mutationOptions({
@@ -95,7 +114,15 @@ export function AdminDashboard() {
     trpc.eventCreation.updateEvent.mutationOptions({
       onSuccess: async () => {
         setEventDialog(null);
-        await queryClient.invalidateQueries({ queryKey: trpc.events.getEvents.queryKey() });
+
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: trpc.events.getEvents.queryKey(),
+          }),
+          queryClient.invalidateQueries({
+            queryKey: trpc.eventCreation.getAllEventsWithCounts.queryKey(),
+          }),
+        ]);
       },
     }),
   );
@@ -103,7 +130,15 @@ export function AdminDashboard() {
     trpc.eventCreation.deleteEvent.mutationOptions({
       onSuccess: async () => {
         setDeleteTarget(null);
-        await queryClient.invalidateQueries({ queryKey: trpc.events.getEvents.queryKey() });
+
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: trpc.events.getEvents.queryKey(),
+          }),
+          queryClient.invalidateQueries({
+            queryKey: trpc.eventCreation.getAllEventsWithCounts.queryKey(),
+          }),
+        ]);
       },
     }),
   );
@@ -284,6 +319,8 @@ export function AdminDashboard() {
             <CardContent>
               <EventManagementTable
                 events={events}
+                attendeeCounts={attendeeCounts}
+                onAttendees={setAttendeeTarget}
                 onEdit={setEventDialog}
                 onDelete={(event) => setDeleteTarget({ kind: 'event', item: event })}
               />
@@ -298,6 +335,11 @@ export function AdminDashboard() {
         pending={updateUser.isPending}
         onClose={() => setUserDialog(null)}
         onSubmit={submitUser}
+      />
+      <EventAttendeeDialog
+        event={attendeeTarget}
+        attendees={attendeeDetailQuery.data ?? []}
+        onClose={() => setAttendeeTarget(null)}
       />
       <EventEditDialog
         event={eventDialog}
