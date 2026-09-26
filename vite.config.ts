@@ -187,6 +187,15 @@ export default defineConfig({
       'repo:test:backend': {
         command: 'vp test --project backend',
         dependsOn: ['repo:trpc:generate'],
+        env: [
+          'NODE_ENV',
+          'DATABASE_URL',
+          'REDIS_URL',
+          'BETTER_AUTH_*',
+          'SEED_*',
+          'CORS_ORIGINS',
+          'DEV_FIXTURES',
+        ],
       },
       'repo:test:backend:e2e': {
         command: 'vp test --project backend test/app.e2e-spec.ts',
