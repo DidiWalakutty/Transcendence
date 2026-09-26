@@ -36,7 +36,10 @@ export const FriendlyReminderEmail = ({
         eventLocation,
         eventAddress,
       }),
-      EmailCta({ href: `http://localhost:3000/${lang}/my-tickets`, label: dictionary.buttonLabel }),
+      EmailCta({
+        href: `https://localhost:3000/${lang}/my-tickets`,
+        label: dictionary.buttonLabel,
+      }),
     ].join(''),
     footer: dictionary.footerNotice,
   });
