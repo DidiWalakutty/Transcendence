@@ -10,7 +10,20 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     env:
+      NODE_ENV: development
       DATABASE_URL: postgres://transcendence:transcendence@localhost:5432/transcendence
+      BETTER_AUTH_SECRET: ci-only-secret
+      BETTER_AUTH_URL: http://localhost:3001
+      SEED_ADMIN_PASSWORD: Transcendence123!
+      SEED_DIDI_PASSWORD: Qwerty123!
+      SEED_HOMER_PASSWORD: Simpsons123!
+      SEED_ADMIN_EMAIL: admin.eventra@gmail.com
+      SEED_DIDI_EMAIL: didi@example.com
+      SEED_HOMER_EMAIL: homer@example.com
+      SEED_ADMIN_USERNAME: admin
+      SEED_DIDI_USERNAME: didi_walakutty
+      SEED_HOMER_USERNAME: homer_simpson
+      CORS_ORIGINS: http://localhost:3000
       DEV_FIXTURES: 'true'
     services:
       postgres:

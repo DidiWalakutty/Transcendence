@@ -4,14 +4,8 @@ This document lists the environment variables currently used by the project.
 
 ## Backend
 
-The backend uses `@nestjs/config` and loads environment files in this order:
-
-1. `apps/backend/.env`
-2. `.env`
-3. `apps/backend/.env.development`
-4. `.env.development`
-
-Earlier files take precedence when the same variable is defined.
+The backend uses `@nestjs/config` and loads the repository root `.env`. Shell
+environment variables take precedence over values loaded from that file.
 
 ### Variables
 
@@ -21,7 +15,7 @@ Earlier files take precedence when the same variable is defined.
 | `DATABASE_URL`         | Unless `DEV_FIXTURES=true` | `postgres://transcendence:transcendence@localhost:5432/transcendence` | PostgreSQL connection string used by the backend and Drizzle Kit.                                                                                                               |
 | `PORT`                 | No                         | `3001`                                                                | Backend HTTP port.                                                                                                                                                              |
 | `REDIS_URL`            | No                         | `redis://localhost:6380`                                              | Redis connection string for backend cache and throttling storage.                                                                                                               |
-| `BETTER_AUTH_SECRET`   | Yes                        | (see `apps/backend/.env.development`)                                 | Signing secret for Better Auth sessions and tokens. See [Authentication](./AUTHENTICATION.md).                                                                                  |
+| `BETTER_AUTH_SECRET`   | Yes                        | (see `.env.example`)                                                  | Signing secret for Better Auth sessions and tokens. See [Authentication](./AUTHENTICATION.md).                                                                                  |
 | `BETTER_AUTH_URL`      | No                         | `http://localhost:3001`                                               | The backend's public base URL, used by Better Auth to build absolute links and to decide on `Secure` cookies. Behind Caddy this is the HTTPS origin (`https://localhost:3000`). |
 | `CACHE_TTL_MS`         | No                         | `30000`                                                               | Default backend cache TTL in milliseconds.                                                                                                                                      |
 | `THROTTLE_TTL_SECONDS` | No                         | `60`                                                                  | Rate-limit window length in seconds.                                                                                                                                            |

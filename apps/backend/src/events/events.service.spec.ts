@@ -45,7 +45,7 @@ describe('EventsService', () => {
       findByOrganizer: async () => [],
       update: async () => null,
       delete: async () => null,
-    } as EventsRepository;
+    } satisfies EventsRepository;
 
     const service = new EventsService(emitter, repository, mockRegistrationsRepository);
 
@@ -77,7 +77,7 @@ describe('EventsService', () => {
       findByOrganizer: async () => [storedEvent],
       update: async () => storedEvent,
       delete: async () => storedEvent,
-    } as EventsRepository;
+    } satisfies EventsRepository;
 
     const service = new EventsService(new EventEmitter2(), repository, mockRegistrationsRepository);
     const abortController = new AbortController();
@@ -99,7 +99,7 @@ describe('EventsService', () => {
       findByOrganizer: async () => [storedEvent],
       update: async () => storedEvent,
       delete: async () => storedEvent,
-    } as EventsRepository;
+    } satisfies EventsRepository;
 
     const service = new EventsService(new EventEmitter2(), repository, mockRegistrationsRepository);
     const abortController = new AbortController();

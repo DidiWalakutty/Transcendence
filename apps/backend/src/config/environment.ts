@@ -2,15 +2,9 @@ import { resolve } from 'node:path';
 import { config as loadDotenv } from 'dotenv';
 import { z } from 'zod';
 
-const backendRoot = resolve(__dirname, '../..');
-const repositoryRoot = resolve(backendRoot, '../..');
+const repositoryRoot = resolve(__dirname, '../../..');
 
-export const environmentFilePaths = [
-  resolve(backendRoot, '.env'),
-  resolve(repositoryRoot, '.env'),
-  resolve(backendRoot, '.env.development'),
-  resolve(repositoryRoot, '.env.development'),
-];
+export const environmentFilePaths = [resolve(repositoryRoot, '.env')];
 
 loadDotenv({
   path: environmentFilePaths,
