@@ -78,11 +78,7 @@ function EventDetailPage() {
       <div className="relative mx-auto max-w-7xl px-6 pb-24 pt-12">
         {/* Event Image */}
         <div className="mx-auto max-w-6xl overflow-hidden rounded-2xl shadow-xl">
-          <img
-            src={eventImage}
-            alt={event?.title ?? ''}
-            className="h-[550px] w-full object-cover"
-          />
+          <img src={eventImage} alt={event?.title ?? ''} className="h-auto w-full object-cover" />
         </div>
 
         {/* Event Information */}
