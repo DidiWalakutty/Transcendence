@@ -8,10 +8,13 @@ const validationMessages = {
     invalidEmail: 'Must be a valid email address',
     nameMin: 'Name must be at least 3 characters',
     nameMax: 'Name must be at most 50 characters',
+    nameChars: 'Name must contain only letters, spaces, hyphens, and apostrophes',
     usernameMin: 'Username must be at least 3 characters',
     usernameMax: 'Username must be at most 30 characters',
     passwordMin: 'Password must be at least 8 characters',
     passwordMax: 'Password must be at most 128 characters',
+    passwordMinRequired:
+      'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
     imageTooLarge: 'Image is too large',
     imageInvalid: 'Image must be an uploaded picture',
     passwordsDoNotMatch: 'Passwords do not match',
@@ -22,10 +25,13 @@ const validationMessages = {
     invalidEmail: 'Voer een geldig e-mailadres in',
     nameMin: 'Naam moet minimaal 3 tekens lang zijn',
     nameMax: 'Naam mag maximaal 50 tekens lang zijn',
+    nameChars: 'Naam mag alleen letters, spaties, verbindingsstrepen en aanhalingstekens bevatten',
     usernameMin: 'Gebruikersnaam moet minimaal 3 tekens lang zijn',
     usernameMax: 'Gebruikersnaam mag maximaal 30 tekens lang zijn',
     passwordMin: 'Wachtwoord moet minimaal 8 tekens lang zijn',
     passwordMax: 'Wachtwoord mag maximaal 128 tekens lang zijn',
+    passwordMinRequired:
+      'Wachtwoord moet minimaal één hoofdletter, één kleine letter, één cijfer en één speciaal teken bevatten',
     imageTooLarge: 'Afbeelding is te groot',
     imageInvalid: 'Afbeelding moet een geüploade foto zijn',
     passwordsDoNotMatch: 'Wachtwoorden komen niet overeen',
@@ -36,10 +42,13 @@ const validationMessages = {
     invalidEmail: 'Debe ser una dirección de correo válida',
     nameMin: 'El nombre debe tener al menos 3 caracteres',
     nameMax: 'El nombre debe tener como máximo 50 caracteres',
+    nameChars: 'El nombre debe contener al menos tres letras',
     usernameMin: 'El nombre de usuario debe tener al menos 3 caracteres',
     usernameMax: 'El nombre de usuario debe tener como máximo 30 caracteres',
     passwordMin: 'La contraseña debe tener al menos 8 caracteres',
     passwordMax: 'La contraseña debe tener como máximo 128 caracteres',
+    passwordMinRequired:
+      'La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial',
     imageTooLarge: 'La imagen es demasiado grande',
     imageInvalid: 'La imagen debe ser una foto subida',
     passwordsDoNotMatch: 'Las contraseñas no coinciden',
@@ -60,19 +69,22 @@ export function getValidationMessage(
 }
 
 export function makeEmailField(locale: string = 'en') {
-  return z.email(getValidationMessage(locale, 'invalidEmail'));
+  return z.email(getValidationMessage(locale, 'invalidEmail')).trim().toLowerCase();
 }
 
 export function makeNameField(locale: string = 'en') {
   return z
     .string()
+    .trim()
     .min(3, getValidationMessage(locale, 'nameMin'))
-    .max(50, getValidationMessage(locale, 'nameMax'));
+    .max(50, getValidationMessage(locale, 'nameMax'))
+    .regex(/^[\p{L}\s'-]+$/u, getValidationMessage(locale, 'nameChars'));
 }
 
 export function makeUsernameField(locale: string = 'en') {
   return z
     .string()
+    .trim()
     .min(3, getValidationMessage(locale, 'usernameMin'))
     .max(30, getValidationMessage(locale, 'usernameMax'));
 }
@@ -81,7 +93,11 @@ export function makePasswordField(locale: string = 'en') {
   return z
     .string()
     .min(8, getValidationMessage(locale, 'passwordMin'))
-    .max(128, getValidationMessage(locale, 'passwordMax'));
+    .max(128, getValidationMessage(locale, 'passwordMax'))
+    .regex(
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).+$/,
+      getValidationMessage(locale, 'passwordMinRequired'),
+    );
 }
 
 export const emailField = makeEmailField();
