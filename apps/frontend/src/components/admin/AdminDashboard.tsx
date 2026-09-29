@@ -288,12 +288,14 @@ export function AdminDashboard() {
                             icon={<Pencil />}
                             onClick={() => setUserDialog({ mode: 'edit', user })}
                           />
-                          <ActionButton
-                            destructive
-                            label={m.admin_delete()}
-                            icon={<Trash2 />}
-                            onClick={() => setDeleteTarget({ kind: 'user', item: user })}
-                          />
+                          {!hasAdminRole(user) && (
+                            <ActionButton
+                              destructive
+                              label={m.admin_delete()}
+                              icon={<Trash2 />}
+                              onClick={() => setDeleteTarget({ kind: 'user', item: user })}
+                            />
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>
