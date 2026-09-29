@@ -101,7 +101,7 @@ function EventDetailPage() {
             </div>
 
             {/* Title */}
-            <h1 className="mt-1 pr-[20%] text-4xl font-bold text-brand-primary-text 2xl:text-5xl">
+            <h1 className="mt-1 break-words pr-[20%] text-4xl font-bold text-brand-primary-text 2xl:text-5xl">
               {event?.title}
             </h1>
 
@@ -157,7 +157,9 @@ function EventDetailPage() {
             <section>
               <h2 className="text-2xl font-bold text-text-primary">{m.events_about_title()}</h2>
 
-              <p className="mt-1 text-lg leading-8 text-text-muted">{event?.description}</p>
+              <p className="mt-1 break-all text-lg leading-8 text-text-muted">
+                {event?.description}
+              </p>
             </section>
 
             {/* Address */}
