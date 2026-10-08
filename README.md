@@ -11,7 +11,7 @@ talk in a live chat. Administrators manage every user and event from a dashboard
 event, a sold-out ticket, a friend coming online or a chat message reaches every open
 browser without a reload.
 
-<img src="apps/frontend/assets/event-page.png" alt="Transcendence Event Page" width="900">
+![Eventra_Homepage](apps/frontend/src/assets/Eventra%20Homepage.png)
 
 What the application does:
 
