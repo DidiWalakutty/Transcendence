@@ -11,6 +11,8 @@ talk in a live chat. Administrators manage every user and event from a dashboard
 event, a sold-out ticket, a friend coming online or a chat message reaches every open
 browser without a reload.
 
+<img src="apps/frontend/assets/event-page.png" alt="Transcendence Event Page" width="900">
+
 What the application does:
 
 - Public event catalogue with category filters, three sort orders and server-side pagination.
@@ -24,6 +26,7 @@ What the application does:
 - Admin dashboard with a user table, role changes and a table of all events.
 - Interface in English, Dutch and Spanish, switchable in the app and remembered per user.
 - Server-side rendering, HTTPS for every request and a single-command Docker deployment.
+
 
 ---
 
